@@ -23,13 +23,13 @@ function generateCandles(count, seed = 42, base = 70000) {
     }
     return out;
 }
-export function CandlestickChart({ width = 720, height = 320, count = 60, seed = 7, base = 70000, animate = true, showAxes = true, }) {
-    const [candles, setCandles] = useState(() => generateCandles(count, seed, base));
+export function CandlestickChart({ width = 720, height = 320, count = 60, seed = 7, base = 70000, animate = true, showAxes = true, data = null, }) {
+    const [internal, setInternal] = useState(() => generateCandles(count, seed, base));
     useEffect(() => {
-        if (!animate)
+        if (data || !animate)
             return;
         const id = setInterval(() => {
-            setCandles((prev) => {
+            setInternal((prev) => {
                 const last = prev[prev.length - 1];
                 const drift = (Math.random() - 0.48) * base * 0.012;
                 const o = last.c;
@@ -40,7 +40,8 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
             });
         }, 1400);
         return () => clearInterval(id);
-    }, [animate, base]);
+    }, [animate, base, data]);
+    const candles = data && data.length ? data : internal;
     const { min, max } = useMemo(() => {
         let mn = Infinity, mx = -Infinity;
         for (const k of candles) {

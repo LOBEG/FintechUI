@@ -1,12 +1,22 @@
 'use client';
-import { ASSETS, formatPct, formatUSD } from '@/lib/utils';
+import { formatPct, formatUSD } from '@/lib/utils';
+import { useLivePrices, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 export function MarketTicker() {
-    const items = [...ASSETS, ...ASSETS];
+    const live = useLivePrices(DEFAULT_TICKER_SYMBOLS);
+    const rows = DEFAULT_TICKER_SYMBOLS
+      .map((s) => {
+        const d = live[s];
+        const m = SYMBOL_META[s];
+        if (!d || !m) return null;
+        return { ...m, key: s, price: d.price, change: d.pct };
+      })
+      .filter(Boolean);
+    const items = [...rows, ...rows];
     return (<section id="markets" className="relative">
       <div className="border-y border-white/5 bg-ink-900/40 backdrop-blur">
         <div className="overflow-hidden">
           <div className="marquee-track py-3">
-            {items.map((a, i) => (<div key={i} className="flex items-center gap-3 px-6 whitespace-nowrap border-r border-white/5">
+            {items.map((a, i) => (<div key={`${a.key}-${i}`} className="flex items-center gap-3 px-6 whitespace-nowrap border-r border-white/5">
                 <span className="h-7 w-7 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: a.color }}>
                   {a.sym.slice(0, 1)}
                 </span>
@@ -19,3 +29,4 @@ export function MarketTicker() {
       </div>
     </section>);
 }
+

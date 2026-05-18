@@ -3,7 +3,14 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
 import { CandlestickChart } from '@/components/ui/Charts';
+import { useLiveKlines, useLivePrices } from '@/lib/useLiveData';
+import { formatUSD, formatPct } from '@/lib/utils';
 export function Hero() {
+    const candles = useLiveKlines('BTCUSDT', '5m', 56);
+    const prices = useLivePrices(['BTCUSDT']);
+    const btc = prices.BTCUSDT || { price: 71248.32, pct: 2.41 };
+    const live = !!btc.live;
+    const pctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
       <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
@@ -49,27 +56,39 @@ export function Hero() {
               <div className="flex items-center gap-2">
                 <span className="h-7 w-7 rounded-md bg-gold-grad inline-flex items-center justify-center text-ink-950 text-xs font-bold">₿</span>
                 <div>
-                  <p className="text-sm font-semibold">BTC / USDT</p>
-                  <p className="text-[11px] text-white/50">Bitcoin · Spot</p>
+                  <p className="text-sm font-semibold flex items-center gap-2">
+                    BTC / USDT
+                    <span className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-wider ${live ? 'text-neon-green' : 'text-white/40'}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-neon-green animate-pulse' : 'bg-white/30'}`}/>
+                      {live ? 'live' : 'connecting'}
+                    </span>
+                  </p>
+                  <p className="text-[11px] text-white/50">Bitcoin · Spot · Binance</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-semibold text-neon-green">$71,248.32</p>
-                <p className="text-xs text-neon-green">+2.41% (24h)</p>
+                <p className={`text-lg font-semibold ${pctClass}`}>{formatUSD(btc.price)}</p>
+                <p className={`text-xs ${pctClass}`}>{formatPct(btc.pct)} (24h)</p>
               </div>
             </div>
             <div className="rounded-xl bg-ink-900/60 border border-white/5 p-2">
               <div className="aspect-[16/9]">
-                <CandlestickChart count={56} seed={11} base={70000}/>
+                <CandlestickChart data={candles} animate={false}/>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2 pt-3">
-              {['1H', '4H', '1D', '1W', '1M', '1Y'].slice(0, 3).map((t, i) => (<div key={t} className="glass-light px-3 py-2 text-center">
-                  <p className="text-[10px] text-white/50">{t} change</p>
-                  <p className={`text-sm font-semibold ${i === 1 ? 'text-neon-red' : 'text-neon-green'}`}>
-                    {i === 1 ? '-0.62%' : '+1.84%'}
-                  </p>
-                </div>))}
+              <div className="glass-light px-3 py-2 text-center">
+                <p className="text-[10px] text-white/50">24h high</p>
+                <p className="text-sm font-semibold text-neon-green">{btc.high ? formatUSD(btc.high) : '—'}</p>
+              </div>
+              <div className="glass-light px-3 py-2 text-center">
+                <p className="text-[10px] text-white/50">24h low</p>
+                <p className="text-sm font-semibold text-neon-red">{btc.low ? formatUSD(btc.low) : '—'}</p>
+              </div>
+              <div className="glass-light px-3 py-2 text-center">
+                <p className="text-[10px] text-white/50">24h change</p>
+                <p className={`text-sm font-semibold ${pctClass}`}>{formatPct(btc.pct)}</p>
+              </div>
             </div>
           </div>
           <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="hidden md:flex absolute -bottom-6 -left-6 glass p-3 items-center gap-3">
@@ -78,10 +97,11 @@ export function Hero() {
             </div>
             <div>
               <p className="text-xs text-white/60">Aurelia AI signal</p>
-              <p className="text-sm font-semibold text-neon-green">BUY · 87% confidence</p>
+              <p className="text-sm font-semibold text-neon-green">{btc.pct >= 0 ? 'BUY' : 'HEDGE'} · 87% confidence</p>
             </div>
           </motion.div>
         </motion.div>
       </div>
     </section>);
 }
+

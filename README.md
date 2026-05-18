@@ -4,7 +4,7 @@
 >
 > *“BlackRock meets Binance.”* AurumX is a luxury, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
 
-A production-grade Next.js 14 (App Router) frontend with Tailwind CSS, Framer Motion, and a curated dark-luxury fintech aesthetic — black + deep navy with **neon green / orange** trading accents and **gold** institutional accents, glassmorphism cards, soft shadows, smooth animations, and a mobile-first responsive layout.
+A production-grade Next.js 15 (App Router) frontend with Tailwind CSS, Framer Motion, and a curated dark-luxury fintech aesthetic — black + deep navy with **neon green / orange** trading accents and **gold** institutional accents, glassmorphism cards, soft shadows, smooth animations, and a mobile-first responsive layout.
 
 ---
 
@@ -73,15 +73,39 @@ A production-grade Next.js 14 (App Router) frontend with Tailwind CSS, Framer Mo
 
 ## 🧱 Tech stack
 
-- **Next.js 14** (App Router, React 18)
-- **TypeScript** (strict)
+- **Next.js 15** (App Router, React 18) — **pure JavaScript (no TypeScript)**
 - **Tailwind CSS** (custom theme: ink/gold/neon, glass utilities, marquee + float animations)
 - **Framer Motion** (page & micro animations)
 - **lucide-react** (icons)
 - **next-themes** (dark/light)
 - Custom **SVG charts** (candlestick, sparkline, donut, bar) — no runtime canvas dependency, swap-in compatible with ApexCharts or TradingView widgets later
+- **Real-time data** via Binance public REST + WebSocket (no API key required) — see `src/lib/useLiveData.js`
 
 > The chart components are intentionally implemented with pure SVG so the bundle is small and the design is fully customizable. They are drop-in replaceable with ApexCharts (`react-apexcharts`) or the TradingView Advanced Charts widget when API keys / licenses are configured.
+
+---
+
+## 📡 Real-time market data
+
+Everything price-related on AurumX is **live, not mocked**. We use the public Binance Spot APIs (no API key required):
+
+| Source | Endpoint | Used by |
+| --- | --- | --- |
+| REST snapshot | `GET https://api.binance.com/api/v3/ticker/24hr?symbols=[...]` | Market ticker, watchlist, asset cards, wallet valuations, positions (on load) |
+| Live WebSocket | `wss://stream.binance.com:9443/stream?streams=<sym>@ticker/...` | Continuous 24h ticker updates (price, %, high, low, vol) |
+| Klines REST | `GET /api/v3/klines?symbol=BTCUSDT&interval=5m&limit=80` | Candlestick chart history (hero + dashboard) |
+| Klines WebSocket | `wss://stream.binance.com:9443/ws/<sym>@kline_<interval>` | Live candle updates (current candle ticks, new candle on close) |
+
+The hooks live in `src/lib/useLiveData.js`:
+
+```js
+import { useLivePrices, useLiveKlines, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
+
+const prices  = useLivePrices(['BTCUSDT', 'ETHUSDT', 'SOLUSDT']);
+const candles = useLiveKlines('BTCUSDT', '5m', 80);
+```
+
+Both hooks ship with seed values so the UI renders instantly during SSR / first paint and then upgrades to live data once the WebSocket connects. If the connection ever drops the seed values keep the screen usable.
 
 ---
 
@@ -91,7 +115,7 @@ A production-grade Next.js 14 (App Router) frontend with Tailwind CSS, Framer Mo
 npm install
 npm run dev      # http://localhost:3000
 npm run build    # production build
-npm run start    # serve production build
+npm run start    # serve production build (honours $PORT)
 npm run lint     # eslint
 ```
 
@@ -100,12 +124,41 @@ npm run lint     # eslint
 | Route        | Description                          |
 | ------------ | ------------------------------------ |
 | `/`          | Landing page                         |
-| `/dashboard` | Trading dashboard                    |
+| `/dashboard` | Trading dashboard (live BTC/USDT)    |
 | `/admin`     | Admin console                        |
 | `/investor`  | Institutional investor portal        |
 | `/insights`  | Market insights & research           |
 | `/login`     | Sign-in                              |
 | `/signup`    | Account creation                     |
+
+---
+
+## 🚂 Deploy to Railway
+
+This repository is configured for **Railway** out of the box:
+
+- `railway.json` — Nixpacks builder, health-check on `/`, auto-restart on failure
+- `nixpacks.toml` — pins Node 20, runs `npm ci && npm run build`
+- `Procfile` — `web: npm run start`
+- `package.json` `start` script binds to `0.0.0.0:$PORT` (Railway sets `$PORT` automatically)
+
+### One-time setup
+
+1. Create a new project on [railway.app](https://railway.app) and connect this GitHub repo.
+2. Railway will auto-detect Node + Next.js via Nixpacks.
+3. (Optional) under **Variables**, add any custom env vars (none are required for the live market data).
+4. Click **Deploy** — Railway will run `npm ci && npm run build`, then `npm run start`.
+
+### CLI alternative
+
+```bash
+npm i -g @railway/cli
+railway login
+railway init
+railway up
+```
+
+The first build takes ~2-3 minutes. After it goes live, attach a custom domain (e.g. `aurumx.app`) from the Railway dashboard.
 
 ---
 
@@ -129,13 +182,13 @@ npm run lint     # eslint
 
 ## 🔒 Telegram & WhatsApp support
 
-Floating CTA buttons on every page link to `https://t.me/AurumXSupport` and `https://wa.me/15555550123` (replace with your real handles in `src/components/widgets/TelegramWhatsAppCTA.tsx`).
+Floating CTA buttons on every page link to `https://t.me/AurumXSupport` and `https://wa.me/15555550123` (replace with your real handles in `src/components/widgets/TelegramWhatsAppCTA.jsx`).
 
 ---
 
 ## 📸 About screenshots
 
-This repository delivers the full **production-ready frontend code** for AurumX. Live screenshots can be generated locally by running `npm run dev` and capturing each route (`/`, `/dashboard`, `/admin`, `/investor`, `/insights`, `/login`, `/signup`) on desktop and mobile widths — or by deploying to Vercel for live previews.
+This repository delivers the full **production-ready frontend code** for AurumX. Live screenshots can be generated locally by running `npm run dev` and capturing each route (`/`, `/dashboard`, `/admin`, `/investor`, `/insights`, `/login`, `/signup`) on desktop and mobile widths — or by deploying to Railway/Vercel for live previews.
 
 ---
 

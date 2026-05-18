@@ -1,17 +1,26 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Wallet, Plus, Bot, Eye, Star, Zap, } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { CandlestickChart, Sparkline, BarChart, DonutChart } from '@/components/ui/Charts';
-import { ASSETS, formatUSD, formatPct } from '@/lib/utils';
-const positions = [
-    { sym: 'BTC/USDT', side: 'LONG', size: 0.4521, entry: 69284.12, mark: 71248.32, pnl: 887.21, roe: 2.84 },
-    { sym: 'ETH/USDT', side: 'LONG', size: 4.2, entry: 3712.55, mark: 3812.07, pnl: 417.98, roe: 2.68 },
-    { sym: 'SOL/USDT', side: 'SHORT', size: 28, entry: 184.5, mark: 178.42, pnl: 170.24, roe: 3.29 },
-    { sym: 'XRP/USDT', side: 'LONG', size: 4200, entry: 0.6045, mark: 0.6128, pnl: 34.86, roe: 1.37 },
+import { formatUSD, formatPct } from '@/lib/utils';
+import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
+
+const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
+const WALLET_HOLDINGS = [
+    { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#f7931a' },
+    { key: 'ETHUSDT', sym: 'ETH', name: 'Ethereum', bal: 12.41, color: '#627eea' },
+    { key: 'SOLUSDT', sym: 'SOL', name: 'Solana',   bal: 84.5,  color: '#14f195' },
+    { key: null,      sym: 'USDT', name: 'Tether',   bal: 24800, color: '#26a17b' },
+];
+const POSITION_TEMPLATE = [
+    { key: 'BTCUSDT', sym: 'BTC/USDT', side: 'LONG',  size: 0.4521, entry: 69284.12 },
+    { key: 'ETHUSDT', sym: 'ETH/USDT', side: 'LONG',  size: 4.2,    entry: 3712.55 },
+    { key: 'SOLUSDT', sym: 'SOL/USDT', side: 'SHORT', size: 28,     entry: 184.5 },
+    { key: 'XRPUSDT', sym: 'XRP/USDT', side: 'LONG',  size: 4200,   entry: 0.6045 },
 ];
 const transactions = [
     { type: 'Buy', asset: 'BTC', amount: '0.0125', value: 891.1, time: '2m ago', status: 'Filled' },
@@ -20,19 +29,42 @@ const transactions = [
     { type: 'Withdraw', asset: 'ETH', amount: '0.45', value: 1715.42, time: '1d ago', status: 'Completed' },
     { type: 'Buy', asset: 'XRP', amount: '4,200', value: 2538.24, time: '2d ago', status: 'Filled' },
 ];
-const wallets = [
-    { sym: 'BTC', name: 'Bitcoin', bal: 1.245, value: 88706.5, color: '#f7931a' },
-    { sym: 'ETH', name: 'Ethereum', bal: 12.41, value: 47307.79, color: '#627eea' },
-    { sym: 'SOL', name: 'Solana', bal: 84.5, value: 15076.49, color: '#14f195' },
-    { sym: 'USDT', name: 'Tether', bal: 24800.0, value: 24800.0, color: '#26a17b' },
-];
-const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
-const portfolioAllocation = wallets.map((w) => ({ label: w.sym, value: Math.round((w.value / totalBalance) * 100), color: w.color }));
+const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
+
 export default function DashboardPage() {
     const [side, setSide] = useState('buy');
     const [orderType, setOrderType] = useState('limit');
     const [amount, setAmount] = useState('0.05');
-    const [price, setPrice] = useState('71248.32');
+    const [interval, setInterval] = useState('5m');
+    const livePrices = useLivePrices([...new Set([...WATCHLIST_SYMBOLS, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'])]);
+    const candles = useLiveKlines('BTCUSDT', interval, 80);
+    const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
+    const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
+    const [price, setPrice] = useState('');
+    const effectivePrice = price || (btc.price ? btc.price.toFixed(2) : '0');
+
+    // Live wallet valuations
+    const wallets = WALLET_HOLDINGS.map((w) => {
+        const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
+        return { ...w, price: px, value: w.bal * px };
+    });
+    const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
+    const portfolioAllocation = useMemo(
+      () => wallets.map((w) => ({ label: w.sym, value: totalBalance ? Math.round((w.value / totalBalance) * 100) : 0, color: w.color })),
+      [wallets, totalBalance],
+    );
+
+    // Live positions w/ mark + PnL
+    const positions = POSITION_TEMPLATE.map((p) => {
+        const mark = livePrices[p.key]?.price ?? p.entry;
+        const direction = p.side === 'LONG' ? 1 : -1;
+        const pnl = (mark - p.entry) * p.size * direction;
+        const roe = p.entry ? ((mark - p.entry) / p.entry) * 100 * direction : 0;
+        return { ...p, mark, pnl, roe };
+    });
+    const openPnl = positions.reduce((s, p) => s + p.pnl, 0);
+    const cashUSDT = WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal;
+
     return (<div className="flex">
       <Sidebar />
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
@@ -43,9 +75,16 @@ export default function DashboardPage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-5 lg:col-span-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white/60">Total Portfolio Value</p>
+                  <p className="text-sm text-white/60 flex items-center gap-2">
+                    Total Portfolio Value
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-neon-green">
+                      <span className="h-1.5 w-1.5 rounded-full bg-neon-green animate-pulse"/> live
+                    </span>
+                  </p>
                   <p className="text-3xl sm:text-4xl font-display mt-1">{formatUSD(totalBalance)}</p>
-                  <p className="text-sm text-neon-green mt-1">+$4,217.42 (+2.4%) today</p>
+                  <p className={`text-sm mt-1 ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                    {openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)} unrealised P&L
+                  </p>
                 </div>
                 <div className="hidden sm:flex gap-2">
                   <button className="btn-primary text-sm"><Plus className="h-4 w-4"/> Deposit</button>
@@ -53,18 +92,20 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="mt-3 h-24">
-                <Sparkline width={640} height={90} seed={9} positive/>
+                <Sparkline width={640} height={90} seed={9} positive={openPnl >= 0}/>
               </div>
             </motion.div>
 
-            {[
-            { label: 'Available Cash', value: '$24,800', sub: 'USDT · ready to trade', accent: 'text-neon-green' },
-            { label: 'Open P&L', value: '+$1,510.29', sub: '4 open positions', accent: 'text-gold-400' },
-        ].map((c) => (<div key={c.label} className="glass p-5">
-                <p className="text-sm text-white/60">{c.label}</p>
-                <p className={`text-2xl font-display mt-1 ${c.accent}`}>{c.value}</p>
-                <p className="text-xs text-white/50 mt-1">{c.sub}</p>
-              </div>))}
+            <div className="glass p-5">
+              <p className="text-sm text-white/60">Available Cash</p>
+              <p className="text-2xl font-display mt-1 text-neon-green">{formatUSD(cashUSDT)}</p>
+              <p className="text-xs text-white/50 mt-1">USDT · ready to trade</p>
+            </div>
+            <div className="glass p-5">
+              <p className="text-sm text-white/60">Open P&L</p>
+              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-gold-400' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
+              <p className="text-xs text-white/50 mt-1">{positions.length} open positions</p>
+            </div>
           </section>
 
           {/* Asset cards */}
@@ -82,7 +123,7 @@ export default function DashboardPage() {
                 </div>
                 <p className="text-lg font-semibold mt-3">{w.bal.toLocaleString()}</p>
                 <p className="text-xs text-white/50">{formatUSD(w.value)}</p>
-                <div className="mt-2"><Sparkline seed={i + 2} positive={i !== 3}/></div>
+                <div className="mt-2"><Sparkline seed={i + 2} positive={w.key ? (livePrices[w.key]?.pct ?? 0) >= 0 : true}/></div>
               </motion.div>))}
           </section>
 
@@ -94,34 +135,29 @@ export default function DashboardPage() {
                   <span className="h-9 w-9 rounded-md inline-flex items-center justify-center text-ink-950 text-sm font-bold" style={{ background: '#f7931a' }}>₿</span>
                   <div>
                     <p className="text-base font-semibold">BTC / USDT</p>
-                    <p className="text-xs text-white/50">Bitcoin · Spot</p>
+                    <p className="text-xs text-white/50">Bitcoin · Spot · Binance</p>
                   </div>
                   <div className="hidden sm:block pl-4">
-                    <p className="text-lg font-semibold text-neon-green">$71,248.32</p>
-                    <p className="text-xs text-neon-green">+2.41% (24h)</p>
+                    <p className={`text-lg font-semibold ${btcPctClass}`}>{formatUSD(btc.price)}</p>
+                    <p className={`text-xs ${btcPctClass}`}>{formatPct(btc.pct)} (24h)</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs">
-                  {['1m', '5m', '15m', '1H', '4H', '1D', '1W'].map((t, i) => (<button key={t} className={`px-2.5 py-1 rounded ${i === 3 ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5'}`}>
+                  {INTERVALS.map((t) => (<button key={t} onClick={() => setInterval(t)} className={`px-2.5 py-1 rounded ${interval === t ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5'}`}>
                       {t}
                     </button>))}
                 </div>
               </div>
               <div className="mt-3 rounded-xl bg-ink-900/60 border border-white/5 p-2">
                 <div className="aspect-[16/9]">
-                  <CandlestickChart count={70} seed={21} base={70000}/>
+                  <CandlestickChart data={candles} animate={false}/>
                 </div>
               </div>
               <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
-                {[
-            { k: '24h High', v: '$72,415' },
-            { k: '24h Low', v: '$69,128' },
-            { k: '24h Vol (BTC)', v: '24,812' },
-            { k: '24h Vol (USD)', v: '$1.76B' },
-        ].map((s) => (<div key={s.k} className="glass-light p-2 text-center">
-                    <p className="text-white/50">{s.k}</p>
-                    <p className="font-semibold mt-0.5">{s.v}</p>
-                  </div>))}
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h High</p><p className="font-semibold mt-0.5">{btc.high ? formatUSD(btc.high) : '—'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{btc.low ? formatUSD(btc.low) : '—'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (BTC)</p><p className="font-semibold mt-0.5">{btc.vol ? btc.vol.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (USD)</p><p className="font-semibold mt-0.5">{btc.quoteVol ? `$${(btc.quoteVol / 1e9).toFixed(2)}B` : '—'}</p></div>
               </div>
             </div>
 
@@ -141,15 +177,15 @@ export default function DashboardPage() {
                   </button>))}
               </div>
               <div className="mt-4 space-y-3">
-                <Field label="Price (USDT)" value={price} onChange={setPrice} disabled={orderType === 'market'}/>
+                <Field label="Price (USDT)" value={effectivePrice} onChange={setPrice} disabled={orderType === 'market'}/>
                 <Field label="Amount (BTC)" value={amount} onChange={setAmount}/>
                 <div className="grid grid-cols-4 gap-1 text-[11px]">
                   {['25%', '50%', '75%', '100%'].map((p) => (<button key={p} className="py-1.5 rounded bg-white/5 hover:bg-white/10 text-white/70">{p}</button>))}
                 </div>
                 <div className="glass-light p-3 text-xs space-y-1">
-                  <Row k="Order value" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(price || '0'))}`}/>
-                  <Row k="Fee (0.10%)" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(price || '0') * 0.001)}`}/>
-                  <Row k="Available" v="24,800.00 USDT"/>
+                  <Row k="Order value" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(effectivePrice || '0'))}`}/>
+                  <Row k="Fee (0.10%)" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(effectivePrice || '0') * 0.001)}`}/>
+                  <Row k="Available" v={`${cashUSDT.toLocaleString()} USDT`}/>
                 </div>
                 <button className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
                   {side === 'buy' ? 'Buy BTC' : 'Sell BTC'}
@@ -166,20 +202,27 @@ export default function DashboardPage() {
                 <button className="text-xs text-white/55 hover:text-white">View all</button>
               </div>
               <div className="mt-3 divide-y divide-white/5">
-                {ASSETS.slice(0, 7).map((a, i) => (<div key={a.sym} className="flex items-center gap-3 py-2.5">
-                    <span className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: a.color }}>
-                      {a.sym.slice(0, 1)}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{a.sym}</p>
-                      <p className="text-[11px] text-white/50 truncate">{a.name}</p>
-                    </div>
-                    <Sparkline seed={i + 4} positive={a.change >= 0} width={70} height={28}/>
-                    <div className="text-right">
-                      <p className="text-sm">{formatUSD(a.price, a.price < 1 ? 4 : 2)}</p>
-                      <p className={`text-[11px] ${a.change >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(a.change)}</p>
-                    </div>
-                  </div>))}
+                {WATCHLIST_SYMBOLS.map((s, i) => {
+                  const meta = SYMBOL_META[s];
+                  const d = livePrices[s];
+                  if (!meta) return null;
+                  const px = d?.price ?? 0;
+                  const pct = d?.pct ?? 0;
+                  return (<div key={s} className="flex items-center gap-3 py-2.5">
+                      <span className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: meta.color }}>
+                        {meta.sym.slice(0, 1)}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{meta.sym}</p>
+                        <p className="text-[11px] text-white/50 truncate">{meta.name}</p>
+                      </div>
+                      <Sparkline seed={i + 4} positive={pct >= 0} width={70} height={28}/>
+                      <div className="text-right">
+                        <p className="text-sm">{formatUSD(px, px < 1 ? 4 : 2)}</p>
+                        <p className={`text-[11px] ${pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(pct)}</p>
+                      </div>
+                    </div>);
+                })}
               </div>
             </div>
 
@@ -204,7 +247,9 @@ export default function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {positions.map((p) => (<tr key={p.sym}>
+                    {positions.map((p) => {
+                      const pos = p.pnl >= 0;
+                      return (<tr key={p.sym}>
                         <td className="py-2.5 font-medium">{p.sym}</td>
                         <td>
                           <span className={`chip ${p.side === 'LONG' ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-red/15 text-neon-red'}`}>
@@ -215,12 +260,13 @@ export default function DashboardPage() {
                         <td>{p.size}</td>
                         <td>{formatUSD(p.entry, p.entry < 1 ? 4 : 2)}</td>
                         <td>{formatUSD(p.mark, p.mark < 1 ? 4 : 2)}</td>
-                        <td className="text-neon-green">+{formatUSD(p.pnl)}</td>
-                        <td className="text-neon-green">+{p.roe}%</td>
+                        <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
+                        <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
                         <td className="text-right">
                           <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Close</button>
                         </td>
-                      </tr>))}
+                      </tr>);
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -246,7 +292,7 @@ export default function DashboardPage() {
             <div className="glass-strong p-5">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">P&L · last 30 days</p>
-                <span className="text-xs text-neon-green">+$8,412</span>
+                <span className={`text-xs ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl + 6900)}</span>
               </div>
               <BarChart data={[12, 18, 9, 22, 14, 28, 19, 31, 24, 36, 28, 41, 33, 22, 38]} color="#00ffa3"/>
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
