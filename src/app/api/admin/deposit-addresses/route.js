@@ -7,6 +7,7 @@ import {
   appendAudit,
 } from '@/lib/server/store.js';
 import { isSupportedSymbol } from '@/lib/server/prices.js';
+import { validateAddressForSymbol } from '@/lib/server/addressFormats.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,10 @@ export async function POST(req) {
     }
     if (address.length > 200 || memo.length > 100 || network.length > 50 || label.length > 80) {
       return NextResponse.json({ error: 'Field too long' }, { status: 400 });
+    }
+    const check = validateAddressForSymbol(symbol, address);
+    if (!check.ok) {
+      return NextResponse.json({ error: check.reason }, { status: 400 });
     }
     const saved = setDepositAddress(symbol, {
       address,

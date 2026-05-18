@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // --- Symbol metadata (display name & brand color) ---
 export const SYMBOL_META = {
@@ -23,8 +23,12 @@ export const DEFAULT_TICKER_SYMBOLS = [
   'DOTUSDT', 'LINKUSDT', 'MATICUSDT', 'TRXUSDT',
 ];
 
-const REST_BASE = 'https://api.binance.com';
-const WS_BASE = 'wss://stream.binance.com:9443';
+// All Binance traffic is proxied through our own /api/markets/* routes
+// so the browser never hits api.binance.com directly. Binance refuses
+// requests from a number of IPs (notably US) — that should not break
+// the dashboard for any user.
+const PROXY_BASE = '/api/markets';
+const POLL_MS = 5000;
 
 function isBrowser() {
   return typeof window !== 'undefined';
@@ -62,70 +66,46 @@ function seedFor(symbols) {
 export function useLivePrices(symbols = DEFAULT_TICKER_SYMBOLS) {
   const symbolsKey = symbols.join(',');
   const [data, setData] = useState(() => seedFor(symbols));
-  const wsRef = useRef(null);
 
   useEffect(() => {
     if (!isBrowser()) return;
     let cancelled = false;
+    let timer = null;
 
-    // Seed via REST snapshot (single call)
-    (async () => {
+    const tick = async () => {
       try {
         const qs = encodeURIComponent(JSON.stringify(symbols));
-        const res = await fetch(`${REST_BASE}/api/v3/ticker/24hr?symbols=${qs}`);
-        if (!res.ok) throw new Error('rest fail');
+        const res = await fetch(`${PROXY_BASE}/ticker?symbols=${qs}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('ticker proxy fail');
         const arr = await res.json();
-        if (cancelled) return;
-        const next = {};
-        for (const t of arr) {
-          next[t.symbol] = {
-            price: parseFloat(t.lastPrice),
-            pct: parseFloat(t.priceChangePercent),
-            open: parseFloat(t.openPrice),
-            high: parseFloat(t.highPrice),
-            low: parseFloat(t.lowPrice),
-            vol: parseFloat(t.volume),
-            quoteVol: parseFloat(t.quoteVolume),
-            live: true,
-          };
-        }
-        setData((prev) => ({ ...prev, ...next }));
-      } catch (_) {
-        // keep seed
-      }
-    })();
-
-    // WebSocket subscription for live updates
-    try {
-      const streams = symbols.map((s) => `${s.toLowerCase()}@ticker`).join('/');
-      const ws = new WebSocket(`${WS_BASE}/stream?streams=${streams}`);
-      wsRef.current = ws;
-      ws.onmessage = (ev) => {
-        try {
-          const msg = JSON.parse(ev.data);
-          const t = msg.data;
-          if (!t || !t.s) return;
-          setData((prev) => ({
-            ...prev,
-            [t.s]: {
-              price: parseFloat(t.c),
-              pct: parseFloat(t.P),
-              open: parseFloat(t.o),
-              high: parseFloat(t.h),
-              low: parseFloat(t.l),
-              vol: parseFloat(t.v),
-              quoteVol: parseFloat(t.q),
+        if (cancelled || !Array.isArray(arr) || !arr.length) return;
+        setData((prev) => {
+          const next = { ...prev };
+          for (const t of arr) {
+            next[t.symbol] = {
+              price: parseFloat(t.lastPrice),
+              pct: parseFloat(t.priceChangePercent),
+              open: parseFloat(t.openPrice),
+              high: parseFloat(t.highPrice),
+              low: parseFloat(t.lowPrice),
+              vol: parseFloat(t.volume),
+              quoteVol: parseFloat(t.quoteVolume),
               live: true,
-            },
-          }));
-        } catch (_) {}
-      };
-      ws.onerror = () => {};
-    } catch (_) {}
+            };
+          }
+          return next;
+        });
+      } catch (_) {
+        // keep last known values
+      }
+    };
+
+    tick();
+    timer = setInterval(tick, POLL_MS);
 
     return () => {
       cancelled = true;
-      try { wsRef.current && wsRef.current.close(); } catch (_) {}
+      if (timer) clearInterval(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbolsKey]);
@@ -167,20 +147,19 @@ export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
   const [candles, setCandles] = useState(() =>
     seedKlines(limit, KLINE_SEED_BASE[symbol] || 100),
   );
-  const wsRef = useRef(null);
 
   useEffect(() => {
     if (!isBrowser()) return;
     let cancelled = false;
+    let timer = null;
 
-    // Fetch initial history
-    (async () => {
+    const tick = async () => {
       try {
-        const url = `${REST_BASE}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('klines fetch failed');
+        const url = `${PROXY_BASE}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('klines proxy fail');
         const arr = await res.json();
-        if (cancelled) return;
+        if (cancelled || !Array.isArray(arr) || !arr.length) return;
         const next = arr.map((k) => ({
           t: k[0],
           o: parseFloat(k[1]),
@@ -191,50 +170,18 @@ export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
         }));
         setCandles(next);
       } catch (_) {
-        // keep seed
+        // keep last set
       }
-    })();
+    };
 
-    // Live kline WebSocket
-    try {
-      const ws = new WebSocket(
-        `${WS_BASE}/ws/${symbol.toLowerCase()}@kline_${interval}`,
-      );
-      wsRef.current = ws;
-      ws.onmessage = (ev) => {
-        try {
-          const msg = JSON.parse(ev.data);
-          const k = msg.k;
-          if (!k) return;
-          const candle = {
-            t: k.t,
-            o: parseFloat(k.o),
-            h: parseFloat(k.h),
-            l: parseFloat(k.l),
-            c: parseFloat(k.c),
-            v: parseFloat(k.v),
-          };
-          setCandles((prev) => {
-            if (!prev.length) return [candle];
-            const last = prev[prev.length - 1];
-            if (last.t === candle.t) {
-              const next = prev.slice();
-              next[next.length - 1] = candle;
-              return next;
-            }
-            // new candle (closed previous, opening new)
-            const next = prev.slice(-limit + 1);
-            next.push(candle);
-            return next;
-          });
-        } catch (_) {}
-      };
-      ws.onerror = () => {};
-    } catch (_) {}
+    tick();
+    // Refresh every 10s — finer-grained updates aren't useful for the
+    // dashboard candle chart and would add load to the proxy.
+    timer = setInterval(tick, 10_000);
 
     return () => {
       cancelled = true;
-      try { wsRef.current && wsRef.current.close(); } catch (_) {}
+      if (timer) clearInterval(timer);
     };
   }, [symbol, interval, limit]);
 

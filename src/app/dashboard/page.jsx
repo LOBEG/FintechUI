@@ -10,7 +10,7 @@ import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 import { InvestModal, WithdrawModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
-import { DepositAddressPanel, MarketsPanel, TestimonialComposer } from '@/components/dashboard/UserPanels';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel } from '@/components/dashboard/UserPanels';
 
 const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
 const WALLET_HOLDINGS = [
@@ -170,6 +170,7 @@ export default function DashboardPage() {
               <MarketsPanel onInvest={openInvest} />
             </section>
           )}
+          {user && <SandboxOnRampPanel />}
           {!user && (
             <section>
               <MarketsPanel onInvest={openInvest} />

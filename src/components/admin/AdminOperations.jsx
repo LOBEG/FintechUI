@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'USDT'];
@@ -70,6 +70,8 @@ export function AdminOperations() {
           ['tokens', `Tokens (${tokens.filter((t) => t.status === 'active').length})`, KeyRound],
           ['tx', `Tx (${transactions.length})`, CheckCircle2],
           ['audit', 'Audit log', FileText],
+          ['metrics', 'Metrics', BarChart3],
+          ['exports', 'CSV exports', Download],
         ].map(([k, label, Icon]) => (
           <button key={k} onClick={() => setTab(k)} className={`px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 ${tab === k ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'}`}>
             <Icon className="h-3.5 w-3.5"/>{label}
@@ -88,6 +90,8 @@ export function AdminOperations() {
       {tab === 'tokens' && <TokensList tokens={tokens} users={users} onDone={refresh}/>}
       {tab === 'tx' && <TxList transactions={transactions} users={users}/>}
       {tab === 'audit' && <AuditLogPanel/>}
+      {tab === 'metrics' && <MetricsPanel/>}
+      {tab === 'exports' && <ExportsPanel/>}
     </motion.section>
   );
 }
@@ -572,6 +576,88 @@ function AuditLogPanel() {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+function MetricsPanel() {
+  const [data, setData] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(async () => {
+    setBusy(true);
+    try { setData(await api.get('/api/admin/metrics')); } catch (_) {} finally { setBusy(false); }
+  }, []);
+  useEffect(() => { load(); const id = setInterval(load, 30_000); return () => clearInterval(id); }, [load]);
+  if (busy && !data) return <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading metrics…</p>;
+  if (!data) return <p className="text-sm text-white/55">Unable to load metrics.</p>;
+  const usd = (n) => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Stat label="AUM (USD)" value={usd(data.aum)}/>
+        <Stat label="Users" value={data.users.total} sub={`${data.users.mau} MAU · +${data.users.newLast7d} new 7d`}/>
+        <Stat label="24h deposits" value={usd(data.flow24h.deposits.usd)} sub={`${data.flow24h.deposits.count} tx`}/>
+        <Stat label="24h withdrawals" value={usd(data.flow24h.withdrawals.usd)} sub={`${data.flow24h.withdrawals.count} tx`}/>
+        <Stat label="24h invests" value={usd(data.flow24h.invests.usd)} sub={`${data.flow24h.invests.count} tx`}/>
+        <Stat label="Active tokens" value={data.tokens.active} sub={`${data.tokens.used} used · ${data.tokens.expired} expired`}/>
+        <Stat label="Disabled users" value={data.users.disabled}/>
+        <Stat label="Transactions" value={data.transactions.total} sub={`${data.transactions.last24h} in 24h`}/>
+      </div>
+      <div>
+        <h4 className="text-xs uppercase tracking-wide text-white/55 mb-2">Per-asset float</h4>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="text-xs text-white/50 text-left">
+              <tr><th className="py-2 font-medium">Asset</th><th className="py-2 font-medium">Total held</th><th className="py-2 font-medium">Price</th><th className="py-2 font-medium">USD value</th></tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {data.float.map((r) => (
+                <tr key={r.symbol}>
+                  <td className="py-2.5 font-medium">{r.symbol}</td>
+                  <td className="text-white/80">{fmt(r.amount)}</td>
+                  <td className="text-white/55">{r.price ? usd(r.price) : '—'}</td>
+                  <td className="text-white/80">{usd(r.usdValue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <button onClick={load} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Refresh</button>
+    </div>
+  );
+}
+
+function Stat({ label, value, sub }) {
+  return (
+    <div className="glass-light p-3">
+      <div className="text-[11px] uppercase tracking-wide text-white/45">{label}</div>
+      <div className="text-lg font-display mt-1">{value}</div>
+      {sub && <div className="text-[11px] text-white/55 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
+function ExportsPanel() {
+  // Download is a plain anchor so the browser handles the file save and
+  // the auth cookie is sent automatically.
+  const Link = ({ kind, label }) => (
+    <a href={`/api/admin/export?kind=${kind}`} className="glass-light p-3 flex items-center gap-3 hover:bg-white/10">
+      <Download className="h-4 w-4 text-gold-400"/>
+      <div className="flex-1">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-[11px] text-white/55">Download as CSV</div>
+      </div>
+    </a>
+  );
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-white/55">CSV snapshots of the live data store, suitable for ops, accounting and reconciliation. Each download is recorded in the audit log.</p>
+      <div className="grid sm:grid-cols-3 gap-3">
+        <Link kind="users" label="Users"/>
+        <Link kind="transactions" label="Transactions"/>
+        <Link kind="tokens" label="Withdrawal tokens"/>
+      </div>
     </div>
   );
 }

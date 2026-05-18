@@ -11,6 +11,7 @@ import {
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendWithdrawEmail } from '@/lib/server/email.js';
 import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
+import { validateAddressForSymbol, requiresMemo, networksFor } from '@/lib/server/addressFormats.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,11 +30,36 @@ export async function POST(req) {
     const amount = parseFloat(body.amount);
     const code = String(body.token || '').trim();
     const address = String(body.address || '').trim();
+    const memo = body.memo ? String(body.memo).trim().slice(0, 100) : '';
+    const network = body.network ? String(body.network).trim().slice(0, 50) : '';
     if (!isSupportedSymbol(symbol)) {
       return NextResponse.json({ error: 'Unsupported asset' }, { status: 400 });
     }
     if (!isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: 'Amount must be greater than zero' }, { status: 400 });
+    }
+    // Validate the destination address against the asset's format. The
+    // user may also omit it entirely (manual desk processing).
+    if (address) {
+      const check = validateAddressForSymbol(symbol, address);
+      if (!check.ok) {
+        return NextResponse.json({ error: check.reason }, { status: 400 });
+      }
+      // Memo / destination-tag bearing chains are unforgiving: funds
+      // sent without a memo are unrecoverable on exchange-side hot
+      // wallets. Refuse the withdrawal rather than risk lost funds.
+      if (requiresMemo(symbol) && !memo) {
+        return NextResponse.json({
+          error: `${symbol} requires a memo / destination tag. Withdrawals without it are unrecoverable.`,
+        }, { status: 400 });
+      }
+      // If a network is supplied, sanity-check it against the asset.
+      const allowed = networksFor(symbol);
+      if (network && allowed.length && !allowed.includes(network)) {
+        return NextResponse.json({
+          error: `Network "${network}" is not supported for ${symbol}. Choose one of: ${allowed.join(', ')}.`,
+        }, { status: 400 });
+      }
     }
     if (!code) {
       return NextResponse.json({ error: 'Withdrawal authorisation token is required' }, { status: 400 });
@@ -84,6 +110,8 @@ export async function POST(req) {
       createdAt: Date.now(),
       tokenId: tok.id,
       address: address || null,
+      memo: memo || null,
+      network: network || null,
     };
     addTransaction(tx);
     updateToken(tok.id, { status: 'used', usedAt: Date.now(), usedBy: user.id, txId: tx.id });

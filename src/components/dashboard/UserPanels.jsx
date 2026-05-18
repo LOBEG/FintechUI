@@ -1,7 +1,35 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2 } from 'lucide-react';
+import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert } from 'lucide-react';
+import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
+
+// Memo / destination-tag bearing chains. Funds sent without the memo are
+// generally not recoverable on a shared exchange wallet, so we warn the
+// user prominently next to the address.
+const MEMO_REQUIRED = new Set(['XRP', 'ATOM', 'EOS', 'TON', 'HBAR', 'XLM']);
+
+function AddressQR({ value }) {
+  const [src, setSrc] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    if (!value) { setSrc(''); return; }
+    QRCode.toDataURL(value, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 144,
+      color: { dark: '#0b0c10', light: '#ffffff' },
+    })
+      .then((url) => { if (!cancelled) setSrc(url); })
+      .catch(() => { if (!cancelled) setSrc(''); });
+    return () => { cancelled = true; };
+  }, [value]);
+  if (!src) return null;
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img src={src} alt="Deposit address QR code" width={120} height={120} className="rounded bg-white p-1 self-start"/>
+  );
+}
 
 // =============================================================
 // Deposit addresses panel — shown on /dashboard for signed-in users.
@@ -43,20 +71,36 @@ export function DepositAddressPanel() {
         <>
           <p className="text-xs text-white/55 mb-3">Send the listed crypto to the address shown. Once your deposit clears it will be credited to your account and appear in your transaction history.</p>
           <ul className="grid sm:grid-cols-2 gap-2">
-            {addresses.map((a) => (
-              <li key={a.symbol} className="glass-light p-3 flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">{a.symbol}</span>
-                  {a.network && <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{a.network}</span>}
-                  {a.label && <span className="text-[10px] text-white/45">{a.label}</span>}
-                  <button onClick={() => copy(a.symbol, a.address)} className="ml-auto h-7 w-7 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center" aria-label="Copy address">
-                    {copied === a.symbol ? <Check className="h-3.5 w-3.5 text-neon-green"/> : <Copy className="h-3.5 w-3.5"/>}
-                  </button>
-                </div>
-                <code className="font-mono text-xs break-all text-white/85">{a.address}</code>
-                {a.memo && <div className="text-[11px] text-gold-300">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
-              </li>
-            ))}
+            {addresses.map((a) => {
+              const memoRequired = MEMO_REQUIRED.has(a.symbol);
+              return (
+                <li key={a.symbol} className="glass-light p-3 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{a.symbol}</span>
+                    {a.network && <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{a.network}</span>}
+                    {a.label && <span className="text-[10px] text-white/45">{a.label}</span>}
+                    <button onClick={() => copy(a.symbol, a.address)} className="ml-auto h-7 w-7 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center" aria-label="Copy address">
+                      {copied === a.symbol ? <Check className="h-3.5 w-3.5 text-neon-green"/> : <Copy className="h-3.5 w-3.5"/>}
+                    </button>
+                  </div>
+                  <div className="flex gap-3 items-start">
+                    <AddressQR value={a.address}/>
+                    <div className="flex flex-col gap-1 min-w-0 flex-1">
+                      <code className="font-mono text-xs break-all text-white/85">{a.address}</code>
+                      {a.memo && <div className="text-[11px] text-gold-300">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
+                      {memoRequired && (
+                        <div className="flex gap-1.5 items-start text-[11px] text-neon-red bg-neon-red/10 border border-neon-red/30 rounded px-2 py-1.5">
+                          <ShieldAlert className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
+                          <span>
+                            {a.symbol} requires a destination tag / memo. Sending without it will result in <strong>permanent loss</strong> of funds.
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </>
       )}
@@ -75,7 +119,10 @@ export function MarketsPanel({ onInvest }) {
     const load = async () => {
       try {
         const r = await api.get('/api/markets');
-        if (mounted) setRows(r.markets || []);
+        // Avoid clobbering a populated table with an empty response —
+        // Binance occasionally returns [] under rate-limit and we don't
+        // want the UI to flash empty.
+        if (mounted && Array.isArray(r.markets) && r.markets.length) setRows(r.markets);
       } catch (_) {}
     };
     load();
@@ -135,6 +182,53 @@ export function MarketsPanel({ onInvest }) {
           </tbody>
         </table>
       </div>
+    </section>
+  );
+}
+
+// =============================================================
+// Sandbox on-ramp panel — shown only when the deployment exposes
+// SANDBOX_ONRAMP_USDT and the user hasn't already claimed.
+// =============================================================
+export function SandboxOnRampPanel({ onClaimed }) {
+  const { user } = useSession();
+  const [info, setInfo] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    api.get('/api/sandbox/credit-usdt')
+      .then((r) => { if (mounted) setInfo(r); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+  if (!user || !info || !info.enabled) return null;
+  if (user.sandboxClaimedAt) return null;
+  const claim = async () => {
+    setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/sandbox/credit-usdt');
+      setMsg({ kind: 'ok', text: `Credited ${info.amount} USDT to your sandbox balance.` });
+      onClaimed && onClaimed(r);
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message });
+    } finally { setBusy(false); }
+  };
+  return (
+    <section className="glass-strong p-5">
+      <div className="flex items-center gap-2 mb-2">
+        <Wallet className="h-4 w-4 text-gold-400"/>
+        <h3 className="font-display text-lg">Sandbox starter funds</h3>
+        <span className="chip bg-gold-500/15 text-gold-300 border border-gold-500/30">test only</span>
+      </div>
+      <p className="text-xs text-white/55 mb-3">
+        This deployment has the sandbox on-ramp enabled. Claim {info.amount} USDT of practice funds to try the invest flow.
+        These are <strong>not real funds</strong> and cannot be withdrawn on-chain.
+      </p>
+      {msg && <p className={`text-xs px-3 py-2 mb-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button onClick={claim} disabled={busy} className="btn-primary disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Claiming…</> : `Claim ${info.amount} USDT`}
+      </button>
     </section>
   );
 }

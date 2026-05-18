@@ -94,24 +94,46 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', u
   );
 }
 
+// Memo / destination-tag bearing chains. Mirrors src/lib/server/addressFormats.js
+// MEMO_REQUIRED. Kept here as a small client-side constant so the dashboard
+// doesn't have to import server code.
+const MEMO_REQUIRED = new Set(['XRP', 'ATOM', 'EOS', 'TON', 'HBAR', 'XLM']);
+const NETWORKS = {
+  ETH: ['ERC20'], BNB: ['BEP20'], MATIC: ['Polygon'], ARB: ['Arbitrum One'],
+  OP: ['Optimism'], AVAX: ['C-Chain'], LINK: ['ERC20', 'BEP20', 'Polygon'],
+  SHIB: ['ERC20', 'BEP20'], TRX: ['TRC20'], INJ: ['Injective', 'ERC20'],
+  USDT: ['TRC20', 'ERC20', 'BEP20', 'Solana'],
+  BTC: ['Bitcoin'], LTC: ['Litecoin'], BCH: ['Bitcoin Cash'], SOL: ['Solana'],
+  XRP: ['XRP Ledger'], ADA: ['Cardano'], DOGE: ['Dogecoin'], DOT: ['Polkadot'],
+  TON: ['TON'], ATOM: ['Cosmos Hub'], NEAR: ['NEAR'], APT: ['Aptos'],
+  SUI: ['Sui'], FIL: ['Filecoin'], XLM: ['Stellar'], ALGO: ['Algorand'],
+  HBAR: ['Hedera'],
+};
+
 export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   const symbols = Object.keys(balances).filter((s) => balances[s] > 0);
   const [symbol, setSymbol] = useState(symbols[0] || 'BTC');
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
+  const [memo, setMemo] = useState('');
+  const [network, setNetwork] = useState('');
   const [tokenCode, setTokenCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const availableNetworks = NETWORKS[symbol] || [];
+  const memoRequired = MEMO_REQUIRED.has(symbol);
   useEffect(() => {
     if (open) { setSuccess(null); setError(null); if (symbols[0] && !balances[symbol]) setSymbol(symbols[0]); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+  // Reset network when the asset changes so we don't submit a stale value.
+  useEffect(() => { setNetwork(availableNetworks[0] || ''); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setError(null);
     try {
-      const r = await api.post('/api/withdraw', { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address });
+      const r = await api.post('/api/withdraw', { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address, memo, network });
       setSuccess(r.transaction);
       onSuccess && onSuccess(r);
     } catch (err) {
@@ -150,6 +172,24 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
             <span className="text-xs text-white/55">Destination address (optional)</span>
             <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-orange/40"/>
           </label>
+          {availableNetworks.length > 1 && (
+            <label className="block">
+              <span className="text-xs text-white/55">Network</span>
+              <select value={network} onChange={(e) => setNetwork(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+                {availableNetworks.map((n) => (
+                  <option key={n} value={n} className="bg-ink-900">{n}</option>
+                ))}
+              </select>
+              <span className="text-[11px] text-neon-orange/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
+            </label>
+          )}
+          {memoRequired && (
+            <label className="block">
+              <span className="text-xs text-white/55">Destination tag / memo <span className="text-neon-red">(required for {symbol})</span></span>
+              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-orange/40"/>
+              <span className="text-[11px] text-neon-red mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
+            </label>
+          )}
           <label className="block">
             <span className="text-xs text-white/55">Admin authorisation token</span>
             <input value={tokenCode} onChange={(e) => setTokenCode(e.target.value.toUpperCase())} required placeholder="e.g. K3WJ9PXTV2NQ7M5BNCRA" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-orange/40 tracking-wider"/>
