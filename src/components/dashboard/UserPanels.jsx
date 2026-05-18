@@ -1440,3 +1440,170 @@ export function EmptyStateCoach() {
     </section>
   );
 }
+
+// =============================================================
+// DcaPanel — recurring (DCA) buys. Schedules are kept active by
+// the server-side order settler; this panel just CRUDs them via
+// /api/dca and polls for run-count updates.
+// =============================================================
+const DCA_ASSETS = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'MATIC', 'LINK', 'LTC'];
+
+function nextRunLabel(ms) {
+  if (!ms || !isFinite(ms)) return '—';
+  const diff = ms - Date.now();
+  if (diff <= 0) return 'on next tick';
+  const mins = Math.round(diff / 60000);
+  if (mins < 60) return `in ${mins}m`;
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return `in ${hours}h`;
+  const days = Math.round(hours / 24);
+  return `in ${days}d`;
+}
+
+export function DcaPanel({ onChanged } = {}) {
+  const { user } = useSession();
+  const [items, setItems] = useState([]);
+  const [intervals, setIntervals] = useState({});
+  const [form, setForm] = useState({ symbol: 'BTC', usdAmount: '', interval: 'weekly' });
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const load = async () => {
+    try {
+      const r = await api.get('/api/dca');
+      setItems(r.items || []);
+      setIntervals(r.intervals || {});
+    } catch (_) { /* ignore */ }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    // Tranches fire asynchronously every 5s on the server settler —
+    // poll modestly so the UI reflects new runs / pauses.
+    const id = setInterval(load, 20000);
+    return () => clearInterval(id);
+  }, [user]);
+  if (!user) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setMsg(null);
+    const amount = parseFloat(form.usdAmount);
+    if (!isFinite(amount) || amount <= 0) { setMsg({ kind: 'err', text: 'Amount must be a positive number' }); return; }
+    setBusy(true);
+    try {
+      await api.post('/api/dca', { symbol: form.symbol, usdAmount: amount, interval: form.interval });
+      setForm({ ...form, usdAmount: '' });
+      setMsg({ kind: 'ok', text: `Recurring buy created. First tranche fires on the next settler tick.` });
+      await load();
+      onChanged && onChanged();
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message });
+    } finally { setBusy(false); }
+  };
+  const action = async (id, act) => {
+    try { await api.patch('/api/dca', { id, action: act }); load(); }
+    catch (err) { setMsg({ kind: 'err', text: err.message }); }
+  };
+  const cancel = async (id) => {
+    try { await api.del(`/api/dca?id=${encodeURIComponent(id)}`); load(); }
+    catch (err) { setMsg({ kind: 'err', text: err.message }); }
+  };
+  const active = items.filter((d) => d.status !== 'cancelled');
+  return (
+    <section className="glass-strong p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <Wallet className="h-4 w-4 text-gold-400" aria-hidden/>
+        <h3 className="font-display text-lg">Recurring buys (DCA)</h3>
+        <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">{active.length} active</span>
+      </div>
+      <p className="text-xs text-white/55 mb-3">
+        Dollar-cost-average into any supported asset on a fixed schedule.
+        Each tranche debits USDT and credits the asset at the live market price (broker taker fee applies).
+      </p>
+      <form onSubmit={submit} className="grid sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end mb-4">
+        <label className="block">
+          <span className="text-[11px] text-white/55">Asset</span>
+          <select
+            value={form.symbol}
+            onChange={(e) => setForm({ ...form, symbol: e.target.value })}
+            className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+          >
+            {DCA_ASSETS.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-[11px] text-white/55">USD per tranche</span>
+          <input
+            type="number"
+            min="1"
+            step="any"
+            value={form.usdAmount}
+            onChange={(e) => setForm({ ...form, usdAmount: e.target.value })}
+            placeholder="25"
+            className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+            required
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] text-white/55">Cadence</span>
+          <select
+            value={form.interval}
+            onChange={(e) => setForm({ ...form, interval: e.target.value })}
+            className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+          >
+            {Object.entries(intervals).length
+              ? Object.entries(intervals).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)
+              : (
+                <>
+                  <option value="daily">Every day</option>
+                  <option value="weekly">Every week</option>
+                  <option value="biweekly">Every 2 weeks</option>
+                  <option value="monthly">Every month</option>
+                </>
+              )}
+          </select>
+        </label>
+        <button
+          type="submit"
+          disabled={busy}
+          className="btn-primary justify-center disabled:opacity-60 self-end"
+        >
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin" aria-hidden/> Saving…</> : 'Add'}
+        </button>
+      </form>
+      {msg && (
+        <p
+          role={msg.kind === 'err' ? 'alert' : 'status'}
+          className={`text-xs mb-3 px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}
+        >
+          {msg.text}
+        </p>
+      )}
+      {active.length === 0
+        ? <p className="text-xs text-white/45">No recurring buys yet.</p>
+        : (
+          <ul className="divide-y divide-white/5">
+            {active.map((d) => (
+              <li key={d.id} className="py-2 flex items-center gap-3 text-sm">
+                <span className="font-semibold w-12">{d.symbol}</span>
+                <span className="text-white/70">${Number(d.usdAmount).toFixed(2)}</span>
+                <span className="text-white/55">{intervals[d.interval]?.label || d.interval}</span>
+                <span className="text-white/45 text-xs">runs: {d.runs || 0}</span>
+                <span className="text-white/45 text-xs hidden sm:inline">
+                  {d.status === 'paused' ? `paused (${d.pauseReason || 'user'})` : `next ${nextRunLabel(d.nextRunAt)}`}
+                </span>
+                <span className="ml-auto flex gap-2">
+                  {d.status === 'active' && (
+                    <button type="button" onClick={() => action(d.id, 'pause')} className="text-xs text-white/70 hover:text-white">Pause</button>
+                  )}
+                  {d.status === 'paused' && (
+                    <button type="button" onClick={() => action(d.id, 'resume')} className="text-xs text-neon-green hover:underline">Resume</button>
+                  )}
+                  <button type="button" onClick={() => cancel(d.id)} className="text-xs text-neon-red hover:underline">Cancel</button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+    </section>
+  );
+}

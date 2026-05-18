@@ -27,6 +27,8 @@ import {
   activePriceAlerts,
   updatePriceAlert,
   addNotification,
+  activeDcas,
+  updateDca,
 } from './store.js';
 import { priceFor, isSupportedSymbol } from './prices.js';
 import { applyTakerFee } from './fees.js';
@@ -177,10 +179,19 @@ async function fillOrder(order) {
 async function tick() {
   let pending;
   let alerts;
+  let dcas;
   try {
     pending = listOrders().filter((o) => o.status === 'open');
     alerts = activePriceAlerts();
+    dcas = activeDcas();
   } catch { return; }
+  // Process due DCAs first — they don't depend on a price-cross condition,
+  // just on wall-clock time, so we don't need a per-symbol price loop here.
+  const now = Date.now();
+  for (const d of dcas) {
+    if (!d.nextRunAt || d.nextRunAt > now) continue;
+    try { await runDca(d); } catch { /* keep going */ }
+  }
   if (!pending.length && !alerts.length) return;
   // Group both orders and alerts by symbol so we fetch each asset's
   // price at most once per tick. fillOrder also calls priceFor() but
@@ -202,6 +213,79 @@ async function tick() {
       try { await fillOrder(o); } catch { /* keep going */ }
     }
   }
+}
+
+// Execute a DCA tranche: debit USDT, credit crypto at the live taker
+// price (with taker fee applied), record a transaction, advance the
+// schedule. If the user has insufficient USDT the schedule is paused so
+// the desk / user can top up; runs counter does not advance.
+async function runDca(dca) {
+  const user = findUserById(dca.userId);
+  if (!user) {
+    updateDca(dca.id, { status: 'cancelled', cancelledAt: Date.now() });
+    return;
+  }
+  if (!isSupportedSymbol(dca.symbol) || dca.symbol === 'USDT') {
+    updateDca(dca.id, { status: 'cancelled', cancelledAt: Date.now() });
+    return;
+  }
+  const usdAmount = Number(dca.usdAmount);
+  if (!isFinite(usdAmount) || usdAmount <= 0) {
+    updateDca(dca.id, { status: 'cancelled', cancelledAt: Date.now() });
+    return;
+  }
+  const usdt = user.balances?.USDT || 0;
+  if (usdt + 1e-9 < usdAmount) {
+    // Pause and surface a notification so the user knows.
+    updateDca(dca.id, { status: 'paused', pausedAt: Date.now(), pauseReason: 'insufficient USDT' });
+    try {
+      addNotification({
+        id: newId('ntf'),
+        userId: user.id,
+        kind: 'dca',
+        title: `DCA paused — top up USDT`,
+        body: `Your ${dca.symbol} recurring buy ($${usdAmount}) was paused at ${new Date().toISOString()} because your USDT balance was below the tranche amount.`,
+        createdAt: Date.now(),
+      });
+    } catch { /* notification is best-effort */ }
+    return;
+  }
+  const price = await priceFor(dca.symbol);
+  if (!price || !isFinite(price)) {
+    // Don't advance — try again next tick.
+    return;
+  }
+  const { net: netUsd, fee, bps } = applyTakerFee(usdAmount);
+  const cryptoAmount = Math.floor((netUsd / price) * 1e8) / 1e8;
+  if (cryptoAmount <= 0) {
+    updateDca(dca.id, { status: 'paused', pausedAt: Date.now(), pauseReason: 'amount too small' });
+    return;
+  }
+  user.balances = user.balances || {};
+  user.balances.USDT = Math.max(0, usdt - usdAmount);
+  user.balances[dca.symbol] = (user.balances[dca.symbol] || 0) + cryptoAmount;
+  upsertUser(user);
+  addTransaction({
+    id: newId('tx'),
+    userId: user.id,
+    type: 'invest',
+    symbol: dca.symbol,
+    amount: cryptoAmount,
+    price,
+    usdValue: usdAmount,
+    fee,
+    feeBps: bps,
+    status: 'completed',
+    note: `DCA tranche — ${cryptoAmount} ${dca.symbol} for $${usdAmount} (fee ${fee.toFixed(2)} USDT)`,
+    dcaId: dca.id,
+    createdAt: Date.now(),
+  });
+  const runs = (Number(dca.runs) || 0) + 1;
+  updateDca(dca.id, {
+    runs,
+    lastRunAt: Date.now(),
+    nextRunAt: Date.now() + Number(dca.intervalMs || 0),
+  });
 }
 
 export function ensureSettlerStarted() {

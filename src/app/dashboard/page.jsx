@@ -10,7 +10,7 @@ import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
-import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach } from '@/components/dashboard/UserPanels';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel } from '@/components/dashboard/UserPanels';
 
 // Default watchlist for anonymous visitors and users who haven't pinned
 // anything yet. Logged-in users override this via /api/watchlist.
@@ -213,6 +213,7 @@ export default function DashboardPage() {
           {user && <KycPanel />}
           {user && <PortfolioPanel />}
           {user && <ConvertPanel onConverted={refreshWallet} />}
+          {user && <DcaPanel onChanged={refreshWallet} />}
           {user && <PriceAlertsPanel />}
           {user && <BeneficiariesPanel />}
           {!user && (

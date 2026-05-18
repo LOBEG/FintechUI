@@ -491,3 +491,36 @@ export function setWatchlist(userId, symbols) {
   write('watchlists', arr);
   return row.symbols.slice();
 }
+
+// ---------------- DCA ----------------
+// Recurring buy schedules. Dca = {
+//   id, userId, symbol, usdAmount, intervalMs,
+//   status: 'active' | 'paused' | 'cancelled',
+//   nextRunAt, lastRunAt?, runs: number,
+//   createdAt
+// }
+// The order settler ticks every 5s and runs any active dca whose
+// nextRunAt has elapsed.
+export function listDcas() {
+  return read('dcas', []);
+}
+export function addDca(d) {
+  const arr = listDcas();
+  arr.unshift(d);
+  write('dcas', arr.slice(0, 5000));
+  return d;
+}
+export function updateDca(id, patch) {
+  const arr = listDcas();
+  const i = arr.findIndex((d) => d.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('dcas', arr);
+  return arr[i];
+}
+export function dcasForUser(userId) {
+  return listDcas().filter((d) => d.userId === userId);
+}
+export function activeDcas() {
+  return listDcas().filter((d) => d.status === 'active');
+}
