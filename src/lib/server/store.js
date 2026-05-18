@@ -341,3 +341,35 @@ export function deleteTestimonial(id) {
   const arr = listTestimonials().filter((t) => t.id !== id);
   write('testimonials', arr);
 }
+
+// --------------- ORDERS ----------------
+// Order = { id, userId, side: 'buy'|'sell', kind: 'limit'|'stop',
+//           symbol, qty, price (limit price or stop trigger), usd (for buy),
+//           status: 'open'|'filled'|'cancelled'|'rejected',
+//           createdAt, filledAt?, txId?, cancelledAt?, rejectedReason? }
+export function listOrders() {
+  return read('orders', []);
+}
+export function saveOrders(arr) {
+  write('orders', arr);
+}
+export function addOrder(o) {
+  const arr = listOrders();
+  arr.unshift(o);
+  write('orders', arr.slice(0, 5000));
+  return o;
+}
+export function updateOrder(id, patch) {
+  const arr = listOrders();
+  const i = arr.findIndex((o) => o.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('orders', arr);
+  return arr[i];
+}
+export function ordersForUser(userId) {
+  return listOrders().filter((o) => o.userId === userId);
+}
+export function openOrders() {
+  return listOrders().filter((o) => o.status === 'open');
+}

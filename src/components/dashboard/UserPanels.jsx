@@ -420,3 +420,193 @@ export function NotificationBell() {
     </div>
   );
 }
+
+// =============================================================
+// Open / recent orders panel — limit & stop orders driven by the
+// server-side settler (src/lib/server/orders.js).
+// =============================================================
+export function OpenOrdersPanel({ refreshKey, onPlaced }) {
+  const { user } = useSession();
+  const [orders, setOrders] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [busyId, setBusyId] = useState(null);
+  const [msg, setMsg] = useState(null);
+  const load = async () => {
+    try {
+      const r = await api.get('/api/orders');
+      setOrders(r.orders || []);
+    } catch (_) { setOrders([]); }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    const id = setInterval(load, 7000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, refreshKey]);
+  if (!user) return null;
+  const cancel = async (oid) => {
+    setBusyId(oid); setMsg(null);
+    try {
+      await api.del(`/api/orders?id=${encodeURIComponent(oid)}`);
+      await load();
+    } catch (e) { setMsg(e.message); } finally { setBusyId(null); }
+  };
+  const openOnly = orders.filter((o) => o.status === 'open');
+  return (
+    <>
+      <section className="glass-strong p-5">
+        <div className="flex items-center flex-wrap gap-2 mb-3">
+          <h3 className="font-display text-lg">Open orders</h3>
+          <span className="chip bg-white/5 border border-white/10 text-white/65">{openOnly.length} open</span>
+          <button
+            onClick={() => setOpen(true)}
+            className="ml-auto btn-primary text-xs"
+          >+ New limit / stop order</button>
+        </div>
+        {msg && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
+        {orders.length === 0 ? (
+          <p className="text-sm text-white/55">No orders yet. Place a limit order to buy the dip or take profit at a target price.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="text-xs text-white/50 text-left">
+                <tr>
+                  <th className="py-2 font-medium">When</th>
+                  <th className="py-2 font-medium">Side</th>
+                  <th className="py-2 font-medium">Kind</th>
+                  <th className="py-2 font-medium">Asset</th>
+                  <th className="py-2 font-medium">Trigger</th>
+                  <th className="py-2 font-medium">Size</th>
+                  <th className="py-2 font-medium">Status</th>
+                  <th className="py-2 font-medium text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {orders.slice(0, 25).map((o) => (
+                  <tr key={o.id}>
+                    <td className="py-2.5 text-white/55 text-xs">{new Date(o.createdAt).toLocaleString()}</td>
+                    <td>
+                      <span className={`chip border ${o.side === 'buy' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' : 'bg-neon-orange/15 text-neon-orange border-neon-orange/30'}`}>{o.side}</span>
+                    </td>
+                    <td className="text-white/80">{o.kind}</td>
+                    <td>{o.symbol}</td>
+                    <td>${Number(o.price).toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
+                    <td className="text-xs text-white/70">
+                      {o.side === 'buy' ? `$${Number(o.usd).toFixed(2)}` : `${Number(o.qty).toFixed(8)} ${o.symbol}`}
+                    </td>
+                    <td>
+                      <span className={`chip border ${
+                        o.status === 'open' ? 'bg-white/5 text-white/80 border-white/10' :
+                        o.status === 'filled' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' :
+                        o.status === 'rejected' ? 'bg-neon-red/15 text-neon-red border-neon-red/30' :
+                        'bg-white/5 text-white/55 border-white/10'
+                      }`}>{o.status}</span>
+                      {o.rejectedReason && <span className="block text-[10px] text-white/45 mt-1">{o.rejectedReason}</span>}
+                    </td>
+                    <td className="text-right">
+                      {o.status === 'open' ? (
+                        <button
+                          onClick={() => cancel(o.id)}
+                          disabled={busyId === o.id}
+                          className="px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-xs disabled:opacity-60"
+                        >{busyId === o.id ? '…' : 'Cancel'}</button>
+                      ) : <span className="text-[11px] text-white/30">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+      <PlaceOrderModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onPlaced={() => { load(); onPlaced && onPlaced(); }}
+      />
+    </>
+  );
+}
+
+const ORDER_SYMBOLS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE','AVAX','LINK','LTC','TRX','DOT','MATIC','TON','ATOM','NEAR','APT','ARB','OP','SUI','FIL','INJ','SHIB','PEPE','BCH','ETC','XLM','ALGO','HBAR'];
+
+function PlaceOrderModal({ open, onClose, onPlaced }) {
+  const [side, setSide] = useState('buy');
+  const [kind, setKind] = useState('limit');
+  const [symbol, setSymbol] = useState('BTC');
+  const [price, setPrice] = useState('');
+  const [usd, setUsd] = useState('100');
+  const [qty, setQty] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => { if (open) { setError(null); } }, [open]);
+  if (!open) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      const body = { side, kind, symbol, price: parseFloat(price) };
+      if (side === 'buy') body.usd = parseFloat(usd);
+      else body.qty = parseFloat(qty);
+      await api.post('/api/orders', body);
+      onPlaced && onPlaced();
+      onClose();
+    } catch (err) { setError(err.message); } finally { setBusy(false); }
+  };
+  const hint = (() => {
+    if (kind === 'limit' && side === 'buy') return 'Fills when the live price falls to or below your trigger.';
+    if (kind === 'limit' && side === 'sell') return 'Fills when the live price rises to or above your trigger.';
+    if (kind === 'stop' && side === 'buy') return 'Fills when the live price rises to or above your trigger (breakout).';
+    if (kind === 'stop' && side === 'sell') return 'Fills when the live price falls to or below your trigger (stop loss).';
+    return '';
+  })();
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-display flex-1">Place limit / stop order</h3>
+          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+        </div>
+        <form onSubmit={submit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex rounded-lg overflow-hidden border border-white/10">
+              <button type="button" onClick={() => setSide('buy')} className={`flex-1 py-2 text-xs ${side === 'buy' ? 'bg-neon-green/20 text-neon-green' : 'bg-white/5 text-white/65'}`}>Buy</button>
+              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-neon-orange/20 text-neon-orange' : 'bg-white/5 text-white/65'}`}>Sell</button>
+            </div>
+            <div className="flex rounded-lg overflow-hidden border border-white/10">
+              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-gold-400/20 text-gold-400' : 'bg-white/5 text-white/65'}`}>Limit</button>
+              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-gold-400/20 text-gold-400' : 'bg-white/5 text-white/65'}`}>Stop</button>
+            </div>
+          </div>
+          <label className="block">
+            <span className="text-xs text-white/55">Asset</span>
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {ORDER_SYMBOLS.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Trigger price (USD)</span>
+            <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="e.g. 65000" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+          </label>
+          {side === 'buy' ? (
+            <label className="block">
+              <span className="text-xs text-white/55">USD to spend at fill</span>
+              <input value={usd} onChange={(e) => setUsd(e.target.value)} required inputMode="decimal" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+            </label>
+          ) : (
+            <label className="block">
+              <span className="text-xs text-white/55">Quantity of {symbol} to sell</span>
+              <input value={qty} onChange={(e) => setQty(e.target.value)} required inputMode="decimal" placeholder="e.g. 0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+            </label>
+          )}
+          <p className="text-[11px] text-white/55">{hint} A taker fee applies on fill.</p>
+          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Placing…</> : `Place ${kind} ${side} order`}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
