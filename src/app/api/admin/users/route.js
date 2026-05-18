@@ -15,6 +15,8 @@ export async function GET() {
       isAdmin: !!u.isAdmin,
       createdAt: u.createdAt,
       balances: u.balances || {},
+      accountStatus: u.accountStatus || 'active',
+      statusReason: u.statusReason || null,
     }));
     return NextResponse.json({ users });
   } catch (err) {

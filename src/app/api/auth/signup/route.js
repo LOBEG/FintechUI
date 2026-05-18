@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { hashPassword, newId, setSessionCookie, publicUser } from '@/lib/server/auth.js';
 import { findUserByEmail, upsertUser, getSettings } from '@/lib/server/store.js';
+import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,8 @@ function isEmail(s) {
 
 export async function POST(req) {
   try {
+    const limited = rateLimitOrJson(req, { key: 'signup', max: 5, windowMs: 60_000 });
+    if (limited) return limited;
     const settings = getSettings();
     if (!settings.signupsEnabled) {
       return NextResponse.json({ error: 'Signups are temporarily disabled.' }, { status: 403 });
@@ -33,6 +36,8 @@ export async function POST(req) {
       isAdmin: false,
       createdAt: Date.now(),
       balances: {},
+      accountStatus: 'active',
+      termsAcceptedAt: Date.now(),
     };
     upsertUser(user);
     await setSessionCookie(user, req);

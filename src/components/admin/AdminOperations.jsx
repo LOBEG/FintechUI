@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'USDT'];
@@ -61,12 +61,15 @@ export function AdminOperations() {
         {[
           ['credit', 'Credit deposit', Coins],
           ['adjust', 'Adjust balance', TrendingUp],
+          ['setbal', 'Set balance', Scale],
+          ['status', 'Freeze user', ShieldOff],
           ['token', 'Issue token', KeyRound],
           ['addresses', `Deposit addresses (${addresses.length})`, WalletIcon],
           ['testimonials', `Testimonials (${testimonials.filter((t) => t.status === 'pending').length} pending)`, MessageSquare],
           ['users', `Users (${users.length})`, UsersIcon],
           ['tokens', `Tokens (${tokens.filter((t) => t.status === 'active').length})`, KeyRound],
           ['tx', `Tx (${transactions.length})`, CheckCircle2],
+          ['audit', 'Audit log', FileText],
         ].map(([k, label, Icon]) => (
           <button key={k} onClick={() => setTab(k)} className={`px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 ${tab === k ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'}`}>
             <Icon className="h-3.5 w-3.5"/>{label}
@@ -76,12 +79,15 @@ export function AdminOperations() {
 
       {tab === 'credit' && <CreditForm users={users} onDone={refresh} />}
       {tab === 'adjust' && <AdjustForm users={users} onDone={refresh} />}
+      {tab === 'setbal' && <SetBalanceForm users={users} onDone={refresh} />}
+      {tab === 'status' && <StatusForm users={users} onDone={refresh} />}
       {tab === 'token' && <TokenForm users={users} onDone={refresh} />}
       {tab === 'addresses' && <AddressesPanel addresses={addresses} onDone={refresh} />}
       {tab === 'testimonials' && <TestimonialsPanel testimonials={testimonials} onDone={refresh} />}
       {tab === 'users' && <UsersList users={users}/>}
       {tab === 'tokens' && <TokensList tokens={tokens} users={users} onDone={refresh}/>}
       {tab === 'tx' && <TxList transactions={transactions} users={users}/>}
+      {tab === 'audit' && <AuditLogPanel/>}
     </motion.section>
   );
 }
@@ -136,6 +142,7 @@ function TokenForm({ users, onDone }) {
   const [email, setEmail] = useState('');
   const [symbol, setSymbol] = useState('');
   const [maxAmount, setMaxAmount] = useState('');
+  const [expiresInHours, setExpiresInHours] = useState('24');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
   const submit = async (e) => {
@@ -144,6 +151,7 @@ function TokenForm({ users, onDone }) {
       const body = { email };
       if (symbol) body.symbol = symbol;
       if (maxAmount) body.maxAmount = parseFloat(maxAmount);
+      if (expiresInHours) body.expiresInHours = parseFloat(expiresInHours);
       const r = await api.post('/api/admin/tokens', body);
       setMsg({ kind: 'ok', text: `Token issued: ${r.token.code}. Emailed to ${email || 'no user (unbound)'}.` });
       onDone && onDone();
@@ -152,7 +160,7 @@ function TokenForm({ users, onDone }) {
   };
   return (
     <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
-      <p className="sm:col-span-2 text-xs text-white/55">Tokens are single-use. Leave a field blank to keep that scope open (e.g. omit asset to allow any).</p>
+      <p className="sm:col-span-2 text-xs text-white/55">Tokens are single-use and expire after the chosen number of hours (default 24). Leave a field blank to keep that scope open (e.g. omit asset to allow any).</p>
       <label className="block sm:col-span-2">
         <span className="text-xs text-white/55">User email (optional — leave empty for unbound)</span>
         <input list="adm-users-t" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
@@ -169,6 +177,10 @@ function TokenForm({ users, onDone }) {
         <span className="text-xs text-white/55">Max amount (optional)</span>
         <input value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} inputMode="decimal" placeholder="e.g. 1.5" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Expires in (hours, 0 = never)</span>
+        <input value={expiresInHours} onChange={(e) => setExpiresInHours(e.target.value)} inputMode="decimal" placeholder="24" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border font-mono break-all ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
       <button disabled={busy} className="sm:col-span-2 btn-gold justify-center disabled:opacity-60">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Issuing…</> : 'Issue withdrawal token'}
@@ -183,7 +195,7 @@ function UsersList({ users }) {
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead className="text-xs text-white/50 text-left">
-          <tr><th className="py-2 font-medium">Email</th><th className="py-2 font-medium">Name</th><th className="py-2 font-medium">Role</th><th className="py-2 font-medium">Created</th><th className="py-2 font-medium">Balances</th></tr>
+          <tr><th className="py-2 font-medium">Email</th><th className="py-2 font-medium">Name</th><th className="py-2 font-medium">Role</th><th className="py-2 font-medium">Status</th><th className="py-2 font-medium">Created</th><th className="py-2 font-medium">Balances</th></tr>
         </thead>
         <tbody className="divide-y divide-white/5">
           {users.map((u) => (
@@ -191,6 +203,7 @@ function UsersList({ users }) {
               <td className="py-2.5">{u.email}</td>
               <td>{u.name}</td>
               <td>{u.isAdmin ? <span className="chip bg-gold-500/15 text-gold-300">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}</td>
+              <td>{(u.accountStatus || 'active') === 'active' ? <span className="chip bg-neon-green/15 text-neon-green">active</span> : <span className="chip bg-neon-red/15 text-neon-red">disabled</span>}</td>
               <td className="text-white/55">{new Date(u.createdAt).toLocaleDateString()}</td>
               <td className="text-white/70 text-xs">{Object.entries(u.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '—'}</td>
             </tr>
@@ -416,5 +429,149 @@ function TestimonialsPanel({ testimonials, onDone }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+function SetBalanceForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [symbol, setSymbol] = useState('BTC');
+  const [amount, setAmount] = useState('');
+  const [reason, setReason] = useState('Position reconciliation');
+  const [notify, setNotify] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const target = users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  const currentBal = target?.balances?.[symbol] ?? 0;
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/admin/set-balance', { email, symbol, amount: parseFloat(amount), reason, notify });
+      setMsg({ kind: 'ok', text: `${r.transaction.symbol} set to ${r.balances[r.transaction.symbol]} (delta ${r.transaction.amount > 0 ? '+' : ''}${r.transaction.amount}). Reflected on user dashboard.` });
+      setAmount('');
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Set a user&rsquo;s holding of a given asset to an <strong>absolute</strong> value. Use this when reconciling a position rather than adjusting by a delta. The change appears on the user dashboard in real time and a <code className="px-1 py-0.5 rounded bg-white/10">set</code> transaction is recorded in their history.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-s" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        <datalist id="adm-users-s">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Asset</span>
+        <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+          {ALL_SYMBOLS.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+        </select>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">New balance ({symbol})</span>
+        <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required placeholder="e.g. 0.25" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        {target && <p className="mt-1 text-[11px] text-white/55">Current: <span className="font-mono">{fmt(currentBal)} {symbol}</span></p>}
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Reason (shown in user&rsquo;s transaction history)</span>
+        <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      <label className="sm:col-span-2 text-xs text-white/60 inline-flex items-center gap-2">
+        <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-neon-green"/> Email the user a notification
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Setting…</> : 'Set balance'}
+      </button>
+    </form>
+  );
+}
+
+function StatusForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('disabled');
+  const [reason, setReason] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const target = users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/admin/set-status', { email, status, reason });
+      setMsg({ kind: 'ok', text: `Account ${email} is now ${r.status}. All sessions revoked.` });
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Freeze a suspect account without touching balances or history. Disabled users cannot log in, invest, or withdraw. Re-enable by setting the status back to <code className="px-1 py-0.5 rounded bg-white/10">active</code>.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-st" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        <datalist id="adm-users-st">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+        {target && <p className="mt-1 text-[11px] text-white/55">Current status: <span className={`chip ${(target.accountStatus || 'active') === 'active' ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-red/15 text-neon-red'}`}>{target.accountStatus || 'active'}</span></p>}
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">New status</span>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+          <option value="disabled" className="bg-ink-900">Disabled (freeze)</option>
+          <option value="active" className="bg-ink-900">Active (unfreeze)</option>
+        </select>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Reason (audit log)</span>
+        <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. AML review" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Updating…</> : status === 'disabled' ? 'Freeze account' : 'Unfreeze account'}
+      </button>
+    </form>
+  );
+}
+
+function AuditLogPanel() {
+  const [entries, setEntries] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(async () => {
+    setBusy(true);
+    try {
+      const r = await api.get('/api/admin/audit-log?limit=200');
+      setEntries(r.entries || []);
+    } catch (_) {} finally { setBusy(false); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <p className="text-xs text-white/55">Append-only, hash-chained record of every administrative action. Each entry includes the SHA-256 of the prior entry so any post-hoc tampering is detectable.</p>
+        <button onClick={load} className="ml-auto text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Refresh</button>
+      </div>
+      {busy && !entries.length ? (
+        <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading…</p>
+      ) : entries.length === 0 ? (
+        <p className="text-sm text-white/55">No audit entries yet.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="text-xs text-white/50 text-left">
+              <tr><th className="py-2 font-medium">When</th><th className="py-2 font-medium">Actor</th><th className="py-2 font-medium">Action</th><th className="py-2 font-medium">Target</th><th className="py-2 font-medium">Payload</th><th className="py-2 font-medium">Hash</th></tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {entries.map((e) => (
+                <tr key={e.id}>
+                  <td className="py-2.5 text-white/55 text-xs whitespace-nowrap">{new Date(e.ts).toLocaleString()}</td>
+                  <td className="text-white/80 text-xs">{e.actorEmail || e.actorId || '—'}</td>
+                  <td><span className="chip bg-white/5 text-white/80 border border-white/10 text-xs">{e.action}</span></td>
+                  <td className="text-white/70 text-xs break-all">{e.target || '—'}</td>
+                  <td className="text-white/55 text-[11px] font-mono max-w-[280px] truncate" title={e.payload ? JSON.stringify(e.payload) : ''}>{e.payload ? JSON.stringify(e.payload) : '—'}</td>
+                  <td className="text-white/45 text-[10px] font-mono">{e.hash?.slice(0, 12)}…</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }

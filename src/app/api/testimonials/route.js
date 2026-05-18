@@ -10,6 +10,7 @@ import {
   addTestimonial,
   transactionsForUser,
 } from '@/lib/server/store.js';
+import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -33,6 +34,8 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const limited = rateLimitOrJson(req, { key: 'testimonials', max: 3, windowMs: 60_000 });
+    if (limited) return limited;
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: 'Please sign in to post a testimonial.' }, { status: 401 });
@@ -58,7 +61,10 @@ export async function POST(req) {
         { status: 403 },
       );
     }
-    const autoApprove = String(process.env.AUTO_APPROVE_TESTIMONIALS || 'true') === 'true';
+    // Default to pending moderation. Operators can opt-in to auto-approve
+    // by setting AUTO_APPROVE_TESTIMONIALS=true, but the safe default for
+    // a public landing-page wall is human review.
+    const autoApprove = String(process.env.AUTO_APPROVE_TESTIMONIALS || 'false') === 'true';
     const status = autoApprove || user.isAdmin ? 'approved' : 'pending';
     const t = {
       id: newId('tst'),

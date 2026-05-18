@@ -122,6 +122,68 @@ export function addToken(token) {
   return token;
 }
 
+// --------------- PASSWORD RESET TOKENS ----------------
+// Reset = { id, userId, codeHash, createdAt, expiresAt, usedAt? }
+export function listResets() {
+  return read('passwordResets', []);
+}
+export function addReset(r) {
+  const arr = listResets();
+  arr.unshift(r);
+  // Keep the last 1000; older entries are useless anyway.
+  write('passwordResets', arr.slice(0, 1000));
+  return r;
+}
+export function findResetById(id) {
+  return listResets().find((r) => r.id === id) || null;
+}
+export function updateReset(id, patch) {
+  const arr = listResets();
+  const i = arr.findIndex((r) => r.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('passwordResets', arr);
+  return arr[i];
+}
+
+// --------------- AUDIT LOG ----------------
+// Append-only, hash-chained record of every admin action. Each entry
+// includes the SHA-256 of the previous entry's serialised payload so any
+// tampering is detectable post-hoc by replaying the chain.
+// Entry = { id, ts, actorId, actorEmail, action, target?, payload?, prevHash, hash }
+import crypto from 'node:crypto';
+
+export function listAudit() {
+  return read('auditLog', []);
+}
+export function appendAudit({ actorId, actorEmail, action, target, payload }) {
+  const arr = listAudit();
+  const prev = arr[0];
+  const prevHash = prev ? prev.hash : 'GENESIS';
+  const entry = {
+    id: `aud_${Date.now().toString(36)}_${crypto.randomBytes(4).toString('hex')}`,
+    ts: Date.now(),
+    actorId: actorId || null,
+    actorEmail: actorEmail || null,
+    action: String(action || ''),
+    target: target || null,
+    payload: payload || null,
+    prevHash,
+  };
+  entry.hash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify({
+      id: entry.id, ts: entry.ts, actorId: entry.actorId, actorEmail: entry.actorEmail,
+      action: entry.action, target: entry.target, payload: entry.payload, prevHash,
+    }))
+    .digest('hex');
+  arr.unshift(entry);
+  // Cap the chain at 10k entries on disk to keep file size sane; in a real
+  // deployment this rotates to cold storage.
+  write('auditLog', arr.slice(0, 10000));
+  return entry;
+}
+
 // --------------- SETTINGS ----------------
 const DEFAULT_SETTINGS = {
   maintenanceMode: false,

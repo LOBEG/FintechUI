@@ -8,6 +8,7 @@ import {
   findUserByEmail,
   upsertUser,
   addTransaction,
+  appendAudit,
 } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendEmail } from '@/lib/server/email.js';
@@ -57,6 +58,13 @@ export async function POST(req) {
       createdAt: Date.now(),
     };
     addTransaction(tx);
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'balance.adjust',
+      target: user.email,
+      payload: { symbol, amount, newBalance: next, reason, txId: tx.id },
+    });
 
     const direction = amount > 0 ? 'increased' : 'decreased';
     const subject = `Your AurumX ${symbol} position was ${direction}`;

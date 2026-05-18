@@ -8,6 +8,7 @@ import {
   findUserByEmail,
   upsertUser,
   addSession,
+  revokeSession,
 } from './store.js';
 
 const COOKIE_NAME = 'aurumx_session';
@@ -16,11 +17,12 @@ const COOKIE_TTL_DAYS = 30;
 function secret() {
   const s = process.env.SESSION_SECRET;
   if (s && s.length >= 16) return s;
-  // Fallback in dev: derive a stable secret from host info so sessions
-  // survive a restart, but warn so prod ops add a real secret.
-  if (process.env.NODE_ENV === 'production' && !s) {
-    // eslint-disable-next-line no-console
-    console.warn('[aurumx] SESSION_SECRET not set — using insecure fallback.');
+  // In production a missing/short secret is a hard error — silently
+  // falling back to a known string would let anyone forge cookies.
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'SESSION_SECRET is required in production and must be at least 16 characters.',
+    );
   }
   return 'aurumx-dev-secret-do-not-use-in-prod-aurumx-dev-secret';
 }
@@ -87,6 +89,14 @@ function verify(token) {
   }
 }
 
+// Exported variants for non-cookie signed tokens (e.g. password reset links).
+export function signPayload(payload) {
+  return sign(payload);
+}
+export function verifyPayload(token) {
+  return verify(token);
+}
+
 export async function setSessionCookie(user, req) {
   const exp = Date.now() + COOKIE_TTL_DAYS * 24 * 60 * 60 * 1000;
   const sid = newId('sess');
@@ -111,7 +121,22 @@ export async function setSessionCookie(user, req) {
 
 export async function clearSessionCookie() {
   const jar = await cookies();
+  // Revoke the session record so /api/auth/sessions stays accurate and
+  // sessions.json doesn't leak rows forever.
+  try {
+    const existing = jar.get(COOKIE_NAME)?.value;
+    const payload = verify(existing);
+    if (payload?.sid) revokeSession(payload.sid);
+  } catch (_) {}
   jar.set(COOKIE_NAME, '', { path: '/', maxAge: 0 });
+}
+
+// Read the current session id (for endpoints that need to know which
+// device is making the request, e.g. "revoke other sessions").
+export async function currentSessionId() {
+  const jar = await cookies();
+  const payload = verify(jar.get(COOKIE_NAME)?.value);
+  return payload?.sid || null;
 }
 
 export async function currentUser() {
@@ -128,6 +153,11 @@ export async function requireUser() {
   if (!u) {
     const err = new Error('Unauthorized');
     err.status = 401;
+    throw err;
+  }
+  if (u.accountStatus && u.accountStatus !== 'active') {
+    const err = new Error('Your account is currently disabled. Please contact support.');
+    err.status = 403;
     throw err;
   }
   return u;
@@ -153,6 +183,7 @@ export function publicUser(u) {
     createdAt: u.createdAt,
     balances: u.balances || {},
     telegramId: u.telegramId || null,
+    accountStatus: u.accountStatus || 'active',
   };
 }
 

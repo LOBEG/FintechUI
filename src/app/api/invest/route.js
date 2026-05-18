@@ -23,7 +23,15 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Amount must be greater than zero' }, { status: 400 });
     }
     const usdt = user.balances?.USDT || 0;
-    if (usdt < usdAmount) {
+    if (usdAmount > 5_000_000) {
+      return NextResponse.json(
+        { error: 'Amount exceeds the per-trade limit ($5,000,000). Contact desk for OTC.' },
+        { status: 400 },
+      );
+    }
+    // Round USD to cents to avoid floating-point dust from the client.
+    const roundedUsd = Math.round(usdAmount * 100) / 100;
+    if (usdt + 1e-9 < roundedUsd) {
       return NextResponse.json(
         { error: `Insufficient USDT. Available: ${usdt.toFixed(2)}` },
         { status: 400 },
@@ -33,9 +41,11 @@ export async function POST(req) {
     if (!price || !isFinite(price)) {
       return NextResponse.json({ error: 'Unable to fetch live price; try again' }, { status: 503 });
     }
-    const cryptoAmount = usdAmount / price;
+    // Round acquired crypto to 8 d.p. (Binance's tightest tick) so balances
+    // don't accumulate floating-point noise over time.
+    const cryptoAmount = Math.floor((roundedUsd / price) * 1e8) / 1e8;
     user.balances = user.balances || {};
-    user.balances.USDT = usdt - usdAmount;
+    user.balances.USDT = Math.max(0, usdt - roundedUsd);
     user.balances[symbol] = (user.balances[symbol] || 0) + cryptoAmount;
     upsertUser(user);
 
@@ -46,14 +56,14 @@ export async function POST(req) {
       symbol,
       amount: cryptoAmount,
       price,
-      usdValue: usdAmount,
+      usdValue: roundedUsd,
       status: 'completed',
-      note: `Invested ${usdAmount.toFixed(2)} USDT into ${symbol}`,
+      note: `Invested ${roundedUsd.toFixed(2)} USDT into ${symbol}`,
       createdAt: Date.now(),
     };
     addTransaction(tx);
     try {
-      await sendInvestEmail({ user, symbol, cryptoAmount, usdAmount, price });
+      await sendInvestEmail({ user, symbol, cryptoAmount, usdAmount: roundedUsd, price });
     } catch (_) {}
 
     return NextResponse.json({ ok: true, transaction: tx, balances: user.balances });

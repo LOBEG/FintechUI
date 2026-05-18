@@ -72,7 +72,7 @@ export default function LoginPage() {
             </label>
             <div className="flex items-center justify-between text-xs text-white/60">
               <label className="inline-flex items-center gap-2"><input type="checkbox" className="accent-neon-green"/> Remember me</label>
-              <Link href="#" className="hover:text-white">Forgot password?</Link>
+              <Link href="/forgot-password" className="hover:text-white">Forgot password?</Link>
             </div>
             {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-primary w-full mt-2 disabled:opacity-60">

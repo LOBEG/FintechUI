@@ -6,6 +6,7 @@ import {
   findUserByEmail,
   upsertUser,
   addTransaction,
+  appendAudit,
 } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendDepositEmail } from '@/lib/server/email.js';
@@ -50,6 +51,13 @@ export async function POST(req) {
       createdAt: Date.now(),
     };
     addTransaction(tx);
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'balance.credit',
+      target: user.email,
+      payload: { symbol, amount, usdValue: tx.usdValue, txId: tx.id, note },
+    });
     try {
       await sendDepositEmail({ user, symbol, amount, price, note: tx.note });
     } catch (_) {}

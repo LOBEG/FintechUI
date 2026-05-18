@@ -5,6 +5,7 @@ import {
   listTestimonials,
   updateTestimonial,
   deleteTestimonial,
+  appendAudit,
 } from '@/lib/server/store.js';
 
 export const runtime = 'nodejs';
@@ -30,6 +31,13 @@ export async function PATCH(req) {
     }
     const t = updateTestimonial(id, { status, moderatedAt: Date.now(), moderatedBy: admin.email });
     if (!t) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'testimonial.moderate',
+      target: id,
+      payload: { status },
+    });
     return NextResponse.json({ ok: true, testimonial: t });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });
@@ -38,11 +46,17 @@ export async function PATCH(req) {
 
 export async function DELETE(req) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     const body = await req.json().catch(() => ({}));
     const id = String(body.id || '');
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
     deleteTestimonial(id);
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'testimonial.delete',
+      target: id,
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });

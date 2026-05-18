@@ -4,6 +4,7 @@ import {
   listDepositAddresses,
   setDepositAddress,
   removeDepositAddress,
+  appendAudit,
 } from '@/lib/server/store.js';
 import { isSupportedSymbol } from '@/lib/server/prices.js';
 
@@ -44,6 +45,13 @@ export async function POST(req) {
       label,
       updatedBy: admin.email,
     });
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'address.set',
+      target: symbol,
+      payload: { address, memo, network, label },
+    });
     return NextResponse.json({ ok: true, address: saved });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });
@@ -52,12 +60,18 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
-    await requireAdmin();
+    const admin = await requireAdmin();
     const body = await req.json().catch(() => ({}));
     const symbol = String(body.symbol || '').toUpperCase();
     if (!symbol) return NextResponse.json({ error: 'symbol required' }, { status: 400 });
     const ok = removeDepositAddress(symbol);
     if (!ok) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    appendAudit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: 'address.remove',
+      target: symbol,
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });

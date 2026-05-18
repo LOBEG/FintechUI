@@ -10,12 +10,15 @@ import {
 } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendWithdrawEmail } from '@/lib/server/email.js';
+import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
   try {
+    const limited = rateLimitOrJson(req, { key: 'withdraw', max: 10, windowMs: 60_000 });
+    if (limited) return limited;
     const user = await requireUser();
     const settings = getSettings();
     if (!settings.withdrawalsEnabled) {
@@ -38,6 +41,11 @@ export async function POST(req) {
     const tok = findTokenByCode(code);
     if (!tok || tok.status !== 'active') {
       return NextResponse.json({ error: 'Invalid or already-used token' }, { status: 400 });
+    }
+    if (tok.expiresAt && Date.now() > tok.expiresAt) {
+      // Auto-mark expired tokens so they cannot be retried.
+      updateToken(tok.id, { status: 'expired', expiredAt: Date.now() });
+      return NextResponse.json({ error: 'This authorisation token has expired. Request a fresh one.' }, { status: 400 });
     }
     if (tok.userId && tok.userId !== user.id) {
       return NextResponse.json({ error: 'This token was not issued to your account' }, { status: 403 });
