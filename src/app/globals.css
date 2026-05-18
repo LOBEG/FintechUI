@@ -28,18 +28,23 @@
   }
 
   body {
-    @apply bg-ink-950 dark:bg-ink-950;
+    @apply bg-ink-950 text-white dark:bg-ink-950 dark:text-white;
     background-image:
-      radial-gradient(1200px 600px at 80% -10%, rgba(0, 255, 163, 0.08), transparent 60%),
-      radial-gradient(1000px 500px at -10% 10%, rgba(230, 173, 38, 0.08), transparent 60%),
-      radial-gradient(800px 400px at 50% 100%, rgba(255, 138, 0, 0.06), transparent 60%);
+      radial-gradient(1200px 600px at 80% -10%, rgba(6, 214, 196, 0.13), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(59, 130, 246, 0.10), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(255, 138, 0, 0.055), transparent 60%),
+      linear-gradient(135deg, #05070d 0%, #070d22 45%, #0b1530 100%);
+    background-attachment: fixed;
   }
 
-  body:not(.dark) {
-    @apply bg-[#f7f8fb] text-ink-950;
+  html:not(.dark) body {
+    @apply bg-navy-950 text-white;
     background-image:
-      radial-gradient(1200px 600px at 80% -10%, rgba(0, 255, 163, 0.04), transparent 60%),
-      radial-gradient(1000px 500px at -10% 10%, rgba(230, 173, 38, 0.04), transparent 60%);
+      radial-gradient(1200px 600px at 80% -10%, rgba(6, 214, 196, 0.18), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(59, 130, 246, 0.14), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(246, 194, 68, 0.06), transparent 60%),
+      linear-gradient(135deg, #070d22 0%, #0b1530 45%, #05070d 100%);
+    background-attachment: fixed;
   }
 
   ::selection {
@@ -53,11 +58,11 @@
 }
 
 @layer components {
-  .glass { @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl; }
-  .glass-strong { @apply bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-2xl; }
-  .glass-light { @apply bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl; }
-  .glass-card { @apply bg-white/80 backdrop-blur-xl border border-white/40 rounded-2xl shadow-[0_8px_30px_rgba(2,6,23,0.08)]; }
-  .terminal-panel { @apply bg-navy-950 text-white rounded-3xl border border-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.45)]; }
+  .glass { @apply bg-navy-950/70 backdrop-blur-xl border border-cyan/10 rounded-2xl shadow-[0_18px_50px_rgba(0,0,0,0.28)]; }
+  .glass-strong { @apply bg-ink-900/85 backdrop-blur-2xl border border-cyan/15 rounded-2xl shadow-[0_24px_70px_rgba(0,0,0,0.36)]; }
+  .glass-light { @apply bg-white/[0.045] backdrop-blur-md border border-cyan/10 rounded-xl; }
+  .glass-card { @apply bg-ink-900/90 text-white backdrop-blur-xl border border-cyan/15 rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]; }
+  .terminal-panel { @apply bg-navy-950 text-white rounded-3xl border border-cyan/10 shadow-[0_30px_80px_rgba(0,0,0,0.45)]; }
   .browser-frame { @apply rounded-3xl overflow-hidden shadow-2xl border border-white/10; }
   .text-gradient-gold {
     background: linear-gradient(135deg, #fff3c0 0%, #e6ad26 50%, #8d6310 100%);

@@ -15,12 +15,13 @@ export const ASSETS = [
     { sym: 'MATIC', name: 'Polygon', price: 0.731, change: 2.05, color: '#8247e5' },
 ];
 export function formatUSD(v, digits = 2) {
+    const value = Number.isFinite(Number(v)) ? Number(v) : 0;
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: digits,
         maximumFractionDigits: digits,
-    }).format(v);
+    }).format(value);
 }
 export function formatPct(v) {
     const s = v >= 0 ? '+' : '';

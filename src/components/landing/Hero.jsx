@@ -11,6 +11,9 @@ export function Hero() {
     const btc = prices.BTCUSDT || { price: 71248.32, pct: 2.41 };
     const live = !!btc.live;
     const pctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
+    const lastCandle = candles[candles.length - 1];
+    const chartLive = !!lastCandle?.live;
+    const chartUpdated = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
       <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
@@ -29,7 +32,7 @@ export function Hero() {
             <span className="text-gradient-neon">professional alpha</span>.
           </h1>
           <p className="mt-5 text-lg text-white/70 max-w-xl">
-            AurumX brings hedge-fund discipline to crypto markets — AI-driven trading, risk-managed
+            AurumX brings hedge-fund discipline to crypto markets with AI-driven trading, risk-managed
             portfolios, and institutional custody for high-net-worth investors and corporate treasuries.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -71,7 +74,11 @@ export function Hero() {
                 <p className={`text-xs ${pctClass}`}>{formatPct(btc.pct)} (24h)</p>
               </div>
             </div>
-            <div className="rounded-xl bg-ink-900/60 border border-white/5 p-2">
+            <div className="rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
+              <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
+                <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>{chartLive ? 'Binance live candles' : 'Connecting to Binance candles'}</span>
+                <span>Updated {chartUpdated}</span>
+              </div>
               <div className="aspect-[16/9]">
                 <CandlestickChart data={candles} animate={false}/>
               </div>
@@ -79,11 +86,11 @@ export function Hero() {
             <div className="grid grid-cols-3 gap-2 pt-3">
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h high</p>
-                <p className="text-sm font-semibold text-neon-green">{btc.high ? formatUSD(btc.high) : '—'}</p>
+                <p className="text-sm font-semibold text-neon-green">{formatUSD(btc.high || 0)}</p>
               </div>
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h low</p>
-                <p className="text-sm font-semibold text-neon-red">{btc.low ? formatUSD(btc.low) : '—'}</p>
+                <p className="text-sm font-semibold text-neon-red">{formatUSD(btc.low || 0)}</p>
               </div>
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h change</p>
@@ -104,4 +111,3 @@ export function Hero() {
       </div>
     </section>);
 }
-

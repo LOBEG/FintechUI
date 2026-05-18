@@ -88,6 +88,9 @@ export default function DashboardPage() {
     }, [user]);
     const livePrices = useLivePrices([...new Set([...watchlistSymbols, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'])]);
     const candles = useLiveKlines('BTCUSDT', interval, 80);
+    const lastCandle = candles[candles.length - 1];
+    const chartLive = !!lastCandle?.live;
+    const chartUpdated = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
     const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const [price, setPrice] = useState('');
@@ -231,7 +234,7 @@ export default function DashboardPage() {
                   <span className="h-9 w-9 rounded-md inline-flex items-center justify-center text-ink-950 text-sm font-bold" style={{ background: '#f7931a' }}>₿</span>
                   <div>
                     <p className="text-base font-semibold">BTC / USDT</p>
-                    <p className="text-xs text-white/50">Bitcoin · Spot · Binance</p>
+                    <p className="text-xs text-white/50">Bitcoin · Spot · Binance live feed</p>
                   </div>
                   <div className="hidden sm:block pl-4">
                     <p className={`text-lg font-semibold ${btcPctClass}`}>{formatUSD(btc.price)}</p>
@@ -244,16 +247,22 @@ export default function DashboardPage() {
                     </button>))}
                 </div>
               </div>
-              <div className="mt-3 rounded-xl bg-ink-900/60 border border-white/5 p-2">
+              <div className="mt-3 rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
+                <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
+                  <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>
+                    {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
+                  </span>
+                  <span>Updated {chartUpdated}</span>
+                </div>
                 <div className="aspect-[16/9]">
                   <CandlestickChart data={candles} animate={false}/>
                 </div>
               </div>
               <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h High</p><p className="font-semibold mt-0.5">{btc.high ? formatUSD(btc.high) : '—'}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{btc.low ? formatUSD(btc.low) : '—'}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (BTC)</p><p className="font-semibold mt-0.5">{btc.vol ? btc.vol.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (USD)</p><p className="font-semibold mt-0.5">{btc.quoteVol ? `$${(btc.quoteVol / 1e9).toFixed(2)}B` : '—'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h High</p><p className="font-semibold mt-0.5">{formatUSD(btc.high || 0)}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{formatUSD(btc.low || 0)}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (BTC)</p><p className="font-semibold mt-0.5">{(btc.vol || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (USD)</p><p className="font-semibold mt-0.5">${((btc.quoteVol || 0) / 1e9).toFixed(2)}B</p></div>
               </div>
             </div>
 

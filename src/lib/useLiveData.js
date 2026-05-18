@@ -124,7 +124,7 @@ function seedKlines(count = 60, base = 70000) {
     const c = Math.max(1, o + drift);
     const h = Math.max(o, c) + Math.random() * base * 0.005;
     const l = Math.min(o, c) - Math.random() * base * 0.005;
-    out.push({ t, o, h, l, c, v: 0 });
+    out.push({ t, o, h, l, c, v: 0, live: false, updatedAt: null });
     prev = c;
     t += 60_000;
   }
@@ -167,6 +167,8 @@ export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
           l: parseFloat(k[3]),
           c: parseFloat(k[4]),
           v: parseFloat(k[5]),
+          live: true,
+          updatedAt: Date.now(),
         }));
         setCandles(next);
       } catch (_) {

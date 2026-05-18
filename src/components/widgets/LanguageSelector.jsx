@@ -31,17 +31,21 @@ export function LanguageSelector() {
         setOpen(false);
     };
     return (<div className="relative">
-      <button onClick={() => setOpen(!open)} className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition text-sm" aria-label="Select language">
+      <button onClick={() => setOpen(!open)} className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-lg bg-white/5 border border-cyan/15 hover:bg-cyan/10 transition text-sm" aria-label="Select language">
         <Globe className="h-4 w-4"/>
         <span>{active.toUpperCase()}</span>
       </button>
       <AnimatePresence>
-        {open && (<motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 mt-2 w-44 glass-strong p-1 z-50">
-            {langs.map((l) => (<button key={l.code} onClick={() => selectLang(l.code)} className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm hover:bg-white/10">
-                <span>{l.label}</span>
-                {active === l.code && <Check className="h-4 w-4 text-neon-green"/>}
-              </button>))}
-          </motion.div>)}
+        {open && (<>
+          <motion.button type="button" aria-label="Close language selector" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 z-[64] bg-ink-950/20 cursor-default"/>
+          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="fixed right-4 top-16 z-[65] w-[calc(100vw-2rem)] max-w-xs max-h-[70vh] overflow-y-auto rounded-2xl border border-cyan/20 bg-navy-900/95 p-2 shadow-[0_24px_70px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+              <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-cyan">Display language</p>
+              {langs.map((l) => (<button key={l.code} onClick={() => selectLang(l.code)} className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm text-white hover:bg-cyan/10">
+                  <span>{l.label}</span>
+                  {active === l.code && <Check className="h-4 w-4 text-neon-green"/>}
+                </button>))}
+            </motion.div>
+        </>)}
       </AnimatePresence>
     </div>);
 }

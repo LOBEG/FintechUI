@@ -21,13 +21,21 @@ const allocation = [
 ];
 const CURRENT_YEAR = new Date().getFullYear();
 const PREVIOUS_YEAR = CURRENT_YEAR - 1;
-const reports = [
-    { name: `Q3 ${CURRENT_YEAR} Performance Report`, date: `Oct 14, ${CURRENT_YEAR}`, size: '2.4 MB' },
-    { name: `September ${CURRENT_YEAR} NAV Statement`, date: `Oct 02, ${CURRENT_YEAR}`, size: '812 KB' },
-    { name: `Audited Financials FY ${PREVIOUS_YEAR}`, date: `Mar 22, ${CURRENT_YEAR}`, size: '4.1 MB' },
-    { name: `Risk & Compliance Disclosure ${PREVIOUS_YEAR}`, date: `Jan 14, ${CURRENT_YEAR}`, size: '1.7 MB' },
-];
+function buildLiveReports() {
+    const now = new Date();
+    const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+    const fmt = (date) => date.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
+    const monthName = previousMonth.toLocaleDateString(undefined, { month: 'long' });
+    return [
+        { name: `Q${currentQuarter} ${CURRENT_YEAR} Performance Report`, date: fmt(now), status: 'Generated today' },
+        { name: `${monthName} ${CURRENT_YEAR} NAV Statement`, date: fmt(new Date(now.getFullYear(), now.getMonth(), 2)), status: 'Monthly NAV cycle' },
+        { name: `Audited Financials FY ${PREVIOUS_YEAR}`, date: fmt(new Date(CURRENT_YEAR, 2, 22)), status: 'Current archive' },
+        { name: `Risk & Compliance Disclosure ${CURRENT_YEAR}`, date: fmt(now), status: 'Daily review' },
+    ];
+}
 export default function InvestorPortalPage() {
+    const reports = buildLiveReports();
     return (<main className="pb-20 lg:pb-0">
       <Navbar />
       <section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
@@ -183,7 +191,7 @@ export default function InvestorPortalPage() {
                 <FileText className="h-4 w-4 text-gold-400"/>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{r.name}</p>
-                  <p className="text-[11px] text-white/55">{r.date} · {r.size}</p>
+                  <p className="text-[11px] text-white/55">{r.date} · {r.status}</p>
                 </div>
               </div>))}
           </div>
