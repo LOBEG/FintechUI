@@ -37,6 +37,13 @@ export function AdminOperations() {
     } catch (_) {}
   }, [user]);
   useEffect(() => { refresh(); }, [refresh]);
+  // Live monitoring: refresh transactions / users every 30 seconds so deposit & withdrawal
+  // monitoring reflects the live data source without manual reload.
+  useEffect(() => {
+    if (!user?.isAdmin) return;
+    const id = setInterval(refresh, 30_000);
+    return () => clearInterval(id);
+  }, [user, refresh]);
 
   if (loading) {
     return <div className="glass-strong p-6 flex items-center gap-2 text-sm text-white/65"><Loader2 className="h-4 w-4 animate-spin"/> Loading admin operations…</div>;
@@ -278,15 +285,17 @@ function TxList({ transactions, users, onDone }) {
       {msg && <p className={`text-xs mb-2 px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
       <table className="min-w-full text-sm">
         <thead className="text-xs text-white/50 text-left">
-          <tr><th className="py-2 font-medium">When</th><th className="py-2 font-medium">User</th><th className="py-2 font-medium">Type</th><th className="py-2 font-medium">Asset</th><th className="py-2 font-medium">Amount</th><th className="py-2 font-medium">USD</th><th className="py-2 font-medium">Note</th><th className="py-2 font-medium text-right">Action</th></tr>
+          <tr><th className="py-2 font-medium">When</th><th className="py-2 font-medium">State</th><th className="py-2 font-medium">Type</th><th className="py-2 font-medium">Asset</th><th className="py-2 font-medium">Amount</th><th className="py-2 font-medium">USD</th><th className="py-2 font-medium">Note</th><th className="py-2 font-medium text-right">Action</th></tr>
         </thead>
         <tbody className="divide-y divide-white/5">
           {transactions.slice(0, 50).map((t) => {
             const canReverse = reversibleTypes.has(t.type) && !t.reversedBy && (Date.now() - (t.createdAt || 0) < REVERSAL_WINDOW_MS);
+            const u = userByID[t.userId];
+            const state = (u && (u.state || (u.address && u.address.state))) || '—';
             return (
               <tr key={t.id}>
                 <td className="py-2.5 text-white/55 text-xs">{new Date(t.createdAt).toLocaleString()}</td>
-                <td>{userByID[t.userId]?.email || '—'}</td>
+                <td className="text-white/70 text-xs">{state}</td>
                 <td>
                   <span className="chip bg-white/5 text-white/80 border border-white/10">{t.type}</span>
                   {t.reversedBy && <span className="ml-1 chip bg-neon-red/10 border border-neon-red/30 text-neon-red text-[10px]">reversed</span>}

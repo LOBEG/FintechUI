@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { DonutChart } from '@/components/ui/Charts';
 import { ArrowUpRight, TrendingUp } from 'lucide-react';
@@ -49,9 +50,9 @@ export function PortfolioGrowth() {
                 <span className="ml-auto text-white/90 font-medium">{a.value}%</span>
               </div>))}
           </div>
-          <button className="btn-outline mt-5 w-full justify-center text-sm">
+          <Link href="/login?next=/investor" className="btn-outline mt-5 w-full justify-center text-sm">
             Open portfolio <ArrowUpRight className="h-4 w-4"/>
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>);

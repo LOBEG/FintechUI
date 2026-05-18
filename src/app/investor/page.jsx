@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Briefcase, ShieldCheck, FileText, TrendingUp, PieChart as PieIcon, Brain, Users, Download, Building2, Gauge, } from 'lucide-react';
+import { Briefcase, ShieldCheck, FileText, TrendingUp, PieChart as PieIcon, Brain, Users, Building2, Gauge, } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -19,11 +19,13 @@ const allocation = [
     { label: 'Stables', value: 16, color: '#26a17b' },
     { label: 'Alts', value: 8, color: '#ff8a00' },
 ];
+const CURRENT_YEAR = new Date().getFullYear();
+const PREVIOUS_YEAR = CURRENT_YEAR - 1;
 const reports = [
-    { name: 'Q3 2026 Performance Report', date: 'Oct 14, 2026', size: '2.4 MB' },
-    { name: 'September 2026 NAV Statement', date: 'Oct 02, 2026', size: '812 KB' },
-    { name: 'Audited Financials FY 2025', date: 'Mar 22, 2026', size: '4.1 MB' },
-    { name: 'Risk & Compliance Disclosure', date: 'Jan 14, 2026', size: '1.7 MB' },
+    { name: `Q3 ${CURRENT_YEAR} Performance Report`, date: `Oct 14, ${CURRENT_YEAR}`, size: '2.4 MB' },
+    { name: `September ${CURRENT_YEAR} NAV Statement`, date: `Oct 02, ${CURRENT_YEAR}`, size: '812 KB' },
+    { name: `Audited Financials FY ${PREVIOUS_YEAR}`, date: `Mar 22, ${CURRENT_YEAR}`, size: '4.1 MB' },
+    { name: `Risk & Compliance Disclosure ${PREVIOUS_YEAR}`, date: `Jan 14, ${CURRENT_YEAR}`, size: '1.7 MB' },
 ];
 export default function InvestorPortalPage() {
     return (<main className="pb-20 lg:pb-0">
@@ -183,9 +185,6 @@ export default function InvestorPortalPage() {
                   <p className="text-sm font-medium truncate">{r.name}</p>
                   <p className="text-[11px] text-white/55">{r.date} · {r.size}</p>
                 </div>
-                <button className="text-xs px-2.5 py-1.5 rounded bg-white/5 border border-white/10 hover:bg-white/10 inline-flex items-center gap-1">
-                  <Download className="h-3.5 w-3.5"/> Download
-                </button>
               </div>))}
           </div>
         </div>
