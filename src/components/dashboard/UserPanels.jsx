@@ -774,3 +774,156 @@ function AddBeneficiaryModal({ open, onClose, onAdded }) {
     </div>
   );
 }
+
+// =============================================================
+// KycPanel — current KYC tier with daily/monthly usage bars and
+// upgrade form for the next tier.
+// =============================================================
+export function KycPanel() {
+  const { user } = useSession();
+  const [data, setData] = useState(null);
+  const [open, setOpen] = useState(false);
+  const load = async () => {
+    try {
+      const r = await api.get('/api/kyc');
+      setData(r);
+    } catch (_) { setData(null); }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    const id = setInterval(load, 30000);
+    return () => clearInterval(id);
+  }, [user]);
+  if (!user || !data) return null;
+  const { summary, pendingSubmission, emailVerifiedAt } = data;
+  const nextTier = summary.tier < 3 ? summary.tier + 1 : null;
+  const pct = (used, lim) => (lim > 0 ? Math.min(100, (used / lim) * 100) : (used > 0 ? 100 : 0));
+  return (
+    <>
+      <section className="glass-strong p-5">
+        <div className="flex items-center flex-wrap gap-2 mb-3">
+          <h3 className="font-display text-lg">KYC verification</h3>
+          <span className="chip bg-gold-400/15 text-gold-300 border border-gold-400/30">{summary.label}</span>
+          {pendingSubmission && (
+            <span className="chip bg-white/5 border border-white/10 text-white/65">Tier {pendingSubmission.requestedTier} pending</span>
+          )}
+          {nextTier && !pendingSubmission && (
+            <button onClick={() => setOpen(true)} className="ml-auto btn-primary text-xs">Upgrade to Tier {nextTier}</button>
+          )}
+        </div>
+        {summary.tier === 0 ? (
+          <p className="text-sm text-white/65">
+            Tier 0 accounts cannot withdraw. {emailVerifiedAt ? 'Submit your phone number to reach Tier 1 ($1,000/day).' : 'Verify your email first, then submit your phone number to reach Tier 1.'}
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-4">
+            <UsageBar title="Daily withdrawals" used={summary.daily.used} limit={summary.daily.limit} pct={pct(summary.daily.used, summary.daily.limit)} />
+            <UsageBar title="30-day withdrawals" used={summary.monthly.used} limit={summary.monthly.limit} pct={pct(summary.monthly.used, summary.monthly.limit)} />
+          </div>
+        )}
+      </section>
+      <KycUpgradeModal open={open} onClose={() => setOpen(false)} requestedTier={nextTier} onSubmitted={() => { setOpen(false); load(); }} />
+    </>
+  );
+}
+
+function UsageBar({ title, used, limit, pct }) {
+  return (
+    <div>
+      <div className="flex justify-between text-xs text-white/55 mb-1">
+        <span>{title}</span>
+        <span>${(used || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} / ${Number(limit || 0).toLocaleString()}</span>
+      </div>
+      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+        <div
+          className={`h-full ${pct > 90 ? 'bg-neon-red' : pct > 70 ? 'bg-gold-400' : 'bg-neon-green'}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
+  const [form, setForm] = useState({});
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => { if (open) { setForm({}); setError(null); } }, [open]);
+  if (!open || !requestedTier) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      await api.post('/api/kyc', { requestedTier, ...form });
+      onSubmitted && onSubmitted();
+    } catch (err) { setError(err.message); } finally { setBusy(false); }
+  };
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-display flex-1">Upgrade to Tier {requestedTier}</h3>
+          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+        </div>
+        <form onSubmit={submit} className="space-y-3 text-sm">
+          {requestedTier === 1 && (
+            <>
+              <p className="text-white/65">Tier 1 raises your withdrawal cap to $1,000/day. Provide a phone number our compliance desk can reach you on.</p>
+              <label className="block">
+                <span className="text-xs text-white/55">Phone number</span>
+                <input required value={form.phone || ''} onChange={set('phone')} placeholder="+44 7700 900123" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+              </label>
+            </>
+          )}
+          {requestedTier === 2 && (
+            <>
+              <p className="text-white/65">Tier 2 raises your cap to $25,000/day. Provide ID document details — the compliance desk will email you to upload the file securely.</p>
+              <label className="block">
+                <span className="text-xs text-white/55">Document type</span>
+                <select required value={form.idDocType || ''} onChange={set('idDocType')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none">
+                  <option value="" className="bg-ink-900">Select…</option>
+                  <option className="bg-ink-900">Passport</option>
+                  <option className="bg-ink-900">National ID card</option>
+                  <option className="bg-ink-900">Driving licence</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-xs text-white/55">Document number</span>
+                <input required value={form.idDocRef || ''} onChange={set('idDocRef')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block">
+                  <span className="text-xs text-white/55">Date of birth</span>
+                  <input required type="date" value={form.dob || ''} onChange={set('dob')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+                </label>
+                <label className="block">
+                  <span className="text-xs text-white/55">Country</span>
+                  <input required value={form.country || ''} onChange={set('country')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+                </label>
+              </div>
+            </>
+          )}
+          {requestedTier === 3 && (
+            <>
+              <p className="text-white/65">Tier 3 is the enhanced limit ($1M/day). Provide proof-of-address and a brief source-of-funds statement.</p>
+              <label className="block">
+                <span className="text-xs text-white/55">Residential address</span>
+                <textarea required rows={2} value={form.address || ''} onChange={set('address')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+              </label>
+              <label className="block">
+                <span className="text-xs text-white/55">Source of funds</span>
+                <textarea required rows={3} value={form.sourceOfFunds || ''} onChange={set('sourceOfFunds')} placeholder="e.g. PAYE salary at <employer>, plus crypto trading P&L since 2019." className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none"/>
+              </label>
+            </>
+          )}
+          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Submitting…</> : `Submit for Tier ${requestedTier} review`}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}

@@ -15,6 +15,7 @@ import { sendWithdrawEmail } from '@/lib/server/email.js';
 import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 import { validateAddressForSymbol, requiresMemo, networksFor } from '@/lib/server/addressFormats.js';
 import { sanctionsMatchReason } from '@/lib/server/sanctions.js';
+import { assertWithdrawAllowed } from '@/lib/server/kyc.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -143,6 +144,14 @@ export async function POST(req) {
     }
 
     const price = await priceFor(symbol);
+    // Enforce KYC tier limits on the USD value before debiting. This is
+    // the only place we can know the live USD value, so the check has to
+    // sit here rather than at validation time.
+    try {
+      assertWithdrawAllowed(user, amount * price);
+    } catch (e) {
+      return NextResponse.json({ error: e.message }, { status: e.status || 403 });
+    }
     user.balances[symbol] = bal - amount;
     upsertUser(user);
 

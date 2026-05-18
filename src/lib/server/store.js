@@ -407,3 +407,33 @@ export function findBeneficiary(id) {
 export function beneficiariesForUser(userId) {
   return listBeneficiaries().filter((b) => b.userId === userId && !b.removedAt);
 }
+
+// ---------------- KYC SUBMISSIONS ----------------
+// Submission = { id, userId, requestedTier (1|2|3), status: 'pending'|'approved'|'rejected',
+//                payload: { phone?, idDocType?, idDocRef?, address?, sourceOfFunds? },
+//                createdAt, reviewedAt?, reviewedBy?, reviewNote? }
+export function listKycSubmissions() {
+  return read('kycSubmissions', []);
+}
+export function addKycSubmission(s) {
+  const arr = listKycSubmissions();
+  arr.unshift(s);
+  write('kycSubmissions', arr.slice(0, 10000));
+  return s;
+}
+export function updateKycSubmission(id, patch) {
+  const arr = listKycSubmissions();
+  const i = arr.findIndex((s) => s.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('kycSubmissions', arr);
+  return arr[i];
+}
+export function findKycSubmission(id) {
+  return listKycSubmissions().find((s) => s.id === id) || null;
+}
+export function pendingKycForUser(userId) {
+  return listKycSubmissions().find(
+    (s) => s.userId === userId && s.status === 'pending',
+  ) || null;
+}

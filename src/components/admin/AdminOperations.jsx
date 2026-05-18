@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'USDT'];
@@ -70,6 +70,7 @@ export function AdminOperations() {
           ['tokens', `Tokens (${tokens.filter((t) => t.status === 'active').length})`, KeyRound],
           ['tx', `Tx (${transactions.length})`, CheckCircle2],
           ['audit', 'Audit log', FileText],
+          ['kyc', 'KYC queue', BadgeCheck],
           ['metrics', 'Metrics', BarChart3],
           ['exports', 'CSV exports', Download],
         ].map(([k, label, Icon]) => (
@@ -90,6 +91,7 @@ export function AdminOperations() {
       {tab === 'tokens' && <TokensList tokens={tokens} users={users} onDone={refresh}/>}
       {tab === 'tx' && <TxList transactions={transactions} users={users} onDone={refresh}/>}
       {tab === 'audit' && <AuditLogPanel/>}
+      {tab === 'kyc' && <KycQueuePanel/>}
       {tab === 'metrics' && <MetricsPanel/>}
       {tab === 'exports' && <ExportsPanel/>}
     </motion.section>
@@ -694,6 +696,71 @@ function ExportsPanel() {
         <Link kind="transactions" label="Transactions"/>
         <Link kind="tokens" label="Withdrawal tokens"/>
       </div>
+    </div>
+  );
+}
+
+function KycQueuePanel() {
+  const [data, setData] = useState({ pending: [], recent: [] });
+  const [busyId, setBusyId] = useState(null);
+  const [note, setNote] = useState({});
+  const load = async () => {
+    try { const r = await api.get('/api/admin/kyc'); setData({ pending: r.pending || [], recent: r.recent || [] }); } catch (_) {}
+  };
+  useEffect(() => { load(); }, []);
+  const act = async (id, decision) => {
+    setBusyId(id);
+    try { await api.post('/api/admin/kyc', { id, decision, note: note[id] || '' }); await load(); }
+    catch (e) { alert(e.message); }
+    finally { setBusyId(null); }
+  };
+  return (
+    <div className="space-y-5 text-sm">
+      <div>
+        <div className="text-xs uppercase tracking-wide text-white/55 mb-2">Pending ({data.pending.length})</div>
+        {data.pending.length === 0 ? (
+          <p className="text-white/55">Queue is empty.</p>
+        ) : data.pending.map((s) => (
+          <div key={s.id} className="glass p-3 mb-2 space-y-2">
+            <div className="flex items-center flex-wrap gap-2 text-xs">
+              <span className="chip bg-gold-400/15 text-gold-300 border border-gold-400/30">Tier {s.requestedTier}</span>
+              <span className="text-white/85">{s.userEmail}</span>
+              <span className="text-white/45 ml-auto">{new Date(s.createdAt).toLocaleString()}</span>
+            </div>
+            <pre className="text-[11px] bg-black/30 rounded-lg p-2 whitespace-pre-wrap break-words">{JSON.stringify(s.payload, null, 2)}</pre>
+            <input
+              value={note[s.id] || ''}
+              onChange={(e) => setNote((n) => ({ ...n, [s.id]: e.target.value }))}
+              placeholder="Review note (shown to user on reject)"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs outline-none"
+            />
+            <div className="flex gap-2">
+              <button disabled={busyId === s.id} onClick={() => act(s.id, 'approve')} className="btn-primary text-xs disabled:opacity-60">
+                {busyId === s.id ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Check className="h-3.5 w-3.5"/>} Approve
+              </button>
+              <button disabled={busyId === s.id} onClick={() => act(s.id, 'reject')} className="btn-secondary text-xs disabled:opacity-60">
+                <XIcon className="h-3.5 w-3.5"/> Reject
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {data.recent.length > 0 && (
+        <div>
+          <div className="text-xs uppercase tracking-wide text-white/55 mb-2">Recent decisions</div>
+          <div className="space-y-1 text-xs">
+            {data.recent.map((s) => (
+              <div key={s.id} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/5">
+                <span className={`chip border ${s.status === 'approved' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' : 'bg-neon-red/15 text-neon-red border-neon-red/30'}`}>{s.status}</span>
+                <span>{s.userEmail}</span>
+                <span className="text-white/55">→ Tier {s.requestedTier}</span>
+                {s.reviewNote && <span className="text-white/45 truncate">· {s.reviewNote}</span>}
+                <span className="text-white/45 ml-auto">{s.reviewedAt ? new Date(s.reviewedAt).toLocaleString() : ''}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
