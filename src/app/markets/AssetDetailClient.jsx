@@ -5,15 +5,15 @@
 // own home rather than burying it in the watchlist row. Live price,
 // 24-hour stats, candle chart, an "about this asset" panel, and the
 // usual invest/sell CTAs.
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowLeft, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Star } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CandlestickChart } from '@/components/ui/Charts';
 import { useLivePrices, useLiveKlines, SYMBOL_META } from '@/lib/useLiveData';
-import { useSession } from '@/lib/useSession';
+import { useSession, api } from '@/lib/useSession';
 import { InvestModal, SellModal } from '@/components/dashboard/TradeModals';
 
 // A small, deliberately editorial "about" copy block. Real product
@@ -56,6 +56,35 @@ export default function AssetDetailClient({ symbol }) {
   const [investOpen, setInvestOpen] = useState(false);
   const [sellOpen, setSellOpen] = useState(false);
 
+  // Watchlist (favourites) — let the user star/unstar this asset.
+  const [favourited, setFavourited] = useState(false);
+  const [favBusy, setFavBusy] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) { setFavourited(false); return; }
+    (async () => {
+      try {
+        const r = await api.get('/api/watchlist');
+        if (!cancelled) setFavourited(Array.isArray(r.symbols) && r.symbols.includes(meta.sym));
+      } catch (_) { /* tolerate */ }
+    })();
+    return () => { cancelled = true; };
+  }, [user, meta.sym]);
+  const toggleFavourite = async () => {
+    if (!user || favBusy) return;
+    setFavBusy(true);
+    const previous = favourited;
+    setFavourited(!previous); // optimistic
+    try {
+      const r = await api.post('/api/watchlist', { symbol: meta.sym });
+      if (Array.isArray(r?.symbols)) setFavourited(r.symbols.includes(meta.sym));
+    } catch (_) {
+      setFavourited(previous);
+    } finally {
+      setFavBusy(false);
+    }
+  };
+
   const stats = useMemo(
     () => [
       { k: '24h high', v: px.high ? `$${Number(px.high).toLocaleString()}` : '—' },
@@ -84,6 +113,19 @@ export default function AssetDetailClient({ symbol }) {
                 <h1 className="font-display text-xl">{meta.name} <span className="text-white/55 font-normal">({meta.sym})</span></h1>
                 <div className="text-xs text-white/55">{meta.sym}/USDT • spot</div>
               </div>
+              {user && (
+                <button
+                  type="button"
+                  onClick={toggleFavourite}
+                  disabled={favBusy}
+                  className={`ml-2 inline-flex items-center justify-center h-9 w-9 rounded-lg border ${favourited ? 'text-neon-gold border-neon-gold/40 bg-neon-gold/10' : 'text-white/60 hover:text-white border-white/10 bg-white/5 hover:bg-white/10'} disabled:opacity-50`}
+                  aria-label={favourited ? `Remove ${meta.sym} from watchlist` : `Add ${meta.sym} to watchlist`}
+                  aria-pressed={favourited}
+                  title={favourited ? 'Remove from watchlist' : 'Add to watchlist'}
+                >
+                  <Star className={`h-4 w-4 ${favourited ? 'fill-current' : ''}`}/>
+                </button>
+              )}
             </div>
             <div className="text-right">
               <div className="text-2xl font-semibold tabular-nums">${px.price ? Number(px.price).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</div>

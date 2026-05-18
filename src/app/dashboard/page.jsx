@@ -12,7 +12,9 @@ import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/Tr
 import { useSession, api } from '@/lib/useSession';
 import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel } from '@/components/dashboard/UserPanels';
 
-const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
+// Default watchlist for anonymous visitors and users who haven't pinned
+// anything yet. Logged-in users override this via /api/watchlist.
+const DEFAULT_WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
 const WALLET_HOLDINGS = [
     { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#f7931a' },
     { key: 'ETHUSDT', sym: 'ETH', name: 'Ethereum', bal: 12.41, color: '#627eea' },
@@ -51,7 +53,40 @@ export default function DashboardPage() {
         try { const w = await api.get('/api/wallet'); setLiveWallet(w); } catch (_) {}
     }, [user]);
     useEffect(() => { refreshWallet(); }, [refreshWallet]);
-    const livePrices = useLivePrices([...new Set([...WATCHLIST_SYMBOLS, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'])]);
+    // Watchlist: load the user's saved favourites; fall back to the default
+    // set for anonymous visitors or users who haven't pinned anything yet.
+    const [watchlistBases, setWatchlistBases] = useState(null); // null = loading
+    useEffect(() => {
+        let cancelled = false;
+        if (!user) { setWatchlistBases(null); return; }
+        (async () => {
+            try {
+                const r = await api.get('/api/watchlist');
+                if (!cancelled) setWatchlistBases(Array.isArray(r.symbols) ? r.symbols : []);
+            } catch (_) { if (!cancelled) setWatchlistBases([]); }
+        })();
+        return () => { cancelled = true; };
+    }, [user]);
+    const watchlistSymbols = useMemo(() => {
+        if (user && watchlistBases && watchlistBases.length) {
+            return watchlistBases.map((b) => `${b}USDT`);
+        }
+        return DEFAULT_WATCHLIST_SYMBOLS;
+    }, [user, watchlistBases]);
+    const removeFromWatchlist = useCallback(async (pair) => {
+        if (!user) return;
+        const base = pair.endsWith('USDT') ? pair.slice(0, -4) : pair;
+        // Optimistic update — keep the row responsive even if the network is slow.
+        setWatchlistBases((prev) => (prev || []).filter((b) => b !== base));
+        try {
+            const r = await api.post('/api/watchlist', { symbol: base });
+            if (Array.isArray(r?.symbols)) setWatchlistBases(r.symbols);
+        } catch (_) {
+            // Re-fetch on failure so the UI doesn't drift from the server.
+            try { const r = await api.get('/api/watchlist'); setWatchlistBases(r.symbols || []); } catch (_) {}
+        }
+    }, [user]);
+    const livePrices = useLivePrices([...new Set([...watchlistSymbols, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'])]);
     const candles = useLiveKlines('BTCUSDT', interval, 80);
     const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
     const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
@@ -259,27 +294,42 @@ export default function DashboardPage() {
                 <button className="text-xs text-white/55 hover:text-white">View all</button>
               </div>
               <div className="mt-3 divide-y divide-white/5">
-                {WATCHLIST_SYMBOLS.map((s, i) => {
+                {watchlistSymbols.map((s, i) => {
                   const meta = SYMBOL_META[s];
                   const d = livePrices[s];
                   if (!meta) return null;
                   const px = d?.price ?? 0;
                   const pct = d?.pct ?? 0;
+                  const base = s.endsWith('USDT') ? s.slice(0, -4) : s;
+                  const canRemove = !!user && Array.isArray(watchlistBases) && watchlistBases.includes(base);
                   return (<div key={s} className="flex items-center gap-3 py-2.5">
-                      <span className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: meta.color }}>
+                      <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90" style={{ background: meta.color }} aria-label={`Open ${meta.sym} details`}>
                         {meta.sym.slice(0, 1)}
-                      </span>
-                      <div className="flex-1 min-w-0">
+                      </a>
+                      <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-gold">
                         <p className="text-sm font-medium">{meta.sym}</p>
                         <p className="text-[11px] text-white/50 truncate">{meta.name}</p>
-                      </div>
+                      </a>
                       <Sparkline seed={i + 4} positive={pct >= 0} width={70} height={28}/>
                       <div className="text-right">
                         <p className="text-sm">{formatUSD(px, px < 1 ? 4 : 2)}</p>
                         <p className={`text-[11px] ${pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(pct)}</p>
                       </div>
+                      {canRemove && (
+                        <button
+                          onClick={() => removeFromWatchlist(s)}
+                          className="ml-1 p-1 text-neon-gold/80 hover:text-neon-gold"
+                          aria-label={`Remove ${meta.sym} from watchlist`}
+                          title="Remove from watchlist"
+                        >
+                          <Star className="h-3.5 w-3.5 fill-current"/>
+                        </button>
+                      )}
                     </div>);
                 })}
+                {user && Array.isArray(watchlistBases) && watchlistBases.length === 0 && (
+                  <p className="text-[11px] text-white/45 py-3">Tap the ★ on any asset to pin it here.</p>
+                )}
               </div>
             </div>
 

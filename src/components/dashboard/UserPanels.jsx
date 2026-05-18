@@ -112,8 +112,10 @@ export function DepositAddressPanel() {
 // Markets panel — live prices of all supported crypto.
 // =============================================================
 export function MarketsPanel({ onInvest }) {
+  const { user } = useSession();
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState('');
+  const [watchlist, setWatchlist] = useState([]); // base symbols
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -129,6 +131,30 @@ export function MarketsPanel({ onInvest }) {
     const id = setInterval(load, 15000);
     return () => { mounted = false; clearInterval(id); };
   }, []);
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) { setWatchlist([]); return; }
+    (async () => {
+      try {
+        const r = await api.get('/api/watchlist');
+        if (!cancelled) setWatchlist(Array.isArray(r.symbols) ? r.symbols : []);
+      } catch (_) { /* tolerate */ }
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+  const toggleFavourite = async (symbol) => {
+    if (!user) return;
+    const had = watchlist.includes(symbol);
+    // Optimistic update.
+    setWatchlist((prev) => had ? prev.filter((s) => s !== symbol) : [...prev, symbol]);
+    try {
+      const r = await api.post('/api/watchlist', { symbol });
+      if (Array.isArray(r?.symbols)) setWatchlist(r.symbols);
+    } catch (_) {
+      // Revert on failure.
+      setWatchlist((prev) => had ? [...prev, symbol] : prev.filter((s) => s !== symbol));
+    }
+  };
   const filtered = rows.filter((r) => {
     if (!q) return true;
     const s = q.toLowerCase();
@@ -148,6 +174,7 @@ export function MarketsPanel({ onInvest }) {
         <table className="min-w-full text-sm">
           <thead className="text-xs text-white/50 text-left">
             <tr>
+              {user && <th className="py-2 font-medium w-6"><span className="sr-only">Favourite</span></th>}
               <th className="py-2 font-medium">Asset</th>
               <th className="py-2 font-medium">Price</th>
               <th className="py-2 font-medium">24h</th>
@@ -158,8 +185,22 @@ export function MarketsPanel({ onInvest }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filtered.map((r) => (
+            {filtered.map((r) => {
+              const fav = watchlist.includes(r.symbol);
+              return (
               <tr key={r.symbol}>
+                {user && (
+                  <td className="py-2.5 w-6">
+                    <button
+                      onClick={() => toggleFavourite(r.symbol)}
+                      className={fav ? 'text-neon-gold' : 'text-white/35 hover:text-white/70'}
+                      aria-label={fav ? `Remove ${r.symbol} from watchlist` : `Add ${r.symbol} to watchlist`}
+                      title={fav ? 'Remove from watchlist' : 'Add to watchlist'}
+                    >
+                      <Star className={`h-3.5 w-3.5 ${fav ? 'fill-current' : ''}`}/>
+                    </button>
+                  </td>
+                )}
                 <td className="py-2.5">
                   <a href={`/markets/${r.symbol}`} className="flex items-center gap-2 hover:text-neon-gold">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950" style={{ background: r.color }}>{r.symbol.slice(0, 2)}</span>
@@ -178,7 +219,8 @@ export function MarketsPanel({ onInvest }) {
                   <button onClick={() => onInvest && onInvest(r.symbol)} className="px-2.5 py-1 rounded bg-neon-green/15 text-neon-green hover:bg-neon-green/25 text-xs">Invest</button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

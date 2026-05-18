@@ -469,3 +469,25 @@ export function priceAlertsForUser(userId) {
 export function activePriceAlerts() {
   return listPriceAlerts().filter((a) => a.status === 'active');
 }
+
+// --------------- WATCHLISTS ----------------
+// Watchlist = { userId, symbols: string[], updatedAt }
+// One row per user, keyed by userId. Symbols are stored in their *base*
+// form ('BTC', 'ETH', …) and the client converts to a BINANCE pair at
+// render time. Capped at 50 symbols per user to keep the row size sane.
+export function listWatchlists() {
+  return read('watchlists', []);
+}
+export function getWatchlist(userId) {
+  const row = listWatchlists().find((w) => w.userId === userId);
+  return row ? row.symbols.slice() : [];
+}
+export function setWatchlist(userId, symbols) {
+  const arr = listWatchlists();
+  const i = arr.findIndex((w) => w.userId === userId);
+  const row = { userId, symbols: symbols.slice(0, 50), updatedAt: Date.now() };
+  if (i === -1) arr.push(row);
+  else arr[i] = row;
+  write('watchlists', arr);
+  return row.symbols.slice();
+}
