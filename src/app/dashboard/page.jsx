@@ -90,7 +90,7 @@ export default function DashboardPage() {
     const candles = useLiveKlines('BTCUSDT', interval, 80);
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
-    const chartUpdated = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
+    const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
     const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const [price, setPrice] = useState('');
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                   <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>
                     {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
                   </span>
-                  <span>Updated {chartUpdated}</span>
+                  <span>Updated {chartUpdatedLabel}</span>
                 </div>
                 <div className="aspect-[16/9]">
                   <CandlestickChart data={candles} animate={false}/>

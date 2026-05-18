@@ -19,19 +19,19 @@ const allocation = [
     { label: 'Stables', value: 16, color: '#26a17b' },
     { label: 'Alts', value: 8, color: '#ff8a00' },
 ];
-const CURRENT_YEAR = new Date().getFullYear();
-const PREVIOUS_YEAR = CURRENT_YEAR - 1;
 function buildLiveReports() {
     const now = new Date();
+    const currentYear = now.getFullYear();
+    const previousYear = currentYear - 1;
     const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
     const fmt = (date) => date.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
     const monthName = previousMonth.toLocaleDateString(undefined, { month: 'long' });
     return [
-        { name: `Q${currentQuarter} ${CURRENT_YEAR} Performance Report`, date: fmt(now), status: 'Generated today' },
-        { name: `${monthName} ${CURRENT_YEAR} NAV Statement`, date: fmt(new Date(now.getFullYear(), now.getMonth(), 2)), status: 'Monthly NAV cycle' },
-        { name: `Audited Financials FY ${PREVIOUS_YEAR}`, date: fmt(new Date(CURRENT_YEAR, 2, 22)), status: 'Current archive' },
-        { name: `Risk & Compliance Disclosure ${CURRENT_YEAR}`, date: fmt(now), status: 'Daily review' },
+        { name: `Q${currentQuarter} ${currentYear} Performance Report`, date: fmt(now), status: 'Current quarter' },
+        { name: `${monthName} ${currentYear} NAV Statement`, date: fmt(new Date(now.getFullYear(), now.getMonth(), 2)), status: 'Monthly NAV cycle' },
+        { name: `Audited Financials FY ${previousYear}`, date: fmt(new Date(currentYear, 2, 22)), status: 'Current archive' },
+        { name: `Risk & Compliance Disclosure ${currentYear}`, date: fmt(now), status: 'Daily risk cycle' },
     ];
 }
 export default function InvestorPortalPage() {

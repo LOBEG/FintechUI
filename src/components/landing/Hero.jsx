@@ -13,7 +13,7 @@ export function Hero() {
     const pctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
-    const chartUpdated = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
+    const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
       <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
@@ -77,7 +77,7 @@ export function Hero() {
             <div className="rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
               <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
                 <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>{chartLive ? 'Binance live candles' : 'Connecting to Binance candles'}</span>
-                <span>Updated {chartUpdated}</span>
+                <span>Updated {chartUpdatedLabel}</span>
               </div>
               <div className="aspect-[16/9]">
                 <CandlestickChart data={candles} animate={false}/>
