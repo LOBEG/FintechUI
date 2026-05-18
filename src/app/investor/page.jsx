@@ -23,6 +23,7 @@ function buildLiveReports() {
     const now = new Date();
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
+    // Monthly NAV statements publish on the second calendar day after month end.
     const navPublicationDay = 2;
     const previousMonth = new Date(currentYear, now.getMonth() - 1, 1);
     const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
