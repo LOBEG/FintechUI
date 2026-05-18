@@ -119,7 +119,7 @@ export default function AssetDetailClient({ symbol }) {
                 </div>
               </div>
               <div className="h-72">
-                <CandlestickChart candles={candles} />
+                <CandlestickChart data={candles} animate={false} />
               </div>
             </motion.section>
 
