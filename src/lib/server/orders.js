@@ -24,10 +24,14 @@ import {
   findUserById,
   upsertUser,
   addTransaction,
+  activePriceAlerts,
+  updatePriceAlert,
+  addNotification,
 } from './store.js';
 import { priceFor, isSupportedSymbol } from './prices.js';
 import { applyTakerFee } from './fees.js';
 import { newId } from './auth.js';
+import { sendEmail } from './email.js';
 
 const TICK_MS = 5_000;
 const GUARD = Symbol.for('aurumx.orders.tickerStarted');
@@ -43,6 +47,52 @@ export function shouldFill(order, price) {
     return order.side === 'buy' ? price >= t : price <= t;
   }
   return false;
+}
+
+// True if a `gt`/`lt` alert has crossed its threshold at the given live
+// price. We use `>=` / `<=` (rather than strict `>`/`<`) so a hand-set
+// threshold that exactly matches the tick still fires.
+export function alertShouldFire(alert, price) {
+  if (!alert || !price || !isFinite(price)) return false;
+  const t = Number(alert.threshold);
+  if (!isFinite(t) || t <= 0) return false;
+  if (alert.op === 'gt') return price >= t;
+  if (alert.op === 'lt') return price <= t;
+  return false;
+}
+
+async function fireAlert(alert, price) {
+  const user = findUserById(alert.userId);
+  if (!user) {
+    updatePriceAlert(alert.id, { status: 'cancelled', cancelledAt: Date.now() });
+    return;
+  }
+  const direction = alert.op === 'gt' ? 'above' : 'below';
+  const title = `${alert.symbol} ${direction} ${alert.threshold}`;
+  const body = `${alert.symbol} reached ${price} (alert set when ${direction === 'above' ? '≥' : '≤'} ${alert.threshold}).`;
+  updatePriceAlert(alert.id, {
+    status: 'triggered',
+    triggeredAt: Date.now(),
+    triggeredPrice: price,
+  });
+  try {
+    addNotification({
+      id: newId('ntf'),
+      userId: user.id,
+      kind: 'price_alert',
+      title,
+      body,
+      createdAt: Date.now(),
+    });
+  } catch { /* notifications best-effort */ }
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: `Price alert: ${title}`,
+      text: body,
+      html: `<p>${body}</p><p>View your dashboard to set a follow-up alert.</p>`,
+    });
+  } catch { /* email best-effort */ }
 }
 
 async function fillOrder(order) {
@@ -126,18 +176,29 @@ async function fillOrder(order) {
 
 async function tick() {
   let pending;
+  let alerts;
   try {
     pending = listOrders().filter((o) => o.status === 'open');
+    alerts = activePriceAlerts();
   } catch { return; }
-  if (!pending.length) return;
-  // Group by symbol so we only price each asset once per tick.
-  const bySymbol = new Map();
-  for (const o of pending) {
-    if (!bySymbol.has(o.symbol)) bySymbol.set(o.symbol, []);
-    bySymbol.get(o.symbol).push(o);
-  }
-  for (const [, list] of bySymbol) {
-    for (const o of list) {
+  if (!pending.length && !alerts.length) return;
+  // Group both orders and alerts by symbol so we fetch each asset's
+  // price at most once per tick. fillOrder also calls priceFor() but
+  // that result is cached upstream (prices.js), so this is cheap.
+  const symbols = new Set();
+  for (const o of pending) symbols.add(o.symbol);
+  for (const a of alerts) symbols.add(a.symbol);
+  for (const symbol of symbols) {
+    let price = 0;
+    try { price = await priceFor(symbol); } catch { /* keep going */ }
+    if (!price || !isFinite(price)) continue;
+    for (const a of alerts) {
+      if (a.symbol !== symbol) continue;
+      if (!alertShouldFire(a, price)) continue;
+      try { await fireAlert(a, price); } catch { /* keep going */ }
+    }
+    for (const o of pending) {
+      if (o.symbol !== symbol) continue;
       try { await fillOrder(o); } catch { /* keep going */ }
     }
   }

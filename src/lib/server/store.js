@@ -437,3 +437,35 @@ export function pendingKycForUser(userId) {
     (s) => s.userId === userId && s.status === 'pending',
   ) || null;
 }
+
+// --------------- PRICE ALERTS ----------------
+// PriceAlert = { id, userId, symbol, op: 'gt'|'lt', threshold,
+//                status: 'active'|'triggered'|'cancelled',
+//                createdAt, triggeredAt?, triggeredPrice?, cancelledAt? }
+// The background settler (orders.js) evaluates every `active` row against
+// the live mid each tick; on a cross it sets `triggered`, writes a
+// notification, and emails the user. Triggered/cancelled rows are kept
+// so the user can see their history.
+export function listPriceAlerts() {
+  return read('priceAlerts', []);
+}
+export function addPriceAlert(a) {
+  const arr = listPriceAlerts();
+  arr.unshift(a);
+  write('priceAlerts', arr.slice(0, 5000));
+  return a;
+}
+export function updatePriceAlert(id, patch) {
+  const arr = listPriceAlerts();
+  const i = arr.findIndex((a) => a.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('priceAlerts', arr);
+  return arr[i];
+}
+export function priceAlertsForUser(userId) {
+  return listPriceAlerts().filter((a) => a.userId === userId);
+}
+export function activePriceAlerts() {
+  return listPriceAlerts().filter((a) => a.status === 'active');
+}

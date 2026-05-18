@@ -1045,3 +1045,114 @@ function trimQty(n) {
   const s = v.toFixed(8);
   return s.replace(/0+$/, '').replace(/\.$/, '');
 }
+
+// =============================================================
+// PriceAlertsPanel — let users set "notify me when BTC > $80k"
+// style rules. Triggers come from the order-settler tick so we
+// don't open a second polling loop.
+// =============================================================
+export function PriceAlertsPanel() {
+  const { user } = useSession();
+  const [alerts, setAlerts] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [form, setForm] = useState({ symbol: 'BTC', op: 'gt', threshold: '' });
+  const [error, setError] = useState('');
+  const load = async () => {
+    try { const r = await api.get('/api/alerts'); setAlerts(r.alerts || []); }
+    catch (_) { /* ignore */ }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    // Active alerts can trigger asynchronously on the server tick — poll
+    // so the UI flips from active → triggered without a manual refresh.
+    const id = setInterval(load, 15000);
+    return () => clearInterval(id);
+  }, [user]);
+  if (!user) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setError('');
+    const threshold = parseFloat(form.threshold);
+    if (!isFinite(threshold) || threshold <= 0) { setError('Threshold must be a positive number'); return; }
+    setBusy(true);
+    try {
+      await api.post('/api/alerts', { symbol: form.symbol, op: form.op, threshold });
+      setForm({ ...form, threshold: '' });
+      load();
+    } catch (err) { setError(err?.message || 'Could not create alert'); }
+    finally { setBusy(false); }
+  };
+  const cancel = async (id) => {
+    try { await api.del(`/api/alerts?id=${encodeURIComponent(id)}`); load(); } catch (_) {}
+  };
+  const active = alerts.filter((a) => a.status === 'active');
+  const history = alerts.filter((a) => a.status !== 'active').slice(0, 10);
+  return (
+    <section className="glass-strong p-5">
+      <div className="flex items-center flex-wrap gap-2 mb-3">
+        <h3 className="font-display text-lg">Price alerts</h3>
+        <span className="chip bg-white/5 border border-white/10 text-white/65">{active.length} active</span>
+      </div>
+      <form onSubmit={submit} className="grid sm:grid-cols-4 gap-2 mb-3 text-sm">
+        <input
+          aria-label="Asset symbol"
+          value={form.symbol}
+          onChange={(e) => setForm({ ...form, symbol: e.target.value.toUpperCase() })}
+          className="bg-white/5 border border-white/10 rounded px-2 py-1.5"
+          placeholder="BTC"
+        />
+        <select
+          aria-label="Comparator"
+          value={form.op}
+          onChange={(e) => setForm({ ...form, op: e.target.value })}
+          className="bg-white/5 border border-white/10 rounded px-2 py-1.5"
+        >
+          <option value="gt">rises above</option>
+          <option value="lt">falls below</option>
+        </select>
+        <input
+          aria-label="Threshold USD"
+          type="number"
+          step="0.01"
+          min="0"
+          value={form.threshold}
+          onChange={(e) => setForm({ ...form, threshold: e.target.value })}
+          className="bg-white/5 border border-white/10 rounded px-2 py-1.5"
+          placeholder="80000"
+        />
+        <button type="submit" disabled={busy} className="rounded bg-neon-green/90 text-black font-medium px-3 py-1.5 disabled:opacity-60">
+          {busy ? 'Adding…' : 'Add alert'}
+        </button>
+      </form>
+      {error && <p className="text-xs text-neon-red mb-2">{error}</p>}
+      {active.length === 0 ? (
+        <p className="text-sm text-white/55">No active alerts. We&apos;ll email and ping the in-app inbox the moment any rule triggers.</p>
+      ) : (
+        <ul className="space-y-1 text-sm">
+          {active.map((a) => (
+            <li key={a.id} className="flex items-center justify-between gap-2 rounded border border-white/5 bg-white/[0.03] px-3 py-1.5">
+              <span><b>{a.symbol}</b> {a.op === 'gt' ? '≥' : '≤'} ${Number(a.threshold).toLocaleString()}</span>
+              <button onClick={() => cancel(a.id)} className="text-xs text-white/55 hover:text-neon-red">Cancel</button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {history.length > 0 && (
+        <details className="mt-3 text-sm">
+          <summary className="cursor-pointer text-white/55">Recent ({history.length})</summary>
+          <ul className="mt-2 space-y-1">
+            {history.map((a) => (
+              <li key={a.id} className="flex items-center justify-between text-xs text-white/55">
+                <span>{a.symbol} {a.op === 'gt' ? '≥' : '≤'} ${Number(a.threshold).toLocaleString()}</span>
+                <span className={a.status === 'triggered' ? 'text-neon-green' : 'text-white/45'}>
+                  {a.status}{a.triggeredPrice ? ` @ $${Number(a.triggeredPrice).toLocaleString()}` : ''}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </section>
+  );
+}
