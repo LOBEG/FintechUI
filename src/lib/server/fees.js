@@ -39,8 +39,10 @@ export function makerBps() {
  */
 export function applyTakerFee(usd) {
   const bps = takerBps();
-  // bps/10000 → percentage fee. Round to cents (USDT is quoted to 2 dp).
-  const fee = Math.round((usd * bps) / 100) / 100;
+  // Fee in USD = usd × bps / 10000 (since 1 bp = 0.01% = 1/10000).
+  // Round to cents because USDT is quoted to 2 decimal places.
+  const feeRaw = (usd * bps) / 10000;
+  const fee = Math.round(feeRaw * 100) / 100;
   const net = Math.max(0, Math.round((usd - fee) * 100) / 100);
   return { net, fee, bps };
 }
