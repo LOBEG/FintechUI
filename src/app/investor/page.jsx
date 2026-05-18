@@ -23,13 +23,14 @@ function buildLiveReports() {
     const now = new Date();
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
-    const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const navPublicationDay = 2;
+    const previousMonth = new Date(currentYear, now.getMonth() - 1, 1);
     const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
     const fmt = (date) => date.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' });
     const monthName = previousMonth.toLocaleDateString(undefined, { month: 'long' });
     return [
         { name: `Q${currentQuarter} ${currentYear} Performance Report`, date: fmt(now), status: 'Current quarter' },
-        { name: `${monthName} ${currentYear} NAV Statement`, date: fmt(new Date(now.getFullYear(), now.getMonth(), 2)), status: 'Monthly NAV cycle' },
+        { name: `${monthName} ${currentYear} NAV Statement`, date: fmt(new Date(currentYear, now.getMonth(), navPublicationDay)), status: 'Monthly NAV cycle' },
         { name: `Audited Financials FY ${previousYear}`, date: fmt(new Date(currentYear, 2, 22)), status: 'Current archive' },
         { name: `Risk & Compliance Disclosure ${currentYear}`, date: fmt(now), status: 'Daily risk cycle' },
     ];
