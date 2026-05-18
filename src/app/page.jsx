@@ -9,10 +9,8 @@ import { Security } from '@/components/landing/Security';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { FAQ } from '@/components/landing/FAQ';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-
 export default function HomePage() {
-  return (
-    <main className="pb-20 lg:pb-0">
+    return (<main className="pb-20 lg:pb-0">
       <Navbar />
       <Hero />
       <MarketTicker />
@@ -24,6 +22,5 @@ export default function HomePage() {
       <FAQ />
       <Footer />
       <MobileBottomNav />
-    </main>
-  );
+    </main>);
 }

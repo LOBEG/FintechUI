@@ -1,29 +1,21 @@
 'use client';
 import { ASSETS, formatPct, formatUSD } from '@/lib/utils';
-
 export function MarketTicker() {
-  const items = [...ASSETS, ...ASSETS];
-  return (
-    <section id="markets" className="relative">
+    const items = [...ASSETS, ...ASSETS];
+    return (<section id="markets" className="relative">
       <div className="border-y border-white/5 bg-ink-900/40 backdrop-blur">
         <div className="overflow-hidden">
           <div className="marquee-track py-3">
-            {items.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 px-6 whitespace-nowrap border-r border-white/5">
-                <span
-                  className="h-7 w-7 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950"
-                  style={{ background: a.color }}
-                >
+            {items.map((a, i) => (<div key={i} className="flex items-center gap-3 px-6 whitespace-nowrap border-r border-white/5">
+                <span className="h-7 w-7 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: a.color }}>
                   {a.sym.slice(0, 1)}
                 </span>
                 <span className="text-sm font-semibold text-white">{a.sym}</span>
                 <span className="text-sm text-white/80">{formatUSD(a.price, a.price < 1 ? 4 : 2)}</span>
                 <span className={`text-xs ${a.change >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(a.change)}</span>
-              </div>
-            ))}
+              </div>))}
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
 }
