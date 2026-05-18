@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
+    const [oauthError, setOauthError] = useState(null);
     const { login } = useSession();
     const router = useRouter();
     const onSubmit = async (e) => {
@@ -27,6 +28,18 @@ export default function LoginPage() {
             setBusy(false);
         }
     };
+    const handleOAuth = async (provider) => {
+        setOauthError(null);
+        try {
+            const res = await fetch(`/api/auth/oauth/${provider}`);
+            if (!res.ok) {
+                const data = await res.json();
+                setOauthError(data.error || `${provider} OAuth failed`);
+            }
+        } catch (err) {
+            setOauthError(`Failed to connect to ${provider}`);
+        }
+    };
     return (<main className="min-h-screen flex">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
@@ -38,7 +51,7 @@ export default function LoginPage() {
             <span className="text-2xl font-display"><span className="text-gradient-gold">Aurum</span>X</span>
           </Link>
           <h2 className="mt-10 text-3xl font-display leading-tight">
-            Welcome back to the<br /><span className="text-gradient-gold">luxury of digital wealth</span>.
+            Welcome back to the<br /><span className="text-gradient-gold">professional management of digital wealth</span>.
           </h2>
           <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your AurumX investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
@@ -79,12 +92,13 @@ export default function LoginPage() {
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Signing in…</> : 'Sign in'}
             </button>
           </form>
+          {oauthError && <p className="mt-3 text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{oauthError}</p>}
           <div className="my-5 flex items-center gap-3 text-[11px] text-white/40">
             <span className="flex-1 h-px bg-white/10"/> or continue with <span className="flex-1 h-px bg-white/10"/>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <button className="btn-ghost text-sm">Google</button>
-            <button className="btn-ghost text-sm">Apple</button>
+            <button onClick={() => handleOAuth('google')} className="btn-ghost text-sm">Google</button>
+            <button onClick={() => handleOAuth('apple')} className="btn-ghost text-sm">Apple</button>
           </div>
           <div className="mt-3"><Web3ConnectButton /></div>
           <p className="mt-5 text-xs text-white/55 text-center">

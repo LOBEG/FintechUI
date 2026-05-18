@@ -22,11 +22,11 @@ export function Hero() {
             BlackRock-grade infrastructure · Binance-grade performance
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[1.05] tracking-tight">
-            The luxury platform for{' '}
+            The institutional platform for{' '}
             <span className="text-gradient-gold">digital wealth</span>.
             <br />
             Engineered for{' '}
-            <span className="text-gradient-neon">institutional alpha</span>.
+            <span className="text-gradient-neon">professional alpha</span>.
           </h1>
           <p className="mt-5 text-lg text-white/70 max-w-xl">
             AurumX brings hedge-fund discipline to crypto markets — AI-driven trading, risk-managed

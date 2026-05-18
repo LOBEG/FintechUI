@@ -1,0 +1,61 @@
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import { Users, Shield, Briefcase, Award } from 'lucide-react';
+
+export const metadata = {
+    title: 'Managed Accounts — AurumX',
+    description: 'Discretionary portfolio management for high-net-worth crypto investors.',
+};
+
+export default function ManagedAccountsPage() {
+    return (<>
+      <Navbar />
+      <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl font-display">
+            <span className="text-gradient-gold">Managed Accounts</span> by AurumX
+          </h1>
+          <p className="mt-4 text-lg text-white/70">
+            Discretionary portfolio management for accredited investors and institutions. Minimum £500k. Tailored strategies aligned with your risk tolerance.
+          </p>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="glass p-6 rounded-xl">
+              <Users className="h-8 w-8 text-neon-green mb-3"/>
+              <h3 className="text-lg font-semibold">Dedicated Portfolio Manager</h3>
+              <p className="mt-2 text-sm text-white/60">
+                Senior trader with 10+ years in traditional finance and crypto. Quarterly reviews, rebalancing, and custom reporting.
+              </p>
+            </div>
+            <div className="glass p-6 rounded-xl">
+              <Shield className="h-8 w-8 text-gold-400 mb-3"/>
+              <h3 className="text-lg font-semibold">Segregated Custody</h3>
+              <p className="mt-2 text-sm text-white/60">
+                Your assets held in isolated wallets. Qualified custodian with insurance cover up to £10M. Full transparency via real-time dashboard.
+              </p>
+            </div>
+            <div className="glass p-6 rounded-xl">
+              <Briefcase className="h-8 w-8 text-cyan mb-3"/>
+              <h3 className="text-lg font-semibold">Bespoke Strategies</h3>
+              <p className="mt-2 text-sm text-white/60">
+                Conservative (BTC/ETH focus), balanced (top 20 cap-weighted), or aggressive (altcoin rotations). Defined risk limits and stop-loss protocols.
+              </p>
+            </div>
+            <div className="glass p-6 rounded-xl">
+              <Award className="h-8 w-8 text-neon-orange mb-3"/>
+              <h3 className="text-lg font-semibold">Performance-Based Fees</h3>
+              <p className="mt-2 text-sm text-white/60">
+                1.5% management fee + 20% performance fee on gains above 8% hurdle. No lock-up. Withdraw quarterly with 30 days notice.
+              </p>
+            </div>
+          </div>
+          <div className="mt-10 flex gap-4">
+            <a href="/signup" className="btn-primary">Apply for Managed Account</a>
+            <a href="/institutional" className="btn-ghost">Institutional Services</a>
+          </div>
+        </div>
+      </main>
+      <Footer />
+      <MobileBottomNav />
+    </>);
+}

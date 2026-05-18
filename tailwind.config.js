@@ -26,6 +26,10 @@ module.exports = {
           700: '#0f1830',
           600: '#13203d',
         },
+        navy: {
+          900: '#0b1530',
+          950: '#070d22',
+        },
         gold: {
           50: '#fff8e1',
           100: '#ffeeb0',
@@ -43,6 +47,7 @@ module.exports = {
           orangeDark: '#ff6a00',
           red: '#ff4d6d',
         },
+        cyan: '#06d6c4',
       },
       boxShadow: {
         glow: '0 0 40px -10px rgba(0, 255, 163, 0.35)',

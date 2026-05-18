@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Twitter, Github, Linkedin, Youtube, Send, MessageCircle, Sparkles } from 'lucide-react';
+import { Send, MessageCircle, Sparkles } from 'lucide-react';
 const groups = [
     {
         title: 'Platform',
@@ -13,28 +13,28 @@ const groups = [
     {
         title: 'Products',
         links: [
-            { href: '#', label: 'Spot Trading' },
-            { href: '#', label: 'Futures' },
-            { href: '#', label: 'AI Trading Bot' },
-            { href: '#', label: 'Managed Accounts' },
+            { href: '/spot-trading', label: 'Spot Trading' },
+            { href: '/futures', label: 'Futures' },
+            { href: '/ai-trading-bot', label: 'AI Trading Bot' },
+            { href: '/managed-accounts', label: 'Managed Accounts' },
         ],
     },
     {
         title: 'Company',
         links: [
-            { href: '#', label: 'About' },
-            { href: '#', label: 'Careers' },
-            { href: '#', label: 'Press' },
-            { href: '#', label: 'Institutional' },
+            { href: '/about', label: 'About' },
+            { href: '/careers', label: 'Careers' },
+            { href: '/press', label: 'Press' },
+            { href: '/institutional', label: 'Institutional' },
         ],
     },
     {
         title: 'Legal',
         links: [
-            { href: '#', label: 'Terms of Service' },
-            { href: '#', label: 'Privacy Policy' },
-            { href: '#', label: 'AML Policy' },
-            { href: '#', label: 'Risk Disclosure' },
+            { href: '/legal/terms', label: 'Terms of Service' },
+            { href: '/legal/privacy', label: 'Privacy Policy' },
+            { href: '/legal/aml', label: 'AML Policy' },
+            { href: '/legal/risk-disclosure', label: 'Risk Disclosure' },
         ],
     },
 ];
@@ -56,10 +56,6 @@ export function Footer() {
               Institutional-grade digital asset platform — secure, regulated, and engineered for performance.
             </p>
             <div className="mt-5 flex items-center gap-3">
-              <a href="#" aria-label="Twitter" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Twitter className="h-4 w-4"/></a>
-              <a href="#" aria-label="Github" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Github className="h-4 w-4"/></a>
-              <a href="#" aria-label="LinkedIn" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Linkedin className="h-4 w-4"/></a>
-              <a href="#" aria-label="YouTube" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Youtube className="h-4 w-4"/></a>
               <a href="https://t.me/" aria-label="Telegram" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Send className="h-4 w-4"/></a>
               <a href="https://wa.me/" aria-label="WhatsApp" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><MessageCircle className="h-4 w-4"/></a>
             </div>

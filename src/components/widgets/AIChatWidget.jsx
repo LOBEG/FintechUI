@@ -25,11 +25,14 @@ export function AIChatWidget() {
         setTimeout(() => setMsgs((m) => [...m, ai]), 600);
     };
     return (<>
-      <motion.button onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} className="fixed bottom-5 left-5 z-40 h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950" aria-label="Open AI Assistant">
+      <AnimatePresence>
+        {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-ink-950/60 backdrop-blur-sm z-[55]" aria-label="Close AI Assistant"/>)}
+      </AnimatePresence>
+      <motion.button onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950" aria-label="Open AI Assistant">
         {open ? <X className="h-6 w-6"/> : <Bot className="h-6 w-6"/>}
       </motion.button>
       <AnimatePresence>
-        {open && (<motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-5 z-40 w-[92vw] max-w-sm glass-strong overflow-hidden flex flex-col" style={{ height: 480 }}>
+        {open && (<motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-4 right-4 lg:left-5 lg:right-auto z-[60] w-[calc(100vw-2rem)] max-w-md lg:w-96 bg-ink-900 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-[70vh] lg:h-[480px]">
             <div className="px-4 py-3 border-b border-white/10 flex items-center gap-2">
               <span className="h-8 w-8 rounded-lg bg-neon-grad inline-flex items-center justify-center text-ink-950">
                 <Sparkles className="h-4 w-4"/>

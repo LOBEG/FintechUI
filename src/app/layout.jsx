@@ -4,7 +4,7 @@ import { TelegramWhatsAppCTA } from '@/components/widgets/TelegramWhatsAppCTA';
 import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
 export const metadata = {
-    title: 'AurumX — Luxury Digital Asset & Crypto Investment Platform',
+    title: 'AurumX — Institutional Digital Asset & Crypto Investment Platform',
     description: 'AurumX is an institutional-grade cryptocurrency trading and digital asset management platform combining BlackRock-grade sophistication with Binance-level performance.',
     keywords: [
         'crypto',
@@ -19,7 +19,7 @@ export const metadata = {
     ],
     authors: [{ name: 'AurumX' }],
     openGraph: {
-        title: 'AurumX — Luxury Digital Asset Platform',
+        title: 'AurumX — Institutional Digital Asset Platform',
         description: 'Institutional digital asset investment platform for high-net-worth investors and corporate clients.',
         type: 'website',
     },
@@ -28,6 +28,8 @@ export const viewport = {
     themeColor: '#05070d',
     width: 'device-width',
     initialScale: 1,
+    maximumScale: 5,
+    viewportFit: 'cover',
 };
 export default function RootLayout({ children }) {
     return (<html lang="en" suppressHydrationWarning>

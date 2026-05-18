@@ -1,10 +1,10 @@
-# AurumX — Luxury Digital Asset & Crypto Investment Platform
+# AurumX — Institutional Digital Asset & Crypto Investment Platform
 
 > **Platform name:** **AurumX** — registerable as `aurumx.io`, `aurumx.app`, `aurumx.finance`, `aurumx.trade`, `aurumxcapital.com`.
 >
-> *“BlackRock meets Binance.”* AurumX is a luxury, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
+> *“BlackRock meets Binance.”* AurumX is a professional, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
 
-A production-grade Next.js 15 (App Router) frontend with Tailwind CSS, Framer Motion, and a curated dark-luxury fintech aesthetic — black + deep navy with **neon green / orange** trading accents and **gold** institutional accents, glassmorphism cards, soft shadows, smooth animations, and a mobile-first responsive layout.
+A production-grade Next.js 15 (App Router) frontend with Tailwind CSS, Framer Motion, and a curated institutional fintech aesthetic — black + deep navy with **neon green / orange** trading accents and **gold** institutional accents, glassmorphism cards, soft shadows, smooth animations, and a mobile-first responsive layout.
 
 ---
 
@@ -347,3 +347,108 @@ This repository delivers the full **production-ready frontend & backend code** f
 ## 📄 License
 
 Proprietary © AurumX Capital Ltd. — UI scaffolding provided as-is for demonstration purposes.
+
+---
+
+## Railway Environment Variables
+
+Below is a complete list of all environment variables used by AurumX. Set these in your Railway project's **Variables** tab.
+
+### Required (Production)
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `DATA_DIR` | Path to writable volume where user data, transactions, and tokens are persisted | `/data` (Railway volume) or `./data` (local dev) |
+| `SESSION_SECRET` | 32+ character random string for HMAC-signing session cookies | `abc123...xyz` |
+| `JWT_SECRET` | Secret key for signing JWT access tokens | `your-secret-key-here` |
+| `JWT_REFRESH_SECRET` | Secret key for signing JWT refresh tokens | `your-refresh-secret-here` |
+| `ADMIN_EMAIL` | Email for bootstrapping the first admin account | `admin@aurumx.com` |
+| `ADMIN_PASSWORD` | Password for the admin account (first login creates it) | `SecurePass123!` |
+
+### Recommended
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the platform (used in emails and OAuth redirects) | `https://aurumx.app` |
+| `APP_URL` | Alternative name for public URL (used in some email templates) | `https://aurumx.app` |
+
+### Optional — Email (SMTP)
+
+If set, AurumX sends deposit/withdrawal/auth emails via SMTP. If unset, emails are logged to `data/outbox.json`.
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `SMTP_HOST` | SMTP server hostname | `smtp.sendgrid.net` |
+| `SMTP_PORT` | SMTP server port | `587` or `465` |
+| `SMTP_USER` | SMTP username | `apikey` (SendGrid) |
+| `SMTP_PASS` | SMTP password or API key | `SG.abc123...` |
+| `SMTP_FROM` | "From" address for outgoing emails | `no-reply@aurumx.com` |
+| `SMTP_SECURE` | Use TLS (set to `true` for port 465) | `false` |
+| `EMAIL_FROM` | Alternative "From" address (fallback) | `support@aurumx.com` |
+
+### Optional — Telegram Bot
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `TELEGRAM_BOT_TOKEN` | BotFather token for the admin Telegram bot | `123456:ABC-DEF...` |
+| `TELEGRAM_CHAT_ID` | Telegram chat ID(s) allowed to run admin commands (comma-separated) | `123456789,987654321` |
+| `TELEGRAM_ADMIN_CHAT_IDS` | Alternative name for admin chat IDs | `123456789` |
+| `TELEGRAM_WEBHOOK_SECRET` | Random secret token echoed by Telegram in webhook headers | `random-secret-123` |
+
+### Optional — WhatsApp (Meta Business API)
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `WHATSAPP_TOKEN` | Access token for WhatsApp Business API | `Bearer EAAxxxx...` |
+| `WHATSAPP_PHONE_ID` | Phone number ID from Meta Business | `123456789012345` |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business account ID (optional) | `987654321098765` |
+| `WHATSAPP_ADMIN_NUMBER` | Admin phone number for alerts (international format) | `+447700900123` |
+
+### Optional — OAuth (Google / Apple Sign-In)
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID | `123456-abcd.apps.googleusercontent.com` |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret | `GOCSPX-abc123...` |
+| `APPLE_CLIENT_ID` | Apple Sign In service ID | `com.aurumx.signin` |
+| `APPLE_CLIENT_SECRET` | Apple Sign In client secret (JWT signed with private key) | `eyJhbGc...` |
+
+### Optional — External APIs
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `BINANCE_API_BASE` | Binance API base URL (defaults to public API) | `https://api.binance.com` |
+
+### Optional — Feature Toggles
+
+| Variable | Purpose | Example |
+| --- | --- | --- |
+| `AUTO_APPROVE_TESTIMONIALS` | Auto-approve user testimonials (`false` = manual moderation) | `true` |
+
+---
+
+## How to Deploy on Railway
+
+1. **Create a new project** on [railway.app](https://railway.app) and connect this GitHub repository.
+2. **Attach a volume**: Go to **Volumes** → **New Volume** → mount at `/data`. This persists user data across redeploys.
+3. **Set environment variables**: In **Variables**, add at minimum:
+   - `DATA_DIR=/data`
+   - `SESSION_SECRET=<random-32-char-string>`
+   - `JWT_SECRET=<random-string>`
+   - `JWT_REFRESH_SECRET=<random-string>`
+   - `ADMIN_EMAIL=admin@aurumx.com`
+   - `ADMIN_PASSWORD=<secure-password>`
+   - `NEXT_PUBLIC_APP_URL=https://<your-railway-domain>.railway.app`
+4. **Deploy**: Railway auto-detects Next.js and runs `npm ci && npm run build`, then starts with `npm run start`.
+5. **Add a custom domain** (optional): Under **Settings** → **Domains**, add `aurumx.app` or your preferred domain.
+
+After deployment, if you configured Telegram, register the webhook:
+
+```bash
+curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
+  -d "url=https://<your-domain>/api/telegram/webhook" \
+  -d "secret_token=$TELEGRAM_WEBHOOK_SECRET"
+```
+
+Then send `/start` to your bot.
+

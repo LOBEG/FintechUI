@@ -10,17 +10,36 @@
 
   html,
   body {
+    overflow-x: hidden;
+    max-width: 100vw;
     background: rgb(var(--bg));
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
+  * {
+    min-width: 0;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
   body {
+    @apply bg-ink-950 dark:bg-ink-950;
     background-image:
       radial-gradient(1200px 600px at 80% -10%, rgba(0, 255, 163, 0.08), transparent 60%),
       radial-gradient(1000px 500px at -10% 10%, rgba(230, 173, 38, 0.08), transparent 60%),
       radial-gradient(800px 400px at 50% 100%, rgba(255, 138, 0, 0.06), transparent 60%);
+  }
+
+  body:not(.dark) {
+    @apply bg-[#f7f8fb] text-ink-950;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(0, 255, 163, 0.04), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(230, 173, 38, 0.04), transparent 60%);
   }
 
   ::selection {
@@ -37,6 +56,9 @@
   .glass { @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl; }
   .glass-strong { @apply bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-2xl; }
   .glass-light { @apply bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl; }
+  .glass-card { @apply bg-white/80 backdrop-blur-xl border border-white/40 rounded-2xl shadow-[0_8px_30px_rgba(2,6,23,0.08)]; }
+  .terminal-panel { @apply bg-navy-950 text-white rounded-3xl border border-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.45)]; }
+  .browser-frame { @apply rounded-3xl overflow-hidden shadow-2xl border border-white/10; }
   .text-gradient-gold {
     background: linear-gradient(135deg, #fff3c0 0%, #e6ad26 50%, #8d6310 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
