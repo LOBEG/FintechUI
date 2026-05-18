@@ -2,6 +2,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { TelegramWhatsAppCTA } from '@/components/widgets/TelegramWhatsAppCTA';
 import { AIChatWidget } from '@/components/widgets/AIChatWidget';
+import { SiteBanner } from '@/components/layout/SiteBanner';
 export const metadata = {
     title: 'AurumX — Luxury Digital Asset & Crypto Investment Platform',
     description: 'AurumX is an institutional-grade cryptocurrency trading and digital asset management platform combining BlackRock-grade sophistication with Binance-level performance.',
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
     return (<html lang="en" suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased text-white">
         <Providers>
+          <SiteBanner />
           {children}
           <AIChatWidget />
           <TelegramWhatsAppCTA />

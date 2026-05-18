@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Wallet, Plus, Bot, Eye, Star, Zap, } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
@@ -8,6 +8,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { CandlestickChart, Sparkline, BarChart, DonutChart } from '@/components/ui/Charts';
 import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
+import { InvestModal, WithdrawModal } from '@/components/dashboard/TradeModals';
+import { useSession, api } from '@/lib/useSession';
 
 const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
 const WALLET_HOLDINGS = [
@@ -36,6 +38,15 @@ export default function DashboardPage() {
     const [orderType, setOrderType] = useState('limit');
     const [amount, setAmount] = useState('0.05');
     const [interval, setInterval] = useState('5m');
+    const [investOpen, setInvestOpen] = useState(false);
+    const [withdrawOpen, setWithdrawOpen] = useState(false);
+    const { user } = useSession();
+    const [liveWallet, setLiveWallet] = useState(null);
+    const refreshWallet = useCallback(async () => {
+        if (!user) { setLiveWallet(null); return; }
+        try { const w = await api.get('/api/wallet'); setLiveWallet(w); } catch (_) {}
+    }, [user]);
+    useEffect(() => { refreshWallet(); }, [refreshWallet]);
     const livePrices = useLivePrices([...new Set([...WATCHLIST_SYMBOLS, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT'])]);
     const candles = useLiveKlines('BTCUSDT', interval, 80);
     const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
@@ -43,11 +54,32 @@ export default function DashboardPage() {
     const [price, setPrice] = useState('');
     const effectivePrice = price || (btc.price ? btc.price.toFixed(2) : '0');
 
-    // Live wallet valuations
-    const wallets = WALLET_HOLDINGS.map((w) => {
-        const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
-        return { ...w, price: px, value: w.bal * px };
-    });
+    // Wallet: real balances when logged in, demo otherwise.
+    const wallets = useMemo(() => {
+        if (liveWallet) {
+            const meta = {
+                BTC: { name: 'Bitcoin', color: '#f7931a', key: 'BTCUSDT' },
+                ETH: { name: 'Ethereum', color: '#627eea', key: 'ETHUSDT' },
+                SOL: { name: 'Solana', color: '#14f195', key: 'SOLUSDT' },
+                XRP: { name: 'XRP', color: '#22c55e', key: 'XRPUSDT' },
+                BNB: { name: 'BNB', color: '#f3ba2f', key: 'BNBUSDT' },
+                USDT: { name: 'Tether', color: '#26a17b', key: null },
+            };
+            // ensure BTC/ETH/SOL/USDT always shown
+            const must = ['BTC', 'ETH', 'SOL', 'USDT'];
+            const symbols = Array.from(new Set([...must, ...Object.keys(liveWallet.balances || {})]));
+            return symbols.map((sym) => {
+                const m = meta[sym] || { name: sym, color: '#999', key: `${sym}USDT` };
+                const bal = liveWallet.balances?.[sym] || 0;
+                const px = sym === 'USDT' ? 1 : (livePrices[m.key]?.price ?? 0);
+                return { sym, name: m.name, color: m.color, key: m.key, bal, price: px, value: bal * px };
+            });
+        }
+        return WALLET_HOLDINGS.map((w) => {
+            const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
+            return { ...w, price: px, value: w.bal * px };
+        });
+    }, [liveWallet, livePrices]);
     const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
     const portfolioAllocation = useMemo(
       () => wallets.map((w) => ({ label: w.sym, value: totalBalance ? Math.round((w.value / totalBalance) * 100) : 0, color: w.color })),
@@ -63,7 +95,8 @@ export default function DashboardPage() {
         return { ...p, mark, pnl, roe };
     });
     const openPnl = positions.reduce((s, p) => s + p.pnl, 0);
-    const cashUSDT = WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal;
+    const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal;
+    const userBalances = liveWallet?.balances || {};
 
     return (<div className="flex">
       <Sidebar />
@@ -87,8 +120,8 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="hidden sm:flex gap-2">
-                  <button className="btn-primary text-sm"><Plus className="h-4 w-4"/> Deposit</button>
-                  <button className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Withdraw</button>
+                  <button onClick={() => setInvestOpen(true)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> Invest</button>
+                  <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Withdraw</button>
                 </div>
               </div>
               <div className="mt-3 h-24">
@@ -337,7 +370,14 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {transactions.map((t, i) => {
+                  {(liveWallet?.transactions?.length ? liveWallet.transactions.slice(0, 10).map((t) => ({
+                    type: t.type === 'invest' ? 'Buy' : t.type === 'admin_credit' ? 'Deposit' : t.type === 'withdraw' ? 'Withdraw' : t.type,
+                    asset: t.symbol,
+                    amount: Number(t.amount).toLocaleString(undefined, { maximumFractionDigits: 8 }),
+                    value: t.usdValue || 0,
+                    time: new Date(t.createdAt).toLocaleString(),
+                    status: t.status === 'completed' ? 'Completed' : t.status,
+                  })) : transactions).map((t, i) => {
             const isIn = t.type === 'Buy' || t.type === 'Deposit';
             return (<tr key={i}>
                         <td className="py-2.5">
@@ -359,12 +399,14 @@ export default function DashboardPage() {
           </section>
 
           {/* Mobile floating action button */}
-          <button className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
+          <button onClick={() => setInvestOpen(true)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
             <Wallet className="h-6 w-6"/>
           </button>
         </main>
       </div>
       <MobileBottomNav />
+      <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} usdtBalance={cashUSDT}/>
+      <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
     </div>);
 }
 function Field({ label, value, onChange, disabled, }) {

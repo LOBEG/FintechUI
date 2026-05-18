@@ -6,6 +6,7 @@ import { TopBar } from '@/components/dashboard/TopBar';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BarChart, Sparkline, DonutChart } from '@/components/ui/Charts';
 import { formatUSD } from '@/lib/utils';
+import { AdminOperations } from '@/components/admin/AdminOperations';
 const users = [
     { id: 'U-10241', name: 'Helena Marchetti', email: 'helena@marchetti.fo', tier: 'Institutional', kyc: 'Verified', bal: 4218742, status: 'Active' },
     { id: 'U-10242', name: 'Daniel Okafor', email: 'd.okafor@lumen.co', tier: 'Corporate', kyc: 'Verified', bal: 1872312, status: 'Active' },
@@ -48,6 +49,7 @@ export default function AdminPage() {
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <TopBar title="Admin Console"/>
         <main className="p-4 sm:p-6 space-y-6">
+          <AdminOperations />
           {/* KPIs */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[

@@ -1,9 +1,15 @@
 'use client';
-import { Search, Bell, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Search, Bell, ChevronDown, LogOut, LogIn } from 'lucide-react';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
+import { useSession } from '@/lib/useSession';
 export function TopBar({ title }) {
+    const { user, logout } = useSession();
+    const router = useRouter();
+    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : 'AV';
     return (<header className="h-16 border-b border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 z-30">
       <div className="h-full px-4 sm:px-6 flex items-center gap-3">
         <h1 className="text-lg font-display hidden sm:block">{title}</h1>
@@ -15,16 +21,27 @@ export function TopBar({ title }) {
         <div className="ml-auto flex items-center gap-2">
           <LanguageSelector />
           <ThemeToggle />
-          <button className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10">
+          <button className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10" aria-label="Notifications">
             <Bell className="h-4 w-4"/>
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-neon-orange"/>
           </button>
           <Web3ConnectButton />
-          <div className="hidden sm:flex items-center gap-2 pl-2">
-            <div className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold text-sm">AV</div>
-            <ChevronDown className="h-4 w-4 text-white/50"/>
-          </div>
+          {user ? (
+            <div className="hidden sm:flex items-center gap-2 pl-2">
+              <div title={user.email} className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold text-sm">{initials}</div>
+              <div className="text-xs leading-tight hidden md:block">
+                <div className="font-medium">{user.name || user.email.split('@')[0]}</div>
+                <div className="text-white/45">{user.isAdmin ? 'Admin' : 'Member'}</div>
+              </div>
+              <button onClick={async () => { await logout(); router.push('/'); }} aria-label="Sign out" className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10">
+                <LogOut className="h-4 w-4"/>
+              </button>
+            </div>
+          ) : (
+            <Link href="/login" className="btn-ghost text-sm"><LogIn className="h-4 w-4"/> Sign in</Link>
+          )}
         </div>
       </div>
     </header>);
 }
+

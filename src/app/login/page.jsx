@@ -1,11 +1,32 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, Loader2 } from 'lucide-react';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
+import { useSession } from '@/lib/useSession';
 export default function LoginPage() {
     const [show, setShow] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [busy, setBusy] = useState(false);
+    const { login } = useSession();
+    const router = useRouter();
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setBusy(true);
+        try {
+            const u = await login(email, password);
+            router.push(u.isAdmin ? '/admin' : '/dashboard');
+        } catch (err) {
+            setError(err.message || 'Login failed');
+        } finally {
+            setBusy(false);
+        }
+    };
     return (<main className="min-h-screen flex">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
@@ -31,19 +52,19 @@ export default function LoginPage() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
           <h1 className="text-2xl font-display">Sign in to AurumX</h1>
           <p className="text-sm text-white/60 mt-1">Welcome back. Please enter your details.</p>
-          <form className="mt-6 space-y-3" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">Email</span>
               <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
                 <Mail className="h-4 w-4 text-white/40"/>
-                <input type="email" placeholder="you@firm.com" className="bg-transparent outline-none text-sm flex-1"/>
+                <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@firm.com" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Password</span>
               <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
                 <Lock className="h-4 w-4 text-white/40"/>
-                <input type={show ? 'text' : 'password'} placeholder="••••••••" className="bg-transparent outline-none text-sm flex-1"/>
+                <input type={show ? 'text' : 'password'} autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="bg-transparent outline-none text-sm flex-1"/>
                 <button type="button" onClick={() => setShow(!show)} aria-label="Toggle password visibility">
                   {show ? <EyeOff className="h-4 w-4 text-white/40"/> : <Eye className="h-4 w-4 text-white/40"/>}
                 </button>
@@ -53,7 +74,10 @@ export default function LoginPage() {
               <label className="inline-flex items-center gap-2"><input type="checkbox" className="accent-neon-green"/> Remember me</label>
               <Link href="#" className="hover:text-white">Forgot password?</Link>
             </div>
-            <button className="btn-primary w-full mt-2">Sign in</button>
+            {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+            <button disabled={busy} className="btn-primary w-full mt-2 disabled:opacity-60">
+              {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Signing in…</> : 'Sign in'}
+            </button>
           </form>
           <div className="my-5 flex items-center gap-3 text-[11px] text-white/40">
             <span className="flex-1 h-px bg-white/10"/> or continue with <span className="flex-1 h-px bg-white/10"/>
@@ -70,3 +94,4 @@ export default function LoginPage() {
       </section>
     </main>);
 }
+

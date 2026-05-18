@@ -3,9 +3,14 @@
 // (configurable via DATA_DIR env). Falls back to <repo>/data in dev.
 //
 // All public functions are synchronous to keep the API routes simple.
-// Concurrency safety relies on Node's single-thread event loop and the
-// atomic-rename `writeFileSync` pattern. For very high concurrency you
-// would swap this layer for SQLite / Postgres without touching callers.
+// Concurrency safety relies on Node's single-thread event loop plus the
+// `writeFileSync` + `renameSync` pattern, which is atomic on POSIX
+// filesystems (Railway/Linux) for same-directory renames. Two API requests
+// arriving in the same event-loop tick are serialized by Node so they
+// cannot interleave reads/writes. This is fine for the volumes a typical
+// fintech UI/demo workload handles. For multi-process deployments or
+// very high concurrency, swap this layer for SQLite / Postgres without
+// touching callers (every callsite goes through the helpers below).
 
 import fs from 'node:fs';
 import path from 'node:path';
