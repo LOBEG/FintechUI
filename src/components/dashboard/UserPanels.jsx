@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose } from 'lucide-react';
+import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
 
@@ -116,6 +116,14 @@ export function MarketsPanel({ onInvest }) {
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState('');
   const [watchlist, setWatchlist] = useState([]); // base symbols
+  // Column sort. Click a header to toggle asc/desc; clicking a different
+  // column resets to desc (the more useful direction for price/volume).
+  const [sortBy, setSortBy] = useState(null); // 'price' | 'pct' | 'volume' | null
+  const [sortDir, setSortDir] = useState('desc');
+  const requestSort = (col) => {
+    if (sortBy === col) setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'));
+    else { setSortBy(col); setSortDir('desc'); }
+  };
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -160,6 +168,37 @@ export function MarketsPanel({ onInvest }) {
     const s = q.toLowerCase();
     return r.symbol.toLowerCase().includes(s) || r.name.toLowerCase().includes(s);
   });
+  // Apply column sort if one is active. Missing values sort to the end so
+  // a freshly-rendered table with one slow row doesn't claim first place.
+  const sorted = sortBy
+    ? filtered.slice().sort((a, b) => {
+      const av = a[sortBy]; const bv = b[sortBy];
+      const aMissing = av == null || !isFinite(av);
+      const bMissing = bv == null || !isFinite(bv);
+      if (aMissing && bMissing) return 0;
+      if (aMissing) return 1;
+      if (bMissing) return -1;
+      return sortDir === 'asc' ? av - bv : bv - av;
+    })
+    : filtered;
+  const sortIndicator = (col) => {
+    if (sortBy !== col) return null;
+    return <span aria-hidden className="ml-1 text-white/60">{sortDir === 'asc' ? '▲' : '▼'}</span>;
+  };
+  const sortableHeader = (col, label, extraClass = '') => (
+    <th
+      className={`py-2 font-medium ${extraClass}`}
+      aria-sort={sortBy === col ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => requestSort(col)}
+        className="inline-flex items-center hover:text-white/80"
+      >
+        {label}{sortIndicator(col)}
+      </button>
+    </th>
+  );
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -176,16 +215,16 @@ export function MarketsPanel({ onInvest }) {
             <tr>
               {user && <th className="py-2 font-medium w-6"><span className="sr-only">Favourite</span></th>}
               <th className="py-2 font-medium">Asset</th>
-              <th className="py-2 font-medium">Price</th>
-              <th className="py-2 font-medium">24h</th>
+              {sortableHeader('price', 'Price')}
+              {sortableHeader('pct', '24h')}
               <th className="py-2 font-medium hidden md:table-cell">24h High</th>
               <th className="py-2 font-medium hidden md:table-cell">24h Low</th>
-              <th className="py-2 font-medium hidden lg:table-cell">24h Volume (USD)</th>
+              {sortableHeader('volume', '24h Volume (USD)', 'hidden lg:table-cell')}
               <th className="py-2 font-medium text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filtered.map((r) => {
+            {sorted.map((r) => {
               const fav = watchlist.includes(r.symbol);
               return (
               <tr key={r.symbol}>
@@ -1195,6 +1234,209 @@ export function PriceAlertsPanel() {
           </ul>
         </details>
       )}
+    </section>
+  );
+}
+
+// =============================================================
+// ConvertPanel — one-tap swap between two assets at live mid +
+// a small spread (0.5 % by default). Posts to /api/convert.
+// =============================================================
+const CONVERT_ASSETS = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'MATIC', 'LINK', 'LTC', 'USDT'];
+
+export function ConvertPanel({ onConverted } = {}) {
+  const { user } = useSession();
+  const [from, setFrom] = useState('BTC');
+  const [to, setTo] = useState('USDT');
+  const [amount, setAmount] = useState('');
+  const [preview, setPreview] = useState(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  // Debounced live preview while the user types.
+  useEffect(() => {
+    if (!user) return;
+    const amt = parseFloat(amount);
+    if (!isFinite(amt) || amt <= 0 || !from || !to || from === to) {
+      setPreview(null); return;
+    }
+    let cancelled = false;
+    setPreviewBusy(true);
+    const id = setTimeout(async () => {
+      try {
+        const r = await api.get(`/api/convert?from=${from}&to=${to}&amount=${amt}`);
+        if (!cancelled) setPreview(r);
+      } catch (err) {
+        if (!cancelled) { setPreview(null); }
+      } finally {
+        if (!cancelled) setPreviewBusy(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(id); setPreviewBusy(false); };
+  }, [user, from, to, amount]);
+  if (!user) return null;
+  const swap = () => { setFrom(to); setTo(from); setPreview(null); };
+  const execute = async (e) => {
+    e.preventDefault(); setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/convert', { from, to, amount: parseFloat(amount) });
+      setMsg({ kind: 'ok', text: `Converted ${amount} ${from} → ${r.transactions[1].amount} ${to}.` });
+      setAmount(''); setPreview(null);
+      onConverted && onConverted(r);
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message });
+    } finally { setBusy(false); }
+  };
+  const fromBalance = user.balances?.[from] || 0;
+  return (
+    <section className="glass-strong p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <ArrowRightLeft className="h-4 w-4 text-gold-400"/>
+        <h3 className="font-display text-lg">Convert</h3>
+        <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">live mid + spread</span>
+      </div>
+      <p className="text-xs text-white/55 mb-3">
+        Swap directly between any two supported assets at the live Binance mid price.
+        A small spread covers the broker leg — no separate trading fee.
+      </p>
+      <form onSubmit={execute} className="space-y-3">
+        <div className="grid sm:grid-cols-[1fr_auto_1fr] gap-2 items-end">
+          <label className="block">
+            <span className="text-[11px] text-white/55">From</span>
+            <select
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+            >
+              {CONVERT_ASSETS.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+          <button
+            type="button"
+            onClick={swap}
+            aria-label="Swap from and to"
+            title="Swap from and to"
+            className="self-end p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10"
+          >
+            <ArrowRightLeft className="h-4 w-4"/>
+          </button>
+          <label className="block">
+            <span className="text-[11px] text-white/55">To</span>
+            <select
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+            >
+              {CONVERT_ASSETS.filter((s) => s !== from).map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+        </div>
+        <label className="block">
+          <span className="text-[11px] text-white/55">
+            Amount ({from})
+            <button
+              type="button"
+              onClick={() => setAmount(String(fromBalance))}
+              className="ml-2 text-neon-gold hover:underline"
+            >
+              max: {fromBalance}
+            </button>
+          </span>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder={`0.00 ${from}`}
+            className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+            required
+          />
+        </label>
+        {preview && (
+          <div className="text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 space-y-0.5">
+            <div className="flex justify-between"><span className="text-white/55">You receive</span><span className="font-semibold">{preview.toAmount} {preview.to}</span></div>
+            <div className="flex justify-between"><span className="text-white/55">Rate</span><span>1 {preview.from} ≈ {preview.rate?.toFixed(preview.to === 'USDT' ? 2 : 6)} {preview.to}</span></div>
+            <div className="flex justify-between"><span className="text-white/55">Spread ({(preview.spreadBps / 100).toFixed(2)} %)</span><span>${preview.spreadUsd?.toFixed(2)}</span></div>
+          </div>
+        )}
+        {previewBusy && !preview && <p className="text-[11px] text-white/45">Fetching live rate…</p>}
+        {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+        <button
+          disabled={busy || !preview || fromBalance + 1e-9 < parseFloat(amount || '0')}
+          className="btn-primary justify-center disabled:opacity-60 w-full"
+        >
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Converting…</> : `Convert ${from} → ${to}`}
+        </button>
+      </form>
+    </section>
+  );
+}
+
+// =============================================================
+// EmptyStateCoach — three-step Start-here panel for brand-new
+// users with no balances and no transactions yet. Hidden once
+// the user has any non-zero balance.
+// =============================================================
+export function EmptyStateCoach() {
+  const { user } = useSession();
+  const [dismissed, setDismissed] = useState(false);
+  if (!user || dismissed) return null;
+  const totalCrypto = Object.entries(user.balances || {})
+    .reduce((sum, [, v]) => sum + (Number(v) || 0), 0);
+  if (totalCrypto > 0) return null;
+  const emailVerified = !!user.emailVerifiedAt;
+  const steps = [
+    {
+      done: emailVerified,
+      title: 'Verify your email',
+      body: 'Confirm the six-digit code we sent. Verification unlocks deposits, withdrawals, and KYC.',
+    },
+    {
+      done: false,
+      title: 'Fund your account',
+      body: 'Claim sandbox USDT (if enabled) or send a deposit to the asset address shown in the wallet panel.',
+    },
+    {
+      done: false,
+      title: 'Place your first trade',
+      body: 'Open the Invest panel, choose an asset, and execute at the live market price.',
+    },
+  ];
+  return (
+    <section className="glass-strong p-5 border border-gold-500/20">
+      <div className="flex items-center gap-2 mb-3">
+        <Rocket className="h-4 w-4 text-gold-400"/>
+        <h3 className="font-display text-lg">Start here</h3>
+        <span className="chip bg-gold-500/15 text-gold-300 border border-gold-500/30">new account</span>
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          aria-label="Dismiss Start here tour"
+          className="ml-auto p-1 rounded hover:bg-white/10 text-white/60"
+        >
+          <BellClose className="h-4 w-4"/>
+        </button>
+      </div>
+      <p className="text-xs text-white/55 mb-4">
+        Welcome to AurumX. Complete these three steps to unlock the full broker dashboard.
+      </p>
+      <ol className="space-y-3">
+        {steps.map((s, i) => (
+          <li key={s.title} className="flex gap-3">
+            <span
+              className={`h-7 w-7 shrink-0 rounded-full inline-flex items-center justify-center text-xs font-semibold ${s.done ? 'bg-neon-green/20 text-neon-green border border-neon-green/40' : 'bg-white/5 text-white/70 border border-white/15'}`}
+              aria-hidden
+            >
+              {s.done ? <Check className="h-3.5 w-3.5"/> : i + 1}
+            </span>
+            <div>
+              <p className={`text-sm font-medium ${s.done ? 'line-through text-white/45' : ''}`}>{s.title}</p>
+              <p className="text-xs text-white/55">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
