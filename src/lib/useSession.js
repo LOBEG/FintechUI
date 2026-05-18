@@ -21,6 +21,7 @@ async function jsonFetch(url, opts = {}) {
 export const api = {
   get: (u) => jsonFetch(u),
   post: (u, body) => jsonFetch(u, { method: 'POST', body: JSON.stringify(body || {}) }),
+  patch: (u, body) => jsonFetch(u, { method: 'PATCH', body: JSON.stringify(body || {}) }),
   del: (u, body) => jsonFetch(u, { method: 'DELETE', body: JSON.stringify(body || {}) }),
 };
 

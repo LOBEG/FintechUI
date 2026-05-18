@@ -10,6 +10,7 @@ import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 import { InvestModal, WithdrawModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer } from '@/components/dashboard/UserPanels';
 
 const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
 const WALLET_HOLDINGS = [
@@ -39,6 +40,8 @@ export default function DashboardPage() {
     const [amount, setAmount] = useState('0.05');
     const [interval, setInterval] = useState('5m');
     const [investOpen, setInvestOpen] = useState(false);
+    const [investSymbol, setInvestSymbol] = useState('BTC');
+    const openInvest = useCallback((sym) => { if (sym) setInvestSymbol(sym); setInvestOpen(true); }, []);
     const [withdrawOpen, setWithdrawOpen] = useState(false);
     const { user } = useSession();
     const [liveWallet, setLiveWallet] = useState(null);
@@ -159,6 +162,19 @@ export default function DashboardPage() {
                 <div className="mt-2"><Sparkline seed={i + 2} positive={w.key ? (livePrices[w.key]?.pct ?? 0) >= 0 : true}/></div>
               </motion.div>))}
           </section>
+
+          {/* Deposit addresses + markets — only after sign-in for deposit, markets always */}
+          {user && (
+            <section className="grid xl:grid-cols-2 gap-4">
+              <DepositAddressPanel />
+              <MarketsPanel onInvest={openInvest} />
+            </section>
+          )}
+          {!user && (
+            <section>
+              <MarketsPanel onInvest={openInvest} />
+            </section>
+          )}
 
           {/* Chart + Buy/Sell */}
           <section className="grid xl:grid-cols-3 gap-4">
@@ -398,6 +414,9 @@ export default function DashboardPage() {
             </div>
           </section>
 
+          {/* Testimonial composer — for invested users to share feedback */}
+          {user && <TestimonialComposer />}
+
           {/* Mobile floating action button */}
           <button onClick={() => setInvestOpen(true)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
             <Wallet className="h-6 w-6"/>
@@ -405,7 +424,7 @@ export default function DashboardPage() {
         </main>
       </div>
       <MobileBottomNav />
-      <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} usdtBalance={cashUSDT}/>
+      <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} usdtBalance={cashUSDT} defaultSymbol={investSymbol}/>
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
     </div>);
 }

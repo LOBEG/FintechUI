@@ -5,7 +5,7 @@ import { X, Loader2, ArrowDownLeft, ArrowUpRight, CheckCircle2, ShieldAlert } fr
 import { api } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 
-const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC'];
+const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'TON', 'ATOM', 'NEAR', 'APT', 'ARB', 'OP', 'SUI', 'FIL', 'INJ', 'SHIB', 'PEPE', 'BCH', 'ETC', 'XLM', 'ALGO', 'HBAR'];
 
 function Modal({ open, onClose, title, icon, children }) {
   return (
@@ -43,7 +43,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', u
   const prices = useLivePrices([`${symbol}USDT`]);
   const px = prices[`${symbol}USDT`]?.price || 0;
   const estCrypto = px ? parseFloat(usdAmount || '0') / px : 0;
-  useEffect(() => { if (open) { setSuccess(null); setError(null); } }, [open]);
+  useEffect(() => { if (open) { setSuccess(null); setError(null); setSymbol(defaultSymbol || 'BTC'); } }, [open, defaultSymbol]);
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setError(null);

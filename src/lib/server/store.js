@@ -164,3 +164,53 @@ export function revokeSession(id) {
   const arr = listSessions().filter((s) => s.id !== id);
   write('sessions', arr);
 }
+
+// --------------- DEPOSIT ADDRESSES ---------------
+// One global record per symbol (the address the admin advertises for
+// inbound transfers). Stored as { SYMBOL: { address, memo?, network?,
+// updatedAt, updatedBy } }.
+export function listDepositAddresses() {
+  return read('depositAddresses', {});
+}
+export function setDepositAddress(symbol, payload) {
+  const sym = String(symbol || '').toUpperCase();
+  if (!sym) throw new Error('symbol required');
+  const all = listDepositAddresses();
+  all[sym] = { ...payload, symbol: sym, updatedAt: Date.now() };
+  write('depositAddresses', all);
+  return all[sym];
+}
+export function removeDepositAddress(symbol) {
+  const sym = String(symbol || '').toUpperCase();
+  const all = listDepositAddresses();
+  if (!all[sym]) return false;
+  delete all[sym];
+  write('depositAddresses', all);
+  return true;
+}
+
+// --------------- TESTIMONIALS ---------------
+// Testimonial = { id, userId, name, role, text, rating (1-5), status:
+//                 'pending'|'approved'|'rejected', createdAt, moderatedAt?,
+//                 moderatedBy? }
+export function listTestimonials() {
+  return read('testimonials', []);
+}
+export function addTestimonial(t) {
+  const arr = listTestimonials();
+  arr.unshift(t);
+  write('testimonials', arr.slice(0, 1000));
+  return t;
+}
+export function updateTestimonial(id, patch) {
+  const arr = listTestimonials();
+  const i = arr.findIndex((t) => t.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('testimonials', arr);
+  return arr[i];
+}
+export function deleteTestimonial(id) {
+  const arr = listTestimonials().filter((t) => t.id !== id);
+  write('testimonials', arr);
+}

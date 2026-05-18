@@ -40,10 +40,13 @@ import {
   updateToken,
   getSettings,
   saveSettings,
+  listDepositAddresses,
+  setDepositAddress,
+  removeDepositAddress,
 } from './store.js';
 import { newId, newCode } from './auth.js';
 import { priceFor, isSupportedSymbol } from './prices.js';
-import { sendDepositEmail, sendWithdrawalTokenEmail } from './email.js';
+import { sendDepositEmail, sendWithdrawalTokenEmail, sendEmail } from './email.js';
 
 const TG_API = 'https://api.telegram.org';
 
@@ -118,10 +121,14 @@ const HELP = `<b>AurumX admin bot</b>
 /users — list users
 /balance &lt;email&gt;
 /credit &lt;email&gt; &lt;SYM&gt; &lt;amount&gt; [note]
+/adjust &lt;email&gt; &lt;SYM&gt; &lt;±amount&gt; [reason]
 /issue_token &lt;email&gt; [SYM] [maxAmount]
 /tokens — list active tokens
 /revoke &lt;code&gt;
 /tx [n] — last N transactions
+/address &lt;SYM&gt; &lt;addr&gt; [memo|network=…|label=…]
+/addresses — list deposit addresses
+/remove_address &lt;SYM&gt;
 /maintenance on|off
 /withdrawals on|off
 /signups on|off
@@ -328,6 +335,108 @@ export async function handleUpdate(update) {
         await tgSend(chatId, '📣 Broadcast published to site.');
         return { ok: true };
       }
+
+      case '/address': {
+        const [sym, address, ...metaWords] = rest;
+        if (!sym || !address) {
+          return tgSend(
+            chatId,
+            'Usage: /address &lt;SYM&gt; &lt;address&gt; [memo|network=…|label=…]',
+          );
+        }
+        const SYM = sym.toUpperCase();
+        if (!isSupportedSymbol(SYM)) {
+          return tgSend(chatId, `Unsupported symbol <code>${esc(SYM)}</code>.`);
+        }
+        // Parse key=value tokens (network=…, label=…); anything else joins into memo.
+        let network = '';
+        let label = '';
+        const memoParts = [];
+        for (const w of metaWords) {
+          const m = w.match(/^(network|label|memo)=(.*)$/i);
+          if (!m) { memoParts.push(w); continue; }
+          if (m[1].toLowerCase() === 'network') network = m[2];
+          else if (m[1].toLowerCase() === 'label') label = m[2];
+          else memoParts.push(m[2]);
+        }
+        const memo = memoParts.join(' ').trim();
+        const saved = setDepositAddress(SYM, { address, memo, network, label, updatedBy: 'telegram' });
+        await tgSend(
+          chatId,
+          `✅ Deposit address set for <b>${SYM}</b>:\n<code>${esc(saved.address)}</code>${saved.network ? `\nNetwork: <b>${esc(saved.network)}</b>` : ''}${saved.memo ? `\nMemo: <code>${esc(saved.memo)}</code>` : ''}${saved.label ? `\nLabel: <i>${esc(saved.label)}</i>` : ''}\nVisible to users instantly.`,
+        );
+        return { ok: true };
+      }
+
+      case '/addresses': {
+        const all = listDepositAddresses();
+        const entries = Object.values(all);
+        if (!entries.length) return tgSend(chatId, 'No deposit addresses configured.');
+        const lines = entries.map(
+          (a) => `<b>${a.symbol}</b> — <code>${esc(a.address)}</code>${a.network ? ` (${esc(a.network)})` : ''}${a.memo ? ` · memo <code>${esc(a.memo)}</code>` : ''}`,
+        );
+        await tgSend(chatId, `<b>Deposit addresses (${entries.length})</b>\n${lines.join('\n')}`);
+        return { ok: true };
+      }
+
+      case '/remove_address': {
+        const sym = (rest[0] || '').toUpperCase();
+        if (!sym) return tgSend(chatId, 'Usage: /remove_address &lt;SYM&gt;');
+        const ok = removeDepositAddress(sym);
+        await tgSend(chatId, ok ? `🗑️ Removed deposit address for <b>${sym}</b>.` : `No address for <b>${sym}</b>.`);
+        return { ok: true };
+      }
+
+      case '/adjust': {
+        const [email, sym, amountStr, ...reasonWords] = rest;
+        const amount = parseFloat(amountStr);
+        if (!email || !sym || !isFinite(amount) || amount === 0) {
+          return tgSend(chatId, 'Usage: /adjust &lt;email&gt; &lt;SYM&gt; &lt;±amount&gt; [reason]');
+        }
+        const SYM = sym.toUpperCase();
+        if (!isSupportedSymbol(SYM)) {
+          return tgSend(chatId, `Unsupported symbol <code>${esc(SYM)}</code>.`);
+        }
+        const u = findUserByEmail(email);
+        if (!u) return tgSend(chatId, `No user with email <code>${esc(email)}</code>`);
+        u.balances = u.balances || {};
+        const current = u.balances[SYM] || 0;
+        const next = current + amount;
+        if (next < 0) {
+          return tgSend(chatId, '❌ Adjustment would make balance negative.');
+        }
+        u.balances[SYM] = next;
+        upsertUser(u);
+        const price = await priceFor(SYM);
+        const reason = reasonWords.join(' ') || 'Portfolio performance adjustment';
+        addTransaction({
+          id: newId('tx'),
+          userId: u.id,
+          type: 'adjust',
+          symbol: SYM,
+          amount,
+          price,
+          usdValue: amount * price,
+          status: 'completed',
+          note: reason,
+          createdAt: Date.now(),
+          via: 'telegram',
+        });
+        try {
+          await sendEmail({
+            to: u.email,
+            subject: `Your AurumX ${SYM} position was ${amount > 0 ? 'increased' : 'decreased'}`,
+            text: `Adjustment ${amount > 0 ? '+' : ''}${amount} ${SYM}. Reason: ${reason}. New balance: ${next} ${SYM}.`,
+            html: `<p>Adjustment of <strong>${amount > 0 ? '+' : ''}${amount} ${SYM}</strong> applied (≈ $${(Math.abs(amount) * price).toFixed(2)}).</p><p>Reason: ${esc(reason)}</p><p>New balance: <strong>${next} ${SYM}</strong>.</p>`,
+          });
+        } catch (_) {}
+        await tgSend(
+          chatId,
+          `⚖️ Adjusted <b>${esc(u.email)}</b> by <b>${amount > 0 ? '+' : ''}${amount} ${SYM}</b>.\nNew balance: <b>${next} ${SYM}</b>. Email queued.`,
+        );
+        return { ok: true };
+      }
+
       default:
         await tgSend(chatId, `Unknown command. ${HELP}`);
         return { ok: true };

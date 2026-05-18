@@ -178,19 +178,35 @@ The first build takes ~2-3 minutes. After it goes live, attach a custom domain (
 
 ## 💵 How users invest, deposit & withdraw
 
-AurumX persists real account state on the server — users, balances, transactions, and admin-issued withdrawal tokens — all stored as JSON in `$DATA_DIR` (Railway volume in production).
+AurumX persists real account state on the server — users, balances, transactions, admin-issued withdrawal tokens, and admin-published deposit wallet addresses — all stored as JSON in `$DATA_DIR` (Railway volume in production).
+
+### Live crypto markets (`/dashboard`)
+
+Every supported asset — currently 29 (BTC, ETH, SOL, XRP, BNB, ADA, DOGE, AVAX, DOT, LINK, MATIC, TRX, LTC, TON, ATOM, NEAR, APT, ARB, OP, SUI, FIL, INJ, SHIB, PEPE, BCH, ETC, XLM, ALGO, HBAR) — is displayed on the dashboard with **live Binance 24h ticker data** (price, 24h change, 24h high/low, 24h quote volume). Each row has an **Invest** button that opens the invest modal pre-filled for that asset.
+
+### Funding the account (admin-published deposit addresses)
+
+Admins publish a wallet address per asset from the admin dashboard (**Live admin operations → Deposit addresses**) or via Telegram (`/address BTC bc1q… network=BTC label="Cold storage A"`). Every signed-in user immediately sees the address on their dashboard in a "Deposit crypto" panel with a one-click copy button, the network, memo/tag (e.g. for XRP, ATOM), and the admin's label. When the deposit clears, an admin credits the user (see below) and the deposit shows up in the user's transaction history with the asset, amount, and live USD value.
 
 ### Invest in any crypto
 
-1. User signs in and clicks **Invest** on `/dashboard`.
-2. They pick an asset (BTC, ETH, SOL, XRP, BNB, ADA, DOGE, AVAX, LINK, LTC, TRX, DOT, MATIC) and a USD amount.
+1. User signs in and clicks **Invest** on `/dashboard` (or **Invest** on any markets row).
+2. They pick an asset and a USD amount.
 3. AurumX fetches the **live Binance price** server-side, debits the user's USDT balance, credits the crypto, records a `tx` entry, and emails the user a branded confirmation showing the exact crypto amount + USD value + fill price.
 
 ### Deposit (admin-credited)
 
 1. Off-ramp / wire is received externally.
 2. An admin signs in to `/admin` and uses **Live admin operations → Credit deposit**, *or* sends `/credit alice@example.com BTC 0.05 "wire #4421"` to the Telegram bot.
-3. AurumX credits the user, records a `tx`, and emails the user with the asset, crypto amount, indicative USD value, and timestamp.
+3. AurumX credits the user, records a `tx`, and emails the user with the asset, crypto amount, indicative USD value, and timestamp. The deposit appears in the user's dashboard transaction history within seconds.
+
+### Performance / yield adjustments
+
+Admins can apply a signed adjustment to any user's position from **Live admin operations → Adjust balance** (or `/adjust alice@example.com BTC +0.012 "Q2 yield"` in Telegram). The change is recorded as a transaction of type `adjust`, surfaces on the user's dashboard in real time, and the user receives an email explaining the reason.
+
+### Real-time testimonials
+
+Once a user has at least one completed invest, deposit, or adjustment, they unlock the **"Share your AurumX experience"** form on the dashboard. Submissions are persisted to the server, listed live on the landing page (`/`) every 30 s, and admins can approve / reject / delete them from **Live admin operations → Testimonials**. Set `AUTO_APPROVE_TESTIMONIALS=false` if you want manual moderation (default: auto-approve).
 
 ### Withdraw (token-gated)
 
@@ -234,10 +250,14 @@ curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
 | `/users` | List registered users |
 | `/balance <email>` | Show a user's crypto balances |
 | `/credit <email> <SYM> <amount> [note]` | Credit a user with a deposit (real-time live price snapshot stored; email sent to user) |
+| `/adjust <email> <SYM> <±amount> [reason]` | Adjust a user's position up or down (e.g. apply yield/ROI); shows on user dashboard instantly + email |
 | `/issue_token <email> [SYM] [maxAmount]` | Issue a single-use withdrawal authorisation token (emails the user) |
 | `/tokens` | List all currently active withdrawal tokens |
 | `/revoke <code>` | Revoke an active token |
 | `/tx [n]` | Show the last *n* transactions across the platform |
+| `/address <SYM> <addr> [memo=…] [network=…] [label=…]` | Publish a deposit wallet address for an asset (instantly visible on every user's dashboard) |
+| `/addresses` | List all currently published deposit addresses |
+| `/remove_address <SYM>` | Remove a published deposit address |
 | `/maintenance on\|off` | Toggle site-wide maintenance banner |
 | `/withdrawals on\|off` | Globally enable / disable withdrawals |
 | `/signups on\|off` | Globally enable / disable new signups |
@@ -264,17 +284,28 @@ All endpoints are JSON. Auth is via HMAC-signed `aurumx_session` cookie (scrypt-
 
 - `GET  /api/wallet` — balances + breakdown (with live USD values) + recent transactions
 - `GET  /api/transactions`
+- `GET  /api/markets` — live 24h ticker for every supported coin (price, %, high/low, volume). **Public.**
+- `GET  /api/deposit-addresses` — admin-published wallet addresses the user can fund from
 - `POST /api/invest` — `{ symbol, usdAmount }` — debits USDT, credits crypto at live price, emails user
 - `POST /api/withdraw` — `{ symbol, amount, token, address? }` — requires admin-issued token, debits crypto, marks token used, emails user
+- `GET  /api/testimonials` — public list of approved testimonials
+- `POST /api/testimonials` — `{ text, rating?, role? }` — eligible after one cleared deposit/invest
 
 ### Admin only
 
 - `GET  /api/admin/users`
 - `GET  /api/admin/transactions`
 - `POST /api/admin/credit` — `{ email, symbol, amount, note? }` — credits a user (= deposit) and emails them
+- `POST /api/admin/adjust` — `{ email, symbol, amount, reason? }` — signed adjustment (+ or −) to a user's position; surfaces on their dashboard + emails them
 - `GET  /api/admin/tokens` — list all withdrawal tokens
 - `POST /api/admin/tokens` — `{ email?, symbol?, maxAmount? }` — issue a token (emails the user if email is bound)
 - `DELETE /api/admin/tokens` — `{ id }` — revoke a token
+- `GET    /api/admin/deposit-addresses` — list configured deposit addresses
+- `POST   /api/admin/deposit-addresses` — `{ symbol, address, network?, memo?, label? }` — publish/replace an address
+- `DELETE /api/admin/deposit-addresses` — `{ symbol }` — remove
+- `GET    /api/admin/testimonials` — list all (including pending)
+- `PATCH  /api/admin/testimonials` — `{ id, status }` — moderate (`approved` / `rejected` / `pending`)
+- `DELETE /api/admin/testimonials` — `{ id }` — delete
 
 ### Telegram
 

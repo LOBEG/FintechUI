@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'USDT'];
@@ -15,19 +15,25 @@ export function AdminOperations() {
   const [users, setUsers] = useState([]);
   const [tokens, setTokens] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [tab, setTab] = useState('credit');
 
   const refresh = useCallback(async () => {
     if (!user?.isAdmin) return;
     try {
-      const [u, t, tx] = await Promise.all([
+      const [u, t, tx, ad, ts] = await Promise.all([
         api.get('/api/admin/users'),
         api.get('/api/admin/tokens'),
         api.get('/api/admin/transactions'),
+        api.get('/api/admin/deposit-addresses'),
+        api.get('/api/admin/testimonials'),
       ]);
       setUsers(u.users || []);
       setTokens(t.tokens || []);
       setTransactions(tx.transactions || []);
+      setAddresses(Object.values(ad.addresses || {}));
+      setTestimonials(ts.testimonials || []);
     } catch (_) {}
   }, [user]);
   useEffect(() => { refresh(); }, [refresh]);
@@ -51,10 +57,13 @@ export function AdminOperations() {
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● real-time</span>
         <button onClick={refresh} className="ml-auto text-xs text-white/55 hover:text-white">Refresh</button>
       </div>
-      <div className="flex gap-1 text-xs">
+      <div className="flex gap-1 text-xs flex-wrap">
         {[
           ['credit', 'Credit deposit', Coins],
+          ['adjust', 'Adjust balance', TrendingUp],
           ['token', 'Issue token', KeyRound],
+          ['addresses', `Deposit addresses (${addresses.length})`, WalletIcon],
+          ['testimonials', `Testimonials (${testimonials.filter((t) => t.status === 'pending').length} pending)`, MessageSquare],
           ['users', `Users (${users.length})`, UsersIcon],
           ['tokens', `Tokens (${tokens.filter((t) => t.status === 'active').length})`, KeyRound],
           ['tx', `Tx (${transactions.length})`, CheckCircle2],
@@ -66,7 +75,10 @@ export function AdminOperations() {
       </div>
 
       {tab === 'credit' && <CreditForm users={users} onDone={refresh} />}
+      {tab === 'adjust' && <AdjustForm users={users} onDone={refresh} />}
       {tab === 'token' && <TokenForm users={users} onDone={refresh} />}
+      {tab === 'addresses' && <AddressesPanel addresses={addresses} onDone={refresh} />}
+      {tab === 'testimonials' && <TestimonialsPanel testimonials={testimonials} onDone={refresh} />}
       {tab === 'users' && <UsersList users={users}/>}
       {tab === 'tokens' && <TokensList tokens={tokens} users={users} onDone={refresh}/>}
       {tab === 'tx' && <TxList transactions={transactions} users={users}/>}
@@ -248,5 +260,161 @@ function TxList({ transactions, users }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+const ALL_SYMBOLS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE','AVAX','DOT','LINK','MATIC','TRX','LTC','USDT','TON','ATOM','NEAR','APT','ARB','OP','SUI','FIL','INJ','SHIB','PEPE','BCH','ETC','XLM','ALGO','HBAR'];
+
+function AdjustForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [symbol, setSymbol] = useState('BTC');
+  const [amount, setAmount] = useState('');
+  const [reason, setReason] = useState('Portfolio performance adjustment');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/admin/adjust', { email, symbol, amount: parseFloat(amount), reason });
+      setMsg({ kind: 'ok', text: `Balance updated: ${r.transaction.amount > 0 ? '+' : ''}${r.transaction.amount} ${r.transaction.symbol}. Email queued.` });
+      setAmount('');
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Adjust a user&rsquo;s position. Positive amount increases (e.g. ROI/yield), negative decreases. Recorded as an <code className="px-1 py-0.5 rounded bg-white/10">adjust</code> transaction in the user&rsquo;s history, the new balance shows on their dashboard in real time, and the user is emailed.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-a" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        <datalist id="adm-users-a">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Asset</span>
+        <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+          {ALL_SYMBOLS.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+        </select>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Amount (signed)</span>
+        <input value={amount} onChange={(e) => setAmount(e.target.value)} required placeholder="+0.05 or -0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Reason (shown in email & transaction)</span>
+        <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Adjusting…</> : 'Apply adjustment & email user'}
+      </button>
+    </form>
+  );
+}
+
+function AddressesPanel({ addresses, onDone }) {
+  const [symbol, setSymbol] = useState('BTC');
+  const [address, setAddress] = useState('');
+  const [network, setNetwork] = useState('');
+  const [memo, setMemo] = useState('');
+  const [label, setLabel] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const save = async (e) => {
+    e.preventDefault(); setBusy(true); setMsg(null);
+    try {
+      await api.post('/api/admin/deposit-addresses', { symbol, address, network, memo, label });
+      setMsg({ kind: 'ok', text: `${symbol} deposit address published — visible to users instantly.` });
+      setAddress(''); setMemo(''); setNetwork(''); setLabel('');
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  const remove = async (sym) => {
+    try { await api.del('/api/admin/deposit-addresses', { symbol: sym }); onDone && onDone(); } catch (_) {}
+  };
+  return (
+    <div className="space-y-4">
+      <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
+        <p className="sm:col-span-2 text-xs text-white/55">Publish a wallet address for a given asset. Users see the address on their dashboard as soon as it&rsquo;s saved so they can send the chosen crypto to fund their account.</p>
+        <label className="block">
+          <span className="text-xs text-white/55">Asset</span>
+          <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            {ALL_SYMBOLS.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-xs text-white/55">Network (optional)</span>
+          <input value={network} onChange={(e) => setNetwork(e.target.value)} placeholder="e.g. ERC-20, BEP-20, TRC-20" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+        </label>
+        <label className="block sm:col-span-2">
+          <span className="text-xs text-white/55">Wallet address</span>
+          <input value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="bc1q… / 0x… / T…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-green/40"/>
+        </label>
+        <label className="block">
+          <span className="text-xs text-white/55">Memo / tag (optional)</span>
+          <input value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="Required for XRP, ATOM, etc." className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+        </label>
+        <label className="block">
+          <span className="text-xs text-white/55">Label (optional)</span>
+          <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Cold storage A" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+        </label>
+        {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+        <button disabled={busy} className="sm:col-span-2 btn-gold justify-center disabled:opacity-60">
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Publish deposit address'}
+        </button>
+      </form>
+      <div className="border-t border-white/5 pt-3">
+        <h4 className="text-sm font-medium mb-2">Currently published</h4>
+        {addresses.length === 0 ? (
+          <p className="text-sm text-white/55">No addresses configured yet.</p>
+        ) : (
+          <ul className="space-y-2">
+            {addresses.map((a) => (
+              <li key={a.symbol} className="glass-light p-3 flex flex-wrap items-center gap-2 text-sm">
+                <span className="font-semibold w-12">{a.symbol}</span>
+                {a.network && <span className="chip bg-white/5 border border-white/10 text-white/70">{a.network}</span>}
+                <code className="font-mono text-xs break-all flex-1">{a.address}</code>
+                {a.memo && <span className="text-xs text-white/55">memo: <code className="font-mono">{a.memo}</code></span>}
+                <button onClick={() => navigator.clipboard?.writeText(a.address)} title="Copy" className="h-7 w-7 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center"><Copy className="h-3.5 w-3.5"/></button>
+                <button onClick={() => remove(a.symbol)} title="Remove" className="h-7 w-7 rounded bg-white/5 hover:bg-neon-red/30 inline-flex items-center justify-center"><Trash2 className="h-3.5 w-3.5"/></button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TestimonialsPanel({ testimonials, onDone }) {
+  const setStatus = async (id, status) => {
+    try { await api.patch('/api/admin/testimonials', { id, status }); onDone && onDone(); } catch (_) {}
+  };
+  const del = async (id) => {
+    try { await api.del('/api/admin/testimonials', { id }); onDone && onDone(); } catch (_) {}
+  };
+  if (!testimonials.length) return <p className="text-sm text-white/60">No testimonials yet.</p>;
+  return (
+    <ul className="space-y-2">
+      {testimonials.map((t) => (
+        <li key={t.id} className="glass-light p-3 flex flex-wrap gap-2 items-start">
+          <div className="flex-1 min-w-[200px]">
+            <div className="flex items-center gap-2 text-xs">
+              <strong className="text-white">{t.name}</strong>
+              <span className="text-white/55">{t.role || 'AurumX investor'}</span>
+              <span className={`chip ${t.status === 'approved' ? 'bg-neon-green/15 text-neon-green' : t.status === 'pending' ? 'bg-gold-500/15 text-gold-200' : 'bg-neon-red/15 text-neon-red'}`}>{t.status}</span>
+              <span className="text-gold-300">{'★'.repeat(t.rating || 5)}</span>
+            </div>
+            <p className="mt-1 text-sm text-white/80">{t.text}</p>
+          </div>
+          <div className="flex gap-1">
+            {t.status !== 'approved' && <button onClick={() => setStatus(t.id, 'approved')} className="px-2 py-1 rounded bg-neon-green/15 text-neon-green text-xs inline-flex items-center gap-1"><Check className="h-3 w-3"/>Approve</button>}
+            {t.status !== 'rejected' && <button onClick={() => setStatus(t.id, 'rejected')} className="px-2 py-1 rounded bg-neon-red/15 text-neon-red text-xs inline-flex items-center gap-1"><XIcon className="h-3 w-3"/>Reject</button>}
+            <button onClick={() => del(t.id)} className="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs inline-flex items-center gap-1"><Trash2 className="h-3 w-3"/>Delete</button>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
