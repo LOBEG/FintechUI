@@ -927,3 +927,121 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
     </div>
   );
 }
+
+// =============================================================
+// PortfolioPanel — per-position weighted-average cost basis, live
+// mark, unrealised P&L, and lifetime realised P&L. Backed by
+// /api/portfolio which walks transactions.json chronologically.
+// =============================================================
+export function PortfolioPanel({ refreshKey }) {
+  const { user } = useSession();
+  const [data, setData] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const load = async () => {
+    setBusy(true);
+    try { const r = await api.get('/api/portfolio'); setData(r); } catch (_) { setData(null); }
+    finally { setBusy(false); }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    const id = setInterval(load, 20000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, refreshKey]);
+  if (!user) return null;
+  if (!data) {
+    return (
+      <section className="glass-strong p-5">
+        <h3 className="font-display text-lg mb-2">Portfolio P&amp;L</h3>
+        <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading positions…</p>
+      </section>
+    );
+  }
+  const { positions, realisedTotal, costBasisTotal, marketValueTotal, unrealisedTotal } = data;
+  const nonQuote = positions.filter((p) => !p.isQuote && p.qty > 0);
+  const totalPct = costBasisTotal > 0 ? (unrealisedTotal / costBasisTotal) * 100 : 0;
+  return (
+    <section className="glass-strong p-5">
+      <div className="flex items-center flex-wrap gap-2 mb-4">
+        <h3 className="font-display text-lg">Portfolio P&amp;L</h3>
+        <span className="chip bg-white/5 border border-white/10 text-white/65">cost-basis weighted</span>
+        {busy && <Loader2 className="h-3.5 w-3.5 animate-spin text-white/40"/>}
+        <button onClick={load} className="ml-auto text-xs text-white/55 hover:text-white">Refresh</button>
+      </div>
+      <div className="grid sm:grid-cols-4 gap-3 mb-4 text-sm">
+        <Stat label="Market value" value={`$${fmtMoney(marketValueTotal)}`}/>
+        <Stat label="Cost basis" value={`$${fmtMoney(costBasisTotal)}`}/>
+        <Stat label="Unrealised" value={fmtSigned(unrealisedTotal)} accent={unrealisedTotal >= 0 ? 'green' : 'red'} sub={costBasisTotal > 0 ? `${totalPct >= 0 ? '+' : ''}${totalPct.toFixed(2)}%` : null}/>
+        <Stat label="Realised (lifetime)" value={fmtSigned(realisedTotal)} accent={realisedTotal >= 0 ? 'green' : 'red'}/>
+      </div>
+      {nonQuote.length === 0 ? (
+        <p className="text-sm text-white/55">No crypto positions yet. Buy an asset from the markets panel and your cost basis and live P&amp;L will appear here.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="text-xs text-white/45 text-left">
+              <tr>
+                <th className="py-2">Asset</th>
+                <th>Qty</th>
+                <th>Avg cost</th>
+                <th>Mark</th>
+                <th>Value</th>
+                <th>Unrealised</th>
+                <th>Realised</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nonQuote.map((p) => {
+                const up = p.unrealised >= 0;
+                return (
+                  <tr key={p.symbol} className="border-t border-white/5">
+                    <td className="py-2 font-medium">{p.symbol}</td>
+                    <td className="font-mono text-xs">{trimQty(p.qty)}</td>
+                    <td className="font-mono text-xs">${fmtMoney(p.avgCost)}</td>
+                    <td className="font-mono text-xs">${fmtMoney(p.mark)}</td>
+                    <td className="font-mono text-xs">${fmtMoney(p.marketValue)}</td>
+                    <td className={`font-mono text-xs ${up ? 'text-neon-green' : 'text-neon-red'}`}>
+                      {up ? '+' : ''}${fmtMoney(p.unrealised)}
+                      <span className="text-white/45"> ({up ? '+' : ''}{p.unrealisedPct.toFixed(2)}%)</span>
+                    </td>
+                    <td className={`font-mono text-xs ${p.realised >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                      {p.realised >= 0 ? '+' : ''}${fmtMoney(p.realised)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Stat({ label, value, sub, accent }) {
+  const colour = accent === 'green' ? 'text-neon-green' : accent === 'red' ? 'text-neon-red' : '';
+  return (
+    <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+      <div className="text-[11px] uppercase tracking-wide text-white/45">{label}</div>
+      <div className={`font-display text-lg ${colour}`}>{value}</div>
+      {sub && <div className={`text-xs ${colour}`}>{sub}</div>}
+    </div>
+  );
+}
+
+function fmtMoney(n) {
+  const v = Number(n) || 0;
+  if (Math.abs(v) >= 1) return v.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  return v.toLocaleString(undefined, { maximumFractionDigits: 6 });
+}
+function fmtSigned(n) {
+  const v = Number(n) || 0;
+  return `${v >= 0 ? '+' : ''}$${fmtMoney(Math.abs(v))}`;
+}
+function trimQty(n) {
+  const v = Number(n) || 0;
+  if (v === 0) return '0';
+  const s = v.toFixed(8);
+  return s.replace(/0+$/, '').replace(/\.$/, '');
+}
