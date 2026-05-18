@@ -43,6 +43,7 @@ export function AdminSidebar() {
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {items.map((it) => {
           const Icon = it.icon;
+          // Sub-sections use hash anchors on the same /admin page; highlight Overview when on /admin.
           const active = pathname === '/admin' && it.href === '/admin';
           return (
             <Link

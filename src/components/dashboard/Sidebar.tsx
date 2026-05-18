@@ -44,7 +44,8 @@ export function Sidebar() {
       </Link>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {items.map((it) => {
-          const active = pathname.startsWith(it.href.split('?')[0]) && it.href === '/dashboard';
+          // Highlight the first/overview item by default; other items share the same path with query tabs.
+          const active = it.href === '/dashboard' && pathname === '/dashboard';
           const Icon = it.icon;
           return (
             <Link
