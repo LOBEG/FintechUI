@@ -6,6 +6,7 @@ import { upsertUser, addTransaction } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendInvestEmail } from '@/lib/server/email.js';
 import { newId } from '@/lib/server/auth.js';
+import { applyTakerFee } from '@/lib/server/fees.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -41,9 +42,13 @@ export async function POST(req) {
     if (!price || !isFinite(price)) {
       return NextResponse.json({ error: 'Unable to fetch live price; try again' }, { status: 503 });
     }
+    // Take taker fee from the USDT side. The user pays `roundedUsd` of
+    // USDT but only `net` of it actually buys crypto; the rest is the
+    // platform fee. This matches how every retail broker bills.
+    const { net: netUsd, fee, bps } = applyTakerFee(roundedUsd);
     // Round acquired crypto to 8 d.p. (Binance's tightest tick) so balances
     // don't accumulate floating-point noise over time.
-    const cryptoAmount = Math.floor((roundedUsd / price) * 1e8) / 1e8;
+    const cryptoAmount = Math.floor((netUsd / price) * 1e8) / 1e8;
     user.balances = user.balances || {};
     user.balances.USDT = Math.max(0, usdt - roundedUsd);
     user.balances[symbol] = (user.balances[symbol] || 0) + cryptoAmount;
@@ -57,8 +62,10 @@ export async function POST(req) {
       amount: cryptoAmount,
       price,
       usdValue: roundedUsd,
+      fee,
+      feeBps: bps,
       status: 'completed',
-      note: `Invested ${roundedUsd.toFixed(2)} USDT into ${symbol}`,
+      note: `Invested ${roundedUsd.toFixed(2)} USDT into ${symbol} (fee ${fee.toFixed(2)} USDT)`,
       createdAt: Date.now(),
     };
     addTransaction(tx);
@@ -66,7 +73,7 @@ export async function POST(req) {
       await sendInvestEmail({ user, symbol, cryptoAmount, usdAmount: roundedUsd, price });
     } catch (_) {}
 
-    return NextResponse.json({ ok: true, transaction: tx, balances: user.balances });
+    return NextResponse.json({ ok: true, transaction: tx, balances: user.balances, fee });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });
   }

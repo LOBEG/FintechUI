@@ -1,11 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Bell, ChevronDown, LogOut, LogIn } from 'lucide-react';
+import { Search, ChevronDown, LogOut, LogIn } from 'lucide-react';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { useSession } from '@/lib/useSession';
+import { NotificationBell } from '@/components/dashboard/UserPanels';
 export function TopBar({ title }) {
     const { user, logout } = useSession();
     const router = useRouter();
@@ -21,10 +22,7 @@ export function TopBar({ title }) {
         <div className="ml-auto flex items-center gap-2">
           <LanguageSelector />
           <ThemeToggle />
-          <button className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10" aria-label="Notifications">
-            <Bell className="h-4 w-4"/>
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-neon-orange"/>
-          </button>
+          {user && <NotificationBell />}
           <Web3ConnectButton />
           {user ? (
             <div className="hidden sm:flex items-center gap-2 pl-2">

@@ -203,3 +203,114 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
     </Modal>
   );
 }
+
+// SellModal — mirror of InvestModal. Converts a crypto balance back to
+// USDT at the live Binance price. The taker fee (returned by the server)
+// is shown alongside the estimated proceeds so the user never sees a
+// surprise haircut on the next refresh.
+export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymbol }) {
+  const heldSymbols = Object.keys(balances).filter((s) => s !== 'USDT' && balances[s] > 0);
+  const initial = defaultSymbol && balances[defaultSymbol] > 0
+    ? defaultSymbol
+    : heldSymbols[0] || 'BTC';
+  const [symbol, setSymbol] = useState(initial);
+  const [amount, setAmount] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [feeBps, setFeeBps] = useState(20);
+  useEffect(() => {
+    if (open) {
+      setSuccess(null);
+      setError(null);
+      setAmount('');
+      setSymbol(initial);
+      // Pull the live fee schedule so the modal can show "Fee 0.20%".
+      // Falls back to the displayed default on error.
+      fetch('/api/sell').then((r) => r.json()).then((j) => {
+        if (j?.fees?.takerBps) setFeeBps(j.fees.takerBps);
+      }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+  const prices = useLivePrices([`${symbol}USDT`]);
+  const px = prices[`${symbol}USDT`]?.price || 0;
+  const cryptoAmt = parseFloat(amount) || 0;
+  const grossUsd = px * cryptoAmt;
+  const feeUsd = grossUsd * (feeBps / 10000);
+  const netUsd = Math.max(0, grossUsd - feeUsd);
+  const held = balances[symbol] || 0;
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      const r = await api.post('/api/sell', { symbol, amount: cryptoAmt });
+      setSuccess(r);
+      onSuccess && onSuccess(r);
+    } catch (err) {
+      setError(err.message);
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <Modal open={open} onClose={onClose} title="Sell crypto" icon={<ArrowUpRight className="h-4 w-4 text-neon-green"/>}>
+      {success ? (
+        <div className="text-center py-6">
+          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <p className="mt-3 font-semibold">Sell filled</p>
+          <p className="text-sm text-white/65 mt-1">
+            Sold <strong>{success.transaction.amount} {success.transaction.symbol}</strong> for{' '}
+            <strong>{Number(success.proceeds).toFixed(2)} USDT</strong>{' '}
+            (fee {Number(success.fee).toFixed(2)} USDT).
+          </p>
+          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="space-y-3">
+          <p className="text-xs text-white/60">
+            Sell crypto from your wallet back to USDT at the live Binance price.
+          </p>
+          <label className="block">
+            <span className="text-xs text-white/55">Asset</span>
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {(heldSymbols.length ? heldSymbols : SUPPORTED).map((s) => (
+                <option key={s} value={s} className="bg-ink-900">{s} — {(balances[s] || 0).toFixed(8)}</option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Amount ({symbol})</span>
+            <div className="relative mt-1">
+              <input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                inputMode="decimal"
+                required
+                className="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-16 py-2 text-sm outline-none focus:border-neon-green/40"
+              />
+              <button
+                type="button"
+                onClick={() => setAmount(String(held))}
+                className="absolute right-1 top-1 px-2 py-1 rounded-md text-[11px] bg-white/10 hover:bg-white/15"
+              >
+                Max
+              </button>
+            </div>
+            <span className="text-[11px] text-white/45 mt-1 block">Available: {held.toFixed(8)} {symbol}</span>
+          </label>
+          <div className="glass-light p-3 text-xs space-y-1">
+            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Gross</span><span>${grossUsd.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Fee ({(feeBps / 100).toFixed(2)}%)</span><span>−${feeUsd.toFixed(2)}</span></div>
+            <div className="flex justify-between font-semibold pt-1 border-t border-white/10"><span>You receive</span><span>${netUsd.toFixed(2)} USDT</span></div>
+          </div>
+          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          <button disabled={busy || !px || cryptoAmt <= 0 || cryptoAmt > held} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Selling…</> : `Sell ${cryptoAmt || ''} ${symbol}`}
+          </button>
+        </form>
+      )}
+    </Modal>
+  );
+}

@@ -8,9 +8,9 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { CandlestickChart, Sparkline, BarChart, DonutChart } from '@/components/ui/Charts';
 import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
-import { InvestModal, WithdrawModal } from '@/components/dashboard/TradeModals';
+import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
-import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel } from '@/components/dashboard/UserPanels';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell } from '@/components/dashboard/UserPanels';
 
 const WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
 const WALLET_HOLDINGS = [
@@ -43,6 +43,7 @@ export default function DashboardPage() {
     const [investSymbol, setInvestSymbol] = useState('BTC');
     const openInvest = useCallback((sym) => { if (sym) setInvestSymbol(sym); setInvestOpen(true); }, []);
     const [withdrawOpen, setWithdrawOpen] = useState(false);
+    const [sellOpen, setSellOpen] = useState(false);
     const { user } = useSession();
     const [liveWallet, setLiveWallet] = useState(null);
     const refreshWallet = useCallback(async () => {
@@ -106,7 +107,7 @@ export default function DashboardPage() {
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <TopBar title="Trading Dashboard"/>
         <main className="p-4 sm:p-6 space-y-6">
-          {/* Portfolio overview */}
+          {user && <EmailVerifyBanner user={user} />}          {/* Portfolio overview */}
           <section className="grid lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-5 lg:col-span-2">
               <div className="flex items-center justify-between">
@@ -124,6 +125,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="hidden sm:flex gap-2">
                   <button onClick={() => setInvestOpen(true)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> Invest</button>
+                  <button onClick={() => setSellOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Sell</button>
                   <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Withdraw</button>
                 </div>
               </div>
@@ -427,6 +429,7 @@ export default function DashboardPage() {
       <MobileBottomNav />
       <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} usdtBalance={cashUSDT} defaultSymbol={investSymbol}/>
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
+      <SellModal open={sellOpen} onClose={() => setSellOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
     </div>);
 }
 function Field({ label, value, onChange, disabled, }) {

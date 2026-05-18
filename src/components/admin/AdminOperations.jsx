@@ -88,7 +88,7 @@ export function AdminOperations() {
       {tab === 'testimonials' && <TestimonialsPanel testimonials={testimonials} onDone={refresh} />}
       {tab === 'users' && <UsersList users={users}/>}
       {tab === 'tokens' && <TokensList tokens={tokens} users={users} onDone={refresh}/>}
-      {tab === 'tx' && <TxList transactions={transactions} users={users}/>}
+      {tab === 'tx' && <TxList transactions={transactions} users={users} onDone={refresh}/>}
       {tab === 'audit' && <AuditLogPanel/>}
       {tab === 'metrics' && <MetricsPanel/>}
       {tab === 'exports' && <ExportsPanel/>}
@@ -253,27 +253,63 @@ function TokensList({ tokens, users, onDone }) {
   );
 }
 
-function TxList({ transactions, users }) {
+function TxList({ transactions, users, onDone }) {
   const userByID = Object.fromEntries(users.map((u) => [u.id, u]));
+  const [busyId, setBusyId] = useState(null);
+  const [msg, setMsg] = useState(null);
+  const reverse = async (txId) => {
+    if (!window.confirm('Reverse this transaction? A counter-tx will be recorded; the original stays in the ledger.')) return;
+    setBusyId(txId); setMsg(null);
+    try {
+      await api.post('/api/admin/reverse', { txId, reason: 'Admin desk reversal' });
+      setMsg({ kind: 'ok', text: 'Reversal recorded.' });
+      onDone && onDone();
+    } catch (e) {
+      setMsg({ kind: 'err', text: e.message });
+    } finally { setBusyId(null); }
+  };
   if (!transactions.length) return <p className="text-sm text-white/60">No transactions yet.</p>;
+  const reversibleTypes = new Set(['credit', 'admin_credit', 'adjust', 'set_balance']);
+  const REVERSAL_WINDOW_MS = 30 * 60 * 1000;
   return (
     <div className="overflow-x-auto">
+      {msg && <p className={`text-xs mb-2 px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
       <table className="min-w-full text-sm">
         <thead className="text-xs text-white/50 text-left">
-          <tr><th className="py-2 font-medium">When</th><th className="py-2 font-medium">User</th><th className="py-2 font-medium">Type</th><th className="py-2 font-medium">Asset</th><th className="py-2 font-medium">Amount</th><th className="py-2 font-medium">USD</th><th className="py-2 font-medium">Note</th></tr>
+          <tr><th className="py-2 font-medium">When</th><th className="py-2 font-medium">User</th><th className="py-2 font-medium">Type</th><th className="py-2 font-medium">Asset</th><th className="py-2 font-medium">Amount</th><th className="py-2 font-medium">USD</th><th className="py-2 font-medium">Note</th><th className="py-2 font-medium text-right">Action</th></tr>
         </thead>
         <tbody className="divide-y divide-white/5">
-          {transactions.slice(0, 50).map((t) => (
-            <tr key={t.id}>
-              <td className="py-2.5 text-white/55 text-xs">{new Date(t.createdAt).toLocaleString()}</td>
-              <td>{userByID[t.userId]?.email || '—'}</td>
-              <td><span className="chip bg-white/5 text-white/80 border border-white/10">{t.type}</span></td>
-              <td>{t.symbol}</td>
-              <td>{fmt(t.amount)}</td>
-              <td>${fmt(t.usdValue, 2)}</td>
-              <td className="text-white/55 text-xs">{t.note}</td>
-            </tr>
-          ))}
+          {transactions.slice(0, 50).map((t) => {
+            const canReverse = reversibleTypes.has(t.type) && !t.reversedBy && (Date.now() - (t.createdAt || 0) < REVERSAL_WINDOW_MS);
+            return (
+              <tr key={t.id}>
+                <td className="py-2.5 text-white/55 text-xs">{new Date(t.createdAt).toLocaleString()}</td>
+                <td>{userByID[t.userId]?.email || '—'}</td>
+                <td>
+                  <span className="chip bg-white/5 text-white/80 border border-white/10">{t.type}</span>
+                  {t.reversedBy && <span className="ml-1 chip bg-neon-red/10 border border-neon-red/30 text-neon-red text-[10px]">reversed</span>}
+                </td>
+                <td>{t.symbol}</td>
+                <td>{fmt(t.amount)}</td>
+                <td>${fmt(t.usdValue, 2)}</td>
+                <td className="text-white/55 text-xs">{t.note}</td>
+                <td className="text-right">
+                  {canReverse ? (
+                    <button
+                      onClick={() => reverse(t.id)}
+                      disabled={busyId === t.id}
+                      className="px-2 py-1 rounded bg-neon-red/15 text-neon-red hover:bg-neon-red/25 text-xs disabled:opacity-60"
+                      title="Reverse within 30 min of creation"
+                    >
+                      {busyId === t.id ? '…' : 'Reverse'}
+                    </button>
+                  ) : (
+                    <span className="text-[11px] text-white/30">—</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

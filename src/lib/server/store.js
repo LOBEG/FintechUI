@@ -184,6 +184,71 @@ export function appendAudit({ actorId, actorEmail, action, target, payload }) {
   return entry;
 }
 
+// --------------- EMAIL VERIFICATION CODES ---------------
+// Code = { id, userId, codeHash, createdAt, expiresAt, usedAt? }
+export function listVerifications() {
+  return read('emailVerifications', []);
+}
+export function addVerification(v) {
+  const arr = listVerifications();
+  arr.unshift(v);
+  write('emailVerifications', arr.slice(0, 1000));
+  return v;
+}
+export function findVerification(id) {
+  return listVerifications().find((v) => v.id === id) || null;
+}
+export function updateVerification(id, patch) {
+  const arr = listVerifications();
+  const i = arr.findIndex((v) => v.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('emailVerifications', arr);
+  return arr[i];
+}
+export function latestVerificationForUser(userId) {
+  return listVerifications().find((v) => v.userId === userId && !v.usedAt) || null;
+}
+
+// --------------- NOTIFICATIONS ---------------
+// Notification = { id, userId, kind, title, body, createdAt, readAt? }
+// `userId === null` is a broadcast visible to every signed-in user.
+export function listNotifications() {
+  return read('notifications', []);
+}
+export function addNotification(n) {
+  const arr = listNotifications();
+  arr.unshift(n);
+  write('notifications', arr.slice(0, 5000));
+  return n;
+}
+export function notificationsForUser(userId) {
+  return listNotifications().filter((n) => !n.userId || n.userId === userId);
+}
+export function markNotificationsRead(userId, ids) {
+  const arr = listNotifications();
+  const idSet = ids === 'all' ? null : new Set(ids || []);
+  const now = Date.now();
+  let changed = false;
+  for (const n of arr) {
+    if (n.userId && n.userId !== userId) continue; // can't mark someone else's
+    if (idSet && !idSet.has(n.id)) continue;
+    if (n.userId === userId && !n.readAt) {
+      n.readAt = now;
+      changed = true;
+    } else if (!n.userId) {
+      // Broadcast: track per-user reads in a `readBy` set.
+      n.readBy = n.readBy || {};
+      if (!n.readBy[userId]) {
+        n.readBy[userId] = now;
+        changed = true;
+      }
+    }
+  }
+  if (changed) write('notifications', arr);
+  return changed;
+}
+
 // --------------- SETTINGS ----------------
 const DEFAULT_SETTINGS = {
   maintenanceMode: false,

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert } from 'lucide-react';
+import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
 
@@ -161,13 +161,13 @@ export function MarketsPanel({ onInvest }) {
             {filtered.map((r) => (
               <tr key={r.symbol}>
                 <td className="py-2.5">
-                  <div className="flex items-center gap-2">
+                  <a href={`/markets/${r.symbol}`} className="flex items-center gap-2 hover:text-neon-gold">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950" style={{ background: r.color }}>{r.symbol.slice(0, 2)}</span>
                     <div>
                       <div className="font-medium">{r.symbol}</div>
                       <div className="text-[11px] text-white/45">{r.name}</div>
                     </div>
-                  </div>
+                  </a>
                 </td>
                 <td>${r.price ? r.price.toLocaleString(undefined, { maximumFractionDigits: r.price < 1 ? 6 : 2 }) : '—'}</td>
                 <td className={r.pct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{r.pct >= 0 ? '+' : ''}{r.pct?.toFixed(2)}%</td>
@@ -280,5 +280,143 @@ export function TestimonialComposer() {
         </button>
       </form>
     </section>
+  );
+}
+
+// ---- EmailVerifyBanner -------------------------------------------------
+// Surfaced at the top of the dashboard for any signed-in user whose
+// emailVerifiedAt is unset. Sends/confirms the six-digit OTP code.
+export function EmailVerifyBanner({ user }) {
+  const [sent, setSent] = useState(false);
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const [hidden, setHidden] = useState(false);
+  if (!user || user.emailVerifiedAt || hidden) return null;
+  const send = async () => {
+    setBusy(true); setMsg(null);
+    try { await api.post('/api/auth/send-verification', {}); setSent(true); setMsg({ kind: 'ok', text: 'Code sent — check your inbox.' }); }
+    catch (e) { setMsg({ kind: 'err', text: e.message }); }
+    finally { setBusy(false); }
+  };
+  const confirm = async (e) => {
+    e.preventDefault();
+    setBusy(true); setMsg(null);
+    try {
+      await api.post('/api/auth/verify-email', { code });
+      setMsg({ kind: 'ok', text: 'Email verified.' });
+      // Hide after a brief moment so the user sees the confirmation.
+      setTimeout(() => setHidden(true), 1200);
+    } catch (e) {
+      setMsg({ kind: 'err', text: e.message });
+    } finally { setBusy(false); }
+  };
+  return (
+    <section className="glass border border-gold-500/30 bg-gold-500/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+      <ShieldAlert className="h-5 w-5 text-gold-400 shrink-0"/>
+      <div className="flex-1">
+        <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
+        <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
+      </div>
+      {!sent ? (
+        <button onClick={send} disabled={busy} className="btn-primary text-sm disabled:opacity-60">
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Sending…</> : 'Send verification code'}
+        </button>
+      ) : (
+        <form onSubmit={confirm} className="flex gap-2 items-center">
+          <input
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            inputMode="numeric"
+            placeholder="123456"
+            className="w-28 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-gold-400/40 tracking-widest text-center"
+          />
+          <button disabled={busy || code.length !== 6} className="btn-primary text-sm disabled:opacity-60">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin"/> : 'Verify'}
+          </button>
+        </form>
+      )}
+      {msg && (
+        <span className={`text-xs ${msg.kind === 'ok' ? 'text-neon-green' : 'text-neon-red'}`}>{msg.text}</span>
+      )}
+    </section>
+  );
+}
+
+// ---- NotificationBell --------------------------------------------------
+// Replaces the placeholder Bell in the top bar. Polls /api/notifications
+// every 30s and opens a dropdown of unread broadcasts + per-user
+// notifications. Marking-all-read is one click.
+export function NotificationBell() {
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([]);
+  const [unread, setUnread] = useState(0);
+  const reload = async () => {
+    try {
+      const r = await api.get('/api/notifications');
+      setItems(r.items || []);
+      setUnread(r.unread || 0);
+    } catch (_) {}
+  };
+  useEffect(() => {
+    reload();
+    const t = window.setInterval(reload, 30_000);
+    return () => window.clearInterval(t);
+  }, []);
+  const markAll = async () => {
+    try {
+      await api.post('/api/notifications', { ids: 'all' });
+      reload();
+    } catch (_) {}
+  };
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10"
+        aria-label={`Notifications${unread ? ` — ${unread} unread` : ''}`}
+        aria-expanded={open}
+      >
+        <Bell className="h-4 w-4"/>
+        {unread > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] bg-neon-orange text-ink-950 font-semibold inline-flex items-center justify-center">
+            {unread > 9 ? '9+' : unread}
+          </span>
+        )}
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto glass-strong border border-white/10 rounded-xl shadow-glass z-40" role="dialog" aria-label="Notifications">
+          <div className="flex items-center justify-between p-3 border-b border-white/10">
+            <span className="text-sm font-display">Notifications</span>
+            <div className="flex items-center gap-1">
+              {unread > 0 && (
+                <button onClick={markAll} className="text-[11px] text-white/65 hover:text-white px-2 py-1 rounded hover:bg-white/5">Mark all read</button>
+              )}
+              <button onClick={() => setOpen(false)} aria-label="Close" className="h-7 w-7 rounded-md hover:bg-white/10 inline-flex items-center justify-center">
+                <BellClose className="h-3.5 w-3.5"/>
+              </button>
+            </div>
+          </div>
+          {items.length === 0 ? (
+            <p className="text-xs text-white/55 p-4">You&apos;re all caught up.</p>
+          ) : (
+            <ul className="divide-y divide-white/5">
+              {items.map((n) => (
+                <li key={n.id} className={`p-3 ${n.read ? 'opacity-70' : ''}`}>
+                  <div className="flex items-start gap-2">
+                    <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 ${n.read ? 'bg-white/20' : 'bg-neon-orange'}`}/>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{n.title || (n.kind === 'broadcast' ? 'Broadcast' : 'Notification')}</p>
+                      {n.body && <p className="text-xs text-white/65 mt-0.5">{n.body}</p>}
+                      <p className="text-[10px] text-white/40 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

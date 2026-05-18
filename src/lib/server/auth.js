@@ -184,6 +184,8 @@ export function publicUser(u) {
     balances: u.balances || {},
     telegramId: u.telegramId || null,
     accountStatus: u.accountStatus || 'active',
+    emailVerifiedAt: u.emailVerifiedAt || null,
+    twoFactorEnabled: !!u.totp?.enabled,
   };
 }
 
