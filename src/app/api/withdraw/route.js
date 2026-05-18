@@ -7,11 +7,14 @@ import {
   upsertUser,
   addTransaction,
   getSettings,
+  beneficiariesForUser,
+  appendAudit,
 } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendWithdrawEmail } from '@/lib/server/email.js';
 import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 import { validateAddressForSymbol, requiresMemo, networksFor } from '@/lib/server/addressFormats.js';
+import { sanctionsMatchReason } from '@/lib/server/sanctions.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,18 +32,64 @@ export async function POST(req) {
     const symbol = String(body.symbol || '').toUpperCase();
     const amount = parseFloat(body.amount);
     const code = String(body.token || '').trim();
-    const address = String(body.address || '').trim();
-    const memo = body.memo ? String(body.memo).trim().slice(0, 100) : '';
-    const network = body.network ? String(body.network).trim().slice(0, 50) : '';
+    let address = String(body.address || '').trim();
+    let memo = body.memo ? String(body.memo).trim().slice(0, 100) : '';
+    let network = body.network ? String(body.network).trim().slice(0, 50) : '';
+    const beneficiaryId = body.beneficiaryId ? String(body.beneficiaryId) : '';
+    // If a saved beneficiary is selected, hydrate the address details from it.
+    // This is the preferred path because the beneficiary has already
+    // passed the 24 h email confirmation + 48 h cool-down.
+    let beneficiary = null;
+    if (beneficiaryId) {
+      beneficiary = beneficiariesForUser(user.id).find((b) => b.id === beneficiaryId) || null;
+      if (!beneficiary) {
+        return NextResponse.json({ error: 'Saved beneficiary not found' }, { status: 404 });
+      }
+      if (beneficiary.symbol !== symbol) {
+        return NextResponse.json({ error: 'Beneficiary is for a different asset' }, { status: 400 });
+      }
+      if (!beneficiary.confirmedAt) {
+        return NextResponse.json({ error: 'Beneficiary has not been confirmed by email yet' }, { status: 400 });
+      }
+      if (!beneficiary.usableAt || Date.now() < beneficiary.usableAt) {
+        const when = beneficiary.usableAt ? new Date(beneficiary.usableAt).toUTCString() : 'pending';
+        return NextResponse.json({ error: `Beneficiary is still in the 48-hour cool-down. Usable from ${when}.` }, { status: 400 });
+      }
+      address = beneficiary.address;
+      memo = beneficiary.memo || '';
+      network = beneficiary.network || network;
+    }
     if (!isSupportedSymbol(symbol)) {
       return NextResponse.json({ error: 'Unsupported asset' }, { status: 400 });
     }
     if (!isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: 'Amount must be greater than zero' }, { status: 400 });
     }
+    // If settings require a whitelisted beneficiary, refuse any ad-hoc
+    // free-text destination. This is the recommended setting for any
+    // live deployment.
+    const settingsRequiresWhitelist = !!settings.requireWhitelist;
+    if (settingsRequiresWhitelist && !beneficiary) {
+      return NextResponse.json({
+        error: 'This account requires withdrawals to a saved, confirmed beneficiary. Add and confirm one in the address book first.',
+      }, { status: 403 });
+    }
     // Validate the destination address against the asset's format. The
     // user may also omit it entirely (manual desk processing).
     if (address) {
+      // Always screen against the embedded OFAC sample list, even when
+      // the address comes from a saved beneficiary — the list updates
+      // over time, so a previously-accepted address may now be sanctioned.
+      const sanctioned = sanctionsMatchReason(address);
+      if (sanctioned) {
+        appendAudit({
+          actorId: user.id,
+          actorEmail: user.email,
+          action: 'withdraw.sanctioned_reject',
+          target: { symbol, address },
+        });
+        return NextResponse.json({ error: sanctioned }, { status: 400 });
+      }
       const check = validateAddressForSymbol(symbol, address);
       if (!check.ok) {
         return NextResponse.json({ error: check.reason }, { status: 400 });
@@ -112,6 +161,7 @@ export async function POST(req) {
       address: address || null,
       memo: memo || null,
       network: network || null,
+      beneficiaryId: beneficiary ? beneficiary.id : null,
     };
     addTransaction(tx);
     updateToken(tok.id, { status: 'used', usedAt: Date.now(), usedBy: user.id, txId: tx.id });

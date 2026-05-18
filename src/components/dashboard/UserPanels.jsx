@@ -610,3 +610,166 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
     </div>
   );
 }
+
+// =============================================================
+// BeneficiariesPanel — whitelisted withdrawal address book with
+// 48-hour cool-down on additions and OFAC sanctions screening.
+// =============================================================
+const BEN_SYMBOLS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE','AVAX','LINK','LTC','TRX','DOT','MATIC','TON','ATOM','NEAR','APT','ARB','OP','SUI','FIL','INJ','SHIB','PEPE','BCH','ETC','XLM','ALGO','HBAR','USDT'];
+const BEN_MEMO = new Set(['XRP','ATOM','EOS','TON','HBAR','XLM']);
+
+export function BeneficiariesPanel() {
+  const { user } = useSession();
+  const [items, setItems] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const [busyId, setBusyId] = useState(null);
+  const load = async () => {
+    try {
+      const r = await api.get('/api/beneficiaries');
+      setItems(r.beneficiaries || []);
+    } catch (_) { setItems([]); }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    const id = setInterval(load, 30000);
+    return () => clearInterval(id);
+  }, [user]);
+  if (!user) return null;
+  const remove = async (id) => {
+    if (!confirm('Remove this beneficiary? Past withdrawals to it are unaffected.')) return;
+    setBusyId(id); setMsg(null);
+    try {
+      await api.del(`/api/beneficiaries?id=${encodeURIComponent(id)}`);
+      await load();
+    } catch (e) { setMsg(e.message); } finally { setBusyId(null); }
+  };
+  return (
+    <>
+      <section className="glass-strong p-5">
+        <div className="flex items-center flex-wrap gap-2 mb-3">
+          <h3 className="font-display text-lg">Withdrawal address book</h3>
+          <span className="chip bg-white/5 border border-white/10 text-white/65">{items.filter((b) => b.status === 'active').length} active</span>
+          <button onClick={() => setOpen(true)} className="ml-auto btn-primary text-xs">+ Add beneficiary</button>
+        </div>
+        <p className="text-xs text-white/55 mb-3">
+          Whitelisted addresses pass an OFAC sanctions check and a 48-hour security cool-down after email confirmation before they can receive funds.
+        </p>
+        {msg && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
+        {items.length === 0 ? (
+          <p className="text-sm text-white/55">No saved beneficiaries yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="text-xs text-white/50 text-left">
+                <tr>
+                  <th className="py-2 font-medium">Label</th>
+                  <th className="py-2 font-medium">Asset</th>
+                  <th className="py-2 font-medium">Address</th>
+                  <th className="py-2 font-medium">Status</th>
+                  <th className="py-2 font-medium text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {items.map((b) => (
+                  <tr key={b.id}>
+                    <td className="py-2.5">{b.label}</td>
+                    <td>{b.symbol}{b.network ? <span className="text-[10px] text-white/40 ml-1">{b.network}</span> : null}</td>
+                    <td className="font-mono text-[11px] text-white/65 truncate max-w-[14rem]">
+                      {b.address}
+                      {b.memo && <span className="block text-white/40">memo: {b.memo}</span>}
+                    </td>
+                    <td>
+                      {b.status === 'active' && <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">active</span>}
+                      {b.status === 'cooling-down' && <span className="chip bg-gold-400/15 text-gold-400 border border-gold-400/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
+                      {b.status === 'pending-email' && <span className="chip bg-white/5 text-white/65 border border-white/10">awaiting email</span>}
+                    </td>
+                    <td className="text-right">
+                      <button
+                        onClick={() => remove(b.id)}
+                        disabled={busyId === b.id}
+                        className="px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-xs disabled:opacity-60"
+                      >{busyId === b.id ? '…' : 'Remove'}</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+      <AddBeneficiaryModal open={open} onClose={() => setOpen(false)} onAdded={load} />
+    </>
+  );
+}
+
+function AddBeneficiaryModal({ open, onClose, onAdded }) {
+  const [label, setLabel] = useState('');
+  const [symbol, setSymbol] = useState('BTC');
+  const [address, setAddress] = useState('');
+  const [memo, setMemo] = useState('');
+  const [network, setNetwork] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const [done, setDone] = useState(false);
+  useEffect(() => { if (open) { setError(null); setDone(false); setLabel(''); setAddress(''); setMemo(''); setNetwork(''); } }, [open]);
+  if (!open) return null;
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      await api.post('/api/beneficiaries', { label, symbol, address, memo, network });
+      setDone(true);
+      onAdded && onAdded();
+    } catch (err) { setError(err.message); } finally { setBusy(false); }
+  };
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-display flex-1">Add beneficiary</h3>
+          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+        </div>
+        {done ? (
+          <div className="text-sm space-y-3">
+            <p>We&apos;ve emailed you a confirmation link. After you click it the address will enter a <b>48-hour cool-down</b> before it can receive funds.</p>
+            <button onClick={onClose} className="btn-primary w-full justify-center">Done</button>
+          </div>
+        ) : (
+        <form onSubmit={submit} className="space-y-3">
+          <label className="block">
+            <span className="text-xs text-white/55">Label</span>
+            <input value={label} onChange={(e) => setLabel(e.target.value)} required maxLength={60} placeholder="e.g. Cold storage Ledger" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Asset</span>
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {BEN_SYMBOLS.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Network (optional)</span>
+            <input value={network} onChange={(e) => setNetwork(e.target.value)} maxLength={50} placeholder="e.g. ERC20, TRC20" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Address</span>
+            <input value={address} onChange={(e) => setAddress(e.target.value)} required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none font-mono"/>
+          </label>
+          {BEN_MEMO.has(symbol) && (
+            <label className="block">
+              <span className="text-xs text-white/55">Memo / destination tag (required)</span>
+              <input value={memo} onChange={(e) => setMemo(e.target.value)} required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none font-mono"/>
+            </label>
+          )}
+          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          <p className="text-[11px] text-white/55">After saving, check your email for the confirmation link. A 48-hour cool-down then applies before the first withdrawal.</p>
+          <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save & send confirmation email'}
+          </button>
+        </form>
+        )}
+      </div>
+    </div>
+  );
+}

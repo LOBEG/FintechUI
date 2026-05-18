@@ -121,19 +121,30 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [beneficiaries, setBeneficiaries] = useState([]);
+  const [beneficiaryId, setBeneficiaryId] = useState('');
   const availableNetworks = NETWORKS[symbol] || [];
   const memoRequired = MEMO_REQUIRED.has(symbol);
   useEffect(() => {
-    if (open) { setSuccess(null); setError(null); if (symbols[0] && !balances[symbol]) setSymbol(symbols[0]); }
+    if (open) {
+      setSuccess(null); setError(null);
+      if (symbols[0] && !balances[symbol]) setSymbol(symbols[0]);
+      // Load beneficiaries when the modal opens so the picker is current.
+      api.get('/api/beneficiaries').then((r) => setBeneficiaries(r.beneficiaries || [])).catch(() => setBeneficiaries([]));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
   // Reset network when the asset changes so we don't submit a stale value.
-  useEffect(() => { setNetwork(availableNetworks[0] || ''); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setNetwork(availableNetworks[0] || ''); setBeneficiaryId(''); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
+  const eligible = beneficiaries.filter((b) => b.symbol === symbol && b.status === 'active');
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setError(null);
     try {
-      const r = await api.post('/api/withdraw', { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address, memo, network });
+      const payload = beneficiaryId
+        ? { symbol, amount: parseFloat(amount), token: tokenCode.trim(), beneficiaryId }
+        : { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address, memo, network };
+      const r = await api.post('/api/withdraw', payload);
       setSuccess(r.transaction);
       onSuccess && onSuccess(r);
     } catch (err) {
@@ -169,10 +180,28 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
             <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-orange/40"/>
           </label>
           <label className="block">
-            <span className="text-xs text-white/55">Destination address (optional)</span>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-orange/40"/>
+            <span className="text-xs text-white/55">Saved beneficiary</span>
+            <select
+              value={beneficiaryId}
+              onChange={(e) => setBeneficiaryId(e.target.value)}
+              className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+            >
+              <option value="" className="bg-ink-900">— Enter address manually —</option>
+              {eligible.map((b) => (
+                <option key={b.id} value={b.id} className="bg-ink-900">{b.label} · {b.address.slice(0, 10)}…{b.address.slice(-6)}</option>
+              ))}
+            </select>
+            {beneficiaries.some((b) => b.symbol === symbol && b.status !== 'active') && (
+              <span className="text-[11px] text-white/45 mt-1 block">Some saved {symbol} addresses are pending email confirmation or still in the 48-hour cool-down.</span>
+            )}
           </label>
-          {availableNetworks.length > 1 && (
+          {!beneficiaryId && (
+            <label className="block">
+              <span className="text-xs text-white/55">Destination address (optional)</span>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-orange/40"/>
+            </label>
+          )}
+          {!beneficiaryId && availableNetworks.length > 1 && (
             <label className="block">
               <span className="text-xs text-white/55">Network</span>
               <select value={network} onChange={(e) => setNetwork(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
@@ -183,7 +212,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
               <span className="text-[11px] text-neon-orange/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
             </label>
           )}
-          {memoRequired && (
+          {!beneficiaryId && memoRequired && (
             <label className="block">
               <span className="text-xs text-white/55">Destination tag / memo <span className="text-neon-red">(required for {symbol})</span></span>
               <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-orange/40"/>

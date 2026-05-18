@@ -373,3 +373,37 @@ export function ordersForUser(userId) {
 export function openOrders() {
   return listOrders().filter((o) => o.status === 'open');
 }
+
+// --------------- BENEFICIARIES (whitelisted withdraw addresses) ----------
+// Beneficiary = { id, userId, label, symbol, network?, address, memo?,
+//                 createdAt, confirmTokenHash?, confirmedAt?, usableAt?,
+//                 removedAt? }
+// Lifecycle:
+//   created     → row inserted, confirmation email sent
+//   confirmed   → user clicked the email link (confirmedAt set, usableAt =
+//                 confirmedAt + 48h cool-down)
+//   usable      → usableAt has passed; withdraw flow will accept it
+//   removed     → soft-deleted (removedAt set) so audit trail survives
+export function listBeneficiaries() {
+  return read('beneficiaries', []);
+}
+export function addBeneficiary(b) {
+  const arr = listBeneficiaries();
+  arr.unshift(b);
+  write('beneficiaries', arr.slice(0, 10000));
+  return b;
+}
+export function updateBeneficiary(id, patch) {
+  const arr = listBeneficiaries();
+  const i = arr.findIndex((b) => b.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch };
+  write('beneficiaries', arr);
+  return arr[i];
+}
+export function findBeneficiary(id) {
+  return listBeneficiaries().find((b) => b.id === id) || null;
+}
+export function beneficiariesForUser(userId) {
+  return listBeneficiaries().filter((b) => b.userId === userId && !b.removedAt);
+}
