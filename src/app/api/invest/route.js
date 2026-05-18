@@ -7,6 +7,7 @@ import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { sendInvestEmail } from '@/lib/server/email.js';
 import { newId } from '@/lib/server/auth.js';
 import { applyTakerFee } from '@/lib/server/fees.js';
+import { creditReferralRebate } from '@/lib/server/referral.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -69,6 +70,7 @@ export async function POST(req) {
       createdAt: Date.now(),
     };
     addTransaction(tx);
+    creditReferralRebate({ refereeId: user.id, feeUsd: fee, sourceTxId: tx.id, kind: 'invest' });
     try {
       await sendInvestEmail({ user, symbol, cryptoAmount, usdAmount: roundedUsd, price });
     } catch (_) {}

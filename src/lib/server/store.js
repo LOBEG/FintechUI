@@ -524,3 +524,38 @@ export function dcasForUser(userId) {
 export function activeDcas() {
   return listDcas().filter((d) => d.status === 'active');
 }
+
+// ---------------- REFERRALS ----------------
+// Each user gets a short, unique referral code on first access. When a
+// new account signs up with `?ref=CODE` we set `user.referredBy = id`;
+// every time the referee then pays a broker fee, a small rebate
+// (REFERRAL_REBATE_BPS, default 1000 = 10% of the fee) is credited to
+// the referrer's USDT balance and a `referral_rebate` transaction is
+// written. We also keep an idempotency log so re-runs over the same
+// source transaction never double-pay.
+export function findUserByReferralCode(code) {
+  const c = String(code || '').toUpperCase().trim();
+  if (!c) return null;
+  return listUsers().find((u) => (u.referralCode || '').toUpperCase() === c) || null;
+}
+
+export function refereesOf(userId) {
+  return listUsers().filter((u) => u.referredBy === userId);
+}
+
+export function listReferralRebates() {
+  return read('referralRebates', []);
+}
+export function addReferralRebate(entry) {
+  const arr = listReferralRebates();
+  // Idempotency: never double-credit the same source transaction.
+  if (entry.sourceTxId && arr.some((r) => r.sourceTxId === entry.sourceTxId)) {
+    return null;
+  }
+  arr.unshift(entry);
+  write('referralRebates', arr.slice(0, 10000));
+  return entry;
+}
+export function referralRebatesForReferrer(referrerId) {
+  return listReferralRebates().filter((r) => r.referrerId === referrerId);
+}

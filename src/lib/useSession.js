@@ -50,8 +50,8 @@ export function useSession() {
     return data.user;
   }, []);
 
-  const signup = useCallback(async (email, password, name) => {
-    const data = await api.post('/api/auth/signup', { email, password, name });
+  const signup = useCallback(async (email, password, name, referralCode) => {
+    const data = await api.post('/api/auth/signup', { email, password, name, referralCode });
     setUser(data.user);
     return data.user;
   }, []);

@@ -1,26 +1,34 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, Sparkles, ShieldCheck, Check, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Sparkles, ShieldCheck, Check, Loader2, Gift } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
-export default function SignupPage() {
+function SignupForm() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [referralCode, setReferralCode] = useState('');
     const [agree, setAgree] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
     const { signup } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    // Pre-fill the referral code from ?ref=CODE in the share URL so
+    // tap-from-Twitter signups don't have to retype anything.
+    useEffect(() => {
+        const fromQuery = searchParams?.get('ref');
+        if (fromQuery) setReferralCode(fromQuery.toUpperCase().slice(0, 12));
+    }, [searchParams]);
     const onSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         if (!agree) { setError('Please accept the terms to continue.'); return; }
         setBusy(true);
         try {
-            await signup(email, password, name);
+            await signup(email, password, name, referralCode.trim() || undefined);
             router.push('/dashboard');
         } catch (err) {
             setError(err.message || 'Signup failed');
@@ -57,6 +65,20 @@ export default function SignupPage() {
               <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
                 <Lock className="h-4 w-4 text-white/40"/>
                 <input type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="bg-transparent outline-none text-sm flex-1"/>
+              </div>
+            </label>
+            <label className="block">
+              <span className="text-xs text-white/55">Referral code <span className="text-white/35">(optional)</span></span>
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+                <Gift className="h-4 w-4 text-white/40"/>
+                <input
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 12))}
+                  placeholder="Referral code"
+                  autoComplete="off"
+                  spellCheck="false"
+                  className="bg-transparent outline-none text-sm flex-1 tracking-wider uppercase"
+                />
               </div>
             </label>
             <label className="flex items-start gap-2 text-xs text-white/60">
@@ -99,4 +121,12 @@ export default function SignupPage() {
         </div>
       </section>
     </main>);
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={null}>
+            <SignupForm />
+        </Suspense>
+    );
 }

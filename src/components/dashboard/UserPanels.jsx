@@ -1607,3 +1607,104 @@ export function DcaPanel({ onChanged } = {}) {
     </section>
   );
 }
+
+// ---------- Referral programme ----------
+// Shows the user's referral code, share URL, headline stats (referee
+// count + total rebated), and a short history of recent rebate events.
+// All numbers come from /api/referral so the panel doesn't have to know
+// about REFERRAL_REBATE_BPS or USDT semantics directly.
+export function ReferralPanel() {
+  const { user } = useSession();
+  const [data, setData] = useState(null);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!user) return undefined;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const r = await api.get('/api/referral');
+        if (!cancelled) setData(r);
+      } catch (_) { /* ignore */ }
+    };
+    load();
+    const id = setInterval(load, 60000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [user]);
+  if (!user || !data) return null;
+  const onCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (_) { /* ignore */ }
+  };
+  const bpsPct = (data.rebateBps / 100).toFixed(data.rebateBps % 100 === 0 ? 0 : 2);
+  return (
+    <section className="glass-strong p-5">
+      <header className="flex items-center gap-2">
+        <h3 className="font-display text-base">Refer &amp; earn</h3>
+        <span className="chip text-[10px] bg-white/5 border border-white/10 text-white/65 ml-auto">
+          {bpsPct}% rebate
+        </span>
+      </header>
+      <p className="text-xs text-white/55 mt-1">
+        Share your code. Earn {bpsPct}% of every broker fee your referees pay,
+        credited straight to your USDT balance.
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+        <div className="glass p-3">
+          <div className="text-white/55">Referees</div>
+          <div className="text-base text-white mt-0.5">{data.refereeCount}</div>
+        </div>
+        <div className="glass p-3">
+          <div className="text-white/55">Rebated so far</div>
+          <div className="text-base text-white mt-0.5">${Number(data.totalRebated || 0).toFixed(2)}</div>
+        </div>
+      </div>
+      <div className="mt-3">
+        <span className="text-[11px] text-white/55">Your code</span>
+        <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+          <code className="text-sm tracking-wider text-white flex-1 truncate">{data.code}</code>
+          <button
+            type="button"
+            onClick={() => onCopy(data.code)}
+            className="btn-ghost text-[11px] px-2 py-1 inline-flex items-center gap-1"
+            aria-label="Copy referral code"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-neon-green"/> : <Copy className="h-3.5 w-3.5"/>}
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+      <div className="mt-2">
+        <span className="text-[11px] text-white/55">Share URL</span>
+        <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+          <code className="text-[11px] text-white/80 flex-1 truncate">{data.shareUrl}</code>
+          <button
+            type="button"
+            onClick={() => onCopy(data.shareUrl)}
+            className="btn-ghost text-[11px] px-2 py-1 inline-flex items-center gap-1"
+            aria-label="Copy referral share URL"
+          >
+            <Copy className="h-3.5 w-3.5"/>
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+      {(data.recent && data.recent.length > 0) && (
+        <div className="mt-3">
+          <div className="text-[11px] text-white/55 mb-1">Recent rebates</div>
+          <ul className="space-y-1 text-[11px] text-white/70 max-h-32 overflow-y-auto">
+            {data.recent.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-2 bg-white/5 border border-white/10 rounded px-2 py-1">
+                <span className="capitalize">{r.kind || 'fee'}</span>
+                <span className="text-white/55">${Number(r.feeUsd || 0).toFixed(2)} fee</span>
+                <span className="text-neon-green">+${Number(r.rebateUsd || 0).toFixed(2)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}

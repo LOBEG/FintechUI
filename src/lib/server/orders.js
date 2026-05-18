@@ -34,6 +34,7 @@ import { priceFor, isSupportedSymbol } from './prices.js';
 import { applyTakerFee } from './fees.js';
 import { newId } from './auth.js';
 import { sendEmail } from './email.js';
+import { creditReferralRebate } from './referral.js';
 
 const TICK_MS = 5_000;
 const GUARD = Symbol.for('aurumx.orders.tickerStarted');
@@ -173,6 +174,7 @@ async function fillOrder(order) {
     };
   }
   addTransaction(tx);
+  creditReferralRebate({ refereeId: user.id, feeUsd: tx.fee, sourceTxId: tx.id, kind: 'order' });
   updateOrder(order.id, { status: 'filled', filledAt: Date.now(), txId: tx.id, fillPrice: price });
 }
 
@@ -265,8 +267,9 @@ async function runDca(dca) {
   user.balances.USDT = Math.max(0, usdt - usdAmount);
   user.balances[dca.symbol] = (user.balances[dca.symbol] || 0) + cryptoAmount;
   upsertUser(user);
+  const dcaTxId = newId('tx');
   addTransaction({
-    id: newId('tx'),
+    id: dcaTxId,
     userId: user.id,
     type: 'invest',
     symbol: dca.symbol,
@@ -280,6 +283,7 @@ async function runDca(dca) {
     dcaId: dca.id,
     createdAt: Date.now(),
   });
+  creditReferralRebate({ refereeId: user.id, feeUsd: fee, sourceTxId: dcaTxId, kind: 'dca' });
   const runs = (Number(dca.runs) || 0) + 1;
   updateDca(dca.id, {
     runs,

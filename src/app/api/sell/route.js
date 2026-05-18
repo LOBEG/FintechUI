@@ -7,6 +7,7 @@ import { requireUser, newId } from '@/lib/server/auth.js';
 import { upsertUser, addTransaction } from '@/lib/server/store.js';
 import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 import { applyTakerFee, feeRateInfo } from '@/lib/server/fees.js';
+import { creditReferralRebate } from '@/lib/server/referral.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -75,6 +76,7 @@ export async function POST(req) {
       createdAt: Date.now(),
     };
     addTransaction(tx);
+    creditReferralRebate({ refereeId: user.id, feeUsd: fee, sourceTxId: tx.id, kind: 'sell' });
 
     return NextResponse.json({
       ok: true,
