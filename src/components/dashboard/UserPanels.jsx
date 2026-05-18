@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
@@ -636,6 +636,7 @@ export function BeneficiariesPanel() {
     const id = setInterval(load, 30000);
     return () => clearInterval(id);
   }, [user]);
+  const activeCount = useMemo(() => items.filter((b) => b.status === 'active').length, [items]);
   if (!user) return null;
   const remove = async (id) => {
     if (!confirm('Remove this beneficiary? Past withdrawals to it are unaffected.')) return;
@@ -650,7 +651,7 @@ export function BeneficiariesPanel() {
       <section className="glass-strong p-5">
         <div className="flex items-center flex-wrap gap-2 mb-3">
           <h3 className="font-display text-lg">Withdrawal address book</h3>
-          <span className="chip bg-white/5 border border-white/10 text-white/65">{items.filter((b) => b.status === 'active').length} active</span>
+          <span className="chip bg-white/5 border border-white/10 text-white/65">{activeCount} active</span>
           <button onClick={() => setOpen(true)} className="ml-auto btn-primary text-xs">+ Add beneficiary</button>
         </div>
         <p className="text-xs text-white/55 mb-3">

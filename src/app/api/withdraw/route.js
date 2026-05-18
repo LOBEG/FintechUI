@@ -68,8 +68,8 @@ export async function POST(req) {
     // If settings require a whitelisted beneficiary, refuse any ad-hoc
     // free-text destination. This is the recommended setting for any
     // live deployment.
-    const settingsRequiresWhitelist = !!settings.requireWhitelist;
-    if (settingsRequiresWhitelist && !beneficiary) {
+    const requiresWhitelist = !!settings.requireWhitelist;
+    if (requiresWhitelist && !beneficiary) {
       return NextResponse.json({
         error: 'This account requires withdrawals to a saved, confirmed beneficiary. Add and confirm one in the address book first.',
       }, { status: 403 });

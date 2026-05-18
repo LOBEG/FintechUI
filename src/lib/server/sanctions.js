@@ -13,7 +13,14 @@
 // Address formats vary across chains; we compare strings literally —
 // sanctioned addresses are reported in their canonical on-chain form.
 
-// Lowercased for cheap O(1) lookup. Comments mark provenance.
+// Lowercased for cheap O(1) lookup. For EVM (0x…) addresses this is the
+// canonical form. For Bitcoin/Base58 the original is mixed case and
+// strictly case-sensitive on-chain, but we still compare case-insensitively
+// here so a user pasting a sanctioned address with stray casing (e.g.
+// pulled from a web page that title-cased it) is still flagged — false
+// positives are vanishingly unlikely at base58 entropy. A production
+// deployment should mirror OFAC's canonical capitalisation and compare
+// exactly. Comments mark provenance.
 const SANCTIONED = new Set([
   // Tornado Cash (Aug 2022, OFAC SDN list — ETH mixer contracts).
   '0x8589427373d6d84e98730d7795d8f6f8731fda16',
