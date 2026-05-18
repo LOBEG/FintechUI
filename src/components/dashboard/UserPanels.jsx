@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket } from 'lucide-react';
+import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
 
@@ -1704,6 +1704,228 @@ export function ReferralPanel() {
             ))}
           </ul>
         </div>
+      )}
+    </section>
+  );
+}
+
+// ---------- Customer support ----------
+// Lets a signed-in user open a ticket, see the thread of staff replies,
+// post follow-ups, and close the ticket once their issue is sorted.
+// Admin replies arrive over the existing notification centre.
+const TICKET_STATUS_COPY = {
+  open: { label: 'Open', tone: 'text-neon-green' },
+  awaiting_user: { label: 'Awaiting you', tone: 'text-gold-400' },
+  answered: { label: 'Answered', tone: 'text-neon-green' },
+  closed: { label: 'Closed', tone: 'text-white/45' },
+};
+function fmtTime(ms) {
+  if (!ms) return '';
+  const diff = Date.now() - Number(ms);
+  if (diff < 60_000) return 'just now';
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+  return new Date(Number(ms)).toLocaleDateString();
+}
+export function SupportPanel() {
+  const { user } = useSession();
+  const [items, setItems] = useState([]);
+  const [openId, setOpenId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ subject: '', body: '', priority: 'normal' });
+  const [reply, setReply] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const load = async () => {
+    try {
+      const r = await api.get('/api/support/tickets');
+      setItems(r.items || []);
+    } catch (_) { /* ignore */ }
+  };
+  useEffect(() => {
+    if (!user) return undefined;
+    load();
+    // Polled so admin replies show up even if the notification bell
+    // hasn't been clicked.
+    const id = setInterval(load, 30_000);
+    return () => clearInterval(id);
+  }, [user]);
+  if (!user) return null;
+  const onCreate = async (e) => {
+    e.preventDefault();
+    setMsg(null);
+    if (!form.subject.trim() || !form.body.trim()) {
+      setMsg({ kind: 'err', text: 'Subject and message are required.' });
+      return;
+    }
+    setBusy(true);
+    try {
+      const r = await api.post('/api/support/tickets', form);
+      setForm({ subject: '', body: '', priority: 'normal' });
+      setShowForm(false);
+      setOpenId(r.ticket.id);
+      setMsg({ kind: 'ok', text: 'Ticket opened. Our team typically replies within a few hours.' });
+      await load();
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message || 'Could not open ticket' });
+    } finally {
+      setBusy(false);
+    }
+  };
+  const onReply = async (ticketId) => {
+    if (!reply.trim()) return;
+    setBusy(true);
+    try {
+      await api.post(`/api/support/tickets/${ticketId}/messages`, { body: reply });
+      setReply('');
+      await load();
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message || 'Could not send reply' });
+    } finally {
+      setBusy(false);
+    }
+  };
+  const onClose = async (ticketId) => {
+    setBusy(true);
+    try {
+      await api.post(`/api/support/tickets/${ticketId}/close`);
+      await load();
+    } catch (err) {
+      setMsg({ kind: 'err', text: err.message || 'Could not close ticket' });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className="glass-strong p-5">
+      <header className="flex items-center gap-2">
+        <LifeBuoy className="h-4 w-4 text-gold-400"/>
+        <h3 className="font-display text-base">Support</h3>
+        <button
+          type="button"
+          onClick={() => { setShowForm((s) => !s); setMsg(null); }}
+          className="btn-ghost text-xs px-2 py-1 ml-auto"
+          aria-expanded={showForm}
+          aria-controls="support-new-form"
+        >
+          {showForm ? 'Cancel' : 'New ticket'}
+        </button>
+      </header>
+      <p className="text-xs text-white/55 mt-1">
+        Ask the AurumX desk anything — KYC, deposits, withdrawals, trade issues.
+      </p>
+      {showForm && (
+        <form id="support-new-form" onSubmit={onCreate} className="mt-3 space-y-2">
+          <input
+            value={form.subject}
+            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            placeholder="Short subject (e.g. Deposit not credited)"
+            maxLength={200}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"
+          />
+          <textarea
+            value={form.body}
+            onChange={(e) => setForm({ ...form, body: e.target.value })}
+            placeholder="Describe the issue in detail — include tx ids and timestamps where you can."
+            maxLength={4000}
+            rows={4}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 resize-y"
+          />
+          <div className="flex items-center gap-2">
+            <label className="text-[11px] text-white/55">Priority</label>
+            <select
+              value={form.priority}
+              onChange={(e) => setForm({ ...form, priority: e.target.value })}
+              className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs outline-none"
+            >
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+            </select>
+            <button disabled={busy} className="btn-gold text-xs ml-auto disabled:opacity-60">
+              {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Send className="h-3.5 w-3.5"/>}
+              <span className="ml-1">Submit</span>
+            </button>
+          </div>
+        </form>
+      )}
+      {msg && (
+        <p className={`mt-3 text-xs rounded-lg border px-3 py-2 ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>
+          {msg.text}
+        </p>
+      )}
+      {items.length === 0 ? (
+        <p className="mt-3 text-xs text-white/45">You have no support tickets yet.</p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {items.map((t) => {
+            const meta = TICKET_STATUS_COPY[t.status] || TICKET_STATUS_COPY.open;
+            const isOpen = openId === t.id;
+            return (
+              <li key={t.id} className="bg-white/5 border border-white/10 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setOpenId(isOpen ? null : t.id)}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-left"
+                  aria-expanded={isOpen}
+                  aria-controls={`tkt-${t.id}-body`}
+                >
+                  <span className="text-sm text-white truncate flex-1">{t.subject}</span>
+                  <span className={`text-[10px] ${meta.tone}`}>{meta.label}</span>
+                  <span className="text-[10px] text-white/40">{fmtTime(t.updatedAt)}</span>
+                  {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-white/45"/> : <ChevronDown className="h-3.5 w-3.5 text-white/45"/>}
+                </button>
+                {isOpen && (
+                  <div id={`tkt-${t.id}-body`} className="px-3 pb-3 space-y-2">
+                    <ul className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+                      {(t.messages || []).map((m) => (
+                        <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-gold-500/10 border border-gold-500/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
+                          <div className="flex items-center justify-between mb-0.5 text-[10px]">
+                            <span className={m.authorRole === 'staff' ? 'text-gold-400' : 'text-white/55'}>
+                              {m.authorRole === 'staff' ? 'AurumX support' : 'You'}
+                            </span>
+                            <span className="text-white/35">{fmtTime(m.createdAt)}</span>
+                          </div>
+                          {m.body}
+                        </li>
+                      ))}
+                    </ul>
+                    {t.status !== 'closed' ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          value={openId === t.id ? reply : ''}
+                          onChange={(e) => setReply(e.target.value)}
+                          placeholder="Reply…"
+                          maxLength={4000}
+                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neon-green/40"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => onReply(t.id)}
+                          disabled={busy || !reply.trim()}
+                          className="btn-ghost text-xs px-2 py-1 disabled:opacity-50"
+                          aria-label="Send reply"
+                        >
+                          <Send className="h-3.5 w-3.5"/>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onClose(t.id)}
+                          disabled={busy}
+                          className="text-[10px] text-white/50 hover:text-white/80 disabled:opacity-50"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-white/45">This ticket is closed. Open a new one if you need further help.</p>
+                    )}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </section>
   );

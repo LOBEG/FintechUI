@@ -559,3 +559,67 @@ export function addReferralRebate(entry) {
 export function referralRebatesForReferrer(referrerId) {
   return listReferralRebates().filter((r) => r.referrerId === referrerId);
 }
+
+// ---------------- SUPPORT TICKETS ----------------
+// A ticket has the shape:
+//   { id, userId, subject, status: 'open'|'awaiting_user'|'answered'|'closed',
+//     priority: 'low'|'normal'|'high', createdAt, updatedAt,
+//     messages: [{ id, authorId, authorRole: 'user'|'staff',
+//                  body, createdAt }] }
+//
+// We keep everything in tickets.json so the customer-support inbox stays
+// inside the same JSON-store envelope as the rest of the app.
+export function listTickets() {
+  return read('tickets', []);
+}
+export function saveTickets(arr) {
+  write('tickets', arr);
+}
+export function ticketsForUser(userId) {
+  return listTickets().filter((t) => t.userId === userId);
+}
+export function findTicket(id) {
+  return listTickets().find((t) => t.id === id) || null;
+}
+export function addTicket(t) {
+  const arr = listTickets();
+  arr.unshift(t);
+  saveTickets(arr.slice(0, 5000));
+  return t;
+}
+export function updateTicket(id, patch) {
+  const arr = listTickets();
+  const i = arr.findIndex((t) => t.id === id);
+  if (i === -1) return null;
+  arr[i] = { ...arr[i], ...patch, updatedAt: Date.now() };
+  saveTickets(arr);
+  return arr[i];
+}
+export function addTicketMessage(id, msg) {
+  const arr = listTickets();
+  const i = arr.findIndex((t) => t.id === id);
+  if (i === -1) return null;
+  arr[i].messages = Array.isArray(arr[i].messages) ? arr[i].messages : [];
+  arr[i].messages.push(msg);
+  arr[i].updatedAt = Date.now();
+  saveTickets(arr);
+  return arr[i];
+}
+
+// ---------------- ADMIN/BROKER NOTES ----------------
+// Free-form context that the desk can record against a user account.
+// Notes are append-only — once written they're never edited so the
+// audit trail is preserved; deletion happens at retention time only.
+//   { id, userId, authorId, authorEmail, body, createdAt }
+export function listUserNotes() {
+  return read('userNotes', []);
+}
+export function notesForUser(userId) {
+  return listUserNotes().filter((n) => n.userId === userId);
+}
+export function addUserNote(n) {
+  const arr = listUserNotes();
+  arr.unshift(n);
+  write('userNotes', arr.slice(0, 10000));
+  return n;
+}
