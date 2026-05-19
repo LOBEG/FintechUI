@@ -19,7 +19,7 @@ const items = [
 export function Sidebar() {
     const pathname = usePathname();
     const { user, logout } = useSession();
-    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : 'AU';
+    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : '';
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
       <Link href="/" className="flex items-center gap-2 px-5 h-16 border-b border-white/5">
         <span className="h-8 w-8 rounded-lg bg-gold-grad inline-flex items-center justify-center text-ink-950">
@@ -34,25 +34,26 @@ export function Sidebar() {
             // Highlight the first/overview item by default; other items share the same path with query tabs.
             const active = it.href === '/dashboard' && pathname === '/dashboard';
             const Icon = it.icon;
-            return (<Link key={it.label} href={it.href} className={cn('flex items-center gap-3 px-3 py-2 rounded-lg text-sm', active ? 'bg-white/10 text-white' : 'text-white/65 hover:bg-white/5 hover:text-white')}>
+            const href = user || it.href === '/dashboard' ? it.href : `/login?next=${encodeURIComponent(it.href)}`;
+            return (<Link key={it.label} href={href} className={cn('flex items-center gap-3 px-3 py-2 rounded-lg text-sm', active ? 'bg-white/10 text-white' : 'text-white/65 hover:bg-white/5 hover:text-white')}>
               <Icon className="h-4 w-4"/>
               {it.label}
             </Link>);
         })}
       </nav>
-      <div className="p-3 border-t border-white/5">
+      {user && <div className="p-3 border-t border-white/5">
         <div className="glass-light p-3">
           <div className="flex items-center gap-2">
-            <div title={user?.email || 'AurumX'} className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold">{initials}</div>
+            <div title={user.email} className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold">{initials}</div>
             <div className="text-xs">
-              <p className="font-semibold truncate max-w-[105px]">{user ? (user.name || user.email.split('@')[0]) : 'AurumX'}</p>
-              <p className="text-white/50">{user?.isAdmin ? 'Admin' : 'Member'}</p>
+              <p className="font-semibold truncate max-w-[105px]">{user.name || user.email.split('@')[0]}</p>
+              <p className="text-white/50">{user.isAdmin ? 'Admin' : 'Member'}</p>
             </div>
             <button onClick={logout} className="ml-auto p-1.5 rounded hover:bg-white/10" aria-label="Logout">
               <LogOut className="h-4 w-4"/>
             </button>
           </div>
         </div>
-      </div>
+      </div>}
     </aside>);
 }

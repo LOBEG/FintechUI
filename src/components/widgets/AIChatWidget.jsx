@@ -29,7 +29,7 @@ export function AIChatWidget() {
       <AnimatePresence>
         {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-ink-950/45 backdrop-blur-sm z-[55]" aria-label="Close AI Assistant"/>)}
       </AnimatePresence>
-      <motion.button onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950" aria-label="Open AI Assistant">
+      <motion.button drag dragMomentum={false} dragElastic={0.08} onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileDrag={{ scale: 1.08 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950 cursor-grab active:cursor-grabbing touch-none" aria-label="Open AI Assistant">
         {open ? <X className="h-6 w-6"/> : <Bot className="h-6 w-6"/>}
       </motion.button>
       <AnimatePresence>

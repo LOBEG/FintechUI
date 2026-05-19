@@ -56,6 +56,11 @@ export default function AssetDetailClient({ symbol }) {
   const pctClass = pct >= 0 ? 'text-neon-green' : 'text-neon-red';
   const [investOpen, setInvestOpen] = useState(false);
   const [sellOpen, setSellOpen] = useState(false);
+  const requireAuth = () => {
+    if (user) return true;
+    window.location.href = `/login?next=/markets/${upper}`;
+    return false;
+  };
 
   // Watchlist (favourites) - let the user star/unstar this asset.
   const [favourited, setFavourited] = useState(false);
@@ -181,15 +186,14 @@ export default function AssetDetailClient({ symbol }) {
               <div className="glass-strong p-4 space-y-2">
                 <button
                   className="btn-primary w-full justify-center"
-                  onClick={() => setInvestOpen(true)}
-                  disabled={!user}
+                  onClick={() => { if (requireAuth()) setInvestOpen(true); }}
                 >
                   <ArrowDownLeft className="h-4 w-4" /> Buy {meta.sym}
                 </button>
                 <button
                   className="btn-secondary w-full justify-center"
-                  onClick={() => setSellOpen(true)}
-                  disabled={!user || !(user?.balances?.[meta.sym] > 0)}
+                  onClick={() => { if (requireAuth()) setSellOpen(true); }}
+                  disabled={!!user && !(user?.balances?.[meta.sym] > 0)}
                 >
                   <ArrowUpRight className="h-4 w-4" /> Sell {meta.sym}
                 </button>

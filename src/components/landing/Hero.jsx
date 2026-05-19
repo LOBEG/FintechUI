@@ -50,8 +50,8 @@ export function Hero() {
           </div>
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/60">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-neon-green"/> SOC 2 · ISO 27001</span>
-            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold-400"/> 99.99% uptime</span>
-            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> $14.2B assets under custody</span>
+            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold-400"/> Live Binance market feed</span>
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> Account-first fintech controls</span>
           </div>
         </motion.div>
 

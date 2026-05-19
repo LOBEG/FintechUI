@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 const wallets = [
-    { name: 'MetaMask', icon: '🦊' },
-    { name: 'WalletConnect', icon: '🔗' },
-    { name: 'Coinbase Wallet', icon: '🟦' },
-    { name: 'Trust Wallet', icon: '🛡️' },
-    { name: 'Phantom (Solana)', icon: '👻' },
-    { name: 'Ledger', icon: '🔒' },
+    { name: 'MetaMask', logo: 'https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg' },
+    { name: 'WalletConnect', logo: 'https://walletconnect.com/walletconnect-logo.svg' },
+    { name: 'Coinbase Wallet', logo: 'https://avatars.githubusercontent.com/u/18060234?s=96&v=4' },
+    { name: 'Trust Wallet', logo: 'https://trustwallet.com/assets/images/media/assets/TWT.png' },
+    { name: 'Phantom (Solana)', logo: 'https://avatars.githubusercontent.com/u/78782331?s=96&v=4' },
+    { name: 'Ledger', logo: 'https://avatars.githubusercontent.com/u/250290?s=96&v=4' },
 ];
 export function Web3ConnectButton() {
     const [open, setOpen] = useState(false);
@@ -28,7 +28,7 @@ export function Web3ConnectButton() {
                     setConnected('0x' + Math.random().toString(16).slice(2, 14));
                     setOpen(false);
                 }} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left">
-                    <span className="text-2xl">{w.icon}</span>
+                    <span className="h-9 w-9 rounded-full bg-white bg-center bg-contain bg-no-repeat border border-white/10" style={{ backgroundImage: `url(${w.logo})` }} aria-hidden/>
                     <span className="text-sm font-medium">{w.name}</span>
                   </button>))}
               </div>

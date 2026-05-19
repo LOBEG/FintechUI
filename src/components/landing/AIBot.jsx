@@ -1,11 +1,12 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Bot, Zap, Brain, LineChart, Cpu } from 'lucide-react';
+import { Bot, Zap, Brain, LineChart, Cpu, ShieldCheck } from 'lucide-react';
 import { Sparkline } from '@/components/ui/Charts';
+import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 const strategies = [
-    { name: 'DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3 },
-    { name: 'Momentum watch · ETH/USDT', ret: 'Live', win: 'Market feed active', seed: 7 },
-    { name: 'Portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4 },
+    { name: 'DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3, symbol: 'BTC' },
+    { name: 'Momentum watch · ETH/USDT', ret: 'Live', win: 'Market feed active', seed: 7, symbol: 'ETH' },
+    { name: 'Portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: ShieldCheck },
 ];
 export function AIBot() {
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
@@ -34,9 +35,11 @@ export function AIBot() {
             <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Running</span>
           </div>
           <div className="mt-4 space-y-3">
-            {strategies.map((s) => (<div key={s.name} className="glass-light p-4 flex items-center gap-3">
+            {strategies.map((s) => {
+                const Icon = s.icon;
+                return (<div key={s.name} className="glass-light p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-neon-grad inline-flex items-center justify-center text-ink-950">
-                  <Bot className="h-5 w-5"/>
+                  {s.symbol ? <span className="h-7 w-7 rounded-full bg-white/5" style={cryptoLogoStyle(s.symbol)} aria-hidden/> : <Icon className="h-5 w-5"/>}
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold">{s.name}</p>
@@ -44,7 +47,8 @@ export function AIBot() {
                 </div>
                 <Sparkline seed={s.seed} positive/>
                 <span className="text-sm font-semibold text-neon-green">{s.ret}</span>
-              </div>))}
+              </div>);
+            })}
           </div>
         </motion.div>
       </div>

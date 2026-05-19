@@ -127,7 +127,6 @@ export default function InvestorPortalPage() {
         <div className="glass-strong p-5 overflow-hidden">
           <div className="flex items-center justify-between">
             <p className="font-semibold">Managed accounts & strategies</p>
-            <button className="btn-outline text-sm">Request mandate</button>
           </div>
           <div className="mt-3 overflow-x-auto -mx-4 px-4">
             <table className="min-w-full text-sm">
@@ -138,8 +137,7 @@ export default function InvestorPortalPage() {
                   <th className="py-2 font-medium">AUM</th>
                   <th className="py-2 font-medium">YTD</th>
                   <th className="py-2 font-medium">Sharpe</th>
-                  <th className="py-2"></th>
-                </tr>
+                  </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {accounts.map((a) => (<tr key={a.name}>
@@ -148,9 +146,6 @@ export default function InvestorPortalPage() {
                     <td>{formatUSD(a.aum, 0)}</td>
                     <td className="text-neon-green">+{a.ytd}%</td>
                     <td>{a.sharpe}</td>
-                    <td className="text-right">
-                      <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Allocate</button>
-                    </td>
                   </tr>))}
               </tbody>
             </table>
@@ -213,7 +208,6 @@ export default function InvestorPortalPage() {
                 Investors receive live market-backed portfolio records, custody-ready transaction history, risk updates, and compliance evidence designed for board packs, treasury reviews, and family-office reporting.
               </p>
             </div>
-            <button className="text-xs text-neon-green hover:underline">Subscribe to reporting updates</button>
           </div>
           <div className="mt-5 grid lg:grid-cols-4 gap-3">
             {reports.map((r) => (<div key={r.name} className="glass-light p-3 flex items-center gap-3">

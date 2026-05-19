@@ -164,6 +164,14 @@ export function MarketsPanel({ onInvest }) {
       setWatchlist((prev) => had ? [...prev, symbol] : prev.filter((s) => s !== symbol));
     }
   };
+  const authHref = '/login?next=/dashboard';
+  const handleInvest = (symbol) => {
+    if (!user) {
+      window.location.href = authHref;
+      return;
+    }
+    onInvest && onInvest(symbol);
+  };
   const filtered = rows.filter((r) => {
     if (!q) return true;
     const s = q.toLowerCase();
@@ -242,7 +250,7 @@ export function MarketsPanel({ onInvest }) {
                   </td>
                 )}
                 <td className="py-2.5">
-                  <a href={`/markets/${r.symbol}`} className="flex items-center gap-2 hover:text-neon-gold">
+                  <a href={user ? `/markets/${r.symbol}` : `/login?next=/markets/${r.symbol}`} className="flex items-center gap-2 hover:text-neon-gold">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(r.symbol) || { background: r.color }}>
                       {!cryptoLogoStyle(r.symbol) && r.symbol.slice(0, 2)}
                     </span>
@@ -258,7 +266,7 @@ export function MarketsPanel({ onInvest }) {
                 <td className="hidden md:table-cell text-white/70">{r.low ? `$${r.low.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'Connecting'}</td>
                 <td className="hidden lg:table-cell text-white/55">{r.volume ? `$${(r.volume / 1e6).toFixed(2)}M` : 'Connecting'}</td>
                 <td className="text-right">
-                  <button onClick={() => onInvest && onInvest(r.symbol)} className="px-2.5 py-1 rounded bg-neon-green/15 text-neon-green hover:bg-neon-green/25 text-xs">Invest</button>
+                  <button onClick={() => handleInvest(r.symbol)} className="px-2.5 py-1 rounded bg-neon-green/15 text-neon-green hover:bg-neon-green/25 text-xs">{user ? 'Invest' : 'Sign in'}</button>
                 </td>
               </tr>
               );
