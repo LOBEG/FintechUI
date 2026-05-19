@@ -19,15 +19,13 @@ export function PortfolioGrowth() {
             disciplined strategy.
           </motion.h2>
           <p className="mt-3 text-white/65 max-w-xl">
-            Diversified, rebalanced, and risk-adjusted portfolios designed by AurumX
-            strategists and executed by Aurelia AI. Average client portfolio grew
-            <span className="text-neon-green font-semibold"> +47.8% YTD</span>.
+            AurumX separates public market visibility from private account servicing. Visitors see live crypto information first, verified users manage balances and orders, and funded clients receive administrator-supervised portfolio updates and reporting.
           </p>
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
             {[
-            { k: 'YTD Return', v: '+47.8%', s: 'Outperforming BTC by 14%' },
-            { k: 'Sharpe Ratio', v: '2.31', s: 'Top-decile risk-adj. perf.' },
-            { k: 'Max Drawdown', v: '-7.4%', s: 'Active hedging strategy' },
+            { k: 'Live markets', v: '24/7', s: 'Binance-backed BTC and altcoin data' },
+            { k: 'Account control', v: 'KYC', s: 'Verified access to trading workflows' },
+            { k: 'Reporting', v: 'Live', s: 'Portfolio records update from real activity' },
         ].map((m) => (<div key={m.k} className="glass p-4">
                 <p className="text-xs text-white/50">{m.k}</p>
                 <p className="text-2xl font-display mt-1">{m.v}</p>

@@ -17,14 +17,14 @@ export default function SpotTradingPage() {
             <span className="text-gradient-gold">Spot Trading</span> on AurumX
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Trade Bitcoin, Ethereum, and over 200 digital assets with institutional-grade execution, deep liquidity, and transparent pricing.
+            Trade Bitcoin, Ethereum, and supported digital assets through a live market interface built for transparent pricing, user-level account controls, portfolio records, and secure settlement workflows.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
               <TrendingUp className="h-8 w-8 text-neon-green mb-3"/>
               <h3 className="text-lg font-semibold">Deep Liquidity</h3>
               <p className="mt-2 text-sm text-white/60">
-                Access tier-1 exchange liquidity with spreads as tight as 0.01%. Aggregate order books from Binance, Coinbase, and OTC desks.
+                Access live market pricing through Binance-backed feeds and supported liquidity routes, with clear execution records for every completed investment or sell order.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
@@ -51,7 +51,7 @@ export default function SpotTradingPage() {
           </div>
           <div className="mt-10 flex gap-4">
             <a href="/signup" className="btn-primary">Start Trading</a>
-            <a href="/dashboard" className="btn-ghost">View Markets</a>
+                 <a href="/login?next=/dashboard" className="btn-ghost">View Markets</a>
           </div>
         </div>
       </main>

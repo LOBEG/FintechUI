@@ -22,31 +22,29 @@ export function Stats() {
         }),
         { vol: 0, count: 0 }
     );
-    // Deterministic baseline so values are stable across the day; live overlay keeps them refreshing.
-    const dayKey = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
-    const seed = (dayKey % 9000) / 9000;
+    const liveReady = aggregate.count > 0;
     const stats = [
         {
             label: '24h Trading Volume',
-            value: aggregate.vol > 0 ? formatBigUSD(aggregate.vol) : `$${(7.8 + seed * 1.6).toFixed(2)}B`,
+            value: aggregate.vol > 0 ? formatBigUSD(aggregate.vol) : 'Connecting',
             icon: BarChart3,
             accent: 'text-neon-green',
         },
         {
-            label: 'Active Users',
-            value: `${(4.0 + seed * 0.4).toFixed(1)}M+`,
+            label: 'Live Price Feed',
+            value: liveReady ? 'Binance' : 'Connecting',
             icon: Users,
             accent: 'text-gold-400',
         },
         {
-            label: 'Assets Under Custody',
-            value: `$${(13.6 + seed * 1.8).toFixed(1)}B`,
+            label: 'Tracked Public Assets',
+            value: liveReady ? `${aggregate.count}` : 'Connecting',
             icon: Coins,
             accent: 'text-neon-orange',
         },
         {
-            label: 'Supported Markets',
-            value: `${600 + Math.floor(seed * 80)}+`,
+            label: 'Account Controls',
+            value: 'KYC + Admin',
             icon: Globe2,
             accent: 'text-white',
         },

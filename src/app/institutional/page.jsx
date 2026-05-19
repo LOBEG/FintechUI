@@ -17,14 +17,14 @@ export default function InstitutionalPage() {
             <span className="text-gradient-gold">Institutional Services</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Enterprise-grade digital asset solutions for institutions, family offices, hedge funds, and corporate treasury teams.
+            Enterprise-grade digital asset infrastructure for institutions, family offices, hedge funds, and corporate treasury teams that need live market access, custody coordination, audit-ready records, and controlled operational workflows.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
               <Building2 className="h-8 w-8 text-neon-green mb-3"/>
               <h3 className="text-lg font-semibold">Prime Brokerage</h3>
               <p className="mt-2 text-sm text-white/60">
-                Unified access to spot, futures, and OTC markets. Consolidated reporting across exchanges. Margin financing and securities lending.
+                Unified access to spot, futures, OTC workflows, and portfolio records with consolidated reporting across client accounts and administrator-approved servicing actions.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">

@@ -2,9 +2,10 @@
 // Uses Binance public REST (no API key). Cached for 5s to avoid being
 // rate-limited when many users hit /api/wallet in parallel.
 
+import { fetchBinanceJson } from './binance.js';
+
 const CACHE = new Map(); // symbol -> { price, fetchedAt }
 const TTL_MS = 5000;
-const REST = process.env.BINANCE_API_BASE || 'https://api.binance.com';
 
 export const KNOWN_SYMBOLS = [
   'BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX',
@@ -61,12 +62,7 @@ export async function priceFor(symbol) {
   const pair = toPair(sym);
   if (!pair) return 0;
   try {
-    const res = await fetch(`${REST}/api/v3/ticker/price?symbol=${pair}`, {
-      // never cache at fetch layer
-      cache: 'no-store',
-    });
-    if (!res.ok) throw new Error(`binance ${res.status}`);
-    const j = await res.json();
+    const { data: j } = await fetchBinanceJson(`/api/v3/ticker/price?symbol=${encodeURIComponent(pair)}`);
     const price = parseFloat(j.price);
     if (!isFinite(price)) throw new Error('NaN price');
     CACHE.set(sym, { price, fetchedAt: Date.now() });
@@ -91,10 +87,7 @@ export async function marketStats() {
   if (_statsCache && Date.now() - _statsCache.at < TTL_MS) return _statsCache.data;
   try {
     const pairs = KNOWN_SYMBOLS.filter((s) => s !== 'USDT').map((s) => `"${s}USDT"`).join(',');
-    const url = `${REST}/api/v3/ticker/24hr?symbols=[${pairs}]`;
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`binance ${res.status}`);
-    const arr = await res.json();
+    const { data: arr } = await fetchBinanceJson(`/api/v3/ticker/24hr?symbols=[${pairs}]`);
     const data = arr.map((t) => {
       const sym = t.symbol.replace(/USDT$/, '');
       return {

@@ -17,7 +17,7 @@ export default function FuturesPage() {
             <span className="text-gradient-gold">Futures Trading</span> on AurumX
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Professional derivatives trading with perpetual and quarterly contracts. Trade with leverage up to 100x on BTC, ETH, SOL, and 50+ pairs.
+            Professional derivatives access for clients who understand risk, margin, and liquidation mechanics. AurumX presents futures as a controlled fintech workflow with clear margin visibility, risk alerts, and account-level governance.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
@@ -51,7 +51,7 @@ export default function FuturesPage() {
           </div>
           <div className="mt-10 flex gap-4">
             <a href="/signup" className="btn-primary">Open Futures Account</a>
-            <a href="/dashboard" className="btn-ghost">View Contracts</a>
+                 <a href="/login?next=/dashboard" className="btn-ghost">View Contracts</a>
           </div>
         </div>
       </main>

@@ -22,8 +22,21 @@ function publicView(t) {
     role: t.role || 'AurumX investor',
     text: t.text,
     rating: t.rating || 5,
+    avatarUrl: cleanAvatarUrl(t.avatarUrl) || null,
     createdAt: t.createdAt,
   };
+}
+
+function cleanAvatarUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== 'https:') return '';
+    return url.toString().slice(0, 500);
+  } catch (_) {
+    return '';
+  }
 }
 
 export async function GET() {
@@ -44,6 +57,7 @@ export async function POST(req) {
     const text = String(body.text || '').trim();
     const rating = Math.min(5, Math.max(1, parseInt(body.rating, 10) || 5));
     const role = body.role ? String(body.role).slice(0, 80).trim() : '';
+    const avatarUrl = cleanAvatarUrl(body.avatarUrl);
     if (text.length < 20) {
       return NextResponse.json({ error: 'Tell us a bit more — at least 20 characters.' }, { status: 400 });
     }
@@ -73,6 +87,7 @@ export async function POST(req) {
       role,
       text,
       rating,
+      avatarUrl,
       status,
       createdAt: Date.now(),
     };

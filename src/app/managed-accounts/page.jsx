@@ -17,14 +17,14 @@ export default function ManagedAccountsPage() {
             <span className="text-gradient-gold">Managed Accounts</span> by AurumX
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Discretionary portfolio management for accredited investors and institutions. Minimum £500k. Tailored strategies aligned with your risk tolerance.
+            Discretionary digital asset portfolio management for qualified investors and institutions that need professional allocation, admin-supervised balance changes, risk controls, and live reporting instead of self-directed speculation.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
               <Users className="h-8 w-8 text-neon-green mb-3"/>
               <h3 className="text-lg font-semibold">Dedicated Portfolio Manager</h3>
               <p className="mt-2 text-sm text-white/60">
-                Senior trader with 10+ years in traditional finance and crypto. Quarterly reviews, rebalancing, and custom reporting.
+                A dedicated desk reviews allocations, live market exposure, deposits, withdrawals, and administrator-approved adjustments with clear client communication.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">

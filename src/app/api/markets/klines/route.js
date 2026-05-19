@@ -2,11 +2,11 @@
 // See ../ticker/route.js for the rationale (Binance blocks some browser
 // IPs, this proxy works around that and centralises rate-limit handling).
 import { NextResponse } from 'next/server';
+import { fetchBinanceJson } from '@/lib/server/binance.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const REST = process.env.BINANCE_API_BASE || 'https://api.binance.com';
 const VALID_INTERVALS = new Set([
   '1m','3m','5m','15m','30m',
   '1h','2h','4h','6h','8h','12h',
@@ -24,13 +24,22 @@ export async function GET(req) {
   if (!VALID_INTERVALS.has(interval)) {
     return NextResponse.json({ error: 'interval invalid' }, { status: 400 });
   }
+  const qs = `symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&limit=${limit}`;
   try {
-    const url = `${REST}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`binance ${res.status}`);
-    const data = await res.json();
-    return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store' } });
+    const { data, upstream } = await fetchBinanceJson(`/api/v3/klines?${qs}`);
+    return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store', 'X-Binance-Upstream': upstream } });
   } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 502 });
+    try {
+      const { data, upstream } = await fetchBinanceJson(`/api/v3/uiKlines?${qs}`);
+      return NextResponse.json(data, {
+        headers: {
+          'Cache-Control': 'no-store',
+          'X-Binance-Upstream': upstream,
+          'X-Binance-Kline-Endpoint': 'uiKlines',
+        },
+      });
+    } catch (_) {
+      return NextResponse.json({ error: err.message }, { status: 502 });
+    }
   }
 }

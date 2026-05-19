@@ -324,6 +324,7 @@ export function TestimonialComposer() {
   const { user } = useSession();
   const [text, setText] = useState('');
   const [role, setRole] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [rating, setRating] = useState(5);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -331,10 +332,11 @@ export function TestimonialComposer() {
   const submit = async (e) => {
     e.preventDefault(); setBusy(true); setMsg(null);
     try {
-      const r = await api.post('/api/testimonials', { text, role, rating });
+      const r = await api.post('/api/testimonials', { text, role, rating, avatarUrl });
       const pending = r.testimonial && r.testimonial.status === 'pending';
       setMsg({ kind: 'ok', text: pending ? 'Thanks! Your testimonial is pending moderation.' : 'Thanks! Your testimonial is now live.' });
       setText('');
+      setAvatarUrl('');
     } catch (err) {
       setMsg({ kind: 'err', text: err.message });
     } finally { setBusy(false); }
@@ -350,6 +352,7 @@ export function TestimonialComposer() {
         <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on AurumX?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
         <div className="flex gap-2 flex-wrap">
           <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) - e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+          <input type="url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="Public photo URL (optional, https only)" className="flex-1 min-w-[240px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button type="button" key={n} onClick={() => setRating(n)} aria-label={`${n} stars`}>

@@ -2,11 +2,10 @@
 // api.binance.com directly (Binance refuses some IPs - notably US - and
 // blocking issues should not break the dashboard for any user).
 import { NextResponse } from 'next/server';
+import { fetchBinanceJson } from '@/lib/server/binance.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const REST = process.env.BINANCE_API_BASE || 'https://api.binance.com';
 
 // Symbols can be passed as a comma-separated string ("BTCUSDT,ETHUSDT")
 // or as a JSON array. Returns the raw Binance 24h ticker payload.
@@ -31,10 +30,8 @@ export async function GET(req) {
   }
   const qs = encodeURIComponent(JSON.stringify(symbols));
   try {
-    const res = await fetch(`${REST}/api/v3/ticker/24hr?symbols=${qs}`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`binance ${res.status}`);
-    const data = await res.json();
-    return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store' } });
+    const { data, upstream } = await fetchBinanceJson(`/api/v3/ticker/24hr?symbols=${qs}`);
+    return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store', 'X-Binance-Upstream': upstream } });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 502 });
   }

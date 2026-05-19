@@ -17,7 +17,7 @@ export default function AboutPage() {
             About <span className="text-gradient-gold">AurumX</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            AurumX is an institutional-grade cryptocurrency trading and digital asset management platform. Founded in 2021, we serve high-net-worth individuals, family offices, and corporate treasury teams.
+            AurumX is an institutional-grade cryptocurrency trading and digital asset management platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent digital asset infrastructure.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
@@ -52,7 +52,7 @@ export default function AboutPage() {
           <div className="mt-10">
             <h2 className="text-2xl font-display">Our Mission</h2>
             <p className="mt-3 text-white/70">
-              We believe digital assets are the future of finance. Our mission is to make professional-grade crypto trading accessible to sophisticated investors through institutional infrastructure, transparent pricing, and best-in-class custody.
+              We believe digital assets require the same operating discipline as traditional finance. Our mission is to make professional-grade crypto trading accessible through live pricing, compliant onboarding, clear deposit and withdrawal workflows, risk-aware portfolio tools, and transparent reporting that clients can trust.
             </p>
           </div>
         </div>

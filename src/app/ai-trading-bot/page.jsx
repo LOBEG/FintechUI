@@ -17,7 +17,7 @@ export default function AITradingBotPage() {
             <span className="text-gradient-neon">AI Trading Bot</span> by AurumX
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Fully-automated trading strategies powered by machine learning. Grid bots, DCA strategies, and momentum algorithms optimised for crypto markets.
+            AI-assisted trading tools for monitoring live crypto markets, building disciplined DCA plans, and reviewing risk signals before action. AurumX keeps automation inside account controls, transparent records, and client-approved execution workflows.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
@@ -51,7 +51,7 @@ export default function AITradingBotPage() {
           </div>
           <div className="mt-10 flex gap-4">
             <a href="/signup" className="btn-primary">Activate AI Bot</a>
-            <a href="/dashboard" className="btn-ghost">View Strategies</a>
+                 <a href="/login?next=/dashboard" className="btn-ghost">View Strategies</a>
           </div>
         </div>
       </main>

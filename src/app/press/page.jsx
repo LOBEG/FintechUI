@@ -17,17 +17,17 @@ export default function PressPage() {
             <span className="text-gradient-gold">Press</span> & Media
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Latest news, press releases, and media resources from AurumX.
+            Media resources for AurumX, a fintech-grade digital asset platform focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
           </p>
           <div className="mt-10 space-y-6">
             <div className="glass p-6 rounded-xl">
               <div className="flex items-start gap-4">
                 <Newspaper className="h-8 w-8 text-neon-green shrink-0"/>
                 <div>
-                  <h3 className="text-lg font-semibold">AurumX Launches AI-Powered Trading Bot</h3>
-                  <p className="mt-1 text-sm text-white/50">15 March 2024</p>
+                  <h3 className="text-lg font-semibold">Platform overview</h3>
+                  <p className="mt-1 text-sm text-white/50">Company profile</p>
                   <p className="mt-3 text-sm text-white/60">
-                    AurumX today announced the launch of its AI-powered trading bot, offering clients automated strategies with backtested performance over 12% annualised.
+                    AurumX provides public crypto market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for digital asset clients.
                   </p>
                 </div>
               </div>
@@ -36,10 +36,10 @@ export default function PressPage() {
               <div className="flex items-start gap-4">
                 <Newspaper className="h-8 w-8 text-gold-400 shrink-0"/>
                 <div>
-                  <h3 className="text-lg font-semibold">AurumX Secures FCA Authorisation</h3>
-                  <p className="mt-1 text-sm text-white/50">22 January 2024</p>
+                  <h3 className="text-lg font-semibold">Security and compliance posture</h3>
+                  <p className="mt-1 text-sm text-white/50">Operational controls</p>
                   <p className="mt-3 text-sm text-white/60">
-                    AurumX received full authorisation from the Financial Conduct Authority to operate as a registered crypto asset business in the United Kingdom.
+                    The platform is designed around KYC, AML review, administrator approval paths, transaction auditability, and user email notifications for critical wallet activity.
                   </p>
                 </div>
               </div>
@@ -48,10 +48,10 @@ export default function PressPage() {
               <div className="flex items-start gap-4">
                 <Newspaper className="h-8 w-8 text-cyan shrink-0"/>
                 <div>
-                  <h3 className="text-lg font-semibold">AurumX Expands to Singapore</h3>
-                  <p className="mt-1 text-sm text-white/50">10 November 2023</p>
+                  <h3 className="text-lg font-semibold">Market data and reporting</h3>
+                  <p className="mt-1 text-sm text-white/50">Live data infrastructure</p>
                   <p className="mt-3 text-sm text-white/60">
-                    Opening a regional headquarters in Singapore to serve institutional clients across Asia-Pacific markets.
+                    AurumX displays Binance-backed pricing and candle data across public and signed-in experiences, with investor reports derived from live market feeds.
                   </p>
                 </div>
               </div>

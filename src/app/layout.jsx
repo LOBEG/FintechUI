@@ -5,7 +5,7 @@ import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
 export const metadata = {
     title: 'AurumX - Institutional Digital Asset & Crypto Investment Platform',
-    description: 'AurumX is an institutional-grade cryptocurrency trading and digital asset management platform combining BlackRock-grade sophistication with Binance-level performance.',
+    description: 'AurumX is a fintech-grade digital asset platform for live crypto market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
     keywords: [
         'crypto',
         'trading',
@@ -20,7 +20,7 @@ export const metadata = {
     authors: [{ name: 'AurumX' }],
     openGraph: {
         title: 'AurumX - Institutional Digital Asset Platform',
-        description: 'Institutional digital asset investment platform for high-net-worth investors and corporate clients.',
+        description: 'Live crypto market access, secure account operations, managed digital asset portfolios, and reporting infrastructure for verified clients.',
         type: 'website',
     },
 };

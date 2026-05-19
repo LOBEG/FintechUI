@@ -23,7 +23,7 @@ export function Hero() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <span className="chip bg-white/5 border border-white/10 text-white/80">
             <Sparkles className="h-3.5 w-3.5 text-gold-400"/>
-            BlackRock-grade infrastructure · Binance-grade performance
+             Live Binance market data · institutional custody workflows · AI-assisted execution
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[1.05] tracking-tight">
             The institutional platform for{' '}
@@ -33,8 +33,9 @@ export function Hero() {
             <span className="text-gradient-neon">professional alpha</span>.
           </h1>
           <p className="mt-5 text-lg text-white/70 max-w-xl">
-            AurumX brings hedge-fund discipline to crypto markets with AI-driven trading, risk-managed
-            portfolios, and institutional custody for high-net-worth investors and corporate treasuries.
+            AurumX is a fintech-grade digital asset platform for live crypto markets, secure portfolio operations,
+            compliant onboarding, and admin-controlled investment servicing. Public users can review transparent market
+            data before creating an account, while verified clients access trading, reporting, deposits, withdrawals, and managed account tools.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/signup" className="btn-primary">

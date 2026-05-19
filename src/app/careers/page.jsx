@@ -17,7 +17,7 @@ export default function CareersPage() {
             Careers at <span className="text-gradient-gold">AurumX</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            We are building the next generation of digital asset infrastructure. Join a team of engineers, traders, and compliance professionals shaping the future of finance.
+            We are building secure digital asset infrastructure for live markets, account operations, compliance workflows, and client reporting. AurumX teams work across engineering, risk, support, and fintech operations.
           </p>
           <div className="mt-10 space-y-4">
             <div className="glass p-6 rounded-xl">
@@ -30,7 +30,7 @@ export default function CareersPage() {
                     <span className="flex items-center gap-1"><Briefcase className="h-4 w-4"/> Engineering</span>
                   </div>
                   <p className="mt-3 text-sm text-white/60">
-                    Build high-performance trading infrastructure. Go, Rust, or C++. Experience with low-latency systems required.
+                    Build resilient market-data, wallet, notification, and account-servicing systems that support real users across desktop and mobile.
                   </p>
                 </div>
               </div>
@@ -60,7 +60,7 @@ export default function CareersPage() {
                     <span className="flex items-center gap-1"><Briefcase className="h-4 w-4"/> Trading</span>
                   </div>
                   <p className="mt-3 text-sm text-white/60">
-                    Develop and deploy algorithmic strategies. Python, ML frameworks. PhD or MSc in quantitative field preferred.
+                    Develop data-led market monitoring, execution analytics, and portfolio risk tooling that can be reviewed and governed by clients and administrators.
                   </p>
                 </div>
               </div>

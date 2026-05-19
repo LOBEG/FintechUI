@@ -70,8 +70,8 @@ export default function InvestorPortalPage() {
           <h1 className="mt-4 text-3xl sm:text-4xl font-display">
             <span className="text-gradient-gold">AurumX</span> Asset Management
           </h1>
-          <p className="mt-2 text-white/65 max-w-2xl">
-            Private banking for digital assets. Custom mandates, managed strategies, and institutional reporting for family offices, treasuries, and qualified investors.
+          <p className="mt-2 text-white/65 max-w-3xl">
+            AurumX Asset Management combines live crypto market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent digital asset operating platform rather than a basic trading app.
           </p>
         </motion.div>
 
@@ -203,15 +203,20 @@ export default function InvestorPortalPage() {
         </div>
       </section>
 
-      {/* Client reporting */}
+      {/* Transparency and governance */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 mb-12">
         <div className="glass-strong p-5">
           <div className="flex items-center justify-between">
-            <p className="font-semibold flex items-center gap-2"><FileText className="h-4 w-4"/> Client reporting center</p>
-            <button className="text-xs text-neon-green hover:underline">Subscribe to monthly NAV</button>
+            <div>
+              <p className="font-semibold flex items-center gap-2"><FileText className="h-4 w-4"/> Transparency, governance and live reporting</p>
+              <p className="mt-1 text-sm text-white/60 max-w-2xl">
+                Investors receive live market-backed portfolio records, custody-ready transaction history, risk updates, and compliance evidence designed for board packs, treasury reviews, and family-office reporting.
+              </p>
+            </div>
+            <button className="text-xs text-neon-green hover:underline">Subscribe to reporting updates</button>
           </div>
-          <div className="mt-3 divide-y divide-white/5">
-            {reports.map((r) => (<div key={r.name} className="py-2.5 flex items-center gap-3">
+          <div className="mt-5 grid lg:grid-cols-4 gap-3">
+            {reports.map((r) => (<div key={r.name} className="glass-light p-3 flex items-center gap-3">
                 <FileText className="h-4 w-4 text-gold-400"/>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{r.name}</p>
