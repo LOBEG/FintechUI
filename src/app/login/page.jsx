@@ -12,7 +12,6 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
-    const [oauthError, setOauthError] = useState(null);
     const { login } = useSession();
     const router = useRouter();
     const onSubmit = async (e) => {
@@ -26,18 +25,6 @@ export default function LoginPage() {
             setError(err.message || 'Login failed');
         } finally {
             setBusy(false);
-        }
-    };
-    const handleOAuth = async (provider) => {
-        setOauthError(null);
-        try {
-            const res = await fetch(`/api/auth/oauth/${provider}`);
-            if (!res.ok) {
-                const data = await res.json();
-                setOauthError(data.error || `${provider} OAuth failed`);
-            }
-        } catch (err) {
-            setOauthError(`Failed to connect to ${provider}`);
         }
     };
     return (<main className="min-h-screen flex">
@@ -92,13 +79,8 @@ export default function LoginPage() {
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Signing in…</> : 'Sign in'}
             </button>
           </form>
-          {oauthError && <p className="mt-3 text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{oauthError}</p>}
           <div className="my-5 flex items-center gap-3 text-[11px] text-white/40">
-            <span className="flex-1 h-px bg-white/10"/> or continue with <span className="flex-1 h-px bg-white/10"/>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => handleOAuth('google')} className="btn-ghost text-sm">Google</button>
-            <button onClick={() => handleOAuth('apple')} className="btn-ghost text-sm">Apple</button>
+            <span className="flex-1 h-px bg-white/10"/> or connect wallet <span className="flex-1 h-px bg-white/10"/>
           </div>
           <div className="mt-3"><Web3ConnectButton /></div>
           <p className="mt-5 text-xs text-white/55 text-center">
@@ -108,4 +90,3 @@ export default function LoginPage() {
       </section>
     </main>);
 }
-
