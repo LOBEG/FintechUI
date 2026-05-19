@@ -19,7 +19,7 @@ export function AIBot() {
           </h2>
           <p className="mt-3 text-white/65 max-w-lg">
             Aurelia analyzes 12,000+ signals per second across order books, on-chain flows, sentiment, and macro
-            data — executing precision strategies with sub-millisecond latency.
+            data - executing precision strategies with sub-millisecond latency.
           </p>
           <ul className="mt-6 space-y-3 text-sm">
             <li className="flex gap-3"><Zap className="h-5 w-5 text-neon-green flex-shrink-0"/> Sub-ms execution across 80+ liquidity venues</li>

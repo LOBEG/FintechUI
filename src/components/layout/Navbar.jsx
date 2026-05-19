@@ -8,10 +8,10 @@ import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 const nav = [
     { href: '/#markets', label: 'Markets' },
-    { href: '/dashboard', label: 'Trade' },
-    { href: '/investor', label: 'Investor Portal' },
+    { href: '/login?next=/dashboard', label: 'Trade' },
+    { href: '/login?next=/investor', label: 'Investor Portal' },
     { href: '/insights', label: 'Insights' },
-    { href: '/admin', label: 'Admin' },
+    { href: '/login?next=/admin', label: 'Admin' },
 ];
 export function Navbar() {
     const [open, setOpen] = useState(false);

@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Terms of Service — AurumX',
+    title: 'Terms of Service - AurumX',
     description: 'AurumX Terms of Service and platform user agreement.',
 };
 

@@ -81,7 +81,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', u
             <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
-            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated {symbol}</span><span>{estCrypto.toFixed(8)}</span></div>
           </div>
           {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
@@ -171,7 +171,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
             <span className="text-xs text-white/55">Asset</span>
             <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
               {(symbols.length ? symbols : SUPPORTED).map((s) => (
-                <option key={s} value={s} className="bg-ink-900">{s} — {(balances[s] || 0).toFixed(8)}</option>
+                <option key={s} value={s} className="bg-ink-900">{s} - {(balances[s] || 0).toFixed(8)}</option>
               ))}
             </select>
           </label>
@@ -186,7 +186,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
               onChange={(e) => setBeneficiaryId(e.target.value)}
               className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
             >
-              <option value="" className="bg-ink-900">— Enter address manually —</option>
+              <option value="" className="bg-ink-900">- Enter address manually -</option>
               {eligible.map((b) => (
                 <option key={b.id} value={b.id} className="bg-ink-900">{b.label} · {b.address.slice(0, 10)}…{b.address.slice(-6)}</option>
               ))}
@@ -233,7 +233,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   );
 }
 
-// SellModal — mirror of InvestModal. Converts a crypto balance back to
+// SellModal - mirror of InvestModal. Converts a crypto balance back to
 // USDT at the live Binance price. The taker fee (returned by the server)
 // is shown alongside the estimated proceeds so the user never sees a
 // surprise haircut on the next refresh.
@@ -304,7 +304,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
             <span className="text-xs text-white/55">Asset</span>
             <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
               {(heldSymbols.length ? heldSymbols : SUPPORTED).map((s) => (
-                <option key={s} value={s} className="bg-ink-900">{s} — {(balances[s] || 0).toFixed(8)}</option>
+                <option key={s} value={s} className="bg-ink-900">{s} - {(balances[s] || 0).toFixed(8)}</option>
               ))}
             </select>
           </label>
@@ -329,7 +329,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
             <span className="text-[11px] text-white/45 mt-1 block">Available: {held.toFixed(8)} {symbol}</span>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
-            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Gross</span><span>${grossUsd.toFixed(2)}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Fee ({(feeBps / 100).toFixed(2)}%)</span><span>−${feeUsd.toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold pt-1 border-t border-white/10"><span>You receive</span><span>${netUsd.toFixed(2)} USDT</span></div>

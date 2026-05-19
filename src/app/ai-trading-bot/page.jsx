@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Bot, Zap, Target, TrendingUp } from 'lucide-react';
 
 export const metadata = {
-    title: 'AI Trading Bot — AurumX',
+    title: 'AI Trading Bot - AurumX',
     description: 'Automated crypto trading powered by machine learning and quantitative strategies.',
 };
 

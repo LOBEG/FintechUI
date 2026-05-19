@@ -5,7 +5,7 @@ import { Users, BarChart3, Coins, Globe2 } from 'lucide-react';
 import { useLivePrices, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 
 function formatBigUSD(n) {
-    if (!n || !isFinite(n)) return '—';
+    if (!n || !isFinite(n)) return '-';
     if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`;
     if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
     if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;

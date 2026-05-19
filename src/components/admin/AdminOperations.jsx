@@ -175,7 +175,7 @@ function TokenForm({ users, onDone }) {
     <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
       <p className="sm:col-span-2 text-xs text-white/55">Tokens are single-use and expire after the chosen number of hours (default 24). Leave a field blank to keep that scope open (e.g. omit asset to allow any).</p>
       <label className="block sm:col-span-2">
-        <span className="text-xs text-white/55">User email (optional — leave empty for unbound)</span>
+        <span className="text-xs text-white/55">User email (optional - leave empty for unbound)</span>
         <input list="adm-users-t" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
         <datalist id="adm-users-t">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
       </label>
@@ -218,7 +218,7 @@ function UsersList({ users }) {
               <td>{u.isAdmin ? <span className="chip bg-gold-500/15 text-gold-300">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}</td>
               <td>{(u.accountStatus || 'active') === 'active' ? <span className="chip bg-neon-green/15 text-neon-green">active</span> : <span className="chip bg-neon-red/15 text-neon-red">disabled</span>}</td>
               <td className="text-white/55">{new Date(u.createdAt).toLocaleDateString()}</td>
-              <td className="text-white/70 text-xs">{Object.entries(u.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '—'}</td>
+              <td className="text-white/70 text-xs">{Object.entries(u.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '-'}</td>
             </tr>
           ))}
         </tbody>
@@ -291,7 +291,7 @@ function TxList({ transactions, users, onDone }) {
           {transactions.slice(0, 50).map((t) => {
             const canReverse = reversibleTypes.has(t.type) && !t.reversedBy && (Date.now() - (t.createdAt || 0) < REVERSAL_WINDOW_MS);
             const u = userByID[t.userId];
-            const state = (u && (u.state || (u.address && u.address.state))) || '—';
+            const state = (u && (u.state || (u.address && u.address.state))) || '-';
             return (
               <tr key={t.id}>
                 <td className="py-2.5 text-white/55 text-xs">{new Date(t.createdAt).toLocaleString()}</td>
@@ -315,7 +315,7 @@ function TxList({ transactions, users, onDone }) {
                       {busyId === t.id ? '…' : 'Reverse'}
                     </button>
                   ) : (
-                    <span className="text-[11px] text-white/30">—</span>
+                    <span className="text-[11px] text-white/30">-</span>
                   )}
                 </td>
               </tr>
@@ -388,7 +388,7 @@ function AddressesPanel({ addresses, onDone }) {
     e.preventDefault(); setBusy(true); setMsg(null);
     try {
       await api.post('/api/admin/deposit-addresses', { symbol, address, network, memo, label });
-      setMsg({ kind: 'ok', text: `${symbol} deposit address published — visible to users instantly.` });
+      setMsg({ kind: 'ok', text: `${symbol} deposit address published - visible to users instantly.` });
       setAddress(''); setMemo(''); setNetwork(''); setLabel('');
       onDone && onDone();
     } catch (err) { setMsg({ kind: 'err', text: err.message }); }
@@ -612,10 +612,10 @@ function AuditLogPanel() {
               {entries.map((e) => (
                 <tr key={e.id}>
                   <td className="py-2.5 text-white/55 text-xs whitespace-nowrap">{new Date(e.ts).toLocaleString()}</td>
-                  <td className="text-white/80 text-xs">{e.actorEmail || e.actorId || '—'}</td>
+                  <td className="text-white/80 text-xs">{e.actorEmail || e.actorId || '-'}</td>
                   <td><span className="chip bg-white/5 text-white/80 border border-white/10 text-xs">{e.action}</span></td>
-                  <td className="text-white/70 text-xs break-all">{e.target || '—'}</td>
-                  <td className="text-white/55 text-[11px] font-mono max-w-[280px] truncate" title={e.payload ? JSON.stringify(e.payload) : ''}>{e.payload ? JSON.stringify(e.payload) : '—'}</td>
+                  <td className="text-white/70 text-xs break-all">{e.target || '-'}</td>
+                  <td className="text-white/55 text-[11px] font-mono max-w-[280px] truncate" title={e.payload ? JSON.stringify(e.payload) : ''}>{e.payload ? JSON.stringify(e.payload) : '-'}</td>
                   <td className="text-white/45 text-[10px] font-mono">{e.hash?.slice(0, 12)}…</td>
                 </tr>
               ))}
@@ -662,7 +662,7 @@ function MetricsPanel() {
                 <tr key={r.symbol}>
                   <td className="py-2.5 font-medium">{r.symbol}</td>
                   <td className="text-white/80">{fmt(r.amount)}</td>
-                  <td className="text-white/55">{r.price ? usd(r.price) : '—'}</td>
+                  <td className="text-white/55">{r.price ? usd(r.price) : '-'}</td>
                   <td className="text-white/80">{usd(r.usdValue)}</td>
                 </tr>
               ))}

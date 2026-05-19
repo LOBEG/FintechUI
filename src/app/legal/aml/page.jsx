@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'AML Policy — AurumX',
+    title: 'AML Policy - AurumX',
     description: 'AurumX Anti-Money Laundering policy and compliance procedures.',
 };
 

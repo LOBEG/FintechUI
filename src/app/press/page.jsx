@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Newspaper, Download, Mail } from 'lucide-react';
 
 export const metadata = {
-    title: 'Press — AurumX',
+    title: 'Press - AurumX',
     description: 'AurumX press releases, media kit, and contact information.',
 };
 

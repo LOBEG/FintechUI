@@ -5,7 +5,7 @@ import { Building, Globe, Award, Users } from 'lucide-react';
 
 export const metadata = {
     title: 'About AurumX',
-    description: 'Learn about AurumX — institutional-grade digital asset platform.',
+    description: 'Learn about AurumX - institutional-grade digital asset platform.',
 };
 
 export default function AboutPage() {

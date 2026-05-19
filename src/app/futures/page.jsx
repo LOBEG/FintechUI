@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { LineChart, Percent, Gauge, Lock } from 'lucide-react';
 
 export const metadata = {
-    title: 'Futures Trading — AurumX',
+    title: 'Futures Trading - AurumX',
     description: 'Trade crypto futures with up to 100x leverage on BTC, ETH, and altcoins.',
 };
 

@@ -41,8 +41,10 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
         }, 1400);
         return () => clearInterval(id);
     }, [animate, base, data]);
-    const candles = data && data.length ? data : internal;
+    const hasExternalData = Array.isArray(data);
+    const candles = hasExternalData ? data : internal;
     const { min, max } = useMemo(() => {
+        if (!candles.length) return { min: 0, max: 1 };
         let mn = Infinity, mx = -Infinity;
         for (const k of candles) {
             if (k.l < mn)
@@ -53,6 +55,14 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
         const pad = (mx - mn) * 0.08;
         return { min: mn - pad, max: mx + pad };
     }, [candles]);
+    if (hasExternalData && !candles.length) {
+        return (<svg viewBox={`0 0 ${width} ${height}`} width="100%" height="100%" className="block">
+          <rect width={width} height={height} rx="16" fill="rgba(255,255,255,0.025)"/>
+          {[0.2, 0.4, 0.6, 0.8].map((p) => (<line key={p} x1="48" x2={width - 8} y1={height * p} y2={height * p} stroke="rgba(255,255,255,0.06)" strokeDasharray="3 4"/>))}
+          <text x={width / 2} y={height / 2 - 4} textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,255,255,0.78)">Connecting to live market chart</text>
+          <text x={width / 2} y={height / 2 + 18} textAnchor="middle" fontSize="11" fill="rgba(255,255,255,0.48)">Waiting for Binance candle data</text>
+        </svg>);
+    }
     const padL = showAxes ? 48 : 8;
     const padR = 8;
     const padT = 12;

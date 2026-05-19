@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Users, Shield, Briefcase, Award } from 'lucide-react';
 
 export const metadata = {
-    title: 'Managed Accounts — AurumX',
+    title: 'Managed Accounts - AurumX',
     description: 'Discretionary portfolio management for high-net-worth crypto investors.',
 };
 

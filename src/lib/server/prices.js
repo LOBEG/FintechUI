@@ -4,7 +4,7 @@
 
 const CACHE = new Map(); // symbol -> { price, fetchedAt }
 const TTL_MS = 5000;
-const REST = 'https://api.binance.com';
+const REST = process.env.BINANCE_API_BASE || 'https://api.binance.com';
 
 export const KNOWN_SYMBOLS = [
   'BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX',

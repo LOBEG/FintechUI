@@ -5,10 +5,11 @@ import { ArrowRight, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
 import { CandlestickChart } from '@/components/ui/Charts';
 import { useLiveKlines, useLivePrices } from '@/lib/useLiveData';
 import { formatUSD, formatPct } from '@/lib/utils';
+import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 export function Hero() {
     const candles = useLiveKlines('BTCUSDT', '5m', 56);
     const prices = useLivePrices(['BTCUSDT']);
-    const btc = prices.BTCUSDT || { price: 71248.32, pct: 2.41 };
+    const btc = prices.BTCUSDT || { price: 0, pct: 0, high: 0, low: 0, live: false };
     const live = !!btc.live;
     const pctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const lastCandle = candles[candles.length - 1];
@@ -36,13 +37,13 @@ export function Hero() {
             portfolios, and institutional custody for high-net-worth investors and corporate treasuries.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/dashboard" className="btn-primary">
+            <Link href="/signup" className="btn-primary">
               Start Trading <ArrowRight className="h-4 w-4"/>
             </Link>
             <Link href="/signup" className="btn-gold">
               Create Account
             </Link>
-            <Link href="/investor" className="btn-ghost">
+            <Link href="/login?next=/investor" className="btn-ghost">
               Investor Portal
             </Link>
           </div>
@@ -57,7 +58,9 @@ export function Hero() {
           <div className="glass-strong p-4 shadow-soft">
             <div className="flex items-center justify-between px-1 pb-3">
               <div className="flex items-center gap-2">
-                <span className="h-7 w-7 rounded-md bg-gold-grad inline-flex items-center justify-center text-ink-950 text-xs font-bold">₿</span>
+                <span className="h-7 w-7 rounded-full bg-white/5 border border-white/10 inline-flex items-center justify-center text-ink-950 text-xs font-bold" style={cryptoLogoStyle('BTC')}>
+                  <span className="sr-only">Bitcoin</span>
+                </span>
                 <div>
                   <p className="text-sm font-semibold flex items-center gap-2">
                     BTC / USDT
@@ -103,8 +106,10 @@ export function Hero() {
               <Sparkles className="h-4 w-4"/>
             </div>
             <div>
-              <p className="text-xs text-white/60">Aurelia AI signal</p>
-              <p className="text-sm font-semibold text-neon-green">{btc.pct >= 0 ? 'BUY' : 'HEDGE'} · 87% confidence</p>
+              <p className="text-xs text-white/60">Live BTC trend</p>
+              <p className={`text-sm font-semibold ${btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                {live ? `${btc.pct >= 0 ? 'Up' : 'Down'} ${formatPct(btc.pct)} today` : 'Connecting to market feed'}
+              </p>
             </div>
           </motion.div>
         </motion.div>

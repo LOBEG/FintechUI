@@ -12,7 +12,7 @@ const fallback = [
     {
         name: 'Daniel Okafor',
         role: 'Treasurer, Lumen Industries',
-        text: 'Treasury management on AurumX is exceptional. Yield strategies plus compliance — exactly what corporate clients need.',
+        text: 'Treasury management on AurumX is exceptional. Yield strategies plus compliance - exactly what corporate clients need.',
         rating: 5,
     },
     {

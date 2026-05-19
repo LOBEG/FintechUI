@@ -37,7 +37,7 @@ export function PortfolioGrowth() {
         </div>
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="lg:col-span-2 glass-strong p-6 flex flex-col items-center">
           <div className="w-full flex items-center justify-between">
-            <p className="text-sm text-white/60">Sample allocation</p>
+            <p className="text-sm text-white/60">Public market allocation</p>
             <span className="chip bg-gold-500/15 text-gold-400 border border-gold-500/30">
               <TrendingUp className="h-3 w-3"/> +12.4% MoM
             </span>

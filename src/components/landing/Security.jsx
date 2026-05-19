@@ -17,7 +17,7 @@ export function Security() {
           Built like an <span className="text-gradient-gold">institutional vault</span>.
         </h2>
         <p className="mt-3 text-white/65">
-          From regulated entities and qualified custody to continuous auditing —
+          From regulated entities and qualified custody to continuous auditing -
           AurumX takes the standards of traditional finance and applies them to digital assets.
         </p>
       </div>

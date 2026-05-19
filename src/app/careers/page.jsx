@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Briefcase, MapPin, Clock, TrendingUp } from 'lucide-react';
 
 export const metadata = {
-    title: 'Careers — AurumX',
+    title: 'Careers - AurumX',
     description: 'Join the AurumX team and shape the future of digital finance.',
 };
 

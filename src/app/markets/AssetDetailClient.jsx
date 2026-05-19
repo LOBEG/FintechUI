@@ -1,5 +1,5 @@
 'use client';
-// Asset detail page — /markets/[symbol]
+// Asset detail page - /markets/[symbol]
 //
 // Lightweight TradingView-style page that finally gives every asset its
 // own home rather than burying it in the watchlist row. Live price,
@@ -15,6 +15,7 @@ import { CandlestickChart } from '@/components/ui/Charts';
 import { useLivePrices, useLiveKlines, SYMBOL_META } from '@/lib/useLiveData';
 import { useSession, api } from '@/lib/useSession';
 import { InvestModal, SellModal } from '@/components/dashboard/TradeModals';
+import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 
 // A small, deliberately editorial "about" copy block. Real product
 // would feed this from a CMS or fixture file; for now an inline map
@@ -56,7 +57,7 @@ export default function AssetDetailClient({ symbol }) {
   const [investOpen, setInvestOpen] = useState(false);
   const [sellOpen, setSellOpen] = useState(false);
 
-  // Watchlist (favourites) — let the user star/unstar this asset.
+  // Watchlist (favourites) - let the user star/unstar this asset.
   const [favourited, setFavourited] = useState(false);
   const [favBusy, setFavBusy] = useState(false);
   useEffect(() => {
@@ -87,10 +88,10 @@ export default function AssetDetailClient({ symbol }) {
 
   const stats = useMemo(
     () => [
-      { k: '24h high', v: px.high ? `$${Number(px.high).toLocaleString()}` : '—' },
-      { k: '24h low', v: px.low ? `$${Number(px.low).toLocaleString()}` : '—' },
-      { k: '24h volume', v: px.vol ? `${Number(px.vol).toLocaleString(undefined, { maximumFractionDigits: 0 })} ${meta.sym}` : '—' },
-      { k: '24h notional', v: px.quoteVol ? `$${(px.quoteVol / 1e6).toFixed(1)}M` : '—' },
+      { k: '24h high', v: px.high ? `$${Number(px.high).toLocaleString()}` : 'Connecting' },
+      { k: '24h low', v: px.low ? `$${Number(px.low).toLocaleString()}` : 'Connecting' },
+      { k: '24h volume', v: px.vol ? `${Number(px.vol).toLocaleString(undefined, { maximumFractionDigits: 0 })} ${meta.sym}` : 'Connecting' },
+      { k: '24h notional', v: px.quoteVol ? `$${(px.quoteVol / 1e6).toFixed(1)}M` : 'Connecting' },
     ],
     [px, meta.sym],
   );
@@ -106,8 +107,8 @@ export default function AssetDetailClient({ symbol }) {
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <div className="flex items-center gap-3 flex-1">
-              <div className="h-10 w-10 rounded-full inline-flex items-center justify-center font-semibold" style={{ background: `${meta.color}22`, color: meta.color }}>
-                {meta.sym.slice(0, 3)}
+              <div className="h-10 w-10 rounded-full inline-flex items-center justify-center font-semibold bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: `${meta.color}22`, color: meta.color }}>
+                {!cryptoLogoStyle(meta.sym) && meta.sym.slice(0, 3)}
               </div>
               <div>
                 <h1 className="font-display text-xl">{meta.name} <span className="text-white/55 font-normal">({meta.sym})</span></h1>
@@ -128,10 +129,10 @@ export default function AssetDetailClient({ symbol }) {
               )}
             </div>
             <div className="text-right">
-              <div className="text-2xl font-semibold tabular-nums">${px.price ? Number(px.price).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</div>
+               <div className="text-2xl font-semibold tabular-nums">{px.price ? `$${Number(px.price).toLocaleString(undefined, { maximumFractionDigits: 4 })}` : 'Connecting'}</div>
               <div className={`text-xs ${pctClass} flex items-center justify-end gap-1`}>
                 {pct >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                {isFinite(pct) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—'} (24h)
+                 {isFinite(pct) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : 'Connecting'} (24h)
               </div>
             </div>
           </div>

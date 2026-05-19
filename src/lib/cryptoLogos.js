@@ -25,10 +25,28 @@ const logoMap = {
     APT: 'https://cryptologos.cc/logos/aptos-apt-logo.svg',
     ARB: 'https://cryptologos.cc/logos/arbitrum-arb-logo.svg',
     OP: 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg',
+    TON: 'https://cryptologos.cc/logos/toncoin-ton-logo.svg',
+    SUI: 'https://cryptologos.cc/logos/sui-sui-logo.svg',
+    INJ: 'https://cryptologos.cc/logos/injective-inj-logo.svg',
+    SHIB: 'https://cryptologos.cc/logos/shiba-inu-shib-logo.svg',
+    PEPE: 'https://cryptologos.cc/logos/pepe-pepe-logo.svg',
+    BCH: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.svg',
+    HBAR: 'https://cryptologos.cc/logos/hedera-hbar-logo.svg',
 };
 
 export function getCryptoLogo(symbol) {
     if (!symbol) return null;
     const upper = symbol.toUpperCase().replace('USDT', '').replace('USDC', '').replace('BUSD', '');
-    return logoMap[upper] || `https://via.placeholder.com/32/05070d/00ffa3?text=${upper.charAt(0)}`;
+    return logoMap[upper] || null;
+}
+
+export function cryptoLogoStyle(symbol) {
+    const logo = getCryptoLogo(symbol);
+    if (!logo) return null;
+    return {
+        backgroundImage: `url(${logo})`,
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+    };
 }

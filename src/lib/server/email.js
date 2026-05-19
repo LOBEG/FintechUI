@@ -129,7 +129,7 @@ export async function sendDepositEmail({ user, symbol, amount, price, note }) {
     cta: 'Open wallet',
     ctaUrl: `${process.env.APP_URL || ''}/dashboard`,
   });
-  return sendEmail({ to: user.email, subject: `Deposit confirmed — ${fmt(amount)} ${symbol}`, html, text });
+  return sendEmail({ to: user.email, subject: `Deposit confirmed - ${fmt(amount)} ${symbol}`, html, text });
 }
 
 export async function sendWithdrawEmail({ user, symbol, amount, price, address, note }) {
@@ -142,7 +142,7 @@ export async function sendWithdrawEmail({ user, symbol, amount, price, address, 
       { k: 'Asset', v: symbol },
       { k: 'Amount', v: `${fmt(amount)} ${symbol}` },
       { k: 'Indicative value', v: fmtUsd(usd) },
-      { k: 'Destination', v: address || '— provided in app —' },
+      { k: 'Destination', v: address || '- provided in app -' },
       { k: 'Date', v: new Date().toUTCString() },
     ],
     cta: 'View transactions',
@@ -150,7 +150,7 @@ export async function sendWithdrawEmail({ user, symbol, amount, price, address, 
     footer:
       'If you did not initiate this withdrawal, contact AurumX support immediately via the in-app chat or Telegram support button.',
   });
-  return sendEmail({ to: user.email, subject: `Withdrawal processed — ${fmt(amount)} ${symbol}`, html, text });
+  return sendEmail({ to: user.email, subject: `Withdrawal processed - ${fmt(amount)} ${symbol}`, html, text });
 }
 
 export async function sendInvestEmail({ user, symbol, cryptoAmount, usdAmount, price }) {
@@ -168,7 +168,7 @@ export async function sendInvestEmail({ user, symbol, cryptoAmount, usdAmount, p
     cta: 'Open dashboard',
     ctaUrl: `${process.env.APP_URL || ''}/dashboard`,
   });
-  return sendEmail({ to: user.email, subject: `Investment confirmed — ${symbol}`, html, text });
+  return sendEmail({ to: user.email, subject: `Investment confirmed - ${symbol}`, html, text });
 }
 
 export async function sendWithdrawalTokenEmail({ user, code, symbol, maxAmount }) {

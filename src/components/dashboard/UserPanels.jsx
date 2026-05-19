@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
+import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 
 // Memo / destination-tag bearing chains. Funds sent without the memo are
 // generally not recoverable on a shared exchange wallet, so we warn the
@@ -32,7 +33,7 @@ function AddressQR({ value }) {
 }
 
 // =============================================================
-// Deposit addresses panel — shown on /dashboard for signed-in users.
+// Deposit addresses panel - shown on /dashboard for signed-in users.
 // =============================================================
 export function DepositAddressPanel() {
   const { user } = useSession();
@@ -109,7 +110,7 @@ export function DepositAddressPanel() {
 }
 
 // =============================================================
-// Markets panel — live prices of all supported crypto.
+// Markets panel - live prices of all supported crypto.
 // =============================================================
 export function MarketsPanel({ onInvest }) {
   const { user } = useSession();
@@ -129,7 +130,7 @@ export function MarketsPanel({ onInvest }) {
     const load = async () => {
       try {
         const r = await api.get('/api/markets');
-        // Avoid clobbering a populated table with an empty response —
+        // Avoid clobbering a populated table with an empty response -
         // Binance occasionally returns [] under rate-limit and we don't
         // want the UI to flash empty.
         if (mounted && Array.isArray(r.markets) && r.markets.length) setRows(r.markets);
@@ -242,18 +243,20 @@ export function MarketsPanel({ onInvest }) {
                 )}
                 <td className="py-2.5">
                   <a href={`/markets/${r.symbol}`} className="flex items-center gap-2 hover:text-neon-gold">
-                    <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950" style={{ background: r.color }}>{r.symbol.slice(0, 2)}</span>
+                    <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(r.symbol) || { background: r.color }}>
+                      {!cryptoLogoStyle(r.symbol) && r.symbol.slice(0, 2)}
+                    </span>
                     <div>
                       <div className="font-medium">{r.symbol}</div>
                       <div className="text-[11px] text-white/45">{r.name}</div>
                     </div>
                   </a>
                 </td>
-                <td>${r.price ? r.price.toLocaleString(undefined, { maximumFractionDigits: r.price < 1 ? 6 : 2 }) : '—'}</td>
+                <td>{r.price ? `$${r.price.toLocaleString(undefined, { maximumFractionDigits: r.price < 1 ? 6 : 2 })}` : 'Connecting'}</td>
                 <td className={r.pct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{r.pct >= 0 ? '+' : ''}{r.pct?.toFixed(2)}%</td>
-                <td className="hidden md:table-cell text-white/70">${r.high ? r.high.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}</td>
-                <td className="hidden md:table-cell text-white/70">${r.low ? r.low.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}</td>
-                <td className="hidden lg:table-cell text-white/55">${r.volume ? (r.volume / 1e6).toFixed(2) + 'M' : '—'}</td>
+                <td className="hidden md:table-cell text-white/70">{r.high ? `$${r.high.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'Connecting'}</td>
+                <td className="hidden md:table-cell text-white/70">{r.low ? `$${r.low.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'Connecting'}</td>
+                <td className="hidden lg:table-cell text-white/55">{r.volume ? `$${(r.volume / 1e6).toFixed(2)}M` : 'Connecting'}</td>
                 <td className="text-right">
                   <button onClick={() => onInvest && onInvest(r.symbol)} className="px-2.5 py-1 rounded bg-neon-green/15 text-neon-green hover:bg-neon-green/25 text-xs">Invest</button>
                 </td>
@@ -268,7 +271,7 @@ export function MarketsPanel({ onInvest }) {
 }
 
 // =============================================================
-// Sandbox on-ramp panel — shown only when the deployment exposes
+// Sandbox on-ramp panel - shown only when the deployment exposes
 // SANDBOX_ONRAMP_USDT and the user hasn't already claimed.
 // =============================================================
 export function SandboxOnRampPanel({ onClaimed }) {
@@ -315,7 +318,7 @@ export function SandboxOnRampPanel({ onClaimed }) {
 }
 
 // =============================================================
-// Testimonial submission form — shown on /dashboard for eligible users.
+// Testimonial submission form - shown on /dashboard for eligible users.
 // =============================================================
 export function TestimonialComposer() {
   const { user } = useSession();
@@ -346,7 +349,7 @@ export function TestimonialComposer() {
       <form onSubmit={submit} className="space-y-2">
         <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on AurumX?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
         <div className="flex gap-2 flex-wrap">
-          <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) — e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+          <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) - e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button type="button" key={n} onClick={() => setRating(n)} aria-label={`${n} stars`}>
@@ -376,7 +379,7 @@ export function EmailVerifyBanner({ user }) {
   if (!user || user.emailVerifiedAt || hidden) return null;
   const send = async () => {
     setBusy(true); setMsg(null);
-    try { await api.post('/api/auth/send-verification', {}); setSent(true); setMsg({ kind: 'ok', text: 'Code sent — check your inbox.' }); }
+    try { await api.post('/api/auth/send-verification', {}); setSent(true); setMsg({ kind: 'ok', text: 'Code sent - check your inbox.' }); }
     catch (e) { setMsg({ kind: 'err', text: e.message }); }
     finally { setBusy(false); }
   };
@@ -455,7 +458,7 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen((v) => !v)}
         className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10"
-        aria-label={`Notifications${unread ? ` — ${unread} unread` : ''}`}
+        aria-label={`Notifications${unread ? ` - ${unread} unread` : ''}`}
         aria-expanded={open}
       >
         <Bell className="h-4 w-4"/>
@@ -503,7 +506,7 @@ export function NotificationBell() {
 }
 
 // =============================================================
-// Open / recent orders panel — limit & stop orders driven by the
+// Open / recent orders panel - limit & stop orders driven by the
 // server-side settler (src/lib/server/orders.js).
 // =============================================================
 export function OpenOrdersPanel({ refreshKey, onPlaced }) {
@@ -592,7 +595,7 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
                           disabled={busyId === o.id}
                           className="px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-xs disabled:opacity-60"
                         >{busyId === o.id ? '…' : 'Cancel'}</button>
-                      ) : <span className="text-[11px] text-white/30">—</span>}
+                      ) : <span className="text-[11px] text-white/30">-</span>}
                     </td>
                   </tr>
                 ))}
@@ -693,7 +696,7 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
 }
 
 // =============================================================
-// BeneficiariesPanel — whitelisted withdrawal address book with
+// BeneficiariesPanel - whitelisted withdrawal address book with
 // 48-hour cool-down on additions and OFAC sanctions screening.
 // =============================================================
 const BEN_SYMBOLS = ['BTC','ETH','SOL','XRP','BNB','ADA','DOGE','AVAX','LINK','LTC','TRX','DOT','MATIC','TON','ATOM','NEAR','APT','ARB','OP','SUI','FIL','INJ','SHIB','PEPE','BCH','ETC','XLM','ALGO','HBAR','USDT'];
@@ -857,7 +860,7 @@ function AddBeneficiaryModal({ open, onClose, onAdded }) {
 }
 
 // =============================================================
-// KycPanel — current KYC tier with daily/monthly usage bars and
+// KycPanel - current KYC tier with daily/monthly usage bars and
 // upgrade form for the next tier.
 // =============================================================
 export function KycPanel() {
@@ -960,7 +963,7 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
           )}
           {requestedTier === 2 && (
             <>
-              <p className="text-white/65">Tier 2 raises your cap to $25,000/day. Provide ID document details — the compliance desk will email you to upload the file securely.</p>
+              <p className="text-white/65">Tier 2 raises your cap to $25,000/day. Provide ID document details - the compliance desk will email you to upload the file securely.</p>
               <label className="block">
                 <span className="text-xs text-white/55">Document type</span>
                 <select required value={form.idDocType || ''} onChange={set('idDocType')} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 outline-none">
@@ -1010,7 +1013,7 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
 }
 
 // =============================================================
-// PortfolioPanel — per-position weighted-average cost basis, live
+// PortfolioPanel - per-position weighted-average cost basis, live
 // mark, unrealised P&L, and lifetime realised P&L. Backed by
 // /api/portfolio which walks transactions.json chronologically.
 // =============================================================
@@ -1128,7 +1131,7 @@ function trimQty(n) {
 }
 
 // =============================================================
-// PriceAlertsPanel — let users set "notify me when BTC > $80k"
+// PriceAlertsPanel - let users set "notify me when BTC > $80k"
 // style rules. Triggers come from the order-settler tick so we
 // don't open a second polling loop.
 // =============================================================
@@ -1145,7 +1148,7 @@ export function PriceAlertsPanel() {
   useEffect(() => {
     if (!user) return undefined;
     load();
-    // Active alerts can trigger asynchronously on the server tick — poll
+    // Active alerts can trigger asynchronously on the server tick - poll
     // so the UI flips from active → triggered without a manual refresh.
     const id = setInterval(load, 15000);
     return () => clearInterval(id);
@@ -1239,7 +1242,7 @@ export function PriceAlertsPanel() {
 }
 
 // =============================================================
-// ConvertPanel — one-tap swap between two assets at live mid +
+// ConvertPanel - one-tap swap between two assets at live mid +
 // a small spread (0.5 % by default). Posts to /api/convert.
 // =============================================================
 const CONVERT_ASSETS = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'MATIC', 'LINK', 'LTC', 'USDT'];
@@ -1297,7 +1300,7 @@ export function ConvertPanel({ onConverted } = {}) {
       </div>
       <p className="text-xs text-white/55 mb-3">
         Swap directly between any two supported assets at the live Binance mid price.
-        A small spread covers the broker leg — no separate trading fee.
+        A small spread covers the broker leg - no separate trading fee.
       </p>
       <form onSubmit={execute} className="space-y-3">
         <div className="grid sm:grid-cols-[1fr_auto_1fr] gap-2 items-end">
@@ -1374,7 +1377,7 @@ export function ConvertPanel({ onConverted } = {}) {
 }
 
 // =============================================================
-// EmptyStateCoach — three-step Start-here panel for brand-new
+// EmptyStateCoach - three-step Start-here panel for brand-new
 // users with no balances and no transactions yet. Hidden once
 // the user has any non-zero balance.
 // =============================================================
@@ -1442,14 +1445,14 @@ export function EmptyStateCoach() {
 }
 
 // =============================================================
-// DcaPanel — recurring (DCA) buys. Schedules are kept active by
+// DcaPanel - recurring (DCA) buys. Schedules are kept active by
 // the server-side order settler; this panel just CRUDs them via
 // /api/dca and polls for run-count updates.
 // =============================================================
 const DCA_ASSETS = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'MATIC', 'LINK', 'LTC'];
 
 function nextRunLabel(ms) {
-  if (!ms || !isFinite(ms)) return '—';
+  if (!ms || !isFinite(ms)) return '-';
   const diff = ms - Date.now();
   if (diff <= 0) return 'on next tick';
   const mins = Math.round(diff / 60000);
@@ -1477,7 +1480,7 @@ export function DcaPanel({ onChanged } = {}) {
   useEffect(() => {
     if (!user) return undefined;
     load();
-    // Tranches fire asynchronously every 5s on the server settler —
+    // Tranches fire asynchronously every 5s on the server settler -
     // poll modestly so the UI reflects new runs / pauses.
     const id = setInterval(load, 20000);
     return () => clearInterval(id);
@@ -1812,7 +1815,7 @@ export function SupportPanel() {
         </button>
       </header>
       <p className="text-xs text-white/55 mt-1">
-        Ask the AurumX desk anything — KYC, deposits, withdrawals, trade issues.
+        Ask the AurumX desk anything - KYC, deposits, withdrawals, trade issues.
       </p>
       {showForm && (
         <form id="support-new-form" onSubmit={onCreate} className="mt-3 space-y-2">
@@ -1826,7 +1829,7 @@ export function SupportPanel() {
           <textarea
             value={form.body}
             onChange={(e) => setForm({ ...form, body: e.target.value })}
-            placeholder="Describe the issue in detail — include tx ids and timestamps where you can."
+            placeholder="Describe the issue in detail - include tx ids and timestamps where you can."
             maxLength={4000}
             rows={4}
             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 resize-y"

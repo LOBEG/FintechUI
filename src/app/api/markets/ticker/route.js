@@ -1,12 +1,12 @@
 // Proxy for Binance's 24h ticker, so the browser never talks to
-// api.binance.com directly (Binance refuses some IPs — notably US — and
+// api.binance.com directly (Binance refuses some IPs - notably US - and
 // blocking issues should not break the dashboard for any user).
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const REST = 'https://api.binance.com';
+const REST = process.env.BINANCE_API_BASE || 'https://api.binance.com';
 
 // Symbols can be passed as a comma-separated string ("BTCUSDT,ETHUSDT")
 // or as a JSON array. Returns the raw Binance 24h ticker payload.

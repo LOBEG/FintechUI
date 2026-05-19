@@ -6,8 +6,8 @@ const faqs = [
     { q: 'Is AurumX regulated?', a: 'Yes. AurumX operates regulated entities under MiCA (EU), FCA (UK), MSB (US FinCEN), and DIFC. We comply with AML/CFT, the Travel Rule, and applicable consumer protection rules.' },
     { q: 'How are client assets secured?', a: 'We use a combination of qualified custodians (Fireblocks, BitGo) with MPC + multi-sig and segregated cold storage for ~95% of assets. Hot wallets are insured for up to $250M.' },
     { q: 'What is the minimum investment?', a: 'Retail accounts start at $50. Institutional and managed-account services start at $250,000 and include dedicated relationship managers.' },
-    { q: 'Can I integrate via API?', a: 'Yes — AurumX offers REST and FIX 4.4 APIs, WebSocket market data, and OMS/EMS integrations (Talos, Crossover, Wyden).' },
-    { q: 'Do you support fiat on/off-ramps?', a: 'Yes — USD, EUR, GBP, AED, SGD via SWIFT, SEPA Instant, Faster Payments, and FedNow with same-day settlement for verified institutions.' },
+    { q: 'Can I integrate via API?', a: 'Yes - AurumX offers REST and FIX 4.4 APIs, WebSocket market data, and OMS/EMS integrations (Talos, Crossover, Wyden).' },
+    { q: 'Do you support fiat on/off-ramps?', a: 'Yes - USD, EUR, GBP, AED, SGD via SWIFT, SEPA Instant, Faster Payments, and FedNow with same-day settlement for verified institutions.' },
     { q: 'How does the AI trading bot work?', a: 'Aurelia AI combines transformer and reinforcement-learning models with order-book microstructure and on-chain analytics. Users select risk profile, strategy, and capital allocation.' },
 ];
 export function FAQ() {

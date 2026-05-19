@@ -25,6 +25,10 @@ export async function POST(req) {
     const password = String(body.password || '');
     if (!isEmail(email)) return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     if (password.length < 8) return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+    const adminEmail = String(process.env.ADMIN_EMAIL || '').toLowerCase().trim();
+    if (adminEmail && email === adminEmail) {
+      return NextResponse.json({ error: 'This account is reserved for secure admin sign-in.' }, { status: 403 });
+    }
     if (findUserByEmail(email)) return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
 
     // Optional referral: resolve before we create the new user so we

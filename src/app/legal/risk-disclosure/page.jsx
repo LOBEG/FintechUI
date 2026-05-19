@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Risk Disclosure — AurumX',
+    title: 'Risk Disclosure - AurumX',
     description: 'Important risk disclosure for digital asset trading on AurumX.',
 };
 

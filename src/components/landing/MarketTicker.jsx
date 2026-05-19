@@ -16,6 +16,7 @@ export function MarketTicker() {
     return (<section id="markets" className="relative">
       <div className="border-y border-white/5 bg-ink-900/40 backdrop-blur">
         <div className="overflow-hidden">
+          {!items.length && <div className="py-3 text-center text-sm text-white/50">Connecting to live market prices...</div>}
           <div className="marquee-track py-3">
             {items.map((a, i) => {
               const logo = getCryptoLogo(a.sym);
@@ -37,4 +38,3 @@ export function MarketTicker() {
       </div>
     </section>);
 }
-

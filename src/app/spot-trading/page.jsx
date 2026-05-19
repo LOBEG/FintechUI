@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { TrendingUp, Zap, Shield, Clock } from 'lucide-react';
 
 export const metadata = {
-    title: 'Spot Trading — AurumX',
+    title: 'Spot Trading - AurumX',
     description: 'Trade BTC, ETH, and 200+ digital assets with zero-fee spot trading on AurumX.',
 };
 

@@ -53,7 +53,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-white/60 max-w-xs">
-              Institutional-grade digital asset platform — secure, regulated, and engineered for performance.
+              Institutional-grade digital asset platform - secure, regulated, and engineered for performance.
             </p>
             <div className="mt-5 flex items-center gap-3">
               <a href="https://t.me/" aria-label="Telegram" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Send className="h-4 w-4"/></a>

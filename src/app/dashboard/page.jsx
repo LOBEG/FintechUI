@@ -8,6 +8,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { CandlestickChart, Sparkline, BarChart, DonutChart } from '@/components/ui/Charts';
 import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
+import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
 import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel, ReferralPanel } from '@/components/dashboard/UserPanels';
@@ -76,7 +77,7 @@ export default function DashboardPage() {
     const removeFromWatchlist = useCallback(async (pair) => {
         if (!user) return;
         const base = pair.endsWith('USDT') ? pair.slice(0, -4) : pair;
-        // Optimistic update — keep the row responsive even if the network is slow.
+        // Optimistic update - keep the row responsive even if the network is slow.
         setWatchlistBases((prev) => (prev || []).filter((b) => b !== base));
         try {
             const r = await api.post('/api/watchlist', { symbol: base });
@@ -91,7 +92,7 @@ export default function DashboardPage() {
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
     const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
-    const btc = livePrices.BTCUSDT || { price: 71248.32, pct: 2.41, high: 72415, low: 69128, vol: 24812, quoteVol: 1.76e9 };
+    const btc = livePrices.BTCUSDT || { price: 0, pct: 0, high: 0, low: 0, vol: 0, quoteVol: 0, live: false };
     const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const [price, setPrice] = useState('');
     const effectivePrice = price || (btc.price ? btc.price.toFixed(2) : '0');
@@ -188,8 +189,8 @@ export default function DashboardPage() {
           <section id="wallet" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {wallets.slice(0, 4).map((w, i) => (<motion.div key={w.sym} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass p-4">
                 <div className="flex items-center gap-2">
-                  <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-xs font-bold text-ink-950" style={{ background: w.color }}>
-                    {w.sym.slice(0, 1)}
+                  <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-xs font-bold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(w.sym) || { background: w.color }}>
+                    {!cryptoLogoStyle(w.sym) && w.sym.slice(0, 1)}
                   </span>
                   <div>
                     <p className="text-sm font-semibold">{w.sym}</p>
@@ -203,7 +204,7 @@ export default function DashboardPage() {
               </motion.div>))}
           </section>
 
-          {/* Deposit addresses + markets — only after sign-in for deposit, markets always */}
+          {/* Deposit addresses + markets - only after sign-in for deposit, markets always */}
           {user && (
             <section className="grid xl:grid-cols-2 gap-4">
               <DepositAddressPanel />
@@ -231,7 +232,9 @@ export default function DashboardPage() {
             <div className="xl:col-span-2 glass-strong p-4">
               <div className="flex items-center justify-between flex-wrap gap-3 px-1">
                 <div className="flex items-center gap-3">
-                  <span className="h-9 w-9 rounded-md inline-flex items-center justify-center text-ink-950 text-sm font-bold" style={{ background: '#f7931a' }}>₿</span>
+                  <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-ink-950 text-sm font-bold bg-white/5 border border-white/10" style={cryptoLogoStyle('BTC')}>
+                    <span className="sr-only">Bitcoin</span>
+                  </span>
                   <div>
                     <p className="text-base font-semibold">BTC / USDT</p>
                     <p className="text-xs text-white/50">Bitcoin · Spot · Binance live feed</p>
@@ -316,8 +319,8 @@ export default function DashboardPage() {
                   const base = s.endsWith('USDT') ? s.slice(0, -4) : s;
                   const canRemove = !!user && Array.isArray(watchlistBases) && watchlistBases.includes(base);
                   return (<div key={s} className="flex items-center gap-3 py-2.5">
-                      <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90" style={{ background: meta.color }} aria-label={`Open ${meta.sym} details`}>
-                        {meta.sym.slice(0, 1)}
+                      <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90 bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: meta.color }} aria-label={`Open ${meta.sym} details`}>
+                        {!cryptoLogoStyle(meta.sym) && meta.sym.slice(0, 1)}
                       </a>
                       <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-gold">
                         <p className="text-sm font-medium">{meta.sym}</p>
@@ -485,7 +488,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* Testimonial composer — for invested users to share feedback */}
+          {/* Testimonial composer - for invested users to share feedback */}
           {user && <TestimonialComposer />}
 
           {/* Mobile floating action button */}
