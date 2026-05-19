@@ -27,7 +27,7 @@ export async function POST(req) {
     if (password.length < 8) return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
     const adminEmail = String(process.env.ADMIN_EMAIL || '').toLowerCase().trim();
     if (adminEmail && email === adminEmail) {
-      return NextResponse.json({ error: 'This account is reserved for secure admin sign-in.' }, { status: 403 });
+      return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
     }
     if (findUserByEmail(email)) return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
 
