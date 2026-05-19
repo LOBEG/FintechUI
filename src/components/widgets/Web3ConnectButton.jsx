@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Wallet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSession } from '@/lib/useSession';
 const wallets = [
     { name: 'MetaMask', logo: 'https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg' },
     { name: 'WalletConnect', logo: 'https://walletconnect.com/walletconnect-logo.svg' },
@@ -11,8 +12,18 @@ const wallets = [
     { name: 'Ledger', logo: 'https://avatars.githubusercontent.com/u/250290?s=96&v=4' },
 ];
 export function Web3ConnectButton() {
+    const { user } = useSession();
     const [open, setOpen] = useState(false);
     const [connected, setConnected] = useState(null);
+    const chooseWallet = (walletName) => {
+        if (!user) {
+            const wallet = encodeURIComponent(walletName);
+            window.location.href = `/login?next=/dashboard&wallet=${wallet}`;
+            return;
+        }
+        setConnected('0x' + Math.random().toString(16).slice(2, 14));
+        setOpen(false);
+    };
     return (<>
       <button onClick={() => setOpen(true)} className="btn-outline text-sm">
         <Wallet className="h-4 w-4"/>
@@ -24,10 +35,7 @@ export function Web3ConnectButton() {
               <h3 className="text-lg font-semibold text-white">Connect a wallet</h3>
               <p className="text-sm text-white/60 mt-1">Choose a supported Web3 wallet to continue.</p>
               <div className="mt-5 grid grid-cols-2 gap-3">
-                {wallets.map((w) => (<button key={w.name} onClick={() => {
-                    setConnected('0x' + Math.random().toString(16).slice(2, 14));
-                    setOpen(false);
-                }} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left">
+                {wallets.map((w) => (<button key={w.name} onClick={() => chooseWallet(w.name)} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left">
                     <span className="h-9 w-9 rounded-full bg-white bg-center bg-contain bg-no-repeat border border-white/10" style={{ backgroundImage: `url(${w.logo})` }} aria-hidden/>
                     <span className="text-sm font-medium">{w.name}</span>
                   </button>))}

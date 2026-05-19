@@ -330,7 +330,7 @@ export default function DashboardPage() {
                     if (side === 'buy') openInvest(investSymbol);
                     else setSellOpen(true);
                 }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
-                  {user ? (side === 'buy' ? `Buy ${investSymbol}` : `Sell ${investSymbol}`) : 'Sign in to trade'}
+                  {user ? (side === 'buy' ? `Buy ${investSymbol}` : `Sell ${investSymbol}`) : 'Trade'}
                 </button>
               </div>
             </div>

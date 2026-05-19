@@ -3,14 +3,70 @@ import { useState } from 'react';
 import { Bot, Send, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 const seed = [
-    { role: 'ai', text: 'Hi, I’m Aurelia, AurumX’s AI trading assistant. Ask me anything about markets, your portfolio, or strategies.' },
+    { role: 'ai', text: 'Hi, I’m Aurelia, AurumX’s AI trading assistant. Ask me about crypto investing, trading order types, risk management, portfolio allocation, deposits, withdrawals, or how to start safely on AurumX.' },
 ];
-const cannedReplies = [
-    'Based on current momentum, BTC looks bullish above 70k. I’d watch the 72.4k resistance.',
-    'Your portfolio risk score is 4/10 (moderate). Consider rebalancing 5% from SOL into stablecoins.',
-    'ETH on-chain volume is up 14% week-over-week, with accumulation still visible.',
-    'Try our AI Grid Bot on SOL/USDT. The latest 30-day backtest shows +6.4%.',
+const investmentKnowledge = [
+    {
+        keywords: ['start', 'begin', 'new', 'account', 'signup', 'sign up', 'login', 'create'],
+        text: 'To start on AurumX, create an account or sign in first. New users can review public live markets, but investing, selling, wallet funding, watchlists, and trading controls unlock only after secure authentication. Start small, verify your account details, and review risk before placing any order.',
+    },
+    {
+        keywords: ['invest', 'investment', 'portfolio', 'allocate', 'allocation'],
+        text: 'A sound crypto investment plan starts with clear objectives, time horizon, risk tolerance, and position sizing. Many investors use diversified allocation across core assets such as BTC/ETH, stablecoins for liquidity, and smaller satellite positions only when they understand the volatility. AurumX keeps execution and portfolio records inside the signed-in account experience.',
+    },
+    {
+        keywords: ['trade', 'trading', 'buy', 'sell', 'execute', 'execution'],
+        text: 'Trading is different from long-term investing: define your entry, exit, invalidation level, and maximum loss before placing a buy or sell. On AurumX, public users can study the market first, while authenticated users get the complete trade ticket, selected asset context, balances, order controls, and account records.',
+    },
+    {
+        keywords: ['market', 'limit', 'stop', 'order type', 'order'],
+        text: 'Market orders prioritise immediate execution at the best available price. Limit orders execute only at your chosen price or better. Stop orders help trigger an action after a selected price level is reached. New traders should understand slippage, liquidity, and fees before choosing an order type.',
+    },
+    {
+        keywords: ['risk', 'loss', 'safe', 'safety', 'protect', 'volatility'],
+        text: 'Crypto markets are volatile, so risk management is essential. Consider limiting risk per trade, avoiding overconcentration, keeping liquidity in stable assets, using stop levels where appropriate, and never investing funds you cannot afford to lose. I can explain concepts, but I do not provide personalised financial advice.',
+    },
+    {
+        keywords: ['dca', 'dollar cost', 'average'],
+        text: 'Dollar-cost averaging spreads purchases across time instead of investing everything at once. It can reduce timing pressure in volatile markets, but it does not remove downside risk. AurumX presents DCA as an account-based strategy workflow so users can monitor allocation and execution history after signing in.',
+    },
+    {
+        keywords: ['btc', 'bitcoin'],
+        text: 'Bitcoin is commonly treated as the core crypto asset because of its liquidity, market depth, fixed issuance schedule, and institutional adoption. Traders still need to monitor volatility, macro catalysts, support/resistance zones, and position size before investing or trading BTC.',
+    },
+    {
+        keywords: ['eth', 'ethereum'],
+        text: 'Ethereum is widely used for smart contracts, DeFi, tokenisation, and staking ecosystems. ETH exposure can behave differently from BTC because network usage, gas fees, protocol upgrades, and application activity can influence demand.',
+    },
+    {
+        keywords: ['stablecoin', 'usdt', 'usdc', 'cash'],
+        text: 'Stablecoins such as USDT and USDC are often used as trading quote assets and liquidity buffers. They can help investors wait for opportunities, manage risk, or settle trades, but users should still understand issuer, chain, and transfer risks.',
+    },
+    {
+        keywords: ['deposit', 'withdraw', 'wallet', 'connect'],
+        text: 'Wallet and funding actions should happen only inside a secure authenticated account. When you choose a wallet from the landing page, AurumX routes you to sign in or create an account first so deposits, withdrawals, addresses, and records stay tied to your profile.',
+    },
+    {
+        keywords: ['fee', 'fees', 'spread', 'slippage'],
+        text: 'Always account for trading fees, spread, and slippage. A quoted market price can differ from execution during fast moves or thin liquidity. Review the order value and estimated fee before confirming a trade inside your account.',
+    },
+    {
+        keywords: ['strategy', 'strategies', 'bot', 'ai', 'aurelia'],
+        text: 'Aurelia can explain strategy concepts such as DCA, momentum monitoring, rebalancing, stop discipline, and portfolio guardrails. Treat AI as decision support, not a guarantee. Final investment decisions should be based on your objectives, risk capacity, and verified account data.',
+    },
 ];
+const fallbackReplies = [
+    'I can help with crypto investing, trading order types, asset selection, wallet funding, risk management, portfolio allocation, and how AurumX routes account-only actions. Tell me the asset or trading concept you want to understand.',
+    'For fintech-standard safety, AurumX lets public users review markets first, then routes investing, selling, trading, and wallet actions through secure sign-in or account creation. Ask me about market, limit, stop, DCA, portfolio risk, or a specific asset.',
+    'A good trading question includes the asset, time horizon, risk limit, and order type you are considering. I can explain the framework and risks, but I cannot guarantee returns or provide personalised financial advice.',
+];
+
+function getAureliaReply(input) {
+    const q = input.toLowerCase();
+    const topic = investmentKnowledge.find((item) => item.keywords.some((keyword) => q.includes(keyword)));
+    if (topic) return topic.text;
+    return fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+}
 export function AIChatWidget() {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
@@ -19,8 +75,9 @@ export function AIChatWidget() {
     const send = () => {
         if (!input.trim())
             return;
-        const user = { role: 'user', text: input };
-        const ai = { role: 'ai', text: cannedReplies[Math.floor(Math.random() * cannedReplies.length)] };
+        const question = input.trim();
+        const user = { role: 'user', text: question };
+        const ai = { role: 'ai', text: getAureliaReply(question) };
         setMsgs((m) => [...m, user]);
         setInput('');
         setTimeout(() => setMsgs((m) => [...m, ai]), 600);
