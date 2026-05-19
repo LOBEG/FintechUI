@@ -19,7 +19,7 @@ const items = [
 export function Sidebar() {
     const pathname = usePathname();
     const { user, logout } = useSession();
-    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : 'AX';
+    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : 'AU';
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
       <Link href="/" className="flex items-center gap-2 px-5 h-16 border-b border-white/5">
         <span className="h-8 w-8 rounded-lg bg-gold-grad inline-flex items-center justify-center text-ink-950">
