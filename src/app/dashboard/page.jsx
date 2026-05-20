@@ -11,7 +11,9 @@ import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } fro
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/TradeModals';
 import { useSession, api } from '@/lib/useSession';
-import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel, ReferralPanel } from '@/components/dashboard/UserPanels';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel, ReferralPanel, SupportPanel, SupportContactPanel } from '@/components/dashboard/UserPanels';
+import { AvailableCashSelector } from '@/components/dashboard/AvailableCashSelector';
+import { useI18n } from '@/components/I18nProvider';
 
 // Default watchlist for anonymous visitors and users who haven't pinned
 // anything yet. Logged-in users override this via /api/watchlist.
@@ -39,6 +41,7 @@ const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
 
 export default function DashboardPage() {
     const { user } = useSession();
+    const { t } = useI18n();
     const [side, setSide] = useState('buy');
     const [orderType, setOrderType] = useState('limit');
     const [amount, setAmount] = useState('0.05');
@@ -183,7 +186,7 @@ export default function DashboardPage() {
     return (<div className="flex">
       <Sidebar />
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
-        <TopBar title="Trading Dashboard"/>
+        <TopBar title={t('tradingDashboard')}/>
         <main className="p-4 sm:p-6 space-y-6">
           {user && <EmailVerifyBanner user={user} />}          {/* Portfolio overview */}
           {user ? <section className="grid lg:grid-cols-4 gap-4">
@@ -191,7 +194,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-white/60 flex items-center gap-2">
-                    Total Portfolio Value
+                    {t('totalPortfolioValue')}
                     <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-neon-green">
                       <span className="h-1.5 w-1.5 rounded-full bg-neon-green animate-pulse"/> live
                     </span>
@@ -202,9 +205,9 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="hidden sm:flex gap-2">
-                  <button onClick={() => openInvest(investSymbol)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> Invest</button>
-                  <button onClick={() => setSellOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Sell</button>
-                  <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> Withdraw</button>
+                  <button onClick={() => openInvest(investSymbol)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> {t('invest')}</button>
+                  <button onClick={() => setSellOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('sell')}</button>
+                  <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('withdraw')}</button>
                 </div>
               </div>
               <div className="mt-3 h-24">
@@ -212,15 +215,11 @@ export default function DashboardPage() {
               </div>
             </motion.div>
 
+            <AvailableCashSelector wallets={wallets} livePrices={livePrices} />
             <div className="glass p-5">
-              <p className="text-sm text-white/60">Available Cash</p>
-              <p className="text-2xl font-display mt-1 text-neon-green">{formatUSD(cashUSDT)}</p>
-              <p className="text-xs text-white/50 mt-1">{cashUSDT > 0 ? 'USDT · ready to trade' : 'Fund USDT to start trading'}</p>
-            </div>
-            <div className="glass p-5">
-              <p className="text-sm text-white/60">Open P&L</p>
+              <p className="text-sm text-white/60">{t('openPnL')}</p>
               <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-gold-400' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
-              <p className="text-xs text-white/50 mt-1">{positions.length} open positions</p>
+              <p className="text-xs text-white/50 mt-1">{positions.length} {t('openPositions')}</p>
             </div>
           </section> : <section className="glass-strong p-5">
             <p className="text-sm text-white/60">Public trading preview</p>
@@ -268,6 +267,8 @@ export default function DashboardPage() {
           {user && <ReferralPanel />}
           {user && <section id="alerts-section"><PriceAlertsPanel /></section>}
           {user && <section id="settings-section"><BeneficiariesPanel /></section>}
+          {user && <SupportPanel />}
+          {user && <SupportContactPanel />}
           {!user && (
             <section>
               <MarketsPanel onInvest={openInvest} />
@@ -320,10 +321,10 @@ export default function DashboardPage() {
             <div className="glass-strong p-4">
               <div className="grid grid-cols-2 rounded-xl bg-white/5 p-1">
                 <button onClick={() => (user ? setSide('buy') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'buy' ? 'bg-neon-green text-ink-950' : 'text-white/70'}`}>
-                  Buy
+                  {t('buy')}
                 </button>
                 <button onClick={() => (user ? setSide('sell') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'sell' ? 'bg-neon-red text-white' : 'text-white/70'}`}>
-                  Sell
+                  {t('sell')}
                 </button>
               </div>
               <div className="mt-3 flex gap-1 text-xs">
@@ -352,7 +353,7 @@ export default function DashboardPage() {
                     if (side === 'buy') openInvest(investSymbol);
                     else setSellOpen(true);
                 }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
-                  {user ? (side === 'buy' ? `Buy ${investSymbol}` : `Sell ${investSymbol}`) : 'Trade'}
+                  {user ? (side === 'buy' ? `${t('buy')} ${investSymbol}` : `${t('sell')} ${investSymbol}`) : t('trade')}
                 </button>
               </div>
             </div>

@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Globe, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from '@/components/I18nProvider';
+
 const langs = [
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Español' },
@@ -14,26 +16,20 @@ const langs = [
     { code: 'ru', label: 'Русский' },
     { code: 'hi', label: 'हिन्दी' },
 ];
+
 export function LanguageSelector() {
     const [open, setOpen] = useState(false);
-    const [active, setActive] = useState('en');
-    useEffect(() => {
-        const stored = localStorage.getItem('aurumx_lang');
-        if (stored)
-            setActive(stored);
-    }, []);
-    useEffect(() => {
-        document.documentElement.lang = active;
-    }, [active]);
+    const { lang, setLang } = useI18n();
+
     const selectLang = (code) => {
-        setActive(code);
-        localStorage.setItem('aurumx_lang', code);
+        setLang(code);
         setOpen(false);
     };
+
     return (<div className="relative">
       <button onClick={() => setOpen(!open)} className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-lg bg-white/5 border border-cyan/15 hover:bg-cyan/10 transition text-sm" aria-label="Select language">
         <Globe className="h-4 w-4"/>
-        <span>{active.toUpperCase()}</span>
+        <span>{lang.toUpperCase()}</span>
       </button>
       <AnimatePresence>
         {open && (<>
@@ -42,7 +38,7 @@ export function LanguageSelector() {
               <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-cyan">Display language</p>
               {langs.map((l) => (<button key={l.code} onClick={() => selectLang(l.code)} className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm text-white hover:bg-cyan/10">
                   <span>{l.label}</span>
-                  {active === l.code && <Check className="h-4 w-4 text-neon-green"/>}
+                  {lang === l.code && <Check className="h-4 w-4 text-neon-green"/>}
                 </button>))}
             </motion.div>
         </>)}

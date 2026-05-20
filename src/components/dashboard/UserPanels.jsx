@@ -1944,3 +1944,58 @@ export function SupportPanel() {
     </section>
   );
 }
+
+// =============================================================
+// Support panel with Telegram and WhatsApp contact options
+// =============================================================
+export function SupportContactPanel() {
+  const { user } = useSession();
+  const telegramUrl = typeof window !== 'undefined' 
+    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/AurumXSupport')
+    : 'https://t.me/AurumXSupport';
+  const whatsappUrl = typeof window !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT_URL || 'https://wa.me/15555550123')
+    : 'https://wa.me/15555550123';
+
+  if (!user) return null;
+
+  return (
+    <section id="support-section" className="glass-strong p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <LifeBuoy className="h-4 w-4 text-cyan"/>
+        <h3 className="font-display text-lg">Contact Support</h3>
+      </div>
+      <p className="text-sm text-white/60 mb-4">Need help? Reach out to our support team via your preferred channel.</p>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <a
+          href={telegramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="glass-light p-4 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-3 group"
+        >
+          <div className="h-12 w-12 rounded-full flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #229ED9 0%, #1a7cb8 100%)' }}>
+            <Send className="h-5 w-5"/>
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">Telegram Support</p>
+            <p className="text-xs text-white/50">Chat with us on Telegram</p>
+          </div>
+        </a>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="glass-light p-4 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-3 group"
+        >
+          <div className="h-12 w-12 rounded-full flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)' }}>
+            <MessageSquare className="h-5 w-5"/>
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">WhatsApp Support</p>
+            <p className="text-xs text-white/50">Message us on WhatsApp</p>
+          </div>
+        </a>
+      </div>
+    </section>
+  );
+}
