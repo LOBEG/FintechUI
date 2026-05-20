@@ -9,7 +9,9 @@ import { CandlestickChart, Sparkline, BarChart, DonutChart } from '@/components/
 import { formatUSD, formatPct } from '@/lib/utils';
 import { useLivePrices, useLiveKlines, SYMBOL_META, DEFAULT_TICKER_SYMBOLS } from '@/lib/useLiveData';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
-import { InvestModal, WithdrawModal, SellModal } from '@/components/dashboard/TradeModals';
+import { InvestModal, WithdrawModal, SellModal, BrokerageInvestModal } from '@/components/dashboard/TradeModals';
+import BrokerageHubPanel from '@/components/dashboard/BrokerageHubPanel';
+import BrokeragePositionsPanel from '@/components/dashboard/BrokeragePositionsPanel';
 import { useSession, api } from '@/lib/useSession';
 import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel, ReferralPanel, SupportPanel, SupportContactPanel } from '@/components/dashboard/UserPanels';
 import { AvailableCashSelector } from '@/components/dashboard/AvailableCashSelector';
@@ -83,6 +85,9 @@ export default function DashboardPage() {
     }, [requireAuth]);
     const [withdrawOpen, setWithdrawOpen] = useState(false);
     const [sellOpen, setSellOpen] = useState(false);
+    const [brokerageInvestOpen, setBrokerageInvestOpen] = useState(false);
+    const [brokerageInvestSymbol, setBrokerageInvestSymbol] = useState('AAPL');
+    const [brokerageInvestClass, setBrokerageInvestClass] = useState('stocks');
     const [liveWallet, setLiveWallet] = useState(null);
     const refreshWallet = useCallback(async () => {
         if (!user) { setLiveWallet(null); return; }
@@ -385,6 +390,11 @@ export default function DashboardPage() {
               <MarketsPanel onInvest={openInvest} />
             </section>
           )}
+          {user && <BrokerageHubPanel
+            onInvest={(sym, cls) => { if (sym) setBrokerageInvestSymbol(sym); if (cls) setBrokerageInvestClass(cls); setBrokerageInvestOpen(true); }}
+            onWithdraw={() => setWithdrawOpen(true)}
+          />}
+          {user && <BrokeragePositionsPanel />}
           {user && <EmptyStateCoach />}
           {user && <SandboxOnRampPanel />}
           {user && <OpenOrdersPanel />}
@@ -621,6 +631,7 @@ export default function DashboardPage() {
       <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} walletBalances={userBalances} defaultSymbol={investSymbol}/>
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
       <SellModal open={sellOpen} onClose={() => setSellOpen(false)} onSuccess={refreshWallet} balances={userBalances} defaultSymbol={investSymbol}/>
+      <BrokerageInvestModal open={brokerageInvestOpen} onClose={() => setBrokerageInvestOpen(false)} onSuccess={refreshWallet} defaultSymbol={brokerageInvestSymbol} defaultClass={brokerageInvestClass} walletBalances={userBalances}/>
     </div>);
 }
 function Field({ label, value, onChange, disabled, }) {

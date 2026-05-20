@@ -623,3 +623,47 @@ export function addUserNote(n) {
   write('userNotes', arr.slice(0, 10000));
   return n;
 }
+
+// --------------- BROKERAGE SETTINGS ---------------
+// settings.brokerage = {
+//   integrations: { prime: true, crypto: true, multiAsset: true },
+//   classes: { stocks: true, etfs: true, indices: true, forex: true, commodities: true, futures: true },
+//   limits: { stocks: { min: 10, max: 5000000 }, ... } // optional per-class
+// }
+export function getBrokerageSettings() {
+  const s = getSettings();
+  const defaults = {
+    integrations: { prime: true, crypto: true, multiAsset: true },
+    classes: { stocks: true, etfs: true, indices: true, forex: true, commodities: true, futures: true },
+    limits: {},
+  };
+  return { ...defaults, ...(s.brokerage || {}) };
+}
+export function saveBrokerageSettings(patch) {
+  const current = getBrokerageSettings();
+  const next = { ...current, ...patch };
+  saveSettings({ brokerage: next });
+  return next;
+}
+
+// --------------- BROKERAGE POSITIONS ---------------
+// positions stored as user.positions = { 'AAPL|stocks': { symbol, assetClass, qty, avgPrice, usdInvested, createdAt, updatedAt } }
+export function getUserPositions(userId) {
+  const user = findUserById(userId);
+  return user?.positions || {};
+}
+export function upsertPosition(userId, key, patch) {
+  const user = findUserById(userId);
+  if (!user) throw new Error('User not found');
+  user.positions = user.positions || {};
+  user.positions[key] = { ...(user.positions[key] || {}), ...patch, updatedAt: Date.now() };
+  upsertUser(user);
+  return user.positions[key];
+}
+export function setPreferredBroker(userId, broker) {
+  const user = findUserById(userId);
+  if (!user) throw new Error('User not found');
+  user.preferredBroker = broker;
+  upsertUser(user);
+  return broker;
+}

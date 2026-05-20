@@ -59,20 +59,8 @@ export function DepositAddressPanel() {
     setCopied(sym);
     setTimeout(() => setCopied(null), 1500);
   };
-  // When no addresses have been pushed by an administrator yet, render a
-  // compact one-line chip instead of a full panel - the user explicitly
-  // asked for the card to shrink when there is nothing to show and only
-  // expand once admin-published addresses arrive.
-  if (addresses.length === 0) {
-    return (
-      <section className="glass-light px-3 py-2 flex items-center gap-2 text-xs">
-        <Wallet className="h-3.5 w-3.5 text-gold-400"/>
-        <span className="font-semibold text-white/85">Deposit crypto</span>
-        <span className="chip bg-white/5 border border-white/10 text-white/55 text-[10px]">awaiting admin address</span>
-        <span className="ml-auto text-[11px] text-white/45 hidden sm:inline">Addresses appear here automatically once published.</span>
-      </section>
-    );
-  }
+  // No addresses published by admin → hide the card entirely (empty-state-collapse).
+  if (addresses.length === 0) return null;
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">

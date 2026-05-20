@@ -358,3 +358,145 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
     </Modal>
   );
 }
+
+// =============================================================
+// Brokerage invest modal — multi-asset (stocks, ETFs, indices, forex,
+// commodities, futures) bought with USDT and routed through one of the
+// three Oakmont broker integrations.
+// =============================================================
+const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
+const BROKER_OPTIONS = [
+  { id: 'prime', label: 'Oakmont Prime' },
+  { id: 'crypto', label: 'Oakmont DCG Crypto Desk (Binance)' },
+  { id: 'multiAsset', label: 'Oakmont Multi-Asset Desk (Yahoo Finance)' },
+];
+
+export function BrokerageInvestModal({
+  open,
+  onClose,
+  onSuccess,
+  defaultSymbol = 'AAPL',
+  defaultClass = 'stocks',
+  walletBalances = {},
+  preferredBroker = 'prime',
+}) {
+  const [assetClass, setAssetClass] = useState(defaultClass);
+  const [universe, setUniverse] = useState({});
+  const [symbol, setSymbol] = useState(defaultSymbol);
+  const [broker, setBroker] = useState(preferredBroker);
+  const [usdAmount, setUsdAmount] = useState('100');
+  const [quote, setQuote] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const availableUsdt = walletBalances.USDT || 0;
+  const px = quote?.price || 0;
+  const estQty = px ? parseFloat(usdAmount || '0') / px : 0;
+
+  useEffect(() => {
+    if (!open) return;
+    setSuccess(null); setError(null);
+    setAssetClass(defaultClass || 'stocks');
+    setSymbol(defaultSymbol || 'AAPL');
+    setBroker(preferredBroker || 'prime');
+    let cancelled = false;
+    api.get('/api/brokerage/universe').then((r) => {
+      if (!cancelled && r?.universe) setUniverse(r.universe);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [open, defaultClass, defaultSymbol, preferredBroker]);
+
+  useEffect(() => {
+    if (!open || !symbol) { setQuote(null); return; }
+    let cancelled = false;
+    const fetchQuote = () => {
+      api.get(`/api/brokerage/quotes?symbols=${encodeURIComponent(symbol)}`)
+        .then((r) => { if (!cancelled) setQuote(r?.quotes?.[0] || null); })
+        .catch(() => {});
+    };
+    fetchQuote();
+    const id = setInterval(fetchQuote, 10000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [open, symbol]);
+
+  useEffect(() => {
+    const rows = universe[assetClass] || [];
+    if (rows.length && !rows.find((r) => r.symbol === symbol)) {
+      setSymbol(rows[0].symbol);
+    }
+  }, [assetClass, universe, symbol]);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      const r = await api.post('/api/brokerage/invest', {
+        symbol,
+        assetClass,
+        broker,
+        usdAmount: parseFloat(usdAmount),
+      });
+      setSuccess(r);
+      onSuccess && onSuccess(r);
+    } catch (err) {
+      setError(err.message);
+    } finally { setBusy(false); }
+  };
+
+  const rows = universe[assetClass] || [];
+
+  return (
+    <Modal open={open} onClose={onClose} title="Invest via brokerage" icon={<ArrowDownLeft className="h-4 w-4 text-neon-green"/>}>
+      {success ? (
+        <div className="text-center py-6">
+          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <p className="mt-3 font-semibold">Order filled</p>
+          <p className="text-sm text-white/65 mt-1">
+            Acquired <strong>{Number(success.transaction.amount).toLocaleString(undefined, { maximumFractionDigits: 6 })} {success.transaction.symbol}</strong>{' '}
+            for ${Number(success.transaction.usdValue).toFixed(2)} at ${Number(success.transaction.price).toFixed(4)}.
+          </p>
+          <p className="text-xs text-white/45 mt-2">Fee {Number(success.fee).toFixed(2)} USDT.</p>
+          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+        </div>
+      ) : (
+        <form onSubmit={submit} className="space-y-3">
+          <p className="text-xs text-white/60">
+            Spend USDT to buy a brokerage instrument at the live price. Available USDT: <strong>{availableUsdt.toFixed(2)}</strong>
+            {availableUsdt === 0 && <span className="text-neon-orange"> (insufficient balance)</span>}.
+          </p>
+          <label className="block">
+            <span className="text-xs text-white/55">Broker</span>
+            <select value={broker} onChange={(e) => setBroker(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {BROKER_OPTIONS.map((o) => <option key={o.id} value={o.id} className="bg-ink-900">{o.label}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Asset class</span>
+            <select value={assetClass} onChange={(e) => setAssetClass(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {BROKERAGE_CLASSES.map((c) => <option key={c} value={c} className="bg-ink-900">{c}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">Symbol</span>
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {rows.map((r) => <option key={r.symbol} value={r.symbol} className="bg-ink-900">{r.symbol} — {r.name}</option>)}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs text-white/55">USDT amount</span>
+            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+          </label>
+          <div className="glass-light p-3 text-xs space-y-1">
+            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `$${px.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '-'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Estimated qty</span><span>{estQty ? estQty.toFixed(6) : '-'}</span></div>
+          </div>
+          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          <button disabled={busy || !px || availableUsdt === 0} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest ${usdAmount} USDT into ${symbol}`}
+          </button>
+        </form>
+      )}
+    </Modal>
+  );
+}

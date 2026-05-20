@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw, Briefcase } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 
@@ -87,6 +87,7 @@ export function AdminOperations() {
           ['kyc', 'KYC queue', BadgeCheck],
           ['metrics', 'Metrics', BarChart3],
           ['exports', 'CSV exports', Download],
+          ['brokerage', 'Brokerage settings', Briefcase],
         ].map(([k, label, Icon]) => (
           <button key={k} onClick={() => setTab(k)} className={`px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 ${tab === k ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'}`}>
             <Icon className="h-3.5 w-3.5"/>{label}
@@ -110,6 +111,7 @@ export function AdminOperations() {
       {tab === 'kyc' && <KycQueuePanel/>}
       {tab === 'metrics' && <MetricsPanel/>}
       {tab === 'exports' && <ExportsPanel/>}
+      {tab === 'brokerage' && <BrokerageSettingsPanel/>}
     </motion.section>
   );
 }
@@ -914,5 +916,136 @@ function DeleteUserForm({ users, onDone }) {
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Deleting…</> : 'Delete user permanently'}
       </button>
     </form>
+  );
+}
+
+const BROKERAGE_INTEGRATIONS = [
+  ['prime', 'Oakmont Prime'],
+  ['crypto', 'Oakmont DCG Crypto Desk (Binance)'],
+  ['multiAsset', 'Oakmont Multi-Asset Desk (Yahoo Finance)'],
+];
+const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
+
+function BrokerageSettingsPanel() {
+  const [settings, setSettings] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await api.get('/api/admin/brokerage-settings');
+        if (!cancelled) setSettings(r?.settings || null);
+      } catch (e) {
+        if (!cancelled) setMsg({ kind: 'err', text: e.message });
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!settings) return <p className="text-xs text-white/55">Loading brokerage settings…</p>;
+
+  const toggleIntegration = (id) => {
+    setSettings((s) => ({ ...s, integrations: { ...(s.integrations || {}), [id]: !s.integrations?.[id] } }));
+  };
+  const toggleClass = (id) => {
+    setSettings((s) => ({ ...s, classes: { ...(s.classes || {}), [id]: !s.classes?.[id] } }));
+  };
+  const setLimit = (cls, field, value) => {
+    const num = value === '' ? null : Number(value);
+    setSettings((s) => {
+      const limits = { ...(s.limits || {}) };
+      const cur = { ...(limits[cls] || {}) };
+      if (num == null || !isFinite(num)) delete cur[field];
+      else cur[field] = num;
+      if (Object.keys(cur).length === 0) delete limits[cls];
+      else limits[cls] = cur;
+      return { ...s, limits };
+    });
+  };
+
+  const save = async () => {
+    setBusy(true); setMsg(null);
+    try {
+      const r = await api.patch('/api/admin/brokerage-settings', {
+        integrations: settings.integrations,
+        classes: settings.classes,
+        limits: settings.limits,
+      });
+      if (r?.settings) setSettings(r.settings);
+      setMsg({ kind: 'ok', text: 'Brokerage settings saved.' });
+    } catch (e) {
+      setMsg({ kind: 'err', text: e.message });
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <p className="text-xs text-white/55 mb-2">Broker integrations</p>
+        <div className="grid sm:grid-cols-3 gap-2">
+          {BROKERAGE_INTEGRATIONS.map(([id, label]) => (
+            <label key={id} className="glass-light p-3 flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!!settings.integrations?.[id]}
+                onChange={() => toggleIntegration(id)}
+                className="h-4 w-4 accent-gold-400"
+              />
+              <span className="text-xs">{label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-white/55 mb-2">Asset classes</p>
+        <div className="grid sm:grid-cols-3 gap-2">
+          {BROKERAGE_CLASSES.map((c) => (
+            <label key={c} className="glass-light p-3 flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!!settings.classes?.[c]}
+                onChange={() => toggleClass(c)}
+                className="h-4 w-4 accent-gold-400"
+              />
+              <span className="text-xs capitalize">{c}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-white/55 mb-2">Per-class trade limits (USD, optional)</p>
+        <div className="grid sm:grid-cols-2 gap-2">
+          {BROKERAGE_CLASSES.map((c) => (
+            <div key={c} className="glass-light p-3 flex items-center gap-2">
+              <span className="text-xs capitalize w-20">{c}</span>
+              <label className="flex-1">
+                <span className="text-[10px] text-white/45">min</span>
+                <input
+                  type="number"
+                  value={settings.limits?.[c]?.min ?? ''}
+                  onChange={(e) => setLimit(c, 'min', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-xs"
+                />
+              </label>
+              <label className="flex-1">
+                <span className="text-[10px] text-white/45">max</span>
+                <input
+                  type="number"
+                  value={settings.limits?.[c]?.max ?? ''}
+                  onChange={(e) => setLimit(c, 'max', e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-xs"
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+      {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} onClick={save} className="btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save brokerage settings'}
+      </button>
+    </div>
   );
 }
