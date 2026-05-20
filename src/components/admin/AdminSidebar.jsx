@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Users, ShieldCheck, ArrowLeftRight, Headphones, PieChart, DollarSign, Wallet, AlertTriangle, Sparkles, Settings, } from 'lucide-react';
+import { Users, ShieldCheck, ArrowLeftRight, Headphones, PieChart, DollarSign, Wallet, AlertTriangle, Settings, } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BrandWordmark, OakmontLogoMark } from '@/components/layout/BrandLogo';
 const items = [
     { href: '/admin', label: 'Overview', icon: PieChart },
     { href: '/admin#users', label: 'Users', icon: Users },
@@ -18,12 +19,8 @@ export function AdminSidebar() {
     const pathname = usePathname();
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
       <Link href="/" className="flex items-center gap-2 px-5 h-16 border-b border-white/5">
-        <span className="h-8 w-8 rounded-lg bg-gold-grad inline-flex items-center justify-center text-ink-950">
-          <Sparkles className="h-4 w-4"/>
-        </span>
-        <span className="text-lg font-display">
-          <span className="text-gradient-gold">Nexa</span>Vault
-        </span>
+        <OakmontLogoMark className="h-8 w-8"/>
+        <BrandWordmark compact className="text-lg truncate"/>
         <span className="ml-auto text-[10px] uppercase tracking-wider text-gold-400 font-semibold">Admin</span>
       </Link>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">

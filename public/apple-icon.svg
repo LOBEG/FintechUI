@@ -1,13 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="NexaVault logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Oakmont Digital Capital Group logo">
   <defs>
-    <linearGradient id="vault" x1="28" y1="18" x2="152" y2="162" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00ffa3"/>
-      <stop offset="48%" stop-color="#20d6ff"/>
-      <stop offset="100%" stop-color="#f0c14b"/>
+    <linearGradient id="oakmont-gold" x1="32" y1="22" x2="148" y2="160" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f7e7a3"/>
+      <stop offset="45%" stop-color="#d4a63f"/>
+      <stop offset="100%" stop-color="#8d641d"/>
     </linearGradient>
   </defs>
-  <rect width="180" height="180" rx="40" fill="#05070d"/>
-  <path d="M50 70 90 40l40 30v42l-40 30-40-30V70Z" fill="none" stroke="url(#vault)" stroke-width="12" stroke-linejoin="round"/>
-  <path d="M70 72h40l-20 40-20-40Z" fill="url(#vault)"/>
-  <circle cx="90" cy="90" r="12" fill="#05070d" stroke="#20d6ff" stroke-width="6"/>
+  <rect width="180" height="180" rx="40" fill="#07111f"/>
+  <path d="M40 128h100" stroke="url(#oakmont-gold)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M52 116V72l38-22 38 22v44" fill="none" stroke="url(#oakmont-gold)" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M70 116V82h40v34" fill="none" stroke="#f7e7a3" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M90 52v64" stroke="#d4a63f" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="90" cy="74" r="10" fill="#07111f" stroke="#f7e7a3" stroke-width="6"/>
 </svg>

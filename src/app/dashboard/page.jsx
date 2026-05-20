@@ -126,7 +126,13 @@ export default function DashboardPage() {
     const tradePair = `${investSymbol}USDT`;
     const selectedMarketMeta = SYMBOL_META[tradePair] || { sym: investSymbol, name: investSymbol, color: '#999' };
     const quoteSymbol = 'USDT';
-    const livePrices = useLivePrices([...new Set([...watchlistSymbols, ...DEFAULT_TICKER_SYMBOLS, tradePair])]);
+    const walletMarketSymbols = useMemo(() => {
+        if (!liveWallet?.balances) return [];
+        return Object.keys(liveWallet.balances)
+            .filter((sym) => !['USDT', 'USDC'].includes(sym))
+            .map((sym) => `${sym}USDT`);
+    }, [liveWallet]);
+    const livePrices = useLivePrices([...new Set([...watchlistSymbols, ...DEFAULT_TICKER_SYMBOLS, ...walletMarketSymbols, tradePair])]);
     const candles = useLiveKlines(tradePair, interval, 80);
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
@@ -153,18 +159,25 @@ export default function DashboardPage() {
             return symbols.map((sym) => {
                 const m = meta[sym] || { name: sym, color: '#999', key: `${sym}USDT` };
                 const bal = liveWallet.balances?.[sym] || 0;
-                const px = sym === 'USDT' || sym === 'USDC' ? 1 : (livePrices[m.key]?.price ?? 0);
-                return { sym, name: m.name, color: m.color, key: m.key, bal, price: px, value: bal * px };
+                const market = m.key ? livePrices[m.key] : null;
+                const px = sym === 'USDT' || sym === 'USDC' ? 1 : (market?.price ?? 0);
+                const openPx = sym === 'USDT' || sym === 'USDC' ? 1 : (market?.open ?? px);
+                return { sym, name: m.name, color: m.color, key: m.key, bal, price: px, openPrice: openPx, value: bal * px, openValue: bal * openPx };
             });
         }
         if (user) return [];
         // Anonymous visitors see demo data
         return DEMO_WALLET_HOLDINGS.map((w) => {
-            const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
-            return { ...w, price: px, value: w.bal * px };
+            const market = w.key ? livePrices[w.key] : null;
+            const px = w.key ? (market?.price ?? 0) : 1;
+            const openPx = w.key ? (market?.open ?? px) : 1;
+            return { ...w, price: px, openPrice: openPx, value: w.bal * px, openValue: w.bal * openPx };
         });
     }, [liveWallet, livePrices, user]);
     const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
+    const portfolioOpenValue = wallets.reduce((s, w) => s + (w.openValue ?? w.value), 0);
+    const portfolioMarketChange = totalBalance - portfolioOpenValue;
+    const portfolioMarketPct = portfolioOpenValue > 0 ? (portfolioMarketChange / portfolioOpenValue) * 100 : 0;
     const portfolioAllocation = useMemo(
       () => wallets.map((w) => ({ label: w.sym, value: totalBalance ? Math.round((w.value / totalBalance) * 100) : 0, color: w.color })),
       [wallets, totalBalance],
@@ -220,8 +233,8 @@ export default function DashboardPage() {
                     </span>
                   </p>
                   <p className="text-3xl sm:text-4xl font-display mt-1">{formatUSD(totalBalance)}</p>
-                  <p className={`text-sm mt-1 ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
-                    {openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)} unrealised P&L
+                  <p className={`text-sm mt-1 ${portfolioMarketChange >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                    {portfolioMarketChange >= 0 ? '+' : ''}{formatUSD(portfolioMarketChange)} live 24h movement ({portfolioMarketPct >= 0 ? '+' : ''}{portfolioMarketPct.toFixed(2)}%)
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -231,7 +244,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="mt-3 h-24">
-                <Sparkline width={640} height={90} seed={9} positive={openPnl >= 0}/>
+                <Sparkline width={640} height={90} data={[portfolioOpenValue, totalBalance]} positive={portfolioMarketChange >= 0}/>
               </div>
             </motion.div>
 
@@ -361,7 +374,7 @@ export default function DashboardPage() {
                 </div>
                 <p className="text-lg font-semibold mt-3">{w.bal.toLocaleString()}</p>
                 <p className="text-xs text-white/50">{formatUSD(w.value)}</p>
-                <div className="mt-2"><Sparkline seed={i + 2} positive={w.key ? (livePrices[w.key]?.pct ?? 0) >= 0 : true}/></div>
+                <div className="mt-2"><Sparkline data={[w.openValue ?? w.value, w.value]} seed={i + 2} positive={(w.value - (w.openValue ?? w.value)) >= 0}/></div>
               </motion.div>))}
           </section>}
 
@@ -521,7 +534,7 @@ export default function DashboardPage() {
 
             <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
-                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Nexa AI Bot</p>
+                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Oakmont AI Bot</p>
                 {user ? (
                   <span className="chip bg-white/5 text-white/60 border border-white/10">Configuring</span>
                 ) : (

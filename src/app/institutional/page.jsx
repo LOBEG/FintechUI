@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
-    title: 'Institutional Services - NexaVault',
+    title: 'Institutional Services - Oakmont Digital Capital Group',
     description: 'Enterprise crypto solutions for institutions, family offices, and corporate treasury.',
 };
 
@@ -59,7 +59,7 @@ export default function InstitutionalPage() {
             </ul>
           </div>
           <div className="mt-10">
-            <a href="mailto:institutional@nexavault.com" className="btn-primary">Contact Institutional Team</a>
+            <a href="mailto:institutional@oakmontdigitalcapital.com" className="btn-primary">Contact Institutional Team</a>
           </div>
         </div>
       </main>

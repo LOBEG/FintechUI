@@ -23,7 +23,7 @@ import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const ISSUER = 'NexaVault';
+const ISSUER = 'Oakmont Digital Capital Group';
 
 export async function GET() {
   try {

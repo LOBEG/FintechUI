@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Send, MessageCircle, Sparkles } from 'lucide-react';
+import { Send, MessageCircle } from 'lucide-react';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 const groups = [
     {
         title: 'Platform',
@@ -43,14 +44,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
           <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gold-grad shadow-gold">
-                <Sparkles className="h-5 w-5 text-ink-950"/>
-              </span>
-              <span className="text-xl font-display">
-                <span className="text-gradient-gold">Nexa</span>Vault
-              </span>
-            </Link>
+            <BrandLogo compact textClassName="text-xl" />
             <p className="mt-4 text-sm text-white/60 max-w-xs">
               Institutional-grade digital asset platform - secure, regulated, and engineered for performance.
             </p>
@@ -69,7 +63,7 @@ export function Footer() {
             </div>))}
         </div>
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3 items-center justify-between">
-          <p className="text-xs text-white/50">© {new Date().getFullYear()} NexaVault Capital Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
+          <p className="text-xs text-white/50">© {new Date().getFullYear()} Oakmont Digital Capital Group Capital Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
           <p className="text-xs text-white/40">Digital assets are volatile. Trade and invest responsibly.</p>
         </div>
       </div>

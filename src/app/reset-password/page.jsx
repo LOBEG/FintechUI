@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Sparkles, Loader2, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 import { api } from '@/lib/useSession';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 
 function ResetPasswordInner() {
   const params = useSearchParams();
@@ -36,10 +37,7 @@ function ResetPasswordInner() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6 sm:p-10">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
-        <Link href="/" className="flex items-center gap-2 mb-4">
-          <span className="h-9 w-9 rounded-xl bg-gold-grad inline-flex items-center justify-center text-ink-950"><Sparkles className="h-4 w-4"/></span>
-          <span className="text-xl font-display"><span className="text-gradient-gold">Nexa</span>Vault</span>
-        </Link>
+        <BrandLogo compact className="mb-4" textClassName="text-xl" />
         <h1 className="text-2xl font-display">Choose a new password</h1>
         <p className="text-sm text-white/60 mt-1">Your new password takes effect immediately. All other sessions stay signed in &mdash; revoke them from Sessions &amp; devices.</p>
         {!token || !code ? (

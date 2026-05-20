@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { LineChart, Percent, Gauge, Lock } from 'lucide-react';
 
 export const metadata = {
-    title: 'Futures Trading - NexaVault',
+    title: 'Futures Trading - Oakmont Digital Capital Group',
     description: 'Trade crypto futures with up to 100x leverage on BTC, ETH, and altcoins.',
 };
 
@@ -14,10 +14,10 @@ export default function FuturesPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Futures Trading</span> on NexaVault
+            <span className="text-gradient-gold">Futures Trading</span> on Oakmont Digital Capital Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Professional derivatives access for clients who understand risk, margin, and liquidation mechanics. NexaVault presents futures as a controlled fintech workflow with clear margin visibility, risk alerts, and account-level governance.
+            Professional derivatives access for clients who understand risk, margin, and liquidation mechanics. Oakmont Digital Capital Group presents futures as a controlled fintech workflow with clear margin visibility, risk alerts, and account-level governance.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">

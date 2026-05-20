@@ -67,7 +67,7 @@ export function DepositAddressPanel() {
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
       </div>
       {addresses.length === 0 ? (
-        <p className="text-sm text-white/60">Your NexaVault desk is preparing deposit wallets. Addresses pushed by an administrator will appear here automatically.</p>
+        <p className="text-sm text-white/60">Your Oakmont Digital Capital Group desk is preparing deposit wallets. Addresses pushed by an administrator will appear here automatically.</p>
       ) : (
         <>
           <p className="text-xs text-white/55 mb-3">Send the listed crypto to the address shown. Once your deposit clears it will be credited to your account and appear in your transaction history.</p>
@@ -353,11 +353,11 @@ export function TestimonialComposer() {
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
         <MessageSquare className="h-4 w-4 text-gold-400"/>
-        <h3 className="font-display text-lg">Share your NexaVault experience</h3>
+        <h3 className="font-display text-lg">Share your Oakmont Digital Capital Group experience</h3>
       </div>
-      <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the NexaVault landing page.</p>
+      <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Capital Group landing page.</p>
       <form onSubmit={submit} className="space-y-2">
-        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on NexaVault?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
+        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on Oakmont Digital Capital Group?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
         <div className="flex gap-2 flex-wrap">
           <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) - e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <input type="url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="Public photo URL (optional, https only)" className="flex-1 min-w-[240px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
@@ -1433,7 +1433,7 @@ export function EmptyStateCoach() {
         </button>
       </div>
       <p className="text-xs text-white/55 mb-4">
-        Welcome to NexaVault. Complete these three steps to unlock the full broker dashboard.
+        Welcome to Oakmont Digital Capital Group. Complete these three steps to unlock the full broker dashboard.
       </p>
       <ol className="space-y-3">
         {steps.map((s, i) => (
@@ -1826,7 +1826,7 @@ export function SupportPanel() {
         </button>
       </header>
       <p className="text-xs text-white/55 mt-1">
-        Ask the NexaVault desk anything - KYC, deposits, withdrawals, trade issues.
+        Ask the Oakmont Digital Capital Group desk anything - KYC, deposits, withdrawals, trade issues.
       </p>
       {showForm && (
         <form id="support-new-form" onSubmit={onCreate} className="mt-3 space-y-2">
@@ -1896,7 +1896,7 @@ export function SupportPanel() {
                         <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-gold-500/10 border border-gold-500/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
                           <div className="flex items-center justify-between mb-0.5 text-[10px]">
                             <span className={m.authorRole === 'staff' ? 'text-gold-400' : 'text-white/55'}>
-                              {m.authorRole === 'staff' ? 'NexaVault support' : 'You'}
+                              {m.authorRole === 'staff' ? 'Oakmont Digital Capital Group support' : 'You'}
                             </span>
                             <span className="text-white/35">{fmtTime(m.createdAt)}</span>
                           </div>
@@ -1951,8 +1951,8 @@ export function SupportPanel() {
 export function SupportContactPanel() {
   const { user } = useSession();
   const telegramUrl = typeof window !== 'undefined' 
-    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/NexaVaultSupport')
-    : 'https://t.me/NexaVaultSupport';
+    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/Oakmont Digital Capital GroupSupport')
+    : 'https://t.me/Oakmont Digital Capital GroupSupport';
   const whatsappUrl = typeof window !== 'undefined'
     ? (process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT_URL || 'https://wa.me/15555550123')
     : 'https://wa.me/15555550123';

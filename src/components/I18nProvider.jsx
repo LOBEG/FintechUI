@@ -14,7 +14,7 @@ export function I18nProvider({ children }) {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem('nexavault_lang');
+    const stored = localStorage.getItem('oakmontdc_lang');
     if (stored) {
       setLangState(stored);
     }
@@ -23,7 +23,7 @@ export function I18nProvider({ children }) {
   const setLang = (code) => {
     setLangState(code);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('nexavault_lang', code);
+      localStorage.setItem('oakmontdc_lang', code);
       document.documentElement.lang = code;
     }
   };

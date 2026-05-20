@@ -11,7 +11,7 @@ import {
   revokeSession,
 } from './store.js';
 
-const COOKIE_NAME = 'nexavault_session';
+const COOKIE_NAME = 'oakmontdc_session';
 const COOKIE_TTL_DAYS = 30;
 
 function secret() {
@@ -24,7 +24,7 @@ function secret() {
       'SESSION_SECRET is required in production and must be at least 16 characters.',
     );
   }
-  return 'nexavault-dev-secret-do-not-use-in-prod-nexavault-dev-secret';
+  return 'oakmontdc-dev-secret-do-not-use-in-prod-oakmontdc-dev-secret';
 }
 
 export function hashPassword(password) {
@@ -206,7 +206,7 @@ export function bootstrapAdmin() {
   const user = {
     id: newId('user'),
     email,
-    name: 'NexaVault Admin',
+    name: 'Oakmont Digital Capital Group Admin',
     passwordHash: hash,
     passwordSalt: salt,
     isAdmin: true,

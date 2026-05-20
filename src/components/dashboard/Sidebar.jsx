@@ -1,10 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CandlestickChart, Wallet, History, PieChart, Bot, Settings, ShieldCheck, Briefcase, Bell, Sparkles, } from 'lucide-react';
+import { LayoutDashboard, CandlestickChart, Wallet, History, PieChart, Bot, Settings, ShieldCheck, Briefcase, Bell, } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from '@/lib/useSession';
 import { useI18n } from '@/components/I18nProvider';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 
 const items = [
     { href: '/dashboard', label: 'overview', icon: LayoutDashboard },
@@ -25,14 +26,7 @@ export function Sidebar() {
     const { t } = useI18n();
     
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
-      <Link href="/" className="flex items-center gap-2 px-5 h-16 border-b border-white/5">
-        <span className="h-8 w-8 rounded-lg bg-gold-grad inline-flex items-center justify-center text-ink-950">
-          <Sparkles className="h-4 w-4"/>
-        </span>
-         <span className="text-lg font-display">
-           <span className="text-gradient-gold">Nexa</span>Vault
-         </span>
-      </Link>
+      <BrandLogo compact className="px-5 h-16 border-b border-white/5" markClassName="h-8 w-8" textClassName="text-lg" />
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {items.map((it) => {
             const active = it.href === '/dashboard' && pathname === '/dashboard';

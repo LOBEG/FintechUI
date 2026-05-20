@@ -19,7 +19,7 @@ export function PortfolioGrowth() {
             disciplined strategy.
           </motion.h2>
           <p className="mt-3 text-white/65 max-w-xl">
-            NexaVault separates public market visibility from private account servicing. Visitors see live crypto information first, verified users manage balances and orders, and funded clients receive administrator-supervised portfolio updates and reporting.
+            Oakmont Digital Capital Group separates public market visibility from private account servicing. Visitors see live crypto information first, verified users manage balances and orders, and funded clients receive administrator-supervised portfolio updates and reporting.
           </p>
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
             {[

@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { useSession } from '@/lib/useSession';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 export default function LoginPage() {
     const [show, setShow] = useState(false);
     const [email, setEmail] = useState('');
@@ -33,14 +34,11 @@ export default function LoginPage() {
         <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl"/>
         <div className="absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
         <div className="relative max-w-md">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="h-10 w-10 rounded-xl bg-gold-grad inline-flex items-center justify-center text-ink-950"><Sparkles className="h-5 w-5"/></span>
-            <span className="text-2xl font-display"><span className="text-gradient-gold">Nexa</span>Vault</span>
-          </Link>
+          <BrandLogo textClassName="text-2xl" />
           <h2 className="mt-10 text-3xl font-display leading-tight">
             Welcome back to the<br /><span className="text-gradient-gold">professional management of digital wealth</span>.
           </h2>
-          <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your NexaVault investments.</p>
+          <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Capital Group investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-green"/> Hardware MFA + passkeys</li>
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-gold-400"/> SOC 2 · ISO 27001 · MiCA</li>
@@ -50,7 +48,7 @@ export default function LoginPage() {
       </section>
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
-          <h1 className="text-2xl font-display">Sign in to NexaVault</h1>
+          <h1 className="text-2xl font-display">Sign in to Oakmont Digital Capital Group</h1>
           <p className="text-sm text-white/60 mt-1">Welcome back. Please enter your details.</p>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
@@ -84,7 +82,7 @@ export default function LoginPage() {
           </div>
           <div className="mt-3"><Web3ConnectButton /></div>
           <p className="mt-5 text-xs text-white/55 text-center">
-            New to NexaVault? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
+            New to Oakmont Digital Capital Group? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
           </p>
         </motion.div>
       </section>

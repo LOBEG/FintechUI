@@ -2,10 +2,11 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 const nav = [
     { href: '/#markets', label: 'Markets' },
     { href: '/login?next=/dashboard', label: 'Trade' },
@@ -17,14 +18,7 @@ export function Navbar() {
     const [open, setOpen] = useState(false);
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gold-grad shadow-gold">
-            <Sparkles className="h-5 w-5 text-ink-950"/>
-          </span>
-          <span className="text-xl font-display tracking-wide">
-            <span className="text-gradient-gold">Nexa</span>Vault
-          </span>
-        </Link>
+        <BrandLogo compact textClassName="text-xl" />
         <nav className="hidden lg:flex items-center gap-1">
           {nav.map((n) => (<Link key={n.href} href={n.href} className="px-3 py-2 text-sm text-white/70 hover:text-white rounded-lg hover:bg-white/5 transition">
               {n.label}

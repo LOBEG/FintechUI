@@ -124,8 +124,11 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
       </text>
     </svg>);
 }
-export function Sparkline({ width = 120, height = 40, seed = 1, positive = true, }) {
+export function Sparkline({ width = 120, height = 40, seed = 1, positive = true, data = null, }) {
     const points = useMemo(() => {
+        if (Array.isArray(data) && data.length) {
+            return data.map((v) => Number(v)).filter((v) => Number.isFinite(v));
+        }
         const r = rand(seed);
         const arr = [];
         let v = 50;
@@ -134,7 +137,8 @@ export function Sparkline({ width = 120, height = 40, seed = 1, positive = true,
             arr.push(v);
         }
         return arr;
-    }, [seed, positive]);
+    }, [data, seed, positive]);
+    if (points.length < 2) return null;
     const min = Math.min(...points);
     const max = Math.max(...points);
     const path = points
