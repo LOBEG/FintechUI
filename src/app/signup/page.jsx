@@ -42,7 +42,7 @@ function SignupForm() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
           <h1 className="text-2xl font-display">Create your Oakmont Digital Capital Group account</h1>
-          <p className="text-sm text-white/60 mt-1">Trade and invest in digital assets with institutional grade tools.</p>
+          <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">Full name</span>

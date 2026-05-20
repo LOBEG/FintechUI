@@ -4,9 +4,9 @@ import { Bot, Zap, Brain, LineChart, Cpu, ShieldCheck } from 'lucide-react';
 import { Sparkline } from '@/components/ui/Charts';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 const strategies = [
-    { name: 'DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3, symbol: 'BTC' },
-    { name: 'Momentum watch · ETH/USDT', ret: 'Live', win: 'Market feed active', seed: 7, symbol: 'ETH' },
-    { name: 'Portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: ShieldCheck },
+    { name: 'Crypto DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3, symbol: 'BTC' },
+    { name: 'Equity momentum watch · AAPL', ret: 'Live', win: 'Brokerage feed active', seed: 7, icon: LineChart },
+    { name: 'Cross-asset portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: ShieldCheck },
 ];
 export function AIBot() {
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
@@ -19,10 +19,10 @@ export function AIBot() {
             AI-powered <span className="text-gradient-neon">trading intelligence</span>.
           </h2>
           <p className="mt-3 text-white/65 max-w-lg">
-            Aurelia helps clients monitor live Binance-backed market data, order-book conditions, on-chain flows, and portfolio risk so every strategy remains visible, auditable, and aligned with account controls.
+            Aurelia helps clients monitor live crypto, equities, ETFs, forex, commodities, futures and options market data, order-book conditions, and portfolio risk so every strategy remains visible, auditable, and aligned with account controls.
           </p>
           <ul className="mt-6 space-y-3 text-sm">
-            <li className="flex gap-3"><Zap className="h-5 w-5 text-neon-green flex-shrink-0"/> Live pricing, order routing, and transaction records in one account view</li>
+            <li className="flex gap-3"><Zap className="h-5 w-5 text-neon-green flex-shrink-0"/> Live multi-asset pricing, order routing, and transaction records in one account view</li>
             <li className="flex gap-3"><Brain className="h-5 w-5 text-gold-400 flex-shrink-0"/> AI-assisted monitoring for DCA, momentum, and risk-based allocation decisions</li>
             <li className="flex gap-3"><LineChart className="h-5 w-5 text-neon-orange flex-shrink-0"/> Portfolio reporting built from deposits, withdrawals, investments, and admin-approved adjustments</li>
             <li className="flex gap-3"><Cpu className="h-5 w-5 text-white flex-shrink-0"/> Secure workflows for verified users across desktop and mobile</li>

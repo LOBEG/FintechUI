@@ -5,13 +5,21 @@ import { SiteBanner } from '@/components/layout/SiteBanner';
 import { AppBackground } from '@/components/layout/AppBackground';
 import { I18nProvider } from '@/components/I18nProvider';
 export const metadata = {
-    title: 'Oakmont Digital Capital Group - Institutional Digital Asset & Crypto Investment Platform',
-    description: 'Oakmont Digital Capital Group is a fintech-grade digital asset platform for live crypto market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
+    title: 'Oakmont Digital Capital Group - Multi-Asset Brokerage & Investment Platform',
+    description: 'Oakmont Digital Capital Group is a fintech-grade multi-asset brokerage for live stocks, ETFs, indices, crypto, forex, commodities, futures and options market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
     keywords: [
+        'brokerage',
+        'stocks',
+        'ETFs',
         'crypto',
+        'forex',
+        'commodities',
+        'futures',
+        'options',
         'trading',
         'Oakmont Digital Capital Group',
         'digital assets',
+        'multi-asset',
         'institutional',
         'BTC',
         'ETH',
@@ -26,8 +34,8 @@ export const metadata = {
         apple: [{ url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' }],
     },
     openGraph: {
-        title: 'Oakmont Digital Capital Group - Institutional Digital Asset Platform',
-        description: 'Live crypto market access, secure account operations, managed digital asset portfolios, and reporting infrastructure for verified clients.',
+        title: 'Oakmont Digital Capital Group - Institutional Multi-Asset Brokerage',
+        description: 'Live stocks, ETFs, crypto, forex, commodities, futures and options access, secure account operations, managed portfolios, and reporting infrastructure for verified clients.',
         type: 'website',
     },
 };
@@ -44,9 +52,11 @@ export default function RootLayout({ children }) {
         <Providers>
           <I18nProvider>
             <AppBackground />
-            <SiteBanner />
-            {children}
-            <AIChatWidget />
+            <div className="relative z-10 min-h-screen">
+              <SiteBanner />
+              {children}
+              <AIChatWidget />
+            </div>
           </I18nProvider>
         </Providers>
       </body>

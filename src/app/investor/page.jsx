@@ -71,7 +71,7 @@ export default function InvestorPortalPage() {
             <span className="text-gradient-gold">Oakmont Digital Capital Group</span> Asset Management
           </h1>
           <p className="mt-2 text-white/65 max-w-3xl">
-            Oakmont Digital Capital Group Asset Management combines live crypto market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent digital asset operating platform rather than a basic trading app.
+            Oakmont Digital Capital Group Asset Management combines live multi-asset market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent brokerage operating platform rather than a basic trading app.
           </p>
         </motion.div>
 

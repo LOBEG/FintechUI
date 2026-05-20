@@ -5,7 +5,7 @@ import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
     title: 'Institutional Services - Oakmont Digital Capital Group',
-    description: 'Enterprise crypto solutions for institutions, family offices, and corporate treasury.',
+    description: 'Enterprise multi-asset brokerage, custody coordination, reporting and execution services for institutions, family offices, and corporate treasury.',
 };
 
 export default function InstitutionalPage() {
@@ -17,7 +17,7 @@ export default function InstitutionalPage() {
             <span className="text-gradient-gold">Institutional Services</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Enterprise-grade digital asset infrastructure for institutions, family offices, hedge funds, and corporate treasury teams that need live market access, custody coordination, audit-ready records, and controlled operational workflows.
+             Enterprise-grade multi-asset brokerage infrastructure for institutions, family offices, hedge funds, and corporate treasury teams that need live market access, custody coordination, audit-ready records, and controlled operational workflows.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
@@ -59,7 +59,10 @@ export default function InstitutionalPage() {
             </ul>
           </div>
           <div className="mt-10">
-            <a href="mailto:institutional@oakmontdigitalcapital.com" className="btn-primary">Contact Institutional Team</a>
+            <div className="flex flex-wrap gap-4">
+              <a href="/brokerage" className="btn-primary">View Live Brokerage Coverage</a>
+              <a href="mailto:institutional@oakmontdigitalcapital.com" className="btn-ghost">Contact Institutional Team</a>
+            </div>
           </div>
         </div>
       </main>

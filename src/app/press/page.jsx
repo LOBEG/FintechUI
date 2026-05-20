@@ -17,7 +17,7 @@ export default function PressPage() {
             <span className="text-gradient-gold">Press</span> & Media
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Media resources for Oakmont Digital Capital Group, a fintech-grade digital asset platform focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
+            Media resources for Oakmont Digital Capital Group, a fintech-grade multi-asset brokerage focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
           </p>
           <div className="mt-10 space-y-6">
             <div className="glass p-6 rounded-xl">
@@ -27,7 +27,7 @@ export default function PressPage() {
                   <h3 className="text-lg font-semibold">Platform overview</h3>
                   <p className="mt-1 text-sm text-white/50">Company profile</p>
                   <p className="mt-3 text-sm text-white/60">
-                    Oakmont Digital Capital Group provides public crypto market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for digital asset clients.
+                    Oakmont Digital Capital Group provides public multi-asset market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for brokerage clients.
                   </p>
                 </div>
               </div>

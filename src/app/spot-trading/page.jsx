@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { TrendingUp, Zap, Shield, Clock } from 'lucide-react';
 
 export const metadata = {
-    title: 'Spot Trading - Oakmont Digital Capital Group',
-    description: 'Trade BTC, ETH, and 200+ digital assets with zero-fee spot trading on Oakmont Digital Capital Group.',
+    title: 'Crypto Brokerage - Oakmont Digital Capital Group',
+    description: 'Trade BTC, ETH, USDT and major digital assets from the live Oakmont Digital Capital Group brokerage hub.',
 };
 
 export default function SpotTradingPage() {
@@ -50,8 +50,8 @@ export default function SpotTradingPage() {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-            <a href="/signup" className="btn-primary">Start Trading</a>
-                 <a href="/login?next=/dashboard" className="btn-ghost">View Markets</a>
+             <a href="/brokerage?tab=crypto" className="btn-primary">Open Live Crypto Brokerage</a>
+                  <a href="/login?next=/dashboard" className="btn-ghost">View Account Dashboard</a>
           </div>
         </div>
       </main>

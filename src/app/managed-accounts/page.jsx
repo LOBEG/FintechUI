@@ -5,7 +5,7 @@ import { Users, Shield, Briefcase, Award } from 'lucide-react';
 
 export const metadata = {
     title: 'Managed Accounts - Oakmont Digital Capital Group',
-    description: 'Discretionary portfolio management for high-net-worth crypto investors.',
+    description: 'Discretionary multi-asset portfolio management for qualified investors using live brokerage reporting.',
 };
 
 export default function ManagedAccountsPage() {
@@ -17,7 +17,7 @@ export default function ManagedAccountsPage() {
             <span className="text-gradient-gold">Managed Accounts</span> by Oakmont Digital Capital Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Discretionary digital asset portfolio management for qualified investors and institutions that need professional allocation, admin-supervised balance changes, risk controls, and live reporting instead of self-directed speculation.
+            Discretionary multi-asset portfolio management for qualified investors and institutions that need professional allocation, admin-supervised balance changes, risk controls, and live reporting instead of self-directed speculation.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
@@ -50,7 +50,7 @@ export default function ManagedAccountsPage() {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-            <a href="/signup" className="btn-primary">Apply for Managed Account</a>
+            <a href="/brokerage" className="btn-primary">Review Brokerage Coverage</a>
             <a href="/institutional" className="btn-ghost">Institutional Services</a>
           </div>
         </div>

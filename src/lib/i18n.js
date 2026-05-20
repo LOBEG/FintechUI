@@ -2,6 +2,7 @@ export const translations = {
   en: {
     // Navigation
     overview: 'Overview',
+    brokerage: 'Brokerage',
     trade: 'Trade',
     wallet: 'Wallet',
     positions: 'Positions',
@@ -40,6 +41,7 @@ export const translations = {
   es: {
     // Navigation
     overview: 'Resumen',
+    brokerage: 'Corretaje',
     trade: 'Comercio',
     wallet: 'Cartera',
     positions: 'Posiciones',
@@ -78,6 +80,7 @@ export const translations = {
   fr: {
     // Navigation
     overview: 'Aperçu',
+    brokerage: 'Courtier',
     trade: 'Commerce',
     wallet: 'Portefeuille',
     positions: 'Positions',
@@ -116,6 +119,7 @@ export const translations = {
   de: {
     // Navigation
     overview: 'Übersicht',
+    brokerage: 'Brokerage',
     trade: 'Handel',
     wallet: 'Geldbörse',
     positions: 'Positionen',
@@ -154,6 +158,7 @@ export const translations = {
   pt: {
     // Navigation
     overview: 'Visão Geral',
+    brokerage: 'Corretagem',
     trade: 'Negociar',
     wallet: 'Carteira',
     positions: 'Posições',
@@ -192,6 +197,7 @@ export const translations = {
   zh: {
     // Navigation
     overview: '概览',
+    brokerage: '经纪业务',
     trade: '交易',
     wallet: '钱包',
     positions: '持仓',

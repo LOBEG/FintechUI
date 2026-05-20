@@ -383,6 +383,10 @@ function OptionsBoard() {
 
 export default function BrokerageClient() {
   const [tab, setTab] = useState('stocks');
+  useEffect(() => {
+    const requestedTab = new URLSearchParams(window.location.search).get('tab');
+    if (requestedTab && TABS.some((t) => t.id === requestedTab)) setTab(requestedTab);
+  }, []);
   const active = TABS.find((t) => t.id === tab) || TABS[0];
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14 space-y-6">

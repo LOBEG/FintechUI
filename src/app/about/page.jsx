@@ -5,7 +5,7 @@ import { Building, Globe, Award, Users } from 'lucide-react';
 
 export const metadata = {
     title: 'About Oakmont Digital Capital Group',
-    description: 'Learn about Oakmont Digital Capital Group - institutional-grade digital asset platform.',
+    description: 'Learn about Oakmont Digital Capital Group - institutional-grade multi-asset brokerage and investment platform.',
 };
 
 export default function AboutPage() {
@@ -17,14 +17,14 @@ export default function AboutPage() {
             About <span className="text-gradient-gold">Oakmont Digital Capital Group</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Oakmont Digital Capital Group is an institutional-grade cryptocurrency trading and digital asset management platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent digital asset infrastructure.
+             Oakmont Digital Capital Group is an institutional-grade multi-asset brokerage and investment platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent access to stocks, ETFs, crypto, forex, commodities, futures and options.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">
               <Building className="h-8 w-8 text-neon-green mb-3"/>
               <h3 className="text-lg font-semibold">Regulated Entity</h3>
               <p className="mt-2 text-sm text-white/60">
-                Authorised by the FCA and registered with HMRC as a crypto asset business. Compliant with MiCA, 5AMLD, and UK financial promotions regime.
+                 Authorised financial-services workflows with KYC, AML, sanctions screening, client-asset controls, and disclosures aligned to each supported brokerage asset class.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
@@ -38,21 +38,21 @@ export default function AboutPage() {
               <Award className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Industry Recognition</h3>
               <p className="mt-2 text-sm text-white/60">
-                Winner of Best Institutional Crypto Platform 2023. ISO 27001 certified. SOC 2 Type II audit completed annually.
+                 Recognised for institutional brokerage operations, ISO 27001-aligned controls, and SOC 2 Type II-style operational governance.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
               <Users className="h-8 w-8 text-neon-orange mb-3"/>
               <h3 className="text-lg font-semibold">Experienced Team</h3>
               <p className="mt-2 text-sm text-white/60">
-                Leadership team from Goldman Sachs, Coinbase, and Binance. Combined 80+ years in capital markets and fintech.
+                 Leadership team from capital markets, brokerage, exchange, custody, and fintech operations.
               </p>
             </div>
           </div>
           <div className="mt-10">
             <h2 className="text-2xl font-display">Our Mission</h2>
             <p className="mt-3 text-white/70">
-              We believe digital assets require the same operating discipline as traditional finance. Our mission is to make professional-grade crypto trading accessible through live pricing, compliant onboarding, clear deposit and withdrawal workflows, risk-aware portfolio tools, and transparent reporting that clients can trust.
+              We believe every asset class requires institutional operating discipline. Our mission is to make professional-grade brokerage access available through live pricing, compliant onboarding, clear deposit and withdrawal workflows, risk-aware portfolio tools, and transparent reporting that clients can trust.
             </p>
           </div>
         </div>

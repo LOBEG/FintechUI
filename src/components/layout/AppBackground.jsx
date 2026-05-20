@@ -1,5 +1,5 @@
 'use client';
-// Fintech-grade layered background. Sits behind every page (z-index:-10,
+// Fintech-grade layered background. Sits behind every page content (z-index:0,
 // fixed, pointer-events:none) and is intentionally pure CSS - radial +
 // conic gradients with a subtle SVG noise overlay - so it adds no
 // network requests and no JS to the bundle. Cards/text remain fully
@@ -28,7 +28,7 @@ export function AppBackground() {
         .app-bg {
           position: fixed;
           inset: 0;
-          z-index: -10;
+          z-index: 0;
           pointer-events: none;
           overflow: hidden;
           contain: strict;

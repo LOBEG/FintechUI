@@ -17,7 +17,7 @@ export function Security() {
           Built like an <span className="text-gradient-gold">institutional vault</span>.
         </h2>
         <p className="mt-3 text-white/65">
-          Oakmont Digital Capital Group applies traditional-finance controls to digital assets: signed-in access, KYC/AML workflows, admin-controlled account servicing, audit logs, transactional email notices, and clear reporting for every client action.
+          Oakmont Digital Capital Group applies traditional-finance controls to every asset class: signed-in access, KYC/AML workflows, admin-controlled account servicing, audit logs, transactional email notices, and clear reporting for every client action.
         </p>
       </div>
       <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

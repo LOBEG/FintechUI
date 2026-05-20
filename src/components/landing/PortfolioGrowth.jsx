@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { DonutChart } from '@/components/ui/Charts';
 import { ArrowUpRight, TrendingUp } from 'lucide-react';
 const allocation = [
-    { label: 'BTC', value: 42, color: '#f7931a' },
-    { label: 'ETH', value: 26, color: '#627eea' },
-    { label: 'SOL', value: 12, color: '#14f195' },
-    { label: 'Stables', value: 14, color: '#e6ad26' },
-    { label: 'Alts', value: 6, color: '#ff8a00' },
+    { label: 'Stocks', value: 28, color: '#22d3ee' },
+    { label: 'ETFs', value: 22, color: '#c9a24a' },
+    { label: 'Crypto', value: 20, color: '#f7931a' },
+    { label: 'FX', value: 14, color: '#10b981' },
+    { label: 'Futures', value: 10, color: '#8b5cf6' },
+    { label: 'Options', value: 6, color: '#ff8a00' },
 ];
 export function PortfolioGrowth() {
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
@@ -19,11 +20,11 @@ export function PortfolioGrowth() {
             disciplined strategy.
           </motion.h2>
           <p className="mt-3 text-white/65 max-w-xl">
-            Oakmont Digital Capital Group separates public market visibility from private account servicing. Visitors see live crypto information first, verified users manage balances and orders, and funded clients receive administrator-supervised portfolio updates and reporting.
+            Oakmont Digital Capital Group separates public multi-asset market visibility from private account servicing. Visitors see live brokerage coverage across stocks, ETFs, crypto, FX, commodities, futures and options; verified users manage balances and orders; funded clients receive administrator-supervised portfolio updates and reporting.
           </p>
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
             {[
-            { k: 'Live markets', v: '24/7', s: 'Binance-backed BTC and altcoin data' },
+            { k: 'Live markets', v: '24/7', s: 'Crypto plus exchange-hour equities, ETFs, FX and futures' },
             { k: 'Account control', v: 'KYC', s: 'Verified access to trading workflows' },
             { k: 'Reporting', v: 'Live', s: 'Portfolio records update from real activity' },
         ].map((m) => (<div key={m.k} className="glass p-4">
@@ -35,9 +36,9 @@ export function PortfolioGrowth() {
         </div>
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="lg:col-span-2 glass-strong p-6 flex flex-col items-center">
           <div className="w-full flex items-center justify-between">
-            <p className="text-sm text-white/60">Public market allocation</p>
+            <p className="text-sm text-white/60">Brokerage asset-class coverage</p>
             <span className="chip bg-gold-500/15 text-gold-400 border border-gold-500/30">
-              <TrendingUp className="h-3 w-3"/> +12.4% MoM
+              <TrendingUp className="h-3 w-3"/> Live coverage
             </span>
           </div>
           <DonutChart data={allocation} size={220}/>
@@ -49,7 +50,7 @@ export function PortfolioGrowth() {
               </div>))}
           </div>
           <Link href="/login?next=/investor" className="btn-outline mt-5 w-full justify-center text-sm">
-            Open portfolio <ArrowUpRight className="h-4 w-4"/>
+            Open portfolio dashboard <ArrowUpRight className="h-4 w-4"/>
           </Link>
         </motion.div>
       </div>

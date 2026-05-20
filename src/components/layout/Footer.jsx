@@ -5,6 +5,7 @@ const groups = [
     {
         title: 'Platform',
         links: [
+            { href: '/brokerage', label: 'Brokerage' },
             { href: '/dashboard', label: 'Trading Dashboard' },
             { href: '/investor', label: 'Investor Portal' },
             { href: '/admin', label: 'Admin Console' },
@@ -14,10 +15,11 @@ const groups = [
     {
         title: 'Products',
         links: [
-            { href: '/spot-trading', label: 'Spot Trading' },
-            { href: '/futures', label: 'Futures' },
+            { href: '/brokerage?tab=crypto', label: 'Crypto Trading' },
+            { href: '/brokerage?tab=stocks', label: 'Stocks & ETFs' },
+            { href: '/brokerage?tab=futures', label: 'Futures' },
+            { href: '/brokerage?tab=options', label: 'Options' },
             { href: '/ai-trading-bot', label: 'AI Trading Bot' },
-            { href: '/managed-accounts', label: 'Managed Accounts' },
         ],
     },
     {
@@ -46,7 +48,7 @@ export function Footer() {
           <div className="col-span-2">
             <BrandLogo compact textClassName="text-xl" />
             <p className="mt-4 text-sm text-white/60 max-w-xs">
-              Institutional-grade digital asset platform - secure, regulated, and engineered for performance.
+              Institutional-grade multi-asset brokerage for stocks, ETFs, crypto, forex, commodities, futures and options - secure, regulated, and engineered for performance.
             </p>
             <div className="mt-5 flex items-center gap-3">
               <a href="https://t.me/" aria-label="Telegram" className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10"><Send className="h-4 w-4"/></a>
@@ -64,7 +66,7 @@ export function Footer() {
         </div>
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3 items-center justify-between">
           <p className="text-xs text-white/50">© {new Date().getFullYear()} Oakmont Digital Capital Group Capital Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
-          <p className="text-xs text-white/40">Digital assets are volatile. Trade and invest responsibly.</p>
+          <p className="text-xs text-white/40">Markets are volatile. Trade and invest responsibly.</p>
         </div>
       </div>
     </footer>);

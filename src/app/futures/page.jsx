@@ -5,7 +5,7 @@ import { LineChart, Percent, Gauge, Lock } from 'lucide-react';
 
 export const metadata = {
     title: 'Futures Trading - Oakmont Digital Capital Group',
-    description: 'Trade crypto futures with up to 100x leverage on BTC, ETH, and altcoins.',
+    description: 'Explore live futures markets through the Oakmont Digital Capital Group multi-asset brokerage hub.',
 };
 
 export default function FuturesPage() {
@@ -50,8 +50,8 @@ export default function FuturesPage() {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-            <a href="/signup" className="btn-primary">Open Futures Account</a>
-                 <a href="/login?next=/dashboard" className="btn-ghost">View Contracts</a>
+             <a href="/brokerage?tab=futures" className="btn-primary">View Live Futures</a>
+                  <a href="/brokerage?tab=options" className="btn-ghost">View Options Chains</a>
           </div>
         </div>
       </main>
