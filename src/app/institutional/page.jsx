@@ -59,7 +59,7 @@ export default function InstitutionalPage() {
             </ul>
           </div>
           <div className="mt-10">
-            <a href="mailto:institutional@aurumx.com" className="btn-primary">Contact Institutional Team</a>
+            <a href="mailto:institutional@nexavault.com" className="btn-primary">Contact Institutional Team</a>
           </div>
         </div>
       </main>

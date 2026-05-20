@@ -48,8 +48,7 @@ export function Footer() {
                 <Sparkles className="h-5 w-5 text-ink-950"/>
               </span>
               <span className="text-xl font-display">
-                <span className="text-gradient-gold">Aurum</span>
-                <span className="text-white">X</span>
+                <span className="text-gradient-gold">Nexa</span>Vault
               </span>
             </Link>
             <p className="mt-4 text-sm text-white/60 max-w-xs">

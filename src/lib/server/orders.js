@@ -37,7 +37,7 @@ import { sendEmail } from './email.js';
 import { creditReferralRebate } from './referral.js';
 
 const TICK_MS = 5_000;
-const GUARD = Symbol.for('aurumx.orders.tickerStarted');
+const GUARD = Symbol.for('nexavault.orders.tickerStarted');
 
 export function shouldFill(order, price) {
   if (!order || !price || !isFinite(price)) return false;

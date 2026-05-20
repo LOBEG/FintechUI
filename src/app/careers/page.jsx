@@ -76,7 +76,7 @@ export default function CareersPage() {
             </ul>
           </div>
           <div className="mt-10">
-            <a href="mailto:careers@aurumx.com" className="btn-primary">Apply Now</a>
+            <a href="mailto:careers@nexavault.com" className="btn-primary">Apply Now</a>
           </div>
         </div>
       </main>

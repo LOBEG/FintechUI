@@ -22,7 +22,7 @@ export function AdminSidebar() {
           <Sparkles className="h-4 w-4"/>
         </span>
         <span className="text-lg font-display">
-          <span className="text-gradient-gold">Aurum</span>X
+          <span className="text-gradient-gold">Nexa</span>Vault
         </span>
         <span className="ml-auto text-[10px] uppercase tracking-wider text-gold-400 font-semibold">Admin</span>
       </Link>

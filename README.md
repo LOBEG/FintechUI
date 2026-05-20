@@ -1,6 +1,6 @@
 # NexaVault — Institutional Digital Asset & Crypto Investment Platform
 
-> **Platform name:** **NexaVault** — registerable as `aurumx.io`, `aurumx.app`, `aurumx.finance`, `aurumx.trade`, `aurumxcapital.com`.
+> **Platform name:** **NexaVault** — registerable as `nexavault.io`, `nexavault.app`, `nexavault.finance`, `nexavault.trade`, `nexavaultcapital.com`.
 >
 > *“BlackRock meets Binance.”* NexaVault is a professional, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
 
@@ -157,7 +157,7 @@ This repository is configured for **Railway** out of the box:
 | `DATA_DIR` | yes (prod) | Path to the writable volume (e.g. `/data`). Defaults to `./data` in dev. |
 | `SESSION_SECRET` | yes (prod) | 32+ char random string used to HMAC-sign session cookies. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | yes | Auto-bootstraps an admin account on first login. |
-| `APP_URL` | recommended | Public URL used in email CTAs (e.g. `https://aurumx.app`). |
+| `APP_URL` | recommended | Public URL used in email CTAs (e.g. `https://nexavault.app`). |
 | `SMTP_HOST` `SMTP_PORT` `SMTP_USER` `SMTP_PASS` `SMTP_SECURE` `EMAIL_FROM` | optional | If set, deposit / withdrawal / token / invest emails are delivered via SMTP. If unset, every email is still written to the **outbox** at `data/outbox.json` so you can verify what was sent. |
 | `TELEGRAM_BOT_TOKEN` | optional | BotFather token for the admin Telegram bot. |
 | `TELEGRAM_WEBHOOK_SECRET` | optional | Random string Telegram echoes back in the `X-Telegram-Bot-Api-Secret-Token` header. |
@@ -172,7 +172,7 @@ railway init
 railway up
 ```
 
-The first build takes ~2-3 minutes. After it goes live, attach a custom domain (e.g. `aurumx.app`) from the Railway dashboard.
+The first build takes ~2-3 minutes. After it goes live, attach a custom domain (e.g. `nexavault.app`) from the Railway dashboard.
 
 ---
 
@@ -270,7 +270,7 @@ Toggles take effect within seconds — the `<SiteBanner />` component polls `/ap
 
 ## 🔌 API reference
 
-All endpoints are JSON. Auth is via HMAC-signed `aurumx_session` cookie (scrypt-hashed passwords on the server).
+All endpoints are JSON. Auth is via HMAC-signed `nexavault_session` cookie (scrypt-hashed passwords on the server).
 
 ### Public
 
@@ -362,15 +362,15 @@ Below is a complete list of all environment variables used by NexaVault. Set the
 | `SESSION_SECRET` | 32+ character random string for HMAC-signing session cookies | `abc123...xyz` |
 | `JWT_SECRET` | Secret key for signing JWT access tokens | `your-secret-key-here` |
 | `JWT_REFRESH_SECRET` | Secret key for signing JWT refresh tokens | `your-refresh-secret-here` |
-| `ADMIN_EMAIL` | Email for bootstrapping the first admin account | `admin@aurumx.com` |
+| `ADMIN_EMAIL` | Email for bootstrapping the first admin account | `admin@nexavault.com` |
 | `ADMIN_PASSWORD` | Password for the admin account (first login creates it) | `SecurePass123!` |
 
 ### Recommended
 
 | Variable | Purpose | Example |
 | --- | --- | --- |
-| `NEXT_PUBLIC_APP_URL` | Public URL of the platform (used in emails and OAuth redirects) | `https://aurumx.app` |
-| `APP_URL` | Alternative name for public URL (used in some email templates) | `https://aurumx.app` |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the platform (used in emails and OAuth redirects) | `https://nexavault.app` |
+| `APP_URL` | Alternative name for public URL (used in some email templates) | `https://nexavault.app` |
 
 ### Optional — Email (SMTP)
 
@@ -382,9 +382,9 @@ If set, NexaVault sends deposit/withdrawal/auth emails via SMTP. If unset, email
 | `SMTP_PORT` | SMTP server port | `587` or `465` |
 | `SMTP_USER` | SMTP username | `apikey` (SendGrid) |
 | `SMTP_PASS` | SMTP password or API key | `SG.abc123...` |
-| `SMTP_FROM` | "From" address for outgoing emails | `no-reply@aurumx.com` |
+| `SMTP_FROM` | "From" address for outgoing emails | `no-reply@nexavault.com` |
 | `SMTP_SECURE` | Use TLS (set to `true` for port 465) | `false` |
-| `EMAIL_FROM` | Alternative "From" address (fallback) | `support@aurumx.com` |
+| `EMAIL_FROM` | Alternative "From" address (fallback) | `support@nexavault.com` |
 
 ### Optional — Telegram Bot
 
@@ -410,7 +410,7 @@ If set, NexaVault sends deposit/withdrawal/auth emails via SMTP. If unset, email
 | --- | --- | --- |
 | `GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID | `123456-abcd.apps.googleusercontent.com` |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret | `GOCSPX-abc123...` |
-| `APPLE_CLIENT_ID` | Apple Sign In service ID | `com.aurumx.signin` |
+| `APPLE_CLIENT_ID` | Apple Sign In service ID | `com.nexavault.signin` |
 | `APPLE_CLIENT_SECRET` | Apple Sign In client secret (JWT signed with private key) | `eyJhbGc...` |
 
 ### Optional — External APIs
@@ -436,11 +436,11 @@ If set, NexaVault sends deposit/withdrawal/auth emails via SMTP. If unset, email
    - `SESSION_SECRET=<random-32-char-string>`
    - `JWT_SECRET=<random-string>`
    - `JWT_REFRESH_SECRET=<random-string>`
-   - `ADMIN_EMAIL=admin@aurumx.com`
+   - `ADMIN_EMAIL=admin@nexavault.com`
    - `ADMIN_PASSWORD=<secure-password>`
    - `NEXT_PUBLIC_APP_URL=https://<your-railway-domain>.railway.app`
 4. **Deploy**: Railway auto-detects Next.js and runs `npm ci && npm run build`, then starts with `npm run start`.
-5. **Add a custom domain** (optional): Under **Settings** → **Domains**, add `aurumx.app` or your preferred domain.
+5. **Add a custom domain** (optional): Under **Settings** → **Domains**, add `nexavault.app` or your preferred domain.
 
 After deployment, if you configured Telegram, register the webhook:
 

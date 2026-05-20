@@ -35,7 +35,7 @@ async function getTransporter() {
 }
 
 function fromAddress() {
-  return process.env.EMAIL_FROM || 'NexaVault <no-reply@aurumx.app>';
+  return process.env.EMAIL_FROM || 'NexaVault <no-reply@nexavault.app>';
 }
 
 function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
@@ -52,7 +52,7 @@ function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#0b1020;border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden">
         <tr><td style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,0.06)">
           <div style="font-size:18px;font-weight:600;letter-spacing:.04em">
-            <span style="background:linear-gradient(90deg,#f7e08a,#b8862b);-webkit-background-clip:text;background-clip:text;color:transparent">Aurum</span>X
+            <span style="background:linear-gradient(90deg,#00ffa3,#20d6ff,#f0c14b);-webkit-background-clip:text;background-clip:text;color:transparent">Nexa</span>Vault
           </div>
         </td></tr>
         <tr><td style="padding:28px">

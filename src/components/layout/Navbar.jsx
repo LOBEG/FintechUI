@@ -22,8 +22,7 @@ export function Navbar() {
             <Sparkles className="h-5 w-5 text-ink-950"/>
           </span>
           <span className="text-xl font-display tracking-wide">
-            <span className="text-gradient-gold">Aurum</span>
-            <span className="text-white">X</span>
+            <span className="text-gradient-gold">Nexa</span>Vault
           </span>
         </Link>
         <nav className="hidden lg:flex items-center gap-1">

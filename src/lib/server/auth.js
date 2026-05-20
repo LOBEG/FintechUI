@@ -11,7 +11,7 @@ import {
   revokeSession,
 } from './store.js';
 
-const COOKIE_NAME = 'aurumx_session';
+const COOKIE_NAME = 'nexavault_session';
 const COOKIE_TTL_DAYS = 30;
 
 function secret() {
@@ -24,7 +24,7 @@ function secret() {
       'SESSION_SECRET is required in production and must be at least 16 characters.',
     );
   }
-  return 'aurumx-dev-secret-do-not-use-in-prod-aurumx-dev-secret';
+  return 'nexavault-dev-secret-do-not-use-in-prod-nexavault-dev-secret';
 }
 
 export function hashPassword(password) {

@@ -41,7 +41,7 @@ function SignupForm() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
           <Link href="/" className="flex items-center gap-2 lg:hidden mb-4">
             <span className="h-9 w-9 rounded-xl bg-gold-grad inline-flex items-center justify-center text-ink-950"><Sparkles className="h-4 w-4"/></span>
-            <span className="text-xl font-display"><span className="text-gradient-gold">Aurum</span>X</span>
+            <span className="text-xl font-display"><span className="text-gradient-gold">Nexa</span>Vault</span>
           </Link>
           <h1 className="text-2xl font-display">Create your NexaVault account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest in digital assets with institutional grade tools.</p>

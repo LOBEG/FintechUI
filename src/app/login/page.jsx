@@ -35,7 +35,7 @@ export default function LoginPage() {
         <div className="relative max-w-md">
           <Link href="/" className="flex items-center gap-2">
             <span className="h-10 w-10 rounded-xl bg-gold-grad inline-flex items-center justify-center text-ink-950"><Sparkles className="h-5 w-5"/></span>
-            <span className="text-2xl font-display"><span className="text-gradient-gold">Aurum</span>X</span>
+            <span className="text-2xl font-display"><span className="text-gradient-gold">Nexa</span>Vault</span>
           </Link>
           <h2 className="mt-10 text-3xl font-display leading-tight">
             Welcome back to the<br /><span className="text-gradient-gold">professional management of digital wealth</span>.

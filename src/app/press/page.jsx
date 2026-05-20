@@ -74,8 +74,8 @@ export default function PressPage() {
               <p className="mt-2 text-sm text-white/60">
                 For press enquiries, contact our communications team.
               </p>
-              <a href="mailto:press@aurumx.com" className="mt-4 inline-flex items-center text-sm text-neon-green hover:underline">
-                press@aurumx.com →
+              <a href="mailto:press@nexavault.com" className="mt-4 inline-flex items-center text-sm text-neon-green hover:underline">
+                press@nexavault.com →
               </a>
             </div>
           </div>
