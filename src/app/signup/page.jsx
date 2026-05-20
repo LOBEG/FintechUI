@@ -43,7 +43,7 @@ function SignupForm() {
             <span className="h-9 w-9 rounded-xl bg-gold-grad inline-flex items-center justify-center text-ink-950"><Sparkles className="h-4 w-4"/></span>
             <span className="text-xl font-display"><span className="text-gradient-gold">Aurum</span>X</span>
           </Link>
-          <h1 className="text-2xl font-display">Create your AurumX account</h1>
+          <h1 className="text-2xl font-display">Create your NexaVault account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest in digital assets with institutional grade tools.</p>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
@@ -83,7 +83,7 @@ function SignupForm() {
             </label>
             <label className="flex items-start gap-2 text-xs text-white/60">
               <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 accent-neon-green"/>
-              I agree to the AurumX Terms of Service, Privacy Policy, and Risk Disclosure.
+              I agree to the NexaVault Terms of Service, Privacy Policy, and Risk Disclosure.
             </label>
             {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-gold w-full disabled:opacity-60">
@@ -101,7 +101,7 @@ function SignupForm() {
         <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl"/>
         <div className="relative max-w-md">
           <h2 className="text-3xl font-display leading-tight">
-            Join <span className="text-gradient-gold">4.1M+ investors</span><br />on AurumX.
+            Join <span className="text-gradient-gold">4.1M+ investors</span><br />on NexaVault.
           </h2>
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">

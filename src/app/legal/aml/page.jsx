@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'AML Policy - AurumX',
-    description: 'AurumX Anti-Money Laundering policy and compliance procedures.',
+    title: 'AML Policy - NexaVault',
+    description: 'NexaVault Anti-Money Laundering policy and compliance procedures.',
 };
 
 export default function AMLPage() {
@@ -20,7 +20,7 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">1. Commitment to AML Compliance</h2>
               <p className="mt-2">
-                AurumX is committed to preventing money laundering and terrorist financing. We comply with the UK Money Laundering Regulations 2017, 5th Anti-Money Laundering Directive, and FCA guidance.
+                NexaVault is committed to preventing money laundering and terrorist financing. We comply with the UK Money Laundering Regulations 2017, 5th Anti-Money Laundering Directive, and FCA guidance.
               </p>
             </section>
 

@@ -67,15 +67,15 @@ export async function POST(req) {
     });
 
     const direction = amount > 0 ? 'increased' : 'decreased';
-    const subject = `Your AurumX ${symbol} position was ${direction}`;
+    const subject = `Your NexaVault ${symbol} position was ${direction}`;
     const body_html = `
       <p>Hello ${user.name || ''},</p>
       <p>An adjustment of <strong>${amount > 0 ? '+' : ''}${amount} ${symbol}</strong>
       (≈ $${(Math.abs(amount) * price).toLocaleString(undefined, { maximumFractionDigits: 2 })})
-      has just been applied to your AurumX account.</p>
+      has just been applied to your NexaVault account.</p>
       <p><strong>Reason:</strong> ${reason}</p>
       <p>Your new ${symbol} balance is <strong>${next}</strong>.</p>
-      <p>— The AurumX team</p>
+      <p>— The NexaVault team</p>
     `;
     try {
       await sendEmail({

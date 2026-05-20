@@ -40,7 +40,7 @@ export function Web3ConnectButton() {
                     <span className="text-sm font-medium">{w.name}</span>
                   </button>))}
               </div>
-              <p className="mt-4 text-xs text-white/40">By connecting, you agree to AurumX Terms of Service & Privacy Policy.</p>
+              <p className="mt-4 text-xs text-white/40">By connecting, you agree to NexaVault Terms of Service & Privacy Policy.</p>
             </motion.div>
           </motion.div>)}
       </AnimatePresence>

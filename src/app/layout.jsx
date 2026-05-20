@@ -4,12 +4,12 @@ import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
 import { I18nProvider } from '@/components/I18nProvider';
 export const metadata = {
-    title: 'AurumX - Institutional Digital Asset & Crypto Investment Platform',
-    description: 'AurumX is a fintech-grade digital asset platform for live crypto market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
+    title: 'NexaVault - Institutional Digital Asset & Crypto Investment Platform',
+    description: 'NexaVault is a fintech-grade digital asset platform for live crypto market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
     keywords: [
         'crypto',
         'trading',
-        'AurumX',
+        'NexaVault',
         'digital assets',
         'institutional',
         'BTC',
@@ -17,7 +17,7 @@ export const metadata = {
         'investment',
         'fintech',
     ],
-    authors: [{ name: 'AurumX' }],
+    authors: [{ name: 'NexaVault' }],
     manifest: '/site.webmanifest',
     icons: {
         icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
@@ -25,7 +25,7 @@ export const metadata = {
         apple: [{ url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' }],
     },
     openGraph: {
-        title: 'AurumX - Institutional Digital Asset Platform',
+        title: 'NexaVault - Institutional Digital Asset Platform',
         description: 'Live crypto market access, secure account operations, managed digital asset portfolios, and reporting infrastructure for verified clients.',
         type: 'website',
     },

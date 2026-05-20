@@ -37,7 +37,7 @@ export async function GET() {
       items.unshift({
         id: 'banner',
         kind: 'broadcast',
-        title: 'Notice from AurumX',
+        title: 'Notice from NexaVault',
         body: String(settings.banner),
         createdAt: Date.now(),
         read: false,

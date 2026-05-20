@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Users, Shield, Briefcase, Award } from 'lucide-react';
 
 export const metadata = {
-    title: 'Managed Accounts - AurumX',
+    title: 'Managed Accounts - NexaVault',
     description: 'Discretionary portfolio management for high-net-worth crypto investors.',
 };
 
@@ -14,7 +14,7 @@ export default function ManagedAccountsPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Managed Accounts</span> by AurumX
+            <span className="text-gradient-gold">Managed Accounts</span> by NexaVault
           </h1>
           <p className="mt-4 text-lg text-white/70">
             Discretionary digital asset portfolio management for qualified investors and institutions that need professional allocation, admin-supervised balance changes, risk controls, and live reporting instead of self-directed speculation.

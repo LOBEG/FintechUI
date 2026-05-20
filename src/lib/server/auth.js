@@ -206,7 +206,7 @@ export function bootstrapAdmin() {
   const user = {
     id: newId('user'),
     email,
-    name: 'AurumX Admin',
+    name: 'NexaVault Admin',
     passwordHash: hash,
     passwordSalt: salt,
     isAdmin: true,

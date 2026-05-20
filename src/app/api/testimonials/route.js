@@ -19,7 +19,7 @@ function publicView(t) {
   return {
     id: t.id,
     name: t.name,
-    role: t.role || 'AurumX investor',
+    role: t.role || 'NexaVault investor',
     text: t.text,
     rating: t.rating || 5,
     avatarUrl: cleanAvatarUrl(t.avatarUrl) || null,

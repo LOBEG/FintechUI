@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Briefcase, MapPin, Clock, TrendingUp } from 'lucide-react';
 
 export const metadata = {
-    title: 'Careers - AurumX',
-    description: 'Join the AurumX team and shape the future of digital finance.',
+    title: 'Careers - NexaVault',
+    description: 'Join the NexaVault team and shape the future of digital finance.',
 };
 
 export default function CareersPage() {
@@ -14,10 +14,10 @@ export default function CareersPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            Careers at <span className="text-gradient-gold">AurumX</span>
+            Careers at <span className="text-gradient-gold">NexaVault</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            We are building secure digital asset infrastructure for live markets, account operations, compliance workflows, and client reporting. AurumX teams work across engineering, risk, support, and fintech operations.
+            We are building secure digital asset infrastructure for live markets, account operations, compliance workflows, and client reporting. NexaVault teams work across engineering, risk, support, and fintech operations.
           </p>
           <div className="mt-10 space-y-4">
             <div className="glass p-6 rounded-xl">
@@ -67,7 +67,7 @@ export default function CareersPage() {
             </div>
           </div>
           <div className="mt-10">
-            <h2 className="text-2xl font-display">Why AurumX?</h2>
+            <h2 className="text-2xl font-display">Why NexaVault?</h2>
             <ul className="mt-4 space-y-2 text-white/70">
               <li className="flex gap-2"><TrendingUp className="h-5 w-5 text-neon-green shrink-0 mt-0.5"/> Competitive salary + equity package</li>
               <li className="flex gap-2"><TrendingUp className="h-5 w-5 text-neon-green shrink-0 mt-0.5"/> Flexible remote/hybrid work</li>

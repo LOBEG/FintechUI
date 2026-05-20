@@ -60,9 +60,9 @@ export async function POST(req) {
       try {
         await sendEmail({
           to: user.email,
-          subject: 'Your AurumX balances have been reset',
-          text: `All asset balances on your AurumX account have been reset to zero. Reason: ${reason}.`,
-          html: `<p>Hello ${user.name || ''},</p><p>All asset balances on your AurumX account have been reset to <strong>zero</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>If this was unexpected, please contact AurumX support immediately.</p>`,
+          subject: 'Your NexaVault balances have been reset',
+          text: `All asset balances on your NexaVault account have been reset to zero. Reason: ${reason}.`,
+          html: `<p>Hello ${user.name || ''},</p><p>All asset balances on your NexaVault account have been reset to <strong>zero</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>If this was unexpected, please contact NexaVault support immediately.</p>`,
         });
       } catch (_) {}
     }

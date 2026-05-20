@@ -1,4 +1,4 @@
-// File-based JSON persistence layer for AurumX.
+// File-based JSON persistence layer for NexaVault.
 // Designed to run on Railway with an attached volume mounted at /data
 // (configurable via DATA_DIR env). Falls back to <repo>/data in dev.
 //

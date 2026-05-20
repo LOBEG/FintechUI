@@ -70,7 +70,7 @@ export function Footer() {
             </div>))}
         </div>
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3 items-center justify-between">
-          <p className="text-xs text-white/50">© {new Date().getFullYear()} AurumX Capital Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
+          <p className="text-xs text-white/50">© {new Date().getFullYear()} NexaVault Capital Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
           <p className="text-xs text-white/40">Digital assets are volatile. Trade and invest responsibly.</p>
         </div>
       </div>

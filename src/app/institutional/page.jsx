@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
-    title: 'Institutional Services - AurumX',
+    title: 'Institutional Services - NexaVault',
     description: 'Enterprise crypto solutions for institutions, family offices, and corporate treasury.',
 };
 

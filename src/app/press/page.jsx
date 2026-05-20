@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Newspaper, Download, Mail } from 'lucide-react';
 
 export const metadata = {
-    title: 'Press - AurumX',
-    description: 'AurumX press releases, media kit, and contact information.',
+    title: 'Press - NexaVault',
+    description: 'NexaVault press releases, media kit, and contact information.',
 };
 
 export default function PressPage() {
@@ -17,7 +17,7 @@ export default function PressPage() {
             <span className="text-gradient-gold">Press</span> & Media
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Media resources for AurumX, a fintech-grade digital asset platform focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
+            Media resources for NexaVault, a fintech-grade digital asset platform focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
           </p>
           <div className="mt-10 space-y-6">
             <div className="glass p-6 rounded-xl">
@@ -27,7 +27,7 @@ export default function PressPage() {
                   <h3 className="text-lg font-semibold">Platform overview</h3>
                   <p className="mt-1 text-sm text-white/50">Company profile</p>
                   <p className="mt-3 text-sm text-white/60">
-                    AurumX provides public crypto market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for digital asset clients.
+                    NexaVault provides public crypto market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for digital asset clients.
                   </p>
                 </div>
               </div>
@@ -51,7 +51,7 @@ export default function PressPage() {
                   <h3 className="text-lg font-semibold">Market data and reporting</h3>
                   <p className="mt-1 text-sm text-white/50">Live data infrastructure</p>
                   <p className="mt-3 text-sm text-white/60">
-                    AurumX displays Binance-backed pricing and candle data across public and signed-in experiences, with investor reports derived from live market feeds.
+                    NexaVault displays Binance-backed pricing and candle data across public and signed-in experiences, with investor reports derived from live market feeds.
                   </p>
                 </div>
               </div>

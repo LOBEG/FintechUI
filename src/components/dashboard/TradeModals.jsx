@@ -36,7 +36,7 @@ function Modal({ open, onClose, title, icon, children }) {
 
 export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', walletBalances = {} }) {
   const [symbol, setSymbol] = useState(defaultSymbol);
-  const [quoteCurrency, setQuoteCurrency] = useState('USDT');
+  const quoteCurrency = 'USDT';
   const [usdAmount, setUsdAmount] = useState('100');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
@@ -46,21 +46,12 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
   const px = prices[tradingPair]?.price || 0;
   const estCrypto = px ? parseFloat(usdAmount || '0') / px : 0;
   const availableQuote = walletBalances[quoteCurrency] || 0;
-  const quoteAssets = Object.keys(walletBalances).filter((s) => ['USDT', 'USDC', 'BTC', 'ETH'].includes(s) && walletBalances[s] > 0);
-  if (!quoteAssets.includes('USDT')) quoteAssets.unshift('USDT');
   useEffect(() => { 
     if (open) { 
       setSuccess(null); 
       setError(null); 
       setSymbol(defaultSymbol || 'BTC');
-      // Reset to USDT if available, otherwise first available quote
-      if (walletBalances.USDT > 0 || !quoteAssets.length) {
-        setQuoteCurrency('USDT');
-      } else {
-        setQuoteCurrency(quoteAssets[0] || 'USDT');
-      }
     } 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, defaultSymbol]);
   const submit = async (e) => {
     e.preventDefault();
@@ -88,20 +79,17 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
       ) : (
         <form onSubmit={submit} className="space-y-3">
           <p className="text-xs text-white/60">
-            Spend {quoteCurrency} from your wallet to buy crypto at the live Binance price. 
+             Spend {quoteCurrency} from your wallet to buy crypto at the live Binance price.
             Available {quoteCurrency}: <strong>{availableQuote.toFixed(quoteCurrency === 'BTC' || quoteCurrency === 'ETH' ? 8 : 2)}</strong>
             {availableQuote === 0 && <span className="text-neon-orange"> (insufficient balance)</span>}.
           </p>
           <label className="block">
             <span className="text-xs text-white/55">Trading pair</span>
-            <div className="mt-1 grid grid-cols-2 gap-2">
-              <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
-                {SUPPORTED.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
-              </select>
-              <select value={quoteCurrency} onChange={(e) => setQuoteCurrency(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
-                {quoteAssets.map((q) => <option key={q} value={q} className="bg-ink-900">{q} ({(walletBalances[q] || 0).toFixed(q === 'BTC' || q === 'ETH' ? 4 : 2)})</option>)}
-              </select>
-            </div>
+             <div className="mt-1">
+               <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+                 {SUPPORTED.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+               </select>
+             </div>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">{quoteCurrency} amount</span>
@@ -192,7 +180,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         <form onSubmit={submit} className="space-y-3">
           <div className="flex gap-2 text-xs items-start bg-gold-500/10 border border-gold-500/30 text-gold-200 rounded-lg p-3">
             <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
-            <p>Withdrawals require a one-time authorisation token issued by an AurumX administrator.</p>
+            <p>Withdrawals require a one-time authorisation token issued by an NexaVault administrator.</p>
           </div>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>

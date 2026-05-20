@@ -122,16 +122,18 @@ export default function DashboardPage() {
             try { const r = await api.get('/api/watchlist'); setWatchlistBases(r.symbols || []); } catch (_) {}
         }
     }, [user]);
+    const pairOptions = useMemo(() => Object.keys(SYMBOL_META), []);
     const tradePair = `${investSymbol}USDT`;
-    const livePrices = useLivePrices([...new Set([...watchlistSymbols, 'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', tradePair])]);
-    const candles = useLiveKlines('BTCUSDT', interval, 80);
+    const selectedMarketMeta = SYMBOL_META[tradePair] || { sym: investSymbol, name: investSymbol, color: '#999' };
+    const quoteSymbol = 'USDT';
+    const livePrices = useLivePrices([...new Set([...watchlistSymbols, ...DEFAULT_TICKER_SYMBOLS, tradePair])]);
+    const candles = useLiveKlines(tradePair, interval, 80);
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
     const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
-    const btc = livePrices.BTCUSDT || { price: 0, pct: 0, high: 0, low: 0, vol: 0, quoteVol: 0, live: false };
-    const btcPctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const [price, setPrice] = useState('');
-    const tradeMarket = livePrices[tradePair] || btc;
+    const tradeMarket = livePrices[tradePair] || { price: 0, pct: 0, high: 0, low: 0, vol: 0, quoteVol: 0, live: false };
+    const tradePctClass = tradeMarket.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
     const effectivePrice = price || (tradeMarket.price ? tradeMarket.price.toFixed(2) : '0');
     // Wallet: real balances when logged in, demo for anonymous visitors.
     const wallets = useMemo(() => {
@@ -187,6 +189,12 @@ export default function DashboardPage() {
     const openPnl = positions.reduce((s, p) => s + p.pnl, 0);
     const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : (user ? 0 : DEMO_WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal);
     const userBalances = liveWallet?.balances || {};
+    const orderValue = (parseFloat(amount || '0') || 0) * (parseFloat(effectivePrice || '0') || 0);
+    const handleTradePairChange = useCallback((pair) => {
+        const base = pair.endsWith('USDT') ? pair.slice(0, -4) : pair;
+        setInvestSymbol(base);
+        setPrice('');
+    }, []);
     const setPercentAmount = useCallback((pct) => {
         if (!requireAuth()) return;
         const px = parseFloat(effectivePrice || '0');
@@ -203,7 +211,7 @@ export default function DashboardPage() {
           {user && <EmailVerifyBanner user={user} />}          {/* Portfolio overview */}
           {user ? <section className="grid lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-5 lg:col-span-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <p className="text-sm text-white/60 flex items-center gap-2">
                     {t('totalPortfolioValue')}
@@ -216,7 +224,7 @@ export default function DashboardPage() {
                     {openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)} unrealised P&L
                   </p>
                 </div>
-                <div className="hidden sm:flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button onClick={() => openInvest(investSymbol)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> {t('invest')}</button>
                   <button onClick={() => setSellOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('sell')}</button>
                   <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('withdraw')}</button>
@@ -242,6 +250,101 @@ export default function DashboardPage() {
               <a href="/login?next=/dashboard" className="btn-ghost text-sm">Sign in</a>
             </div>
           </section>}
+
+          {/* Chart + Buy/Sell */}
+          <section id="trade-section" className="grid xl:grid-cols-3 gap-4">
+            <div className="xl:col-span-2 glass-strong p-4">
+              <div className="flex items-center justify-between flex-wrap gap-3 px-1">
+                <div className="flex items-center gap-3">
+                  <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-ink-950 text-sm font-bold bg-white/5 border border-white/10" style={cryptoLogoStyle(selectedMarketMeta.sym) || { background: selectedMarketMeta.color }}>
+                    {!cryptoLogoStyle(selectedMarketMeta.sym) && selectedMarketMeta.sym.slice(0, 1)}
+                    <span className="sr-only">{selectedMarketMeta.name}</span>
+                  </span>
+                  <div>
+                    <p className="text-base font-semibold">{selectedMarketMeta.sym} / {quoteSymbol}</p>
+                    <p className="text-xs text-white/50">{selectedMarketMeta.name} · Spot · Binance live feed</p>
+                  </div>
+                  <div className="hidden sm:block pl-4">
+                    <p className={`text-lg font-semibold ${tradePctClass}`}>{formatUSD(tradeMarket.price)}</p>
+                    <p className={`text-xs ${tradePctClass}`}>{formatPct(tradeMarket.pct)} (24h)</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs">
+                  {INTERVALS.map((t) => (<button key={t} onClick={() => setInterval(t)} className={`px-2.5 py-1 rounded ${interval === t ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5'}`}>
+                      {t}
+                    </button>))}
+                </div>
+              </div>
+              <div className="mt-3 rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
+                <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
+                  <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>
+                    {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
+                  </span>
+                  <span>Updated {chartUpdatedLabel}</span>
+                </div>
+                <div className="aspect-[16/9]">
+                  <CandlestickChart data={candles} animate={false}/>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h High</p><p className="font-semibold mt-0.5">{formatUSD(tradeMarket.high || 0)}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{formatUSD(tradeMarket.low || 0)}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol ({selectedMarketMeta.sym})</p><p className="font-semibold mt-0.5">{(tradeMarket.vol || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol ({quoteSymbol})</p><p className="font-semibold mt-0.5">{formatUSD(tradeMarket.quoteVol || 0)}</p></div>
+              </div>
+            </div>
+
+            {/* Buy/Sell panel */}
+            <div className="glass-strong p-4">
+              <div className="grid grid-cols-2 rounded-xl bg-white/5 p-1">
+                <button onClick={() => (user ? setSide('buy') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'buy' ? 'bg-neon-green text-ink-950' : 'text-white/70'}`}>
+                  {t('buy')}
+                </button>
+                <button onClick={() => (user ? setSide('sell') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'sell' ? 'bg-neon-red text-white' : 'text-white/70'}`}>
+                  {t('sell')}
+                </button>
+              </div>
+              <div className="mt-3 flex gap-1 text-xs">
+                {['market', 'limit', 'stop'].map((t) => (<button key={t} onClick={() => (user ? setOrderType(t) : requireAuth())} className={`flex-1 py-1.5 rounded ${orderType === t ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'}`}>
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </button>))}
+              </div>
+              <div className="mt-4 space-y-3">
+                <label className="block">
+                  <span className="text-xs text-white/55">Trading pair</span>
+                  <select value={tradePair} onChange={(e) => handleTradePairChange(e.target.value)} disabled={!user} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/50 disabled:opacity-50">
+                    {pairOptions.map((pair) => {
+                      const meta = SYMBOL_META[pair];
+                      return <option key={pair} value={pair} className="bg-ink-900">{meta.sym} / {quoteSymbol} · {meta.name}</option>;
+                    })}
+                  </select>
+                </label>
+                <Field label={`Price (${quoteSymbol})`} value={effectivePrice} onChange={setPrice} disabled={!user || orderType === 'market'}/>
+                <Field label={`Amount (${investSymbol})`} value={amount} onChange={setAmount} disabled={!user}/>
+                <div className="grid grid-cols-4 gap-1 text-[11px]">
+                  {[
+                    ['25%', 0.25],
+                    ['50%', 0.5],
+                    ['75%', 0.75],
+                    ['100%', 1],
+                  ].map(([label, pct]) => (<button key={label} onClick={() => setPercentAmount(pct)} className="py-1.5 rounded bg-white/5 hover:bg-white/10 text-white/70">{label}</button>))}
+                </div>
+                <div className="glass-light p-3 text-xs space-y-1">
+                  <Row k="Order value" v={`≈ ${formatUSD(orderValue)}`}/>
+                  <Row k="Fee (0.10%)" v={`≈ ${formatUSD(orderValue * 0.001)}`}/>
+                  {user ? <Row k="Available" v={`${cashUSDT.toLocaleString()} ${quoteSymbol}`}/> : <Row k="Access" v="Sign in required"/>}
+                </div>
+                <button onClick={() => {
+                    if (!requireAuth()) return;
+                    if (side === 'buy') openInvest(investSymbol);
+                    else setSellOpen(true);
+                }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
+                  {user ? (side === 'buy' ? `${t('buy')} ${investSymbol}` : `${t('sell')} ${investSymbol}`) : t('trade')}
+                </button>
+              </div>
+            </div>
+          </section>
+
 
           {/* Asset cards */}
           {user && <section id="wallet" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -286,90 +389,6 @@ export default function DashboardPage() {
               <MarketsPanel onInvest={openInvest} />
             </section>
           )}
-
-          {/* Chart + Buy/Sell */}
-          <section id="trade-section" className="grid xl:grid-cols-3 gap-4">
-            <div className="xl:col-span-2 glass-strong p-4">
-              <div className="flex items-center justify-between flex-wrap gap-3 px-1">
-                <div className="flex items-center gap-3">
-                  <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-ink-950 text-sm font-bold bg-white/5 border border-white/10" style={cryptoLogoStyle('BTC')}>
-                    <span className="sr-only">Bitcoin</span>
-                  </span>
-                  <div>
-                    <p className="text-base font-semibold">BTC / USDT</p>
-                    <p className="text-xs text-white/50">Bitcoin · Spot · Binance live feed</p>
-                  </div>
-                  <div className="hidden sm:block pl-4">
-                    <p className={`text-lg font-semibold ${btcPctClass}`}>{formatUSD(btc.price)}</p>
-                    <p className={`text-xs ${btcPctClass}`}>{formatPct(btc.pct)} (24h)</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs">
-                  {INTERVALS.map((t) => (<button key={t} onClick={() => setInterval(t)} className={`px-2.5 py-1 rounded ${interval === t ? 'bg-white/10 text-white' : 'text-white/60 hover:bg-white/5'}`}>
-                      {t}
-                    </button>))}
-                </div>
-              </div>
-              <div className="mt-3 rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
-                <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
-                  <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>
-                    {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
-                  </span>
-                  <span>Updated {chartUpdatedLabel}</span>
-                </div>
-                <div className="aspect-[16/9]">
-                  <CandlestickChart data={candles} animate={false}/>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h High</p><p className="font-semibold mt-0.5">{formatUSD(btc.high || 0)}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{formatUSD(btc.low || 0)}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (BTC)</p><p className="font-semibold mt-0.5">{(btc.vol || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol (USD)</p><p className="font-semibold mt-0.5">${((btc.quoteVol || 0) / 1e9).toFixed(2)}B</p></div>
-              </div>
-            </div>
-
-            {/* Buy/Sell panel */}
-            <div className="glass-strong p-4">
-              <div className="grid grid-cols-2 rounded-xl bg-white/5 p-1">
-                <button onClick={() => (user ? setSide('buy') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'buy' ? 'bg-neon-green text-ink-950' : 'text-white/70'}`}>
-                  {t('buy')}
-                </button>
-                <button onClick={() => (user ? setSide('sell') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'sell' ? 'bg-neon-red text-white' : 'text-white/70'}`}>
-                  {t('sell')}
-                </button>
-              </div>
-              <div className="mt-3 flex gap-1 text-xs">
-                {['market', 'limit', 'stop'].map((t) => (<button key={t} onClick={() => (user ? setOrderType(t) : requireAuth())} className={`flex-1 py-1.5 rounded ${orderType === t ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'}`}>
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </button>))}
-              </div>
-              <div className="mt-4 space-y-3">
-                <Field label="Price (USDT)" value={effectivePrice} onChange={setPrice} disabled={!user || orderType === 'market'}/>
-                <Field label={`Amount (${investSymbol})`} value={amount} onChange={setAmount} disabled={!user}/>
-                <div className="grid grid-cols-4 gap-1 text-[11px]">
-                  {[
-                    ['25%', 0.25],
-                    ['50%', 0.5],
-                    ['75%', 0.75],
-                    ['100%', 1],
-                  ].map(([label, pct]) => (<button key={label} onClick={() => setPercentAmount(pct)} className="py-1.5 rounded bg-white/5 hover:bg-white/10 text-white/70">{label}</button>))}
-                </div>
-                <div className="glass-light p-3 text-xs space-y-1">
-                  <Row k="Order value" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(effectivePrice || '0'))}`}/>
-                  <Row k="Fee (0.10%)" v={`≈ ${formatUSD(parseFloat(amount || '0') * parseFloat(effectivePrice || '0') * 0.001)}`}/>
-                  {user ? <Row k="Available" v={`${cashUSDT.toLocaleString()} USDT`}/> : <Row k="Access" v="Sign in required"/>}
-                </div>
-                <button onClick={() => {
-                    if (!requireAuth()) return;
-                    if (side === 'buy') openInvest(investSymbol);
-                    else setSellOpen(true);
-                }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
-                  {user ? (side === 'buy' ? `${t('buy')} ${investSymbol}` : `${t('sell')} ${investSymbol}`) : t('trade')}
-                </button>
-              </div>
-            </div>
-          </section>
 
           {/* Watchlist + Positions */}
           {user && <section id="positions-section" className="grid xl:grid-cols-3 gap-4">
@@ -502,7 +521,7 @@ export default function DashboardPage() {
 
             <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
-                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Aurelia AI Bot</p>
+                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Nexa AI Bot</p>
                 {user ? (
                   <span className="chip bg-white/5 text-white/60 border border-white/10">Configuring</span>
                 ) : (
@@ -588,7 +607,7 @@ export default function DashboardPage() {
       <MobileBottomNav />
       <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} walletBalances={userBalances} defaultSymbol={investSymbol}/>
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
-      <SellModal open={sellOpen} onClose={() => setSellOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
+      <SellModal open={sellOpen} onClose={() => setSellOpen(false)} onSuccess={refreshWallet} balances={userBalances} defaultSymbol={investSymbol}/>
     </div>);
 }
 function Field({ label, value, onChange, disabled, }) {

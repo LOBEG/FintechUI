@@ -69,9 +69,9 @@ export async function POST(req) {
       try {
         await sendEmail({
           to: user.email,
-          subject: `Your AurumX ${symbol} balance was updated`,
-          text: `Your AurumX ${symbol} balance has been set to ${target}. Reason: ${reason}.`,
-          html: `<p>Hello ${user.name || ''},</p><p>Your AurumX <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>— The AurumX team</p>`,
+          subject: `Your NexaVault ${symbol} balance was updated`,
+          text: `Your NexaVault ${symbol} balance has been set to ${target}. Reason: ${reason}.`,
+          html: `<p>Hello ${user.name || ''},</p><p>Your NexaVault <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>— The NexaVault team</p>`,
         });
       } catch (_) {}
     }

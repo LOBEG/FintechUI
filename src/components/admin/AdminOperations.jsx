@@ -507,7 +507,7 @@ function TestimonialsPanel({ testimonials, onDone }) {
           <div className="flex-1 min-w-[200px]">
             <div className="flex items-center gap-2 text-xs">
               <strong className="text-white">{t.name}</strong>
-              <span className="text-white/55">{t.role || 'AurumX investor'}</span>
+              <span className="text-white/55">{t.role || 'NexaVault investor'}</span>
               <span className={`chip ${t.status === 'approved' ? 'bg-neon-green/15 text-neon-green' : t.status === 'pending' ? 'bg-gold-500/15 text-gold-200' : 'bg-neon-red/15 text-neon-red'}`}>{t.status}</span>
               <span className="text-gold-300">{'★'.repeat(t.rating || 5)}</span>
             </div>

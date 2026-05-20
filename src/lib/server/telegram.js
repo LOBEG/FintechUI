@@ -1,4 +1,4 @@
-// Telegram admin bot for AurumX.
+// Telegram admin bot for NexaVault.
 //
 // Set the following env vars:
 //   TELEGRAM_BOT_TOKEN     - BotFather token
@@ -116,7 +116,7 @@ function fmtBalances(b) {
   return entries.map(([k, v]) => `${k}: <code>${v}</code>`).join(', ');
 }
 
-const HELP = `<b>AurumX admin bot</b>
+const HELP = `<b>NexaVault admin bot</b>
 /status — site overview
 /users — list users
 /balance &lt;email&gt;
@@ -425,7 +425,7 @@ export async function handleUpdate(update) {
         try {
           await sendEmail({
             to: u.email,
-            subject: `Your AurumX ${SYM} position was ${amount > 0 ? 'increased' : 'decreased'}`,
+            subject: `Your NexaVault ${SYM} position was ${amount > 0 ? 'increased' : 'decreased'}`,
             text: `Adjustment ${amount > 0 ? '+' : ''}${amount} ${SYM}. Reason: ${reason}. New balance: ${next} ${SYM}.`,
             html: `<p>Adjustment of <strong>${amount > 0 ? '+' : ''}${amount} ${SYM}</strong> applied (≈ $${(Math.abs(amount) * price).toFixed(2)}).</p><p>Reason: ${esc(reason)}</p><p>New balance: <strong>${next} ${SYM}</strong>.</p>`,
           });
