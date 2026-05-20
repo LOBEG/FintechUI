@@ -19,11 +19,12 @@ import {
   hashRecoveryCode,
 } from '@/lib/server/totp.js';
 import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
+import { BRAND_NAME } from '@/lib/brand.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const ISSUER = 'Oakmont Digital Capital Group';
+const ISSUER = BRAND_NAME;
 
 export async function GET() {
   try {

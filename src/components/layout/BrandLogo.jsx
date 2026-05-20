@@ -1,6 +1,5 @@
 import Link from 'next/link';
-
-export const BRAND_NAME = 'Oakmont Digital Capital Group';
+import { BRAND_NAME } from '@/lib/brand';
 
 export function OakmontLogoMark({ className = 'h-9 w-9' }) {
   return (

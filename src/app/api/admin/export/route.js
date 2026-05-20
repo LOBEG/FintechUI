@@ -6,6 +6,7 @@ import {
   listTokens,
   appendAudit,
 } from '@/lib/server/store.js';
+import { BRAND_SLUG } from '@/lib/brand.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -96,7 +97,7 @@ export async function GET(req) {
     return new Response(csv, {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="oakmontdc-${kind}-${new Date().toISOString().slice(0,10)}.csv"`,
+        'Content-Disposition': `attachment; filename="${BRAND_SLUG}-${kind}-${new Date().toISOString().slice(0,10)}.csv"`,
         'Cache-Control': 'no-store',
       },
     });

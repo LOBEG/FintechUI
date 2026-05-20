@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/lib/server/auth.js';
 import { transactionsForUser } from '@/lib/server/store.js';
+import { BRAND_SLUG } from '@/lib/brand.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -30,7 +31,7 @@ export async function GET(req) {
       return new Response(csv, {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="oakmontdc-transactions-${new Date().toISOString().slice(0,10)}.csv"`,
+          'Content-Disposition': `attachment; filename="${BRAND_SLUG}-transactions-${new Date().toISOString().slice(0,10)}.csv"`,
           'Cache-Control': 'no-store',
         },
       });

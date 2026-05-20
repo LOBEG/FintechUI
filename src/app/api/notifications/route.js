@@ -13,6 +13,7 @@ import {
   markNotificationsRead,
   getSettings,
 } from '@/lib/server/store.js';
+import { BRAND_NOTIFICATION_TITLE } from '@/lib/brand.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -37,7 +38,7 @@ export async function GET() {
       items.unshift({
         id: 'banner',
         kind: 'broadcast',
-        title: 'Notice from Oakmont Digital Capital Group',
+        title: BRAND_NOTIFICATION_TITLE,
         body: String(settings.banner),
         createdAt: Date.now(),
         read: false,
