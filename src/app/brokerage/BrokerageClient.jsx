@@ -6,6 +6,7 @@ import {
   LineChart, BarChart3, RefreshCw, Search, TrendingUp, TrendingDown,
   Activity, ArrowRight, X, Loader2, ChevronDown, ChevronUp,
 } from 'lucide-react';
+import { getCryptoLogo } from '@/lib/cryptoLogos';
 
 const TABS = [
   { id: 'stocks',      label: 'Stocks',       blurb: 'Live equities from US primary listings (NYSE, NASDAQ).' },
@@ -274,9 +275,16 @@ function CryptoBoard() {
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
       {rows.map((r) => {
         const positive = r.pct >= 0;
+        const logo = getCryptoLogo(r.symbol);
         return (
           <Link key={r.symbol} href={`/markets/${r.symbol}`} className="glass-light p-3 flex items-center gap-3 hover:bg-white/10 transition">
-            <span className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950" style={{ background: r.color || '#888' }}>{r.symbol.slice(0,1)}</span>
+            {logo ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={logo} alt={r.symbol} width={32} height={32} loading="lazy"
+                className="h-8 w-8 rounded-full bg-white/5 border border-white/10 object-contain p-0.5"
+                onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling.style.display = 'inline-flex'; }} />
+            ) : null}
+            <span className={`h-8 w-8 rounded-full ${logo ? 'hidden' : 'inline-flex'} items-center justify-center text-[11px] font-bold text-ink-950`} style={{ background: r.color || '#888' }}>{r.symbol.slice(0,1)}</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold">{r.symbol}</p>
               <p className="text-[11px] text-white/55 truncate">{r.name}</p>
@@ -414,6 +422,36 @@ export default function BrokerageClient() {
           <h3 className="font-display mt-2">Risk &amp; reporting</h3>
           <p className="text-sm text-white/65 mt-1">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
         </div>
+      </section>
+      <section className="glass-strong p-4 sm:p-5">
+        <div className="flex items-center flex-wrap gap-2 mb-3">
+          <h2 className="font-display text-xl">Brokerage venues &amp; routing partners</h2>
+          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● live aggregation</span>
+        </div>
+        <p className="text-sm text-white/65 max-w-3xl">
+          Oakmont Digital Capital Group aggregates liquidity across regulated brokerages and exchanges so a single Oakmont account can express any view. Execution is routed by asset class to the venue with best price, depth and settlement at the time of order.
+        </p>
+        <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          {[
+            { name: 'Charles Schwab',       desc: 'US equities, ETFs, options',       cat: 'Stocks · ETFs · Options' },
+            { name: 'Fidelity',             desc: 'US equities, mutual funds, fixed income', cat: 'Stocks · Funds · Bonds' },
+            { name: 'Interactive Brokers',  desc: 'Global multi-asset prime',          cat: 'Stocks · Futures · FX · Options' },
+            { name: 'Coinbase',             desc: 'USD-regulated crypto exchange',     cat: 'Crypto spot · Custody' },
+            { name: 'Binance',              desc: 'Deepest global crypto liquidity',   cat: 'Crypto spot · Live feed' },
+            { name: 'Kraken',               desc: 'EU / US crypto + crypto derivatives', cat: 'Crypto · Margin · Futures' },
+            { name: 'OANDA',                desc: 'Institutional FX & CFD pricing',    cat: 'Forex · Commodities · Indices' },
+            { name: 'Forex.com',            desc: 'Retail FX & CFD execution',         cat: 'Forex · Commodities · Indices' },
+          ].map((v) => (
+            <div key={v.name} className="glass-light p-3">
+              <p className="text-sm font-semibold text-white">{v.name}</p>
+              <p className="text-[11px] text-white/55 mt-0.5">{v.desc}</p>
+              <p className="text-[10px] text-gold-300/85 mt-1">{v.cat}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-[11px] text-white/45">
+          Venue list is illustrative of the brokerage and exchange partners Oakmont Digital Capital Group aggregates for live pricing and routing. Specific routing is determined per-order in line with our best execution policy and disclosed on every fill.
+        </p>
       </section>
       <div className="text-center pt-2">
         <Link href="/signup" className="btn-gold">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>

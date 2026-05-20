@@ -34,10 +34,23 @@ const logoMap = {
     HBAR: 'https://cryptologos.cc/logos/hedera-hbar-logo.svg',
 };
 
+// Resolve the real logo URL for a given asset symbol. Handles both pure
+// symbols ("USDT", "BTC") and trading pairs ("BTCUSDT", "ETHUSDC"). The
+// previous implementation stripped USDT / USDC unconditionally which
+// meant `getCryptoLogo('USDT')` collapsed to an empty string and the
+// stablecoin rendered as a placeholder initial circle everywhere.
 export function getCryptoLogo(symbol) {
     if (!symbol) return null;
-    const upper = symbol.toUpperCase().replace('USDT', '').replace('USDC', '').replace('BUSD', '');
-    return logoMap[upper] || null;
+    const u = String(symbol).toUpperCase();
+    // Exact match first - this is what fixes USDT / USDC / BUSD showing
+    // a placeholder circle instead of their real logo.
+    if (logoMap[u]) return logoMap[u];
+    // Otherwise treat it as a pair: strip a trailing quote-currency
+    // suffix (USDT / USDC / BUSD / FDUSD / TUSD / DAI) only when it
+    // leaves a non-empty base symbol behind.
+    const base = u.replace(/(USDT|USDC|BUSD|FDUSD|TUSD|DAI)$/, '');
+    if (base && base !== u && logoMap[base]) return logoMap[base];
+    return null;
 }
 
 export function cryptoLogoStyle(symbol) {
