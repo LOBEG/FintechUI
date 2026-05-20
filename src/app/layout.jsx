@@ -18,6 +18,12 @@ export const metadata = {
         'fintech',
     ],
     authors: [{ name: 'AurumX' }],
+    manifest: '/site.webmanifest',
+    icons: {
+        icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+        shortcut: ['/icon.svg'],
+        apple: [{ url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' }],
+    },
     openGraph: {
         title: 'AurumX - Institutional Digital Asset Platform',
         description: 'Live crypto market access, secure account operations, managed digital asset portfolios, and reporting infrastructure for verified clients.',

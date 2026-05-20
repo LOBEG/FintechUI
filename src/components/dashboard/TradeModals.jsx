@@ -165,7 +165,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         <form onSubmit={submit} className="space-y-3">
           <div className="flex gap-2 text-xs items-start bg-gold-500/10 border border-gold-500/30 text-gold-200 rounded-lg p-3">
             <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
-            <p>Withdrawals require a one-time authorisation token issued by an AurumX administrator. Request one in-app or via Telegram support and paste it below.</p>
+            <p>Withdrawals require a one-time authorisation token issued by an AurumX administrator.</p>
           </div>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>

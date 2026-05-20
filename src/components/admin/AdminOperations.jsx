@@ -1,8 +1,9 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
+import { useLivePrices } from '@/lib/useLiveData';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'USDT'];
 
@@ -18,9 +19,11 @@ export function AdminOperations() {
   const [addresses, setAddresses] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [tab, setTab] = useState('credit');
+  const [refreshBusy, setRefreshBusy] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!user?.isAdmin) return;
+    setRefreshBusy(true);
     try {
       const [u, t, tx, ad, ts] = await Promise.all([
         api.get('/api/admin/users'),
@@ -34,7 +37,7 @@ export function AdminOperations() {
       setTransactions(tx.transactions || []);
       setAddresses(Object.values(ad.addresses || {}));
       setTestimonials(ts.testimonials || []);
-    } catch (_) {}
+    } catch (_) {} finally { setRefreshBusy(false); }
   }, [user]);
   useEffect(() => { refresh(); }, [refresh]);
   // Live monitoring: refresh transactions / users every 30 seconds so deposit & withdrawal
@@ -62,14 +65,18 @@ export function AdminOperations() {
       <div className="flex items-center gap-2">
         <h2 className="font-display text-lg">Live admin operations</h2>
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● real-time</span>
-        <button onClick={refresh} className="ml-auto text-xs text-white/55 hover:text-white">Refresh</button>
+        <button onClick={refresh} disabled={refreshBusy} className="ml-auto text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-60">
+          {refreshBusy ? <Loader2 className="h-3 w-3 animate-spin"/> : <RefreshCw className="h-3 w-3"/>} Refresh
+        </button>
       </div>
       <div className="flex gap-1 text-xs flex-wrap">
         {[
           ['credit', 'Credit deposit', Coins],
           ['adjust', 'Adjust balance', TrendingUp],
           ['setbal', 'Set balance', Scale],
+          ['reset', 'Reset balances', RotateCcw],
           ['status', 'Freeze user', ShieldOff],
+          ['delete', 'Delete user', UserX],
           ['token', 'Issue token', KeyRound],
           ['addresses', `Deposit addresses (${addresses.length})`, WalletIcon],
           ['testimonials', `Testimonials (${testimonials.filter((t) => t.status === 'pending').length} pending)`, MessageSquare],
@@ -90,7 +97,9 @@ export function AdminOperations() {
       {tab === 'credit' && <CreditForm users={users} onDone={refresh} />}
       {tab === 'adjust' && <AdjustForm users={users} onDone={refresh} />}
       {tab === 'setbal' && <SetBalanceForm users={users} onDone={refresh} />}
+      {tab === 'reset' && <ResetBalancesForm users={users} onDone={refresh} />}
       {tab === 'status' && <StatusForm users={users} onDone={refresh} />}
+      {tab === 'delete' && <DeleteUserForm users={users} onDone={refresh} />}
       {tab === 'token' && <TokenForm users={users} onDone={refresh} />}
       {tab === 'addresses' && <AddressesPanel addresses={addresses} onDone={refresh} />}
       {tab === 'testimonials' && <TestimonialsPanel testimonials={testimonials} onDone={refresh} />}
@@ -108,15 +117,30 @@ export function AdminOperations() {
 function CreditForm({ users, onDone }) {
   const [email, setEmail] = useState('');
   const [symbol, setSymbol] = useState('BTC');
+  const [denom, setDenom] = useState('usd'); // 'usd' or 'crypto'
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('Wire deposit credited');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
+  const prices = useLivePrices([`${symbol}USDT`]);
+  const livePrice = symbol === 'USDT' ? 1 : (prices[`${symbol}USDT`]?.price || 0);
+  const parsed = parseFloat(amount);
+  // Compute the crypto amount that will actually be credited. When the
+  // admin entered a USD value we divide by the live price; when they
+  // entered the crypto amount directly we pass it through unchanged.
+  const cryptoAmount = isFinite(parsed) && parsed > 0
+    ? (denom === 'usd' ? (livePrice ? parsed / livePrice : 0) : parsed)
+    : 0;
+  const usdAmount = isFinite(parsed) && parsed > 0
+    ? (denom === 'usd' ? parsed : parsed * livePrice)
+    : 0;
   const submit = async (e) => {
     e.preventDefault(); setBusy(true); setMsg(null);
     try {
-      const r = await api.post('/api/admin/credit', { email, symbol, amount: parseFloat(amount), note });
-      setMsg({ kind: 'ok', text: `Credited ${r.transaction.amount} ${r.transaction.symbol} ≈ $${r.transaction.usdValue.toFixed(2)}. Email queued.` });
+      if (!cryptoAmount || cryptoAmount <= 0) throw new Error('Enter a positive amount.');
+      if (denom === 'usd' && !livePrice) throw new Error('Live price unavailable for this asset — try again in a moment.');
+      const r = await api.post('/api/admin/credit', { email, symbol, amount: cryptoAmount, note });
+      setMsg({ kind: 'ok', text: `Credited ${r.transaction.amount.toFixed(8)} ${r.transaction.symbol} ≈ $${r.transaction.usdValue.toFixed(2)}. Email queued.` });
       setAmount('');
       onDone && onDone();
     } catch (err) { setMsg({ kind: 'err', text: err.message }); }
@@ -124,6 +148,7 @@ function CreditForm({ users, onDone }) {
   };
   return (
     <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Credit a user&rsquo;s account. Pick <strong>USD</strong> to enter a dollar amount and we&rsquo;ll convert at the live Binance price into the chosen crypto. Pick <strong>{symbol}</strong> to enter a raw crypto amount instead.</p>
       <label className="block sm:col-span-2">
         <span className="text-xs text-white/55">User email</span>
         <input list="adm-users" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
@@ -136,8 +161,24 @@ function CreditForm({ users, onDone }) {
         </select>
       </label>
       <label className="block">
-        <span className="text-xs text-white/55">Amount ({symbol})</span>
+        <span className="text-xs text-white/55">Amount denominated in</span>
+        <select value={denom} onChange={(e) => setDenom(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+          <option value="usd" className="bg-ink-900">USD (auto-convert)</option>
+          <option value="crypto" className="bg-ink-900">{symbol} (raw)</option>
+        </select>
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Amount ({denom === 'usd' ? 'USD $' : symbol})</span>
         <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        <span className="text-[11px] text-white/50 mt-1 block">
+          Live price: <strong>${livePrice ? livePrice.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '—'}</strong>
+          {cryptoAmount > 0 && (
+            <>
+              {' '}· Will credit <strong>{cryptoAmount.toLocaleString('en-US', { maximumFractionDigits: 8 })} {symbol}</strong>
+              {' '}≈ <strong>${usdAmount.toFixed(2)}</strong>
+            </>
+          )}
+        </span>
       </label>
       <label className="block sm:col-span-2">
         <span className="text-xs text-white/55">Note (shown in email & transaction)</span>
@@ -771,5 +812,107 @@ function KycQueuePanel() {
         </div>
       )}
     </div>
+  );
+}
+
+function ResetBalancesForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [reason, setReason] = useState('Account balance reset');
+  const [notify, setNotify] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const target = users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!window.confirm(`Reset ALL balances for ${email} to zero?`)) return;
+    setBusy(true); setMsg(null);
+    try {
+      const r = await api.post('/api/admin/reset-balances', { email, reason, notify });
+      const cleared = Object.entries(r.previousBalances || {}).filter(([, v]) => v > 0).length;
+      setMsg({ kind: 'ok', text: `${email} balances reset to zero (${cleared} asset${cleared === 1 ? '' : 's'} cleared).` });
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Zero every asset balance for a user. Records a single <code className="px-1 py-0.5 rounded bg-white/10">reset</code> transaction with the prior balances and appends an audit-log entry. Account, history, and metadata are preserved.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-rst" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-orange/40"/>
+        <datalist id="adm-users-rst">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+        {target && (
+          <p className="mt-1 text-[11px] text-white/55">
+            Will clear: <span className="font-mono">
+              {Object.entries(target.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '(none positive)'}
+            </span>
+          </p>
+        )}
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Reason (audit log)</span>
+        <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      <label className="sm:col-span-2 text-xs text-white/60 inline-flex items-center gap-2">
+        <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-neon-orange"/> Email the user a notification
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Resetting…</> : 'Reset all balances to zero'}
+      </button>
+    </form>
+  );
+}
+
+function DeleteUserForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [reason, setReason] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const target = users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  const canSubmit = !!target && !target.isAdmin && confirm.trim().toLowerCase() === email.toLowerCase().trim();
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    if (!window.confirm(`PERMANENTLY delete ${email}? This cannot be undone.`)) return;
+    setBusy(true); setMsg(null);
+    try {
+      await api.del('/api/admin/users', { email, reason });
+      setMsg({ kind: 'ok', text: `${email} has been deleted. All sessions revoked.` });
+      setEmail(''); setReason(''); setConfirm('');
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-neon-red/90">Permanently delete a user account. Sessions are revoked immediately. Transaction history is preserved for accounting. Admin accounts cannot be deleted via this form.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-del" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-red/40"/>
+        <datalist id="adm-users-del">{users.filter((u) => !u.isAdmin).map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+        {target && target.isAdmin && <p className="mt-1 text-[11px] text-neon-red">Admin accounts cannot be deleted.</p>}
+        {target && !target.isAdmin && (
+          <p className="mt-1 text-[11px] text-white/55">
+            Holdings: <span className="font-mono">
+              {Object.entries(target.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '(none)'}
+            </span>
+          </p>
+        )}
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Type the email again to confirm</span>
+        <input value={confirm} onChange={(e) => setConfirm(e.target.value)} required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-red/40"/>
+      </label>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">Reason (audit log)</span>
+        <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy || !canSubmit} className="sm:col-span-2 btn justify-center bg-neon-red text-ink-950 hover:shadow-glow disabled:opacity-50">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Deleting…</> : 'Delete user permanently'}
+      </button>
+    </form>
   );
 }

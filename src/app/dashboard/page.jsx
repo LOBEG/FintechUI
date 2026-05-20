@@ -193,7 +193,7 @@ export default function DashboardPage() {
             <div className="glass p-5">
               <p className="text-sm text-white/60">Available Cash</p>
               <p className="text-2xl font-display mt-1 text-neon-green">{formatUSD(cashUSDT)}</p>
-              <p className="text-xs text-white/50 mt-1">USDT · ready to trade</p>
+              <p className="text-xs text-white/50 mt-1">{cashUSDT > 0 ? 'USDT · ready to trade' : 'Fund USDT to start trading'}</p>
             </div>
             <div className="glass p-5">
               <p className="text-sm text-white/60">Open P&L</p>
