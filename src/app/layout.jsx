@@ -2,6 +2,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
+import { AppBackground } from '@/components/layout/AppBackground';
 import { I18nProvider } from '@/components/I18nProvider';
 export const metadata = {
     title: 'Oakmont Digital Capital Group - Institutional Digital Asset & Crypto Investment Platform',
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen font-sans antialiased text-white">
         <Providers>
           <I18nProvider>
+            <AppBackground />
             <SiteBanner />
             {children}
             <AIChatWidget />
