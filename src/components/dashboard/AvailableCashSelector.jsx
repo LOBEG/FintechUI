@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
@@ -28,12 +28,16 @@ export function AvailableCashSelector({ wallets, livePrices }) {
 
   const [selected, setSelected] = useState(defaultAsset);
 
-  // Update selected when wallets change
-  useMemo(() => {
-    if (!selected && defaultAsset) {
-      setSelected(defaultAsset);
+  // Keep the selected asset tied to the current live wallet data so demo
+  // balances cannot remain selected after a signed-in wallet loads.
+  useEffect(() => {
+    const matchingAsset = wallets?.find((w) => w.sym === selected?.sym);
+    if (matchingAsset) {
+      setSelected(matchingAsset);
+      return;
     }
-  }, [defaultAsset, selected]);
+    setSelected(defaultAsset);
+  }, [defaultAsset, selected?.sym, wallets]);
 
   const currentAsset = selected || defaultAsset || { sym: 'USDT', bal: 0, value: 0, name: 'Tether', color: '#26a17b' };
 
@@ -55,7 +59,7 @@ export function AvailableCashSelector({ wallets, livePrices }) {
     : t('fundToStartTrading');
 
   return (
-    <div className="glass p-5 relative overflow-visible">
+    <div className={`glass p-5 relative overflow-visible ${open ? 'z-[80]' : 'z-0'}`}>
       <p className="text-sm text-white/60 mb-1">{t('availableCash')}</p>
       
       <button
@@ -85,16 +89,16 @@ export function AvailableCashSelector({ wallets, livePrices }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[45] bg-transparent cursor-default"
+              className="fixed inset-0 z-[70] bg-transparent cursor-default"
             />
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full left-0 right-0 mt-2 z-[60] rounded-xl border border-cyan/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 z-[90] rounded-xl border border-cyan/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
             >
               <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-cyan">{t('selectAsset')}</p>
-              {wallets && wallets.map((w) => (
+              {wallets?.length ? wallets.map((w) => (
                 <button
                   key={w.sym}
                   onClick={() => selectAsset(w)}
@@ -117,7 +121,9 @@ export function AvailableCashSelector({ wallets, livePrices }) {
                     <p className="text-[11px] text-white/50">{formatUSD(w.value)}</p>
                   </div>
                 </button>
-              ))}
+              )) : (
+                <p className="px-3 py-4 text-sm text-white/50">{t('fundToStartTrading')}</p>
+              )}
             </motion.div>
           </>
         )}

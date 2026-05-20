@@ -135,31 +135,33 @@ export default function DashboardPage() {
     const effectivePrice = price || (tradeMarket.price ? tradeMarket.price.toFixed(2) : '0');
     // Wallet: real balances when logged in, demo for anonymous visitors.
     const wallets = useMemo(() => {
+        const meta = {
+            BTC: { name: 'Bitcoin', color: '#f7931a', key: 'BTCUSDT' },
+            ETH: { name: 'Ethereum', color: '#627eea', key: 'ETHUSDT' },
+            SOL: { name: 'Solana', color: '#14f195', key: 'SOLUSDT' },
+            XRP: { name: 'XRP', color: '#22c55e', key: 'XRPUSDT' },
+            BNB: { name: 'BNB', color: '#f3ba2f', key: 'BNBUSDT' },
+            USDT: { name: 'Tether', color: '#26a17b', key: null },
+            USDC: { name: 'USD Coin', color: '#2775ca', key: null },
+        };
         if (liveWallet) {
-            const meta = {
-                BTC: { name: 'Bitcoin', color: '#f7931a', key: 'BTCUSDT' },
-                ETH: { name: 'Ethereum', color: '#627eea', key: 'ETHUSDT' },
-                SOL: { name: 'Solana', color: '#14f195', key: 'SOLUSDT' },
-                XRP: { name: 'XRP', color: '#22c55e', key: 'XRPUSDT' },
-                BNB: { name: 'BNB', color: '#f3ba2f', key: 'BNBUSDT' },
-                USDT: { name: 'Tether', color: '#26a17b', key: null },
-            };
-            // ensure BTC/ETH/SOL/USDT always shown
-            const must = ['BTC', 'ETH', 'SOL', 'USDT'];
-            const symbols = Array.from(new Set([...must, ...Object.keys(liveWallet.balances || {})]));
+            const symbols = Object.entries(liveWallet.balances || {})
+                .filter(([, bal]) => Number(bal) > 0)
+                .map(([sym]) => sym);
             return symbols.map((sym) => {
                 const m = meta[sym] || { name: sym, color: '#999', key: `${sym}USDT` };
                 const bal = liveWallet.balances?.[sym] || 0;
-                const px = sym === 'USDT' ? 1 : (livePrices[m.key]?.price ?? 0);
+                const px = sym === 'USDT' || sym === 'USDC' ? 1 : (livePrices[m.key]?.price ?? 0);
                 return { sym, name: m.name, color: m.color, key: m.key, bal, price: px, value: bal * px };
             });
         }
+        if (user) return [];
         // Anonymous visitors see demo data
         return DEMO_WALLET_HOLDINGS.map((w) => {
             const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
             return { ...w, price: px, value: w.bal * px };
         });
-    }, [liveWallet, livePrices]);
+    }, [liveWallet, livePrices, user]);
     const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
     const portfolioAllocation = useMemo(
       () => wallets.map((w) => ({ label: w.sym, value: totalBalance ? Math.round((w.value / totalBalance) * 100) : 0, color: w.color })),
