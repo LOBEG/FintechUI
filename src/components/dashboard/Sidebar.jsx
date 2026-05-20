@@ -6,15 +6,15 @@ import { cn } from '@/lib/utils';
 import { useSession } from '@/lib/useSession';
 const items = [
     { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    { href: '/dashboard?tab=trade', label: 'Trade', icon: CandlestickChart },
-    { href: '/dashboard?tab=wallet', label: 'Wallet', icon: Wallet },
-    { href: '/dashboard?tab=positions', label: 'Positions', icon: Briefcase },
-    { href: '/dashboard?tab=history', label: 'History', icon: History },
-    { href: '/dashboard?tab=analytics', label: 'Analytics', icon: PieChart },
-    { href: '/dashboard?tab=bot', label: 'AI Bot', icon: Bot },
-    { href: '/dashboard?tab=alerts', label: 'Alerts', icon: Bell },
-    { href: '/dashboard?tab=security', label: 'Security', icon: ShieldCheck },
-    { href: '/dashboard?tab=settings', label: 'Settings', icon: Settings },
+    { href: '/dashboard#trade-section', label: 'Trade', icon: CandlestickChart },
+    { href: '/dashboard#wallet', label: 'Wallet', icon: Wallet },
+    { href: '/dashboard#positions-section', label: 'Positions', icon: Briefcase },
+    { href: '/dashboard#history-section', label: 'History', icon: History },
+    { href: '/dashboard#analytics-section', label: 'Analytics', icon: PieChart },
+    { href: '/dashboard#bot-section', label: 'AI Bot', icon: Bot },
+    { href: '/dashboard#alerts-section', label: 'Alerts', icon: Bell },
+    { href: '/dashboard#security-section', label: 'Security', icon: ShieldCheck },
+    { href: '/dashboard#settings-section', label: 'Settings', icon: Settings },
 ];
 export function Sidebar() {
     const pathname = usePathname();

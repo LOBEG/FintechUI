@@ -45,6 +45,28 @@ export default function DashboardPage() {
     const [interval, setInterval] = useState('5m');
     const [investOpen, setInvestOpen] = useState(false);
     const [investSymbol, setInvestSymbol] = useState('BTC');
+    
+    // Handle tab navigation from hash on client side
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        const handleHashChange = () => {
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                setTimeout(() => {
+                    const el = document.getElementById(hash);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        };
+        
+        // Handle initial hash
+        handleHashChange();
+        
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
     const requireAuth = useCallback(() => {
         if (user) return true;
         window.location.href = '/login?next=/dashboard';
@@ -239,13 +261,13 @@ export default function DashboardPage() {
           {user && <EmptyStateCoach />}
           {user && <SandboxOnRampPanel />}
           {user && <OpenOrdersPanel />}
-          {user && <KycPanel />}
+          {user && <section id="security-section"><KycPanel /></section>}
           {user && <PortfolioPanel />}
           {user && <ConvertPanel onConverted={refreshWallet} />}
           {user && <DcaPanel onChanged={refreshWallet} />}
           {user && <ReferralPanel />}
-          {user && <PriceAlertsPanel />}
-          {user && <BeneficiariesPanel />}
+          {user && <section id="alerts-section"><PriceAlertsPanel /></section>}
+          {user && <section id="settings-section"><BeneficiariesPanel /></section>}
           {!user && (
             <section>
               <MarketsPanel onInvest={openInvest} />
@@ -253,7 +275,7 @@ export default function DashboardPage() {
           )}
 
           {/* Chart + Buy/Sell */}
-          <section className="grid xl:grid-cols-3 gap-4">
+          <section id="trade-section" className="grid xl:grid-cols-3 gap-4">
             <div className="xl:col-span-2 glass-strong p-4">
               <div className="flex items-center justify-between flex-wrap gap-3 px-1">
                 <div className="flex items-center gap-3">
@@ -337,7 +359,7 @@ export default function DashboardPage() {
           </section>
 
           {/* Watchlist + Positions */}
-          {user && <section className="grid xl:grid-cols-3 gap-4">
+          {user && <section id="positions-section" className="grid xl:grid-cols-3 gap-4">
             <div className="glass-strong p-4 xl:col-span-1">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">Watchlist</p>
@@ -431,8 +453,8 @@ export default function DashboardPage() {
           </section>}
 
           {/* Analytics + AI bot + History */}
-          <section className="grid xl:grid-cols-3 gap-4">
-            <div className="glass-strong p-5">
+          <section id="analytics-section" className="grid xl:grid-cols-3 gap-4">
+            <div id="bot-section" className="glass-strong p-5">
               <p className="font-semibold">Portfolio allocation</p>
               <div className="flex flex-col items-center mt-3">
                 <DonutChart data={portfolioAllocation} size={180}/>
@@ -476,7 +498,7 @@ export default function DashboardPage() {
           </section>
 
           {/* Transaction history */}
-          {user && <section className="glass-strong p-4">
+          {user && <section id="history-section" className="glass-strong p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Transaction history</p>
               <button className="text-xs text-white/55 hover:text-white flex items-center gap-1"><Eye className="h-3.5 w-3.5"/> View all</button>
