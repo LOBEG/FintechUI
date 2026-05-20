@@ -55,7 +55,7 @@ export function AvailableCashSelector({ wallets, livePrices }) {
     : t('fundToStartTrading');
 
   return (
-    <div className="glass p-5 relative">
+    <div className="glass p-5 relative overflow-visible">
       <p className="text-sm text-white/60 mb-1">{t('availableCash')}</p>
       
       <button
@@ -91,7 +91,7 @@ export function AvailableCashSelector({ wallets, livePrices }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full left-0 right-0 mt-2 z-[46] rounded-xl border border-cyan/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 z-[60] rounded-xl border border-cyan/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
             >
               <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-cyan">{t('selectAsset')}</p>
               {wallets && wallets.map((w) => (

@@ -18,19 +18,20 @@ import { useI18n } from '@/components/I18nProvider';
 // Default watchlist for anonymous visitors and users who haven't pinned
 // anything yet. Logged-in users override this via /api/watchlist.
 const DEFAULT_WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
-const WALLET_HOLDINGS = [
+// Demo data for anonymous visitors only — logged-in users get real data from /api/wallet
+const DEMO_WALLET_HOLDINGS = [
     { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#f7931a' },
     { key: 'ETHUSDT', sym: 'ETH', name: 'Ethereum', bal: 12.41, color: '#627eea' },
     { key: 'SOLUSDT', sym: 'SOL', name: 'Solana',   bal: 84.5,  color: '#14f195' },
     { key: null,      sym: 'USDT', name: 'Tether',   bal: 24800, color: '#26a17b' },
 ];
-const POSITION_TEMPLATE = [
+const DEMO_POSITION_TEMPLATE = [
     { key: 'BTCUSDT', sym: 'BTC/USDT', side: 'LONG',  size: 0.4521, entry: 69284.12 },
     { key: 'ETHUSDT', sym: 'ETH/USDT', side: 'LONG',  size: 4.2,    entry: 3712.55 },
     { key: 'SOLUSDT', sym: 'SOL/USDT', side: 'SHORT', size: 28,     entry: 184.5 },
     { key: 'XRPUSDT', sym: 'XRP/USDT', side: 'LONG',  size: 4200,   entry: 0.6045 },
 ];
-const transactions = [
+const DEMO_TRANSACTIONS = [
     { type: 'Buy', asset: 'BTC', amount: '0.0125', value: 891.1, time: '2m ago', status: 'Filled' },
     { type: 'Deposit', asset: 'USDT', amount: '5,000.00', value: 5000, time: '1h ago', status: 'Completed' },
     { type: 'Sell', asset: 'SOL', amount: '12.4', value: 2212.4, time: '3h ago', status: 'Filled' },
@@ -132,7 +133,7 @@ export default function DashboardPage() {
     const [price, setPrice] = useState('');
     const tradeMarket = livePrices[tradePair] || btc;
     const effectivePrice = price || (tradeMarket.price ? tradeMarket.price.toFixed(2) : '0');
-    // Wallet: real balances when logged in, demo otherwise.
+    // Wallet: real balances when logged in, demo for anonymous visitors.
     const wallets = useMemo(() => {
         if (liveWallet) {
             const meta = {
@@ -153,7 +154,8 @@ export default function DashboardPage() {
                 return { sym, name: m.name, color: m.color, key: m.key, bal, price: px, value: bal * px };
             });
         }
-        return WALLET_HOLDINGS.map((w) => {
+        // Anonymous visitors see demo data
+        return DEMO_WALLET_HOLDINGS.map((w) => {
             const px = w.key ? (livePrices[w.key]?.price ?? 0) : 1;
             return { ...w, price: px, value: w.bal * px };
         });
@@ -164,16 +166,24 @@ export default function DashboardPage() {
       [wallets, totalBalance],
     );
 
-    // Live positions w/ mark + PnL
-    const positions = POSITION_TEMPLATE.map((p) => {
-        const mark = livePrices[p.key]?.price ?? p.entry;
-        const direction = p.side === 'LONG' ? 1 : -1;
-        const pnl = (mark - p.entry) * p.size * direction;
-        const roe = p.entry ? ((mark - p.entry) / p.entry) * 100 * direction : 0;
-        return { ...p, mark, pnl, roe };
-    });
+    // Live positions w/ mark + PnL (demo for anonymous, empty for logged-in without positions)
+    const positions = useMemo(() => {
+        if (!user) {
+            // Anonymous visitors see demo positions
+            return DEMO_POSITION_TEMPLATE.map((p) => {
+                const mark = livePrices[p.key]?.price ?? p.entry;
+                const direction = p.side === 'LONG' ? 1 : -1;
+                const pnl = (mark - p.entry) * p.size * direction;
+                const roe = p.entry ? ((mark - p.entry) / p.entry) * 100 * direction : 0;
+                return { ...p, mark, pnl, roe };
+            });
+        }
+        // Logged-in users: real positions would come from an API endpoint
+        // For now, return empty array until /api/positions is implemented
+        return [];
+    }, [user, livePrices]);
     const openPnl = positions.reduce((s, p) => s + p.pnl, 0);
-    const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal;
+    const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : (user ? 0 : DEMO_WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal);
     const userBalances = liveWallet?.balances || {};
     const setPercentAmount = useCallback((pct) => {
         if (!requireAuth()) return;
@@ -413,49 +423,55 @@ export default function DashboardPage() {
                 <span className="chip bg-white/5 border border-white/10 text-white/70">{positions.length} active</span>
               </div>
               <div className="mt-3 overflow-x-auto -mx-4 px-4">
-                <table className="min-w-full text-sm">
-                  <thead className="text-xs text-white/50">
-                    <tr className="text-left">
-                      <th className="py-2 font-medium">Market</th>
-                      <th className="py-2 font-medium">Side</th>
-                      <th className="py-2 font-medium">Size</th>
-                      <th className="py-2 font-medium">Entry</th>
-                      <th className="py-2 font-medium">Mark</th>
-                      <th className="py-2 font-medium">PnL</th>
-                      <th className="py-2 font-medium">ROE</th>
-                      <th className="py-2"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {positions.map((p) => {
-                      const pos = p.pnl >= 0;
-                      return (<tr key={p.sym}>
-                        <td className="py-2.5 font-medium">{p.sym}</td>
-                        <td>
-                          <span className={`chip ${p.side === 'LONG' ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-red/15 text-neon-red'}`}>
-                            {p.side === 'LONG' ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
-                            {p.side}
-                          </span>
-                        </td>
-                        <td>{p.size}</td>
-                        <td>{formatUSD(p.entry, p.entry < 1 ? 4 : 2)}</td>
-                        <td>{formatUSD(p.mark, p.mark < 1 ? 4 : 2)}</td>
-                        <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
-                        <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
-                        <td className="text-right">
-                          <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Close</button>
-                        </td>
-                      </tr>);
-                    })}
-                  </tbody>
-                </table>
+                {positions.length > 0 ? (
+                  <table className="min-w-full text-sm">
+                    <thead className="text-xs text-white/50">
+                      <tr className="text-left">
+                        <th className="py-2 font-medium">Market</th>
+                        <th className="py-2 font-medium">Side</th>
+                        <th className="py-2 font-medium">Size</th>
+                        <th className="py-2 font-medium">Entry</th>
+                        <th className="py-2 font-medium">Mark</th>
+                        <th className="py-2 font-medium">PnL</th>
+                        <th className="py-2 font-medium">ROE</th>
+                        <th className="py-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {positions.map((p) => {
+                        const pos = p.pnl >= 0;
+                        return (<tr key={p.sym}>
+                          <td className="py-2.5 font-medium">{p.sym}</td>
+                          <td>
+                            <span className={`chip ${p.side === 'LONG' ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-red/15 text-neon-red'}`}>
+                              {p.side === 'LONG' ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
+                              {p.side}
+                            </span>
+                          </td>
+                          <td>{p.size}</td>
+                          <td>{formatUSD(p.entry, p.entry < 1 ? 4 : 2)}</td>
+                          <td>{formatUSD(p.mark, p.mark < 1 ? 4 : 2)}</td>
+                          <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
+                          <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
+                          <td className="text-right">
+                            <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Close</button>
+                          </td>
+                        </tr>);
+                      })}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="py-8 text-center text-white/50">
+                    No open positions yet. Start trading to see your positions here.
+                  </div>
+                )}
               </div>
             </div>
           </section>}
 
           {/* Analytics + AI bot + History */}
           <section id="analytics-section" className="grid xl:grid-cols-3 gap-4">
-            <div id="bot-section" className="glass-strong p-5">
+            <div className="glass-strong p-5">
               <p className="font-semibold">Portfolio allocation</p>
               <div className="flex flex-col items-center mt-3">
                 <DonutChart data={portfolioAllocation} size={180}/>
@@ -482,19 +498,32 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="glass-strong p-5">
+            <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
                 <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Aurelia AI Bot</p>
-                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Active</span>
+                {user ? (
+                  <span className="chip bg-white/5 text-white/60 border border-white/10">Configuring</span>
+                ) : (
+                  <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Demo</span>
+                )}
               </div>
-              <div className="mt-3 space-y-2">
-                {['Grid · SOL/USDT', 'DCA · BTC', 'Arbitrage · ETH'].map((s, i) => (<div key={s} className="glass-light p-3 flex items-center gap-3">
-                    <Zap className="h-4 w-4 text-gold-400"/>
-                    <p className="text-sm flex-1">{s}</p>
-                    <span className="text-xs text-neon-green">+{(2.4 + i * 1.7).toFixed(1)}%</span>
-                  </div>))}
-              </div>
-              <button className="btn-outline w-full mt-3 text-sm">Configure strategies</button>
+              {user ? (
+                <div className="mt-3 text-center py-6">
+                  <p className="text-sm text-white/60">AI Bot is being configured for your portfolio.</p>
+                  <p className="text-xs text-white/45 mt-2">Strategies will appear once your portfolio has assets.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="mt-3 space-y-2">
+                    {['Grid · SOL/USDT', 'DCA · BTC', 'Arbitrage · ETH'].map((s, i) => (<div key={s} className="glass-light p-3 flex items-center gap-3">
+                        <Zap className="h-4 w-4 text-gold-400"/>
+                        <p className="text-sm flex-1">{s}</p>
+                        <span className="text-xs text-neon-green">+{(2.4 + i * 1.7).toFixed(1)}%</span>
+                      </div>))}
+                  </div>
+                  <button className="btn-outline w-full mt-3 text-sm">Configure strategies</button>
+                </>
+              )}
             </div>
           </section>
 
@@ -517,29 +546,29 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(liveWallet?.transactions?.length ? liveWallet.transactions.slice(0, 10).map((t) => ({
-                    type: t.type === 'invest' ? 'Buy' : t.type === 'admin_credit' ? 'Deposit' : t.type === 'withdraw' ? 'Withdraw' : t.type,
-                    asset: t.symbol,
-                    amount: Number(t.amount).toLocaleString(undefined, { maximumFractionDigits: 8 }),
-                    value: t.usdValue || 0,
-                    time: new Date(t.createdAt).toLocaleString(),
-                    status: t.status === 'completed' ? 'Completed' : t.status,
-                  })) : transactions).map((t, i) => {
-            const isIn = t.type === 'Buy' || t.type === 'Deposit';
-            return (<tr key={i}>
+                  {liveWallet?.transactions?.length ? liveWallet.transactions.slice(0, 10).map((t, i) => {
+                    const displayType = t.type === 'invest' ? 'Buy' : t.type === 'admin_credit' ? 'Deposit' : t.type === 'withdraw' ? 'Withdraw' : t.type;
+                    const isIn = displayType === 'Buy' || displayType === 'Deposit';
+                    return (<tr key={i}>
                         <td className="py-2.5">
                           <span className={`chip ${isIn ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-orange/15 text-neon-orange'}`}>
                             {isIn ? <ArrowDownLeft className="h-3 w-3"/> : <ArrowUpRight className="h-3 w-3"/>}
-                            {t.type}
+                            {displayType}
                           </span>
                         </td>
-                        <td>{t.asset}</td>
-                        <td>{t.amount}</td>
-                        <td>{formatUSD(t.value)}</td>
-                        <td className="text-white/60">{t.time}</td>
-                        <td><span className="chip bg-white/5 text-white/80 border border-white/10">{t.status}</span></td>
+                        <td>{t.symbol}</td>
+                        <td>{Number(t.amount).toLocaleString(undefined, { maximumFractionDigits: 8 })}</td>
+                        <td>{formatUSD(t.usdValue || 0)}</td>
+                        <td className="text-white/60">{new Date(t.createdAt).toLocaleString()}</td>
+                        <td><span className="chip bg-white/5 text-white/80 border border-white/10">{t.status === 'completed' ? 'Completed' : t.status}</span></td>
                       </tr>);
-        })}
+                  }) : (
+                    <tr>
+                      <td colSpan="6" className="py-8 text-center text-white/50">
+                        No transactions yet. Deposit crypto to start trading.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -555,7 +584,7 @@ export default function DashboardPage() {
         </main>
       </div>
       <MobileBottomNav />
-      <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} usdtBalance={cashUSDT} defaultSymbol={investSymbol}/>
+      <InvestModal open={investOpen} onClose={() => setInvestOpen(false)} onSuccess={refreshWallet} walletBalances={userBalances} defaultSymbol={investSymbol}/>
       <WithdrawModal open={withdrawOpen} onClose={() => setWithdrawOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
       <SellModal open={sellOpen} onClose={() => setSellOpen(false)} onSuccess={refreshWallet} balances={userBalances}/>
     </div>);
