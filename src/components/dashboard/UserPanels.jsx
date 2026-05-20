@@ -59,6 +59,20 @@ export function DepositAddressPanel() {
     setCopied(sym);
     setTimeout(() => setCopied(null), 1500);
   };
+  // When no addresses have been pushed by an administrator yet, render a
+  // compact one-line chip instead of a full panel - the user explicitly
+  // asked for the card to shrink when there is nothing to show and only
+  // expand once admin-published addresses arrive.
+  if (addresses.length === 0) {
+    return (
+      <section className="glass-light px-3 py-2 flex items-center gap-2 text-xs">
+        <Wallet className="h-3.5 w-3.5 text-gold-400"/>
+        <span className="font-semibold text-white/85">Deposit crypto</span>
+        <span className="chip bg-white/5 border border-white/10 text-white/55 text-[10px]">awaiting admin address</span>
+        <span className="ml-auto text-[11px] text-white/45 hidden sm:inline">Addresses appear here automatically once published.</span>
+      </section>
+    );
+  }
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
@@ -66,10 +80,7 @@ export function DepositAddressPanel() {
         <h3 className="font-display text-lg">Deposit crypto</h3>
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
       </div>
-      {addresses.length === 0 ? (
-        <p className="text-sm text-white/60">Your Oakmont Digital Capital Group desk is preparing deposit wallets. Addresses pushed by an administrator will appear here automatically.</p>
-      ) : (
-        <>
+      <>
           <p className="text-xs text-white/55 mb-3">Send the listed crypto to the address shown. Once your deposit clears it will be credited to your account and appear in your transaction history.</p>
           <ul className="grid sm:grid-cols-2 gap-2">
             {addresses.map((a) => {
@@ -104,7 +115,6 @@ export function DepositAddressPanel() {
             })}
           </ul>
         </>
-      )}
     </section>
   );
 }

@@ -8,6 +8,7 @@ import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { BrandLogo } from '@/components/layout/BrandLogo';
 const nav = [
+    { href: '/brokerage', label: 'Brokerage' },
     { href: '/#markets', label: 'Markets' },
     { href: '/login?next=/dashboard', label: 'Trade' },
     { href: '/login?next=/investor', label: 'Investor Portal' },

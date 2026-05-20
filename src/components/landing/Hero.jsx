@@ -23,26 +23,24 @@ export function Hero() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <span className="chip bg-white/5 border border-white/10 text-white/80">
             <Sparkles className="h-3.5 w-3.5 text-gold-400"/>
-             Live Binance market data · institutional custody workflows · AI-assisted execution
+             Live multi-asset brokerage · stocks · crypto · forex · commodities · futures · options
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[1.05] tracking-tight">
-            The institutional platform for{' '}
-            <span className="text-gradient-gold">digital wealth</span>.
+            One brokerage account for{' '}
+            <span className="text-gradient-gold">every market</span>.
             <br />
             Engineered for{' '}
             <span className="text-gradient-neon">professional alpha</span>.
           </h1>
           <p className="mt-5 text-lg text-white/70 max-w-xl">
-            Oakmont Digital Capital Group is a fintech-grade digital asset platform for live crypto markets, secure portfolio operations,
-            compliant onboarding, and admin-controlled investment servicing. Public users can review transparent market
-            data before creating an account, while verified clients access trading, reporting, deposits, withdrawals, and managed account tools.
+            Oakmont Digital Capital Group is a regulated multi-asset brokerage. Trade stocks, ETFs, indices, cryptocurrencies, forex, commodities, futures and options from a single live account, with institutional-grade custody, compliant onboarding, and admin-controlled investment servicing.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/signup" className="btn-primary">
-              Start Trading <ArrowRight className="h-4 w-4"/>
+            <Link href="/brokerage" className="btn-primary">
+              Explore Brokerage <ArrowRight className="h-4 w-4"/>
             </Link>
             <Link href="/signup" className="btn-gold">
-              Create Account
+              Open Account
             </Link>
             <Link href="/login?next=/investor" className="btn-ghost">
               Investor Portal
@@ -50,8 +48,8 @@ export function Hero() {
           </div>
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/60">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-neon-green"/> SOC 2 · ISO 27001</span>
-            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold-400"/> Live Binance market feed</span>
-            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> Account-first fintech controls</span>
+            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold-400"/> Live equities, FX, crypto &amp; futures</span>
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> Smart order routing &amp; risk controls</span>
           </div>
         </motion.div>
 

@@ -1,11 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { TrendingUp, Wallet, ListOrdered, History, BarChart3, Bot, Bell, Shield, Settings } from 'lucide-react';
+import { TrendingUp, Wallet, ListOrdered, History, BarChart3, Bot, Bell, Shield, Settings, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/components/I18nProvider';
 
 const items = [
+    { href: '/brokerage', label: 'brokerage', icon: Briefcase, fallback: 'Brokerage' },
     { href: '/dashboard#trade-section', label: 'trade', icon: TrendingUp },
     { href: '/dashboard#wallet', label: 'wallet', icon: Wallet },
     { href: '/dashboard#positions-section', label: 'positions', icon: ListOrdered },
@@ -25,11 +26,12 @@ export function MobileBottomNav() {
       <ul className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory">
         {items.map((it) => {
             const Icon = it.icon;
-            const active = pathname === '/dashboard';
+            const active = pathname === it.href.split('#')[0];
+            const label = it.fallback ? (t(it.label) === it.label ? it.fallback : t(it.label)) : t(it.label);
             return (<li key={it.href} className="snap-start">
               <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1 py-2.5 px-4 text-[11px] min-w-[72px]', active ? 'text-neon-green' : 'text-white/60 hover:text-white')}>
                 <Icon className="h-5 w-5"/>
-                <span>{t(it.label)}</span>
+                <span>{label}</span>
               </Link>
             </li>);
         })}
