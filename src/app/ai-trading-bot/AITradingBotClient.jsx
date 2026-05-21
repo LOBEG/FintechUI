@@ -1,0 +1,236 @@
+'use client';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Bot, Zap, Activity, TrendingUp, TrendingDown, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { useLivePrices, useLiveKlines } from '@/lib/useLiveData';
+import { useSession } from '@/lib/useSession';
+import { formatUSD, formatPct } from '@/lib/utils';
+
+const UNIVERSE = [
+  'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT',
+  'ADAUSDT', 'AVAXUSDT', 'LINKUSDT', 'DOGEUSDT', 'DOTUSDT',
+];
+
+function rsi(closes, period = 14) {
+  if (!closes || closes.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const d = closes[i] - closes[i - 1];
+    if (d >= 0) gains += d; else losses -= d;
+  }
+  let avgG = gains / period, avgL = losses / period;
+  for (let i = period + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1];
+    avgG = (avgG * (period - 1) + Math.max(d, 0)) / period;
+    avgL = (avgL * (period - 1) + Math.max(-d, 0)) / period;
+  }
+  if (avgL === 0) return 100;
+  const rs = avgG / avgL;
+  return 100 - 100 / (1 + rs);
+}
+
+function sma(closes, n) {
+  if (!closes || closes.length < n) return null;
+  let s = 0;
+  for (let i = closes.length - n; i < closes.length; i++) s += closes[i];
+  return s / n;
+}
+
+function classifySignal({ rsiVal, fast, slow, pct24 }) {
+  const trendUp = fast != null && slow != null && fast > slow;
+  if (rsiVal == null) return { label: 'Warming up', tone: 'neutral', score: 0 };
+  if (rsiVal < 30 && trendUp) return { label: 'Strong buy', tone: 'buy', score: 4 };
+  if (rsiVal < 40 || (trendUp && pct24 > 0)) return { label: 'Accumulate', tone: 'buy', score: 2 };
+  if (rsiVal > 70 && !trendUp) return { label: 'Take profit', tone: 'sell', score: -3 };
+  if (rsiVal > 65 || (!trendUp && pct24 < 0)) return { label: 'Reduce', tone: 'sell', score: -1 };
+  return { label: 'Hold / observe', tone: 'neutral', score: 0 };
+}
+
+function SignalRow({ symbol }) {
+  const candles = useLiveKlines(symbol, '15m', 96);
+  const closes = useMemo(() => candles.map((c) => c.close).filter((v) => v != null), [candles]);
+  const rsiVal = useMemo(() => rsi(closes, 14), [closes]);
+  const fast = useMemo(() => sma(closes, 12), [closes]);
+  const slow = useMemo(() => sma(closes, 26), [closes]);
+  const last = closes[closes.length - 1];
+  const open24 = closes[Math.max(0, closes.length - 96)];
+  const pct24 = last && open24 ? ((last - open24) / open24) * 100 : 0;
+  const sig = classifySignal({ rsiVal, fast, slow, pct24 });
+  const liveCandle = candles[candles.length - 1];
+  const live = !!liveCandle?.live;
+  const base = symbol.replace(/USDT$/, '');
+  const tone = sig.tone === 'buy' ? 'text-neon-green' : sig.tone === 'sell' ? 'text-neon-red' : 'text-white/70';
+  const chipBg = sig.tone === 'buy' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
+    : sig.tone === 'sell' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+    : 'bg-white/5 border-white/10 text-white/70';
+  // Tiny sparkline of the last 30 closes.
+  const tail = closes.slice(-30);
+  let path = '';
+  if (tail.length > 1) {
+    const min = Math.min(...tail), max = Math.max(...tail);
+    const span = max - min || 1;
+    const step = 110 / (tail.length - 1);
+    path = tail.map((v, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${(30 - ((v - min) / span) * 30).toFixed(1)}`).join(' ');
+  }
+  return (
+    <tr className="border-t border-white/5">
+      <td className="py-2 pr-3">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">{base}</span>
+          <span className={`inline-flex items-center gap-1 text-[10px] ${live ? 'text-neon-green' : 'text-white/40'}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-neon-green animate-pulse' : 'bg-white/30'}`}/>
+            {live ? 'live' : 'sync'}
+          </span>
+        </div>
+      </td>
+      <td className="py-2 pr-3 font-mono">{last ? formatUSD(last) : '—'}</td>
+      <td className={`py-2 pr-3 font-mono ${pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{last ? formatPct(pct24) : '—'}</td>
+      <td className="py-2 pr-3 font-mono">{rsiVal != null ? rsiVal.toFixed(1) : '—'}</td>
+      <td className={`py-2 pr-3 font-mono ${fast != null && slow != null ? (fast > slow ? 'text-neon-green' : 'text-neon-red') : 'text-white/45'}`}>
+        {fast != null && slow != null ? (fast > slow ? 'Up' : 'Down') : '—'}
+      </td>
+      <td className="py-2 pr-3 hidden md:table-cell">
+        {path ? (
+          <svg width="110" height="30" viewBox="0 0 110 30" className="opacity-90">
+            <path d={path} fill="none" stroke={pct24 >= 0 ? '#22c55e' : '#ef4444'} strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round"/>
+          </svg>
+        ) : null}
+      </td>
+      <td className="py-2 pr-1">
+        <span className={`chip border text-[11px] ${chipBg}`}>{sig.label}</span>
+      </td>
+    </tr>
+  );
+}
+
+export default function AITradingBotClient() {
+  const { user } = useSession();
+  const prices = useLivePrices(UNIVERSE);
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => { const id = setInterval(() => setNow(new Date()), 15000); return () => clearInterval(id); }, []);
+
+  // Aggregate sentiment: count up vs down across the universe.
+  let up = 0, down = 0, total = 0;
+  for (const s of UNIVERSE) {
+    const p = prices[s];
+    if (!p || !isFinite(p.pct)) continue;
+    total++;
+    if (p.pct >= 0) up++; else down++;
+  }
+  const breadthPct = total ? (up / total) * 100 : 0;
+  const bias = breadthPct >= 60 ? { label: 'Risk-On', tone: 'text-neon-green' }
+    : breadthPct <= 40 ? { label: 'Risk-Off', tone: 'text-neon-red' }
+    : { label: 'Mixed', tone: 'text-gold-300' };
+
+  return (
+    <>
+      <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <span className="chip bg-white/5 border border-white/10 text-white/80">
+          <Sparkles className="h-3.5 w-3.5 text-gold-400"/> Aurelia AI · Oakmont Digital Markets Group
+        </span>
+        <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display leading-tight">
+          <span className="text-gradient-neon">Real-time AI signals</span>
+          <br/>across global crypto markets.
+        </h1>
+        <p className="mt-4 text-white/70 max-w-2xl text-base">
+          Live RSI, momentum, trend bias and 24-hour breadth — recomputed every 15 seconds from primary exchange feeds. Use the signals to inform your manual orders or to configure automated DCA / grid strategies inside your trading dashboard.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {user ? (
+            <Link href="/dashboard#bot-section" className="btn-primary">Open Bot in Dashboard <ArrowRight className="h-4 w-4"/></Link>
+          ) : (
+            <>
+              <Link href="/signup" className="btn-primary">Activate AI Bot <ArrowRight className="h-4 w-4"/></Link>
+              <Link href="/login?next=/ai-trading-bot" className="btn-ghost">Sign in</Link>
+            </>
+          )}
+        </div>
+      </motion.section>
+
+      <section className="mt-10 grid sm:grid-cols-3 gap-3">
+        <div className="glass-strong p-4">
+          <div className="flex items-center gap-2 text-white/60 text-xs"><Activity className="h-4 w-4 text-neon-green"/> Market breadth (24h)</div>
+          <p className={`mt-2 text-2xl font-mono ${bias.tone}`}>{bias.label}</p>
+          <p className="text-xs text-white/55 mt-1">{up} of {total} tracked pairs are up. Breadth {breadthPct.toFixed(0)}%.</p>
+        </div>
+        <div className="glass-strong p-4">
+          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingUp className="h-4 w-4 text-gold-400"/> Top mover</div>
+          {(() => {
+            const ranked = UNIVERSE.map((s) => ({ s, p: prices[s] })).filter((x) => x.p && isFinite(x.p.pct)).sort((a, b) => b.p.pct - a.p.pct);
+            const m = ranked[0];
+            if (!m) return <p className="mt-2 text-white/45 text-sm">Connecting…</p>;
+            return (
+              <>
+                <p className="mt-2 text-2xl font-mono text-neon-green">{m.s.replace(/USDT$/, '')}</p>
+                <p className="text-xs text-neon-green mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
+              </>
+            );
+          })()}
+        </div>
+        <div className="glass-strong p-4">
+          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingDown className="h-4 w-4 text-neon-red"/> Worst performer</div>
+          {(() => {
+            const ranked = UNIVERSE.map((s) => ({ s, p: prices[s] })).filter((x) => x.p && isFinite(x.p.pct)).sort((a, b) => a.p.pct - b.p.pct);
+            const m = ranked[0];
+            if (!m) return <p className="mt-2 text-white/45 text-sm">Connecting…</p>;
+            return (
+              <>
+                <p className="mt-2 text-2xl font-mono text-neon-red">{m.s.replace(/USDT$/, '')}</p>
+                <p className="text-xs text-neon-red mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
+              </>
+            );
+          })()}
+        </div>
+      </section>
+
+      <section className="mt-8 glass-strong p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Bot className="h-4 w-4 text-neon-green"/>
+          <h2 className="font-display text-lg">Live signal table</h2>
+          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● real-time</span>
+          <span className="ml-auto text-[11px] text-white/50">Updated {now.toLocaleTimeString()}</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="text-white/55 text-xs uppercase tracking-wider">
+              <tr>
+                <th className="text-left py-2 pr-3">Pair</th>
+                <th className="text-left py-2 pr-3">Last</th>
+                <th className="text-left py-2 pr-3">24h</th>
+                <th className="text-left py-2 pr-3">RSI(14)</th>
+                <th className="text-left py-2 pr-3">Trend</th>
+                <th className="text-left py-2 pr-3 hidden md:table-cell">24h chart</th>
+                <th className="text-left py-2 pr-1">Signal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {UNIVERSE.map((s) => <SignalRow key={s} symbol={s}/>)}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-white/45 mt-3">
+          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only — Oakmont DMG does not guarantee any returns and all trading carries risk of loss.
+        </p>
+      </section>
+
+      <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { icon: Bot,        title: 'Smart Grid',          desc: 'Place buy and sell orders at preset intervals to harvest range-bound volatility. Configure grid spacing per pair.' },
+          { icon: Zap,        title: 'Momentum',            desc: 'Detects breakout patterns using RSI, volume and 12/26 SMA crossovers. Allocates capital dynamically based on risk.' },
+          { icon: Activity,   title: 'DCA Strategy',        desc: 'Dollar-cost averaging with intelligent timing. Scale in during dips, scale out near resistance, on a fixed schedule.' },
+          { icon: ShieldCheck,title: 'Risk Controls',       desc: 'Per-strategy max drawdown, position sizing and stop-loss bands enforced on every order before it routes.' },
+        ].map((c) => {
+          const Icon = c.icon;
+          return (
+            <div key={c.title} className="glass-strong p-5">
+              <Icon className="h-7 w-7 text-gold-400 mb-3"/>
+              <h3 className="font-semibold">{c.title}</h3>
+              <p className="text-xs text-white/60 mt-2">{c.desc}</p>
+            </div>
+          );
+        })}
+      </section>
+    </>
+  );
+}

@@ -49,7 +49,7 @@ function pickDefaultFunding(walletBalances = {}, prices = {}) {
     const usd = bal * px;
     if (usd > bestUsd) { bestUsd = usd; best = sym; }
   }
-  return best || 'USDT';
+  return best || 'BTC';
 }
 
 export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', walletBalances = {} }) {

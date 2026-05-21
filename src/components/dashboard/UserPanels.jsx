@@ -62,7 +62,7 @@ export function DepositAddressPanel() {
   // No addresses published by admin → hide the card entirely (empty-state-collapse).
   if (addresses.length === 0) return null;
   return (
-    <section className="glass-strong p-5 max-w-4xl">
+    <section className="glass-strong p-5 max-w-3xl">
       <div className="flex items-center gap-2 mb-3">
         <Wallet className="h-4 w-4 text-gold-400"/>
         <h3 className="font-display text-lg">Deposit crypto</h3>
@@ -1953,8 +1953,8 @@ export function SupportPanel() {
 export function SupportContactPanel() {
   const { user } = useSession();
   const telegramUrl = typeof window !== 'undefined' 
-    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/Oakmont Digital Markets GroupSupport')
-    : 'https://t.me/Oakmont Digital Markets GroupSupport';
+    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/OakmontDMGSupport')
+    : 'https://t.me/OakmontDMGSupport';
   const whatsappUrl = typeof window !== 'undefined'
     ? (process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT_URL || 'https://wa.me/15555550123')
     : 'https://wa.me/15555550123';

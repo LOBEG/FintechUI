@@ -179,7 +179,7 @@ function QuoteDetail({ q, onClose }) {
         <p className="mt-4 text-[11px] text-white/45">
           Live quote sourced from primary exchange feed.
           {user
-            ? ' Place an order from your trading dashboard.'
+            ? ' Your Oakmont DMG brokerage account is active — place an order from your trading dashboard.'
             : ' To place an order, open a verified Oakmont DMG brokerage account.'}
         </p>
         <div className="mt-3 flex gap-2">

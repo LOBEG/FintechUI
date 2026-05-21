@@ -589,9 +589,35 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-3 text-center py-6">
-                      <p className="text-sm text-white/60">Fund your wallet to activate AI insights.</p>
-                      <p className="text-xs text-white/45 mt-2">The bot analyses your portfolio in real time once you hold a position.</p>
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-white/55">No positions yet — here are live AI signals you can act on.</p>
+                      {(() => {
+                        const watch = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+                        return watch.map((s) => {
+                          const p = livePrices?.[s];
+                          const sym = s.replace(/USDT$/, '');
+                          if (!p) return (
+                            <div key={s} className="glass-light p-3 flex items-center gap-3">
+                              <Zap className="h-4 w-4 text-white/30"/>
+                              <p className="text-sm flex-1">{sym}</p>
+                              <span className="text-xs text-white/40">connecting…</span>
+                            </div>
+                          );
+                          const pct = Number(p.pct) || 0;
+                          const tone = pct >= 1 ? 'Accumulate' : pct <= -1 ? 'Take Profit' : 'Hold';
+                          const tcol = pct >= 1 ? 'text-neon-green' : pct <= -1 ? 'text-neon-red' : 'text-white/70';
+                          return (
+                            <div key={s} className="glass-light p-3 flex items-center gap-3">
+                              <Zap className={`h-4 w-4 ${tcol}`}/>
+                              <p className="text-sm flex-1 font-semibold">{sym}</p>
+                              <span className={`text-xs ${pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(pct)}</span>
+                              <span className={`chip text-[10px] border ${pct >= 1 ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : pct <= -1 ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : 'bg-white/5 border-white/10 text-white/70'}`}>{tone}</span>
+                            </div>
+                          );
+                        });
+                      })()}
+                      <a href="/ai-trading-bot" className="btn-ghost w-full text-xs justify-center">View all live signals</a>
+                      <p className="text-[11px] text-white/45 text-center">Fund your wallet to apply these signals to your portfolio automatically.</p>
                     </div>
                   );
                 })()
