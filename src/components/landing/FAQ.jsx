@@ -10,7 +10,7 @@ const faqs = [
     { q: 'Are spreads, commissions and execution real?', a: 'Yes - quotes shown on the brokerage and dashboard pages are live primary-exchange feeds. Orders are routed via our smart execution layer to the relevant venue (NYSE, NASDAQ, CME, CBOT, COMEX, NYMEX, ICE, Binance, top-tier FX ECNs).' },
     { q: 'Do you support API access?', a: 'Yes - Oakmont Digital Markets Group offers REST and FIX 4.4 APIs, WebSocket market data, and OMS/EMS integrations covering every asset class on the brokerage.' },
     { q: 'Do you support fiat on/off-ramps?', a: 'Yes - USD, EUR, GBP, AED, SGD via SWIFT, SEPA Instant, Faster Payments, and FedNow with same-day settlement for verified institutions.' },
-    { q: 'How does the AI trading bot work?', a: 'Aurelia AI combines transformer and reinforcement-learning models with order-book microstructure and on-chain analytics. Users select asset class, risk profile, strategy and capital allocation; the bot operates inside the same account that holds your other assets.' },
+    { q: 'How does the markets intelligence bot work?', a: 'Oakmont Intelligence combines transformer and reinforcement-learning models with order-book microstructure and on-chain analytics. Users select asset class, risk profile, strategy and capital allocation; the bot operates inside the same account that holds your other assets.' },
 ];
 export function FAQ() {
     const [open, setOpen] = useState(0);

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Bot, Send, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 const seed = [
-    { role: 'ai', text: 'Hi, I’m Aurelia, Oakmont Digital Markets Group’s AI trading assistant. Ask me about crypto investing, trading order types, risk management, portfolio allocation, deposits, withdrawals, or how to start safely on Oakmont Digital Markets Group.' },
+    { role: 'ai', text: 'Hi, I’m Oakmont Intelligence, Oakmont Digital Markets Group’s markets intelligence assistant. Ask me about crypto investing, trading order types, risk management, portfolio allocation, deposits, withdrawals, or how to start safely on Oakmont Digital Markets Group.' },
 ];
 const investmentKnowledge = [
     {
@@ -51,8 +51,8 @@ const investmentKnowledge = [
         text: 'Always account for trading fees, spread, and slippage. A quoted market price can differ from execution during fast moves or thin liquidity. Review the order value and estimated fee before confirming a trade inside your account.',
     },
     {
-        keywords: ['strategy', 'strategies', 'bot', 'ai', 'aurelia'],
-        text: 'Aurelia can explain strategy concepts such as DCA, momentum monitoring, rebalancing, stop discipline, and portfolio guardrails. Treat AI as decision support, not a guarantee. Final investment decisions should be based on your objectives, risk capacity, and verified account data.',
+        keywords: ['strategy', 'strategies', 'bot', 'signal', 'intelligence'],
+        text: 'Oakmont Intelligence can explain strategy concepts such as DCA, momentum monitoring, rebalancing, stop discipline, and portfolio guardrails. Treat market signals as decision support, not a guarantee. Final investment decisions should be based on your objectives, risk capacity, and verified account data.',
     },
 ];
 const fallbackReplies = [
@@ -61,7 +61,7 @@ const fallbackReplies = [
     'A good trading question includes the asset, time horizon, risk limit, and order type you are considering. I can explain the framework and risks, but I cannot guarantee returns or provide personalised financial advice.',
 ];
 
-function getAureliaReply(input) {
+function getOakmontReply(input) {
     const q = input.toLowerCase();
     const topic = investmentKnowledge.find((item) => item.keywords.some((keyword) => q.includes(keyword)));
     if (topic) return topic.text;
@@ -77,16 +77,16 @@ export function AIChatWidget() {
             return;
         const question = input.trim();
         const user = { role: 'user', text: question };
-        const ai = { role: 'ai', text: getAureliaReply(question) };
+        const ai = { role: 'ai', text: getOakmontReply(question) };
         setMsgs((m) => [...m, user]);
         setInput('');
         setTimeout(() => setMsgs((m) => [...m, ai]), 600);
     };
     return (<>
       <AnimatePresence>
-        {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-ink-950/45 backdrop-blur-sm z-[55]" aria-label="Close AI Assistant"/>)}
+        {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-ink-950/45 backdrop-blur-sm z-[55]" aria-label="Close markets assistant"/>)}
       </AnimatePresence>
-      <motion.button drag dragMomentum={false} dragElastic={0.08} onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileDrag={{ scale: 1.08 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950 cursor-grab active:cursor-grabbing touch-none" aria-label="Open AI Assistant">
+      <motion.button drag dragMomentum={false} dragElastic={0.08} onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileDrag={{ scale: 1.08 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950 cursor-grab active:cursor-grabbing touch-none" aria-label="Open markets assistant">
         {open ? <X className="h-6 w-6"/> : <Bot className="h-6 w-6"/>}
       </motion.button>
       <AnimatePresence>
@@ -96,7 +96,7 @@ export function AIChatWidget() {
                 <Sparkles className="h-4 w-4"/>
               </span>
               <div>
-                <p className="text-sm font-semibold">Aurelia AI</p>
+                <p className="text-sm font-semibold">Oakmont Intelligence</p>
                 <p className="text-[11px] text-white/50">Drag this panel anywhere</p>
               </div>
               <span className="ml-auto chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Online</span>
@@ -109,7 +109,7 @@ export function AIChatWidget() {
                 </div>))}
             </div>
             <div className="p-3 border-t border-white/10 flex gap-2">
-              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Aurelia…" className="flex-1 bg-ink-950/70 border border-cyan/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
+              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-cyan/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
               <button onClick={send} className="btn-primary !px-3 !py-2"><Send className="h-4 w-4"/></button>
             </div>
           </motion.div>)}

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Quote, Star, ShieldCheck } from 'lucide-react';
+import { Quote, Star } from 'lucide-react';
 
 const curatedTestimonials = [
     {
@@ -106,8 +106,8 @@ export function Testimonials() {
                  {t.avatarUrl ? (
                    <div className="h-12 w-12 rounded-full bg-cover bg-center border border-white/10" style={{ backgroundImage: `url(${t.avatarUrl})` }} aria-label={`${t.name} profile photo`}/>
                 ) : (
-                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 inline-flex items-center justify-center text-neon-green">
-                    <ShieldCheck className="h-5 w-5"/>
+                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 inline-flex items-center justify-center text-cyan font-semibold text-sm">
+                    {(t.name || 'O').split(' ').map((p) => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()}
                   </div>
                 )}
                 <div>

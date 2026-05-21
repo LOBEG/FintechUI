@@ -113,7 +113,7 @@ function SignupForm() {
             {[
              'Automatic $100 portfolio cash credit',
              'Spot, futures & OTC desk',
-            'AI Trading Bot · Aurelia',
+            'Markets Intelligence · Oakmont',
             'Managed portfolios & yield',
             'Institutional API · FIX 4.4',
             'Multi-jurisdiction compliance',

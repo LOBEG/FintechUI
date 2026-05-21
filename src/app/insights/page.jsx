@@ -7,8 +7,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Sparkline } from '@/components/ui/Charts';
 const insights = [
     { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Markets Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-neon-green' },
-    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Aurelia AI', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-cyan' },
-    { tag: 'Equities', title: 'AI capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-cyan' },
+    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-cyan' },
+    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-cyan' },
     { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Markets Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
 ];
 export default function InsightsPage() {
@@ -23,7 +23,7 @@ export default function InsightsPage() {
             Institutional <span className="text-gradient-neon">research & intelligence</span>.
           </h1>
           <p className="mt-2 text-white/65 max-w-2xl">
-            Daily macro briefings, on-chain analytics, and AI-curated market intelligence from the Oakmont Digital Markets Group research desk and Aurelia AI.
+            Daily macro briefings, on-chain analytics, and curated market intelligence from the Oakmont Digital Markets Group research desk and Oakmont Intelligence.
           </p>
         </motion.div>
       </section>
@@ -48,7 +48,7 @@ export default function InsightsPage() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10 mb-12 grid md:grid-cols-3 gap-4">
         {[
             { icon: BookOpen, t: 'Daily Briefings', d: 'Pre-market and Asia-open commentary delivered by 6 AM local.' },
-            { icon: Brain, t: 'AI Signals', d: 'Curated Aurelia AI trade ideas with confidence intervals.' },
+            { icon: Brain, t: 'Live Signals', d: 'Curated Oakmont Intelligence trade ideas with confidence intervals.' },
             { icon: Globe2, t: 'Macro Calendar', d: 'CPI, FOMC, NFP and crypto-native catalysts in one place.' },
         ].map((c) => {
             const Icon = c.icon;

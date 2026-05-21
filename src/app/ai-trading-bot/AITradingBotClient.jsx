@@ -88,10 +88,10 @@ export default function AITradingBotClient() {
     <>
       <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="chip bg-white/5 border border-white/10 text-white/80">
-          <Sparkles className="h-3.5 w-3.5 text-cyan"/> Aurelia AI · Oakmont Digital Markets Group
+          <Sparkles className="h-3.5 w-3.5 text-cyan"/> Oakmont Intelligence · Oakmont Digital Markets Group
         </span>
         <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display leading-tight">
-          <span className="text-gradient-neon">Real-time AI signals</span>
+          <span className="text-gradient-neon">Real-time market signals</span>
           <br/>across global crypto markets.
         </h1>
         <p className="mt-4 text-white/70 max-w-2xl text-base">
@@ -104,7 +104,7 @@ export default function AITradingBotClient() {
              <Link href="/dashboard/analytics#live-signals" className="btn-primary">Open Bot in Dashboard <ArrowRight className="h-4 w-4"/></Link>
           ) : (
             <>
-              <Link href="/signup" className="btn-primary">Activate AI Bot <ArrowRight className="h-4 w-4"/></Link>
+              <Link href="/signup" className="btn-primary">Activate Markets Intelligence <ArrowRight className="h-4 w-4"/></Link>
               <Link href="/login?next=/ai-trading-bot" className="btn-ghost">Sign in</Link>
             </>
           )}

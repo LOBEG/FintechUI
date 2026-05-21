@@ -8,7 +8,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BarChart, DonutChart, Sparkline } from '@/components/ui/Charts';
 import { formatUSD } from '@/lib/utils';
 const accounts = [
-    { name: 'Flagship Digital Alpha', strategy: 'Long/Short · AI', aum: 248000000, ytd: 38.4, sharpe: 2.31 },
+    { name: 'Flagship Digital Alpha', strategy: 'Long/Short · Quant', aum: 248000000, ytd: 38.4, sharpe: 2.31 },
     { name: 'Stable Yield', strategy: 'Stablecoin Yield', aum: 102000000, ytd: 9.8, sharpe: 4.12 },
     { name: 'Bitcoin Core', strategy: 'BTC-only Core', aum: 412000000, ytd: 52.7, sharpe: 1.84 },
     { name: 'Tokenized RWA', strategy: 'RWA Index', aum: 86000000, ytd: 7.2, sharpe: 3.05 },
@@ -153,13 +153,13 @@ export default function InvestorPortalPage() {
         </div>
       </section>
 
-      {/* AI intelligence + Risk + KYC */}
+      {/* Markets intelligence + Risk + KYC */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 grid lg:grid-cols-3 gap-4">
         <div className="glass-strong p-5">
           <Brain className="h-6 w-6 text-neon-green"/>
-          <p className="font-semibold mt-3">AI Trading Intelligence</p>
+          <p className="font-semibold mt-3">Markets Intelligence</p>
           <p className="text-sm text-white/65 mt-1">
-            Aurelia AI delivers proprietary signals, regime detection, and adaptive risk overlays sourced from 200+ on-chain & off-chain datasets.
+            Oakmont Intelligence delivers proprietary signals, regime detection, and adaptive risk overlays sourced from 200+ on-chain & off-chain datasets.
           </p>
           <ul className="mt-3 text-sm text-white/70 space-y-1.5">
             <li>• Regime detection: <span className="text-neon-green">Risk-On</span></li>

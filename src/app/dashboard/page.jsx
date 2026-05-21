@@ -24,7 +24,7 @@ import { DASHBOARD_FEATURES } from './dashboardFeatures';
 // Default watchlist for anonymous visitors and users who haven't pinned
 // anything yet. Logged-in users override this via /api/watchlist.
 const DEFAULT_WATCHLIST_SYMBOLS = DEFAULT_TICKER_SYMBOLS;
-const AI_SIGNAL_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'AVAXUSDT', 'LINKUSDT'];
+const LIVE_SIGNAL_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'AVAXUSDT', 'LINKUSDT'];
 const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
 const HASH_TO_FEATURE = DASHBOARD_FEATURES.reduce((acc, item) => {
     if (item.hash) acc[item.hash] = item.id;
@@ -500,10 +500,10 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <section className="glass-strong p-5">
               <div className="flex items-center flex-wrap gap-2 mb-3">
                 <Bot className="h-4 w-4 text-cyan"/>
-                <h3 className="font-display text-lg">Live AI signals</h3>
+                <h3 className="font-display text-lg">Live market signals</h3>
                 <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● per-symbol</span>
               </div>
-              <p className="text-xs text-white/55 mb-3">Aurelia computes each pair independently from live 15-minute candles, keeping the symbol, price, RSI, trend, and signal visible inside the dashboard.</p>
+              <p className="text-xs text-white/55 mb-3">Oakmont Intelligence computes each pair independently from live 15-minute candles, keeping the symbol, price, RSI, trend, and signal visible inside the dashboard.</p>
               <div className="overflow-x-auto">
                 <table className="min-w-full text-sm">
                   <thead className="text-xs text-white/50 text-left">
@@ -519,7 +519,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {AI_SIGNAL_SYMBOLS.map((symbol) => <DashboardLiveSignalRow key={symbol} symbol={symbol}/>)}
+                    {LIVE_SIGNAL_SYMBOLS.map((symbol) => <DashboardLiveSignalRow key={symbol} symbol={symbol}/>)}
                   </tbody>
                 </table>
               </div>
@@ -641,7 +641,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             </div>
           </section>}
 
-          {/* Analytics + AI bot + History */}
+          {/* Analytics + Markets Intelligence + History */}
           {activeFeature === 'analytics' && <section id="analytics-section" className="grid xl:grid-cols-3 gap-4">
             <div className="glass-strong p-5">
               <p className="font-semibold">Portfolio allocation</p>
@@ -676,7 +676,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
 
             <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
-                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Oakmont AI Bot</p>
+                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Oakmont Markets Intelligence</p>
                 <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
               </div>
               {user ? (
@@ -715,14 +715,14 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                         </div>
                       </div>
                       <div className="glass-light p-3 text-xs space-y-1.5 border border-neon-green/20">
-                        <p className="font-semibold text-neon-green">AI insight</p>
+                        <p className="font-semibold text-neon-green">Market insight</p>
                         <p className="text-white/75">{trend}</p>
                          {concentration && <p className="text-cyan">{concentration}</p>}
                       </div>
                     </div>
                   ) : (
                     <div className="mt-3 space-y-2">
-                      <p className="text-xs text-white/55">No positions yet - here are live AI signals you can act on.</p>
+                      <p className="text-xs text-white/55">No positions yet - here are live market signals you can act on.</p>
                       {(() => {
                         const watch = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
                         return watch.map((s) => {

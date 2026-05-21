@@ -8,6 +8,16 @@
     --fg: 240 246 255;
   }
 
+  html {
+    /* Slightly larger root font so all rem-based text reads comfortably on
+       mobile and desktop without forcing the user to zoom. */
+    font-size: 17px;
+  }
+
+  @media (min-width: 1024px) {
+    html { font-size: 17.5px; }
+  }
+
   html,
   body {
     overflow-x: hidden;

@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, LogOut, LogIn, UserCircle } from 'lucide-react';
-import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { useSession } from '@/lib/useSession';
@@ -29,7 +28,6 @@ export function TopBar({ title }) {
           <LanguageSelector />
           <ThemeToggle />
           {user && <NotificationBell />}
-          <Web3ConnectButton />
           {user ? (
             <div className="flex items-center gap-2 pl-2">
               <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-neon-green/30 text-cyan inline-flex items-center justify-center">

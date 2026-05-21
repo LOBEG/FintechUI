@@ -16,17 +16,17 @@ export function AIBot() {
       <div className="grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <span className="chip bg-neon-green/10 text-neon-green border border-neon-green/30">
-            <Bot className="h-3.5 w-3.5"/> Aurelia AI
+            <Bot className="h-3.5 w-3.5"/> Oakmont Intelligence
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl font-display">
-            AI-powered <span className="text-gradient-neon">trading intelligence</span>.
+            Live <span className="text-gradient-neon">market intelligence</span>.
           </h2>
           <p className="mt-3 text-white/65 max-w-lg">
-            Aurelia helps clients monitor live crypto, equities, ETFs, forex, commodities, futures and options market data, order-book conditions, and portfolio risk so every strategy remains visible, auditable, and aligned with account controls.
+            Oakmont Intelligence helps clients monitor live crypto, equities, ETFs, forex, commodities, futures and options market data, order-book conditions, and portfolio risk so every strategy remains visible, auditable, and aligned with account controls.
           </p>
           <ul className="mt-6 space-y-3 text-sm">
             <li className="flex gap-3"><Zap className="h-5 w-5 text-neon-green flex-shrink-0"/> Live multi-asset pricing, order routing, and transaction records in one account view</li>
-            <li className="flex gap-3"><Brain className="h-5 w-5 text-cyan flex-shrink-0"/> AI-assisted monitoring for DCA, momentum, and risk-based allocation decisions</li>
+            <li className="flex gap-3"><Brain className="h-5 w-5 text-cyan flex-shrink-0"/> Data-driven monitoring for DCA, momentum, and risk-based allocation decisions</li>
             <li className="flex gap-3"><LineChart className="h-5 w-5 text-cyan flex-shrink-0"/> Portfolio reporting built from deposits, withdrawals, investments, and admin-approved adjustments</li>
             <li className="flex gap-3"><Cpu className="h-5 w-5 text-white flex-shrink-0"/> Secure workflows for verified users across desktop and mobile</li>
           </ul>

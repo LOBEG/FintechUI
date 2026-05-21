@@ -19,7 +19,7 @@ const groups = [
             { href: '/brokerage?tab=stocks', label: 'Stocks & ETFs' },
             { href: '/brokerage?tab=futures', label: 'Futures' },
             { href: '/brokerage?tab=options', label: 'Options' },
-            { href: '/ai-trading-bot', label: 'AI Trading Bot' },
+            { href: '/ai-trading-bot', label: 'Markets Intelligence' },
         ],
     },
     {
