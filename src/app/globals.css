@@ -30,20 +30,20 @@
   body {
     @apply bg-ink-950 text-white dark:bg-ink-950 dark:text-white;
     background-image:
-      radial-gradient(1200px 600px at 80% -10%, rgba(6, 214, 196, 0.13), transparent 60%),
-      radial-gradient(1000px 500px at -10% 10%, rgba(59, 130, 246, 0.10), transparent 60%),
-      radial-gradient(800px 400px at 50% 100%, rgba(0, 255, 163, 0.06), transparent 60%),
-      linear-gradient(135deg, #04131c 0%, #070d22 45%, #052236 100%);
+      radial-gradient(1200px 600px at 80% -10%, rgba(16, 185, 129, 0.08), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(120, 113, 108, 0.08), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(63, 63, 70, 0.10), transparent 60%),
+      linear-gradient(135deg, #0b0b0c 0%, #141416 45%, #0a0a0b 100%);
     background-attachment: fixed;
   }
 
   html:not(.dark) body {
     @apply bg-navy-950 text-white;
     background-image:
-      radial-gradient(1200px 600px at 80% -10%, rgba(6, 214, 196, 0.18), transparent 60%),
-      radial-gradient(1000px 500px at -10% 10%, rgba(59, 130, 246, 0.14), transparent 60%),
-      radial-gradient(800px 400px at 50% 100%, rgba(0, 255, 163, 0.08), transparent 60%),
-      linear-gradient(135deg, #04131c 0%, #0b1530 45%, #05070d 100%);
+      radial-gradient(1200px 600px at 80% -10%, rgba(16, 185, 129, 0.10), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(120, 113, 108, 0.10), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(63, 63, 70, 0.12), transparent 60%),
+      linear-gradient(135deg, #111113 0%, #1b1b1f 45%, #0a0a0b 100%);
     background-attachment: fixed;
   }
 

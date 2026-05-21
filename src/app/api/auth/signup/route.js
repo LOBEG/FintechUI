@@ -57,13 +57,13 @@ export async function POST(req) {
     addTransaction({
       id: newId('tx'),
       userId: user.id,
-      type: 'deposit',
+      type: 'portfolio_credit',
       symbol: 'USDT',
       amount: 100,
       usdValue: 100,
       price: 1,
       status: 'completed',
-      note: 'Automatic signup deposit',
+      note: 'Welcome portfolio cash credit',
       createdAt: now,
     });
     // Give the new account its own referral code so it can refer friends

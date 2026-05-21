@@ -32,29 +32,29 @@ export function AppBackground() {
         .app-bg > div { position: absolute; inset: 0; }
         .app-bg__base {
           background:
-            linear-gradient(118deg, rgba(56, 189, 248, 0.16) 0%, transparent 30%),
-            linear-gradient(252deg, rgba(0, 255, 163, 0.12) 0%, transparent 32%),
-            radial-gradient(90vw 70vh at 78% 0%, rgba(0, 255, 163, 0.12), transparent 62%),
-            radial-gradient(80vw 70vh at 0% 20%, rgba(56, 189, 248, 0.14), transparent 64%),
-            linear-gradient(145deg, #01060b 0%, #04131c 52%, #020611 100%);
+            linear-gradient(118deg, rgba(120, 113, 108, 0.12) 0%, transparent 30%),
+            linear-gradient(252deg, rgba(16, 185, 129, 0.08) 0%, transparent 32%),
+            radial-gradient(90vw 70vh at 78% 0%, rgba(16, 185, 129, 0.08), transparent 62%),
+            radial-gradient(80vw 70vh at 0% 20%, rgba(120, 113, 108, 0.10), transparent 64%),
+            linear-gradient(145deg, #0b0b0c 0%, #161618 52%, #0a0a0b 100%);
         }
         .app-bg__blooms {
           background:
-            radial-gradient(36vw 24vw at 18% 22%, rgba(56, 189, 248, 0.20), transparent 70%),
-            radial-gradient(34vw 22vw at 84% 34%, rgba(0, 255, 163, 0.13), transparent 70%),
-            radial-gradient(42vw 26vw at 55% 84%, rgba(0, 255, 163, 0.11), transparent 70%);
-          filter: blur(76px) saturate(118%);
-          opacity: 0.78;
+            radial-gradient(36vw 24vw at 18% 22%, rgba(120, 113, 108, 0.14), transparent 70%),
+            radial-gradient(34vw 22vw at 84% 34%, rgba(16, 185, 129, 0.10), transparent 70%),
+            radial-gradient(42vw 26vw at 55% 84%, rgba(63, 63, 70, 0.18), transparent 70%);
+          filter: blur(76px) saturate(110%);
+          opacity: 0.65;
           will-change: transform;
         }
         .app-bg__grid {
           background-image:
-            linear-gradient(rgba(56, 189, 248, 0.055) 1px, transparent 1px),
-             linear-gradient(90deg, rgba(0, 255, 163, 0.045) 1px, transparent 1px),
-            linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.055) 50%, transparent 80%);
+            linear-gradient(rgba(231, 229, 228, 0.04) 1px, transparent 1px),
+             linear-gradient(90deg, rgba(231, 229, 228, 0.04) 1px, transparent 1px),
+            linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.04) 50%, transparent 80%);
           background-size: 54px 54px, 54px 54px, 100% 100%;
           mask-image: radial-gradient(circle at 50% 24%, black, transparent 74%);
-          opacity: 0.48;
+          opacity: 0.42;
         }
         .app-bg__noise {
           opacity: 0.05;

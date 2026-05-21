@@ -7,12 +7,14 @@ import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { useSession } from '@/lib/useSession';
 import { NotificationBell } from '@/components/dashboard/UserPanels';
+import { useNotifications } from '@/components/Notifications';
 import { useI18n } from '@/components/I18nProvider';
 
 export function TopBar({ title }) {
     const { user, logout } = useSession();
     const router = useRouter();
     const { t } = useI18n();
+    const { notify } = useNotifications();
     const memberLabel = user?.isAdmin ? 'Admin' : 'Member';
     
     return (<header className="h-16 border-b border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 z-30">
@@ -37,7 +39,7 @@ export function TopBar({ title }) {
                 <div className="font-medium">{user.name || user.email.split('@')[0]}</div>
                 <div className="text-white/45">{memberLabel}</div>
               </div>
-              <button onClick={async () => { await logout(); router.push('/'); }} aria-label={t('logout')} title={t('logout')} className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10">
+              <button onClick={async () => { await logout(); notify({ level: 'info', title: 'Signed out', message: 'You have been securely signed out.' }); router.push('/'); }} aria-label={t('logout')} title={t('logout')} className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10">
                 <LogOut className="h-4 w-4"/>
               </button>
             </div>

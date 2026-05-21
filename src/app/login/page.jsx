@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
-import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { useSession } from '@/lib/useSession';
+import { useNotifications } from '@/components/Notifications';
 import { BrandLogo } from '@/components/layout/BrandLogo';
 export default function LoginPage() {
     const [show, setShow] = useState(false);
@@ -14,6 +14,7 @@ export default function LoginPage() {
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
     const { login } = useSession();
+    const { notify } = useNotifications();
     const router = useRouter();
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -21,14 +22,16 @@ export default function LoginPage() {
         setBusy(true);
         try {
             const u = await login(email, password);
+            notify({ level: 'success', title: 'Signed in', message: `Welcome back, ${u.name || u.email}.` });
             router.push(u.isAdmin ? '/admin' : '/dashboard');
         } catch (err) {
             setError(err.message || 'Login failed');
+            notify({ level: 'error', title: 'Sign-in failed', message: err.message || 'Please check your credentials.' });
         } finally {
             setBusy(false);
         }
     };
-    return (<main className="min-h-screen flex relative bg-gradient-to-br from-slate-950/50 via-indigo-950/40 to-slate-900/60">
+    return (<main className="min-h-screen flex relative bg-gradient-to-br from-stone-950 via-zinc-900 to-neutral-950">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
         <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
@@ -78,9 +81,8 @@ export default function LoginPage() {
             </button>
           </form>
           <div className="my-5 flex items-center gap-3 text-[11px] text-white/40">
-            <span className="flex-1 h-px bg-white/10"/> or connect wallet <span className="flex-1 h-px bg-white/10"/>
+            <span className="flex-1 h-px bg-white/10"/> sign in to continue <span className="flex-1 h-px bg-white/10"/>
           </div>
-          <div className="mt-3"><Web3ConnectButton /></div>
           <p className="mt-5 text-xs text-white/55 text-center">
             New to Oakmont Digital Markets Group? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
           </p>

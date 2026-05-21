@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
+import { useNotifications } from '@/components/Notifications';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 
 // Memo / destination-tag bearing chains. Funds sent without the memo are
@@ -946,6 +947,7 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
   const [form, setForm] = useState({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const { notify } = useNotifications();
   useEffect(() => { if (open) { setForm({}); setError(null); } }, [open]);
   if (!open || !requestedTier) return null;
   const submit = async (e) => {
@@ -953,8 +955,12 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
     setBusy(true); setError(null);
     try {
       await api.post('/api/kyc', { requestedTier, ...form });
+      notify({ level: 'success', title: 'KYC submitted', message: `Your Tier ${requestedTier} upgrade is now under compliance review.` });
       onSubmitted && onSubmitted();
-    } catch (err) { setError(err.message); } finally { setBusy(false); }
+    } catch (err) {
+      setError(err.message);
+      notify({ level: 'error', title: 'KYC submission failed', message: err.message || 'Please review the form and try again.' });
+    } finally { setBusy(false); }
   };
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   return (

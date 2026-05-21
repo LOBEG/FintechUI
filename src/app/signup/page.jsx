@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, ShieldCheck, Check, Loader2, Gift } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
+import { useNotifications } from '@/components/Notifications';
 import { BrandLogo } from '@/components/layout/BrandLogo';
 function SignupForm() {
     const [name, setName] = useState('');
@@ -15,6 +16,7 @@ function SignupForm() {
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
     const { signup } = useSession();
+    const { notify } = useNotifications();
     const router = useRouter();
     const searchParams = useSearchParams();
     // Pre-fill the referral code from ?ref=CODE in the share URL so
@@ -30,21 +32,23 @@ function SignupForm() {
         setBusy(true);
         try {
             await signup(email, password, name, referralCode.trim() || undefined);
+            notify({ level: 'success', title: 'Account created', message: 'Your $100 welcome portfolio cash credit is ready to invest.' });
             router.push('/dashboard');
         } catch (err) {
             setError(err.message || 'Signup failed');
+            notify({ level: 'error', title: 'Sign-up failed', message: err.message || 'Please try again.' });
         } finally {
             setBusy(false);
         }
     };
-    return (<main className="min-h-screen flex relative bg-gradient-to-br from-emerald-950/30 via-slate-950/50 to-zinc-900/60">
+    return (<main className="min-h-screen flex relative bg-gradient-to-br from-emerald-950/40 via-stone-950 to-zinc-900">
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-cyan/30 bg-cyan/5">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-emerald-500/30 bg-emerald-500/5">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
           <h1 className="text-2xl font-display">Create your Oakmont Digital Markets Group account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
-          <div className="mt-4 rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2 text-sm text-white/80">
-            <Gift className="inline h-4 w-4 text-cyan mr-1"/> New verified accounts receive an automatic $100 USDT trading credit after signup.
+          <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-white/80">
+            <Gift className="inline h-4 w-4 text-emerald-300 mr-1"/> New verified accounts receive an automatic <strong>$100 portfolio cash</strong> credit, ready to invest after sign-up.
           </div>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
@@ -107,7 +111,7 @@ function SignupForm() {
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">
             {[
-             'Automatic $100 USDT trading credit',
+             'Automatic $100 portfolio cash credit',
              'Spot, futures & OTC desk',
             'AI Trading Bot · Aurelia',
             'Managed portfolios & yield',
