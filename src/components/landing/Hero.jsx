@@ -18,16 +18,16 @@ export function Hero() {
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
       <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
-      <div className="absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl pointer-events-none"/>
+      <div className="absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-24 lg:pb-24 grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <span className="chip bg-white/5 border border-white/10 text-white/80">
-            <Sparkles className="h-3.5 w-3.5 text-gold-400"/>
+            <Sparkles className="h-3.5 w-3.5 text-cyan"/>
              Live multi-asset brokerage · stocks · crypto · forex · commodities · futures · options
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[1.05] tracking-tight">
             One brokerage account for{' '}
-            <span className="text-gradient-gold">every market</span>.
+            <span className="text-gradient-neon">every market</span>.
             <br />
             Engineered for{' '}
             <span className="text-gradient-neon">professional alpha</span>.
@@ -48,7 +48,7 @@ export function Hero() {
           </div>
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/60">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-neon-green"/> SOC 2 · ISO 27001</span>
-            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold-400"/> Live equities, FX, crypto &amp; futures</span>
+            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-cyan"/> Live equities, FX, crypto &amp; futures</span>
             <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> Smart order routing &amp; risk controls</span>
           </div>
         </motion.div>

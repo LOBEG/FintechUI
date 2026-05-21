@@ -225,7 +225,7 @@ export default function AdminPage() {
         <AdminSidebar />
         <div className="flex-1 min-w-0">
           <TopBar title="Admin Console" />
-          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-gold-400"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-primary text-xs">Sign in</a></div></main>
+          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-cyan"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-primary text-xs">Sign in</a></div></main>
         </div>
       </div>
     );
@@ -266,7 +266,7 @@ export default function AdminPage() {
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { k: 'Total users', v: usersTotal.toLocaleString(), sub: `+${usersNew7d} new 7d · ${metrics?.users?.mau || 0} MAU`, icon: Users, color: 'text-neon-green' },
-              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-gold-400' },
+              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-cyan' },
               { k: 'KYC pending', v: kycPending.toLocaleString(), sub: kycPending ? 'Awaiting review' : 'Queue clear', icon: ShieldCheck, color: 'text-neon-orange' },
               { k: 'Risk alerts (24h)', v: fraudCount24h.toLocaleString(), sub: fraudCount24h ? 'Recent audit events' : 'No active alerts', icon: AlertTriangle, color: 'text-neon-red' },
             ].map((s, i) => {
@@ -368,7 +368,7 @@ export default function AdminPage() {
                         <td className="font-medium">{u.name || <span className="text-white/45">—</span>}</td>
                         <td className="text-white/75">{u.email}</td>
                         <td>
-                          {u.isAdmin ? <span className="chip bg-gold-500/15 text-gold-300 border border-gold-400/30">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}
+                          {u.isAdmin ? <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}
                         </td>
                         <td>{formatUSD(usdBal(u.balances), 2)}</td>
                         <td>
@@ -413,7 +413,7 @@ export default function AdminPage() {
                 {kyc.pending.length === 0 && <p className="text-sm text-white/55">Queue is empty.</p>}
                 {kyc.pending.map((k) => (
                   <div key={k.id} className="glass-light p-3 flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold text-xs">
+                    <div className="h-9 w-9 rounded-full bg-neon-grad text-ink-950 inline-flex items-center justify-center font-semibold text-xs">
                       {userInitials(k.userName, k.userEmail)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -525,7 +525,7 @@ export default function AdminPage() {
 
           {/* Settings anchor — links from sidebar land here */}
           <section id="settings" className="glass-strong p-5">
-            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-gold-400"/> Console settings</p>
+            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-cyan"/> Console settings</p>
             <p className="text-xs text-white/55 mt-1">Operational controls for the Oakmont Digital Markets Group admin console. Adjust polling cadence and reload live data without leaving the page.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button onClick={refresh} disabled={refreshing} className="btn-outline text-sm inline-flex items-center gap-1 disabled:opacity-60">

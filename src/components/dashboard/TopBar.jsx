@@ -30,7 +30,7 @@ export function TopBar({ title }) {
           <Web3ConnectButton />
           {user ? (
             <div className="flex items-center gap-2 pl-2">
-              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-gold-400/30 text-gold-200 inline-flex items-center justify-center">
+              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-neon-green/30 text-cyan inline-flex items-center justify-center">
                 <UserCircle className="h-5 w-5"/>
               </div>
               <div className="text-xs leading-tight hidden md:block">

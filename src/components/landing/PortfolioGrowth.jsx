@@ -16,7 +16,7 @@ export function PortfolioGrowth() {
       <div className="grid lg:grid-cols-5 gap-8 items-center">
         <div className="lg:col-span-3">
           <motion.h2 initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl sm:text-4xl font-display">
-            Compound your <span className="text-gradient-gold">portfolio</span> with
+            Compound your <span className="text-gradient-neon">portfolio</span> with
             disciplined strategy.
           </motion.h2>
           <p className="mt-3 text-white/65 max-w-xl">
@@ -37,7 +37,7 @@ export function PortfolioGrowth() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="lg:col-span-2 glass-strong p-6 flex flex-col items-center">
           <div className="w-full flex items-center justify-between">
             <p className="text-sm text-white/60">Brokerage asset-class coverage</p>
-            <span className="chip bg-gold-500/15 text-gold-400 border border-gold-500/30">
+            <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">
               <TrendingUp className="h-3 w-3"/> Live coverage
             </span>
           </div>

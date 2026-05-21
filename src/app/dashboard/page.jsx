@@ -518,7 +518,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90 bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: meta.color }} aria-label={`Open ${meta.sym} details`}>
                         {!cryptoLogoStyle(meta.sym) && <Wallet className="h-4 w-4 text-white/75"/>}
                       </a>
-                      <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-gold">
+                      <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-green">
                         <p className="text-sm font-medium">{meta.sym}</p>
                         <p className="text-[11px] text-white/50 truncate">{meta.name}</p>
                       </a>
@@ -530,7 +530,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       {canRemove && (
                         <button
                           onClick={() => removeFromWatchlist(s)}
-                          className="ml-1 p-1 text-neon-gold/80 hover:text-neon-gold"
+                          className="ml-1 p-1 text-neon-green/80 hover:text-neon-green"
                           aria-label={`Remove ${meta.sym} from watchlist`}
                           title="Remove from watchlist"
                         >

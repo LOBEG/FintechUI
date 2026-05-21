@@ -26,7 +26,7 @@ export function Web3ConnectButton() {
             <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6">
                <h3 className="text-lg font-semibold text-white">Wallet connection coming soon</h3>
                <p className="text-sm text-white/60 mt-1">Secure direct wallet linking is under development.</p>
-              {notice && <p className="mt-3 text-xs text-gold-200 bg-gold-500/10 border border-gold-500/30 rounded-lg px-3 py-2">{notice}</p>}
+              {notice && <p className="mt-3 text-xs text-cyan bg-neon-green/10 border border-neon-green/30 rounded-lg px-3 py-2">{notice}</p>}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {wallets.map((w) => (<button key={w.name} onClick={() => chooseWallet(w.name)} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left">
                     <span className="h-9 w-9 rounded-full bg-white bg-center bg-contain bg-no-repeat border border-white/10" style={{ backgroundImage: `url(${w.logo})` }} aria-hidden/>

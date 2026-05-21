@@ -125,7 +125,7 @@ export default function AssetDetailClient({ symbol }) {
                   type="button"
                   onClick={toggleFavourite}
                   disabled={favBusy}
-                  className={`ml-2 inline-flex items-center justify-center h-9 w-9 rounded-lg border ${favourited ? 'text-neon-gold border-neon-gold/40 bg-neon-gold/10' : 'text-white/60 hover:text-white border-white/10 bg-white/5 hover:bg-white/10'} disabled:opacity-50`}
+                  className={`ml-2 inline-flex items-center justify-center h-9 w-9 rounded-lg border ${favourited ? 'text-neon-green border-neon-green/40 bg-neon-green/10' : 'text-white/60 hover:text-white border-white/10 bg-white/5 hover:bg-white/10'} disabled:opacity-50`}
                   aria-label={favourited ? `Remove ${meta.sym} from watchlist` : `Add ${meta.sym} to watchlist`}
                   aria-pressed={favourited}
                   title={favourited ? 'Remove from watchlist' : 'Add to watchlist'}
@@ -158,7 +158,7 @@ export default function AssetDetailClient({ symbol }) {
                       onClick={() => setInterval(iv)}
                       className={`px-2 py-1 rounded-md border ${
                         interval === iv
-                          ? 'border-neon-gold/40 bg-neon-gold/10 text-neon-gold'
+                          ? 'border-neon-green/40 bg-neon-green/10 text-neon-green'
                           : 'border-white/10 bg-white/5 hover:bg-white/10'
                       }`}
                     >

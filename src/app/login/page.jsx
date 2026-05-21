@@ -31,17 +31,17 @@ export default function LoginPage() {
     return (<main className="min-h-screen flex">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
-        <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl"/>
+        <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
         <div className="absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
         <div className="relative max-w-md">
           <BrandLogo textClassName="text-2xl" />
           <h2 className="mt-10 text-3xl font-display leading-tight">
-            Welcome back to the<br /><span className="text-gradient-gold">professional management of digital wealth</span>.
+            Welcome back to the<br /><span className="text-gradient-neon">professional management of digital wealth</span>.
           </h2>
           <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Markets Group investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-green"/> Hardware MFA + passkeys</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-gold-400"/> SOC 2 · ISO 27001 · MiCA</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-cyan"/> SOC 2 · ISO 27001 · MiCA</li>
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-orange"/> 95% cold storage custody</li>
           </ul>
         </div>

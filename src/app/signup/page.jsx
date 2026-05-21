@@ -84,7 +84,7 @@ function SignupForm() {
               I agree to the Oakmont Digital Markets Group Terms of Service, Privacy Policy, and Risk Disclosure.
             </label>
             {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
-            <button disabled={busy} className="btn-gold w-full disabled:opacity-60">
+            <button disabled={busy} className="btn-primary w-full disabled:opacity-60">
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Creating…</> : 'Create account'}
             </button>
           </form>
@@ -96,10 +96,10 @@ function SignupForm() {
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
         <div className="absolute -top-20 -right-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
-        <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl"/>
+        <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
         <div className="relative max-w-md">
           <h2 className="text-3xl font-display leading-tight">
-            Join <span className="text-gradient-gold">4.1M+ investors</span><br />on Oakmont Digital Markets Group.
+            Join <span className="text-gradient-neon">4.1M+ investors</span><br />on Oakmont Digital Markets Group.
           </h2>
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">

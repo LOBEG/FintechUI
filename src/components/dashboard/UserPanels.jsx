@@ -64,7 +64,7 @@ export function DepositAddressPanel() {
   return (
     <section className="glass-strong p-5 max-w-3xl">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-gold-400"/>
+        <Wallet className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Deposit crypto</h3>
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
       </div>
@@ -91,7 +91,7 @@ export function DepositAddressPanel() {
                       ) : (
                         <span className="block h-4 w-full rounded bg-white/5 animate-pulse" aria-hidden="true"/>
                       )}
-                      {a.memo && <div className="text-[11px] text-gold-300">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
+                      {a.memo && <div className="text-[11px] text-cyan">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
                       {memoRequired && (
                         <div className="flex gap-1.5 items-start text-[11px] text-neon-red bg-neon-red/10 border border-neon-red/30 rounded px-2 py-1.5">
                           <ShieldAlert className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
@@ -243,7 +243,7 @@ export function MarketsPanel({ onInvest }) {
                   <td className="py-2.5 w-6">
                     <button
                       onClick={() => toggleFavourite(r.symbol)}
-                      className={fav ? 'text-neon-gold' : 'text-white/35 hover:text-white/70'}
+                      className={fav ? 'text-neon-green' : 'text-white/35 hover:text-white/70'}
                       aria-label={fav ? `Remove ${r.symbol} from watchlist` : `Add ${r.symbol} to watchlist`}
                       title={fav ? 'Remove from watchlist' : 'Add to watchlist'}
                     >
@@ -252,7 +252,7 @@ export function MarketsPanel({ onInvest }) {
                   </td>
                 )}
                 <td className="py-2.5">
-                  <a href={user ? `/markets/${r.symbol}` : authHref(r.symbol)} className="flex items-center gap-2 hover:text-neon-gold">
+                  <a href={user ? `/markets/${r.symbol}` : authHref(r.symbol)} className="flex items-center gap-2 hover:text-neon-green">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(r.symbol) || { background: r.color }}>
                       {!cryptoLogoStyle(r.symbol) && <Wallet className="h-3.5 w-3.5 text-white/75"/>}
                     </span>
@@ -311,9 +311,9 @@ export function SandboxOnRampPanel({ onClaimed }) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-2">
-        <Wallet className="h-4 w-4 text-gold-400"/>
+        <Wallet className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Sandbox starter funds</h3>
-        <span className="chip bg-gold-500/15 text-gold-300 border border-gold-500/30">test only</span>
+        <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">test only</span>
       </div>
       <p className="text-xs text-white/55 mb-3">
         This deployment has the sandbox on-ramp enabled. Claim {info.amount} USDT of practice funds to try the invest flow.
@@ -354,7 +354,7 @@ export function TestimonialComposer() {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <MessageSquare className="h-4 w-4 text-gold-400"/>
+        <MessageSquare className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Share your Oakmont Digital Markets Group experience</h3>
       </div>
       <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Markets Group landing page.</p>
@@ -366,7 +366,7 @@ export function TestimonialComposer() {
           <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button type="button" key={n} onClick={() => setRating(n)} aria-label={`${n} stars`}>
-                <Star className={`h-4 w-4 ${n <= rating ? 'text-gold-400 fill-gold-400' : 'text-white/30'}`}/>
+                <Star className={`h-4 w-4 ${n <= rating ? 'text-cyan fill-cyan' : 'text-white/30'}`}/>
               </button>
             ))}
           </div>
@@ -409,8 +409,8 @@ export function EmailVerifyBanner({ user }) {
     } finally { setBusy(false); }
   };
   return (
-    <section className="glass border border-gold-500/30 bg-gold-500/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-      <ShieldAlert className="h-5 w-5 text-gold-400 shrink-0"/>
+    <section className="glass border border-neon-green/30 bg-neon-green/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+      <ShieldAlert className="h-5 w-5 text-cyan shrink-0"/>
       <div className="flex-1">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
         <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
@@ -426,7 +426,7 @@ export function EmailVerifyBanner({ user }) {
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             inputMode="numeric"
             placeholder="123456"
-            className="w-28 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-gold-400/40 tracking-widest text-center"
+            className="w-28 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-green/40 tracking-widest text-center"
           />
           <button disabled={busy || code.length !== 6} className="btn-primary text-sm disabled:opacity-60">
             {busy ? <Loader2 className="h-4 w-4 animate-spin"/> : 'Verify'}
@@ -672,8 +672,8 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
               <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-neon-orange/20 text-neon-orange' : 'bg-white/5 text-white/65'}`}>Sell</button>
             </div>
             <div className="flex rounded-lg overflow-hidden border border-white/10">
-              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-gold-400/20 text-gold-400' : 'bg-white/5 text-white/65'}`}>Limit</button>
-              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-gold-400/20 text-gold-400' : 'bg-white/5 text-white/65'}`}>Stop</button>
+              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-neon-green/15 text-cyan' : 'bg-white/5 text-white/65'}`}>Limit</button>
+              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-neon-green/15 text-cyan' : 'bg-white/5 text-white/65'}`}>Stop</button>
             </div>
           </div>
           <label className="block">
@@ -684,17 +684,17 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Trigger price (USD)</span>
-            <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="e.g. 65000" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+            <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="e.g. 65000" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
           </label>
           {side === 'buy' ? (
             <label className="block">
               <span className="text-xs text-white/55">USD to spend at fill</span>
-              <input value={usd} onChange={(e) => setUsd(e.target.value)} required inputMode="decimal" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+              <input value={usd} onChange={(e) => setUsd(e.target.value)} required inputMode="decimal" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
             </label>
           ) : (
             <label className="block">
               <span className="text-xs text-white/55">Quantity of {symbol} to sell</span>
-              <input value={qty} onChange={(e) => setQty(e.target.value)} required inputMode="decimal" placeholder="e.g. 0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-gold-400/40"/>
+              <input value={qty} onChange={(e) => setQty(e.target.value)} required inputMode="decimal" placeholder="e.g. 0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
             </label>
           )}
           <p className="text-[11px] text-white/55">{hint} A taker fee applies on fill.</p>
@@ -780,7 +780,7 @@ export function BeneficiariesPanel() {
                     </td>
                     <td>
                       {b.status === 'active' && <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">active</span>}
-                      {b.status === 'cooling-down' && <span className="chip bg-gold-400/15 text-gold-400 border border-gold-400/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
+                      {b.status === 'cooling-down' && <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
                       {b.status === 'pending-email' && <span className="chip bg-white/5 text-white/65 border border-white/10">awaiting email</span>}
                     </td>
                     <td className="text-right">
@@ -901,7 +901,7 @@ export function KycPanel() {
       <section className="glass-strong p-5">
         <div className="flex items-center flex-wrap gap-2 mb-3">
           <h3 className="font-display text-lg">KYC verification</h3>
-          <span className="chip bg-gold-400/15 text-gold-300 border border-gold-400/30">{summary.label}</span>
+          <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">{summary.label}</span>
           {pendingSubmission && (
             <span className="chip bg-white/5 border border-white/10 text-white/65">Tier {pendingSubmission.requestedTier} pending</span>
           )}
@@ -934,7 +934,7 @@ function UsageBar({ title, used, limit, pct }) {
       </div>
       <div className="h-2 bg-white/5 rounded-full overflow-hidden">
         <div
-          className={`h-full ${pct > 90 ? 'bg-neon-red' : pct > 70 ? 'bg-gold-400' : 'bg-neon-green'}`}
+          className={`h-full ${pct > 90 ? 'bg-neon-red' : pct > 70 ? 'bg-neon-green' : 'bg-neon-green'}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -1307,7 +1307,7 @@ export function ConvertPanel({ onConverted } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <ArrowRightLeft className="h-4 w-4 text-gold-400"/>
+        <ArrowRightLeft className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Convert</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">live mid + spread</span>
       </div>
@@ -1353,7 +1353,7 @@ export function ConvertPanel({ onConverted } = {}) {
             <button
               type="button"
               onClick={() => setAmount(String(fromBalance))}
-              className="ml-2 text-neon-gold hover:underline"
+              className="ml-2 text-neon-green hover:underline"
             >
               max: {fromBalance}
             </button>
@@ -1420,11 +1420,11 @@ export function EmptyStateCoach() {
     },
   ];
   return (
-    <section className="glass-strong p-5 border border-gold-500/20">
+    <section className="glass-strong p-5 border border-neon-green/20">
       <div className="flex items-center gap-2 mb-3">
-        <Rocket className="h-4 w-4 text-gold-400"/>
+        <Rocket className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Start here</h3>
-        <span className="chip bg-gold-500/15 text-gold-300 border border-gold-500/30">new account</span>
+        <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">new account</span>
         <button
           type="button"
           onClick={() => setDismissed(true)}
@@ -1527,7 +1527,7 @@ export function DcaPanel({ onChanged } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-gold-400" aria-hidden/>
+        <Wallet className="h-4 w-4 text-cyan" aria-hidden/>
         <h3 className="font-display text-lg">Recurring buys (DCA)</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">{active.length} active</span>
       </div>
@@ -1731,7 +1731,7 @@ export function ReferralPanel() {
 // Admin replies arrive over the existing notification centre.
 const TICKET_STATUS_COPY = {
   open: { label: 'Open', tone: 'text-neon-green' },
-  awaiting_user: { label: 'Awaiting you', tone: 'text-gold-400' },
+  awaiting_user: { label: 'Awaiting you', tone: 'text-cyan' },
   answered: { label: 'Answered', tone: 'text-neon-green' },
   closed: { label: 'Closed', tone: 'text-white/45' },
 };
@@ -1815,7 +1815,7 @@ export function SupportPanel() {
   return (
     <section className="glass-strong p-5">
       <header className="flex items-center gap-2">
-        <LifeBuoy className="h-4 w-4 text-gold-400"/>
+        <LifeBuoy className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-base">Support</h3>
         <button
           type="button"
@@ -1858,7 +1858,7 @@ export function SupportPanel() {
               <option value="normal">Normal</option>
               <option value="high">High</option>
             </select>
-            <button disabled={busy} className="btn-gold text-xs ml-auto disabled:opacity-60">
+            <button disabled={busy} className="btn-primary text-xs ml-auto disabled:opacity-60">
               {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Send className="h-3.5 w-3.5"/>}
               <span className="ml-1">Submit</span>
             </button>
@@ -1895,9 +1895,9 @@ export function SupportPanel() {
                   <div id={`tkt-${t.id}-body`} className="px-3 pb-3 space-y-2">
                     <ul className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
                       {(t.messages || []).map((m) => (
-                        <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-gold-500/10 border border-gold-500/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
+                        <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-neon-green/10 border border-neon-green/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
                           <div className="flex items-center justify-between mb-0.5 text-[10px]">
-                            <span className={m.authorRole === 'staff' ? 'text-gold-400' : 'text-white/55'}>
+                            <span className={m.authorRole === 'staff' ? 'text-cyan' : 'text-white/55'}>
                               {m.authorRole === 'staff' ? 'Oakmont Digital Markets Group support' : 'You'}
                             </span>
                             <span className="text-white/35">{fmtTime(m.createdAt)}</span>

@@ -215,7 +215,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
-          <div className="flex gap-2 text-xs items-start bg-gold-500/10 border border-gold-500/30 text-gold-200 rounded-lg p-3">
+          <div className="flex gap-2 text-xs items-start bg-neon-green/10 border border-neon-green/30 text-cyan rounded-lg p-3">
             <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
             <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Markets Group administrator.</p>
           </div>

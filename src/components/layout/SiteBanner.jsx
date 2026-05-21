@@ -14,7 +14,7 @@ export function SiteBanner() {
         </div>
       )}
       {s.banner && !s.maintenanceMode && (
-        <div className="relative z-40 bg-gold-500/15 border-b border-gold-500/30 text-gold-200 text-xs sm:text-sm px-4 py-2 text-center">
+        <div className="relative z-40 bg-neon-green/15 border-b border-neon-green/30 text-cyan text-xs sm:text-sm px-4 py-2 text-center">
           <Megaphone className="inline h-4 w-4 mr-2 -mt-0.5" />
           {s.banner}
         </div>

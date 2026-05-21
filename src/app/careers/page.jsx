@@ -14,7 +14,7 @@ export default function CareersPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            Careers at <span className="text-gradient-gold">Oakmont Digital Markets Group</span>
+            Careers at <span className="text-gradient-neon">Oakmont Digital Markets Group</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
             We are building secure digital asset infrastructure for live markets, account operations, compliance workflows, and client reporting. Oakmont Digital Markets Group teams work across engineering, risk, support, and fintech operations.

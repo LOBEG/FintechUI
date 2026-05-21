@@ -47,7 +47,7 @@ export default function BrokeragePositionsPanel() {
       className="glass-strong p-5"
     >
       <div className="flex items-center gap-2 mb-3">
-        <TrendingUp className="h-4 w-4 text-gold-400"/>
+        <TrendingUp className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Brokerage positions</h3>
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
       </div>

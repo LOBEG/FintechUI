@@ -100,7 +100,7 @@ export function Testimonials() {
       {displayItems.length ? (
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           {displayItems.map((t, i) => (<motion.div key={(t.id || t.name) + i} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06 }} className={i === 0 ? 'glass p-6 md:col-span-2 bg-white/[0.04]' : 'glass p-6'}>
-               <Quote className="h-6 w-6 text-gold-400/70"/>
+               <Quote className="h-6 w-6 text-cyan/70"/>
                <p className={i === 0 ? 'mt-3 text-lg text-white/85 leading-relaxed' : 'mt-3 text-white/80 leading-relaxed'}>{t.text}</p>
                <div className="mt-4 flex items-center gap-3">
                  {t.avatarUrl ? (
@@ -115,7 +115,7 @@ export function Testimonials() {
                   <p className="text-xs text-white/55">{t.role || 'Oakmont Digital Markets Group investor'}</p>
                 </div>
                 <div className="ml-auto flex">
-                  {Array.from({ length: t.rating || 5 }).map((_, k) => (<Star key={k} className="h-3.5 w-3.5 text-gold-400 fill-gold-400"/>))}
+                  {Array.from({ length: t.rating || 5 }).map((_, k) => (<Star key={k} className="h-3.5 w-3.5 text-cyan fill-cyan"/>))}
                 </div>
               </div>
             </motion.div>))}

@@ -14,7 +14,7 @@ export default function AboutPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            About <span className="text-gradient-gold">Oakmont Digital Markets Group</span>
+            About <span className="text-gradient-neon">Oakmont Digital Markets Group</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
              Oakmont Digital Markets Group is an institutional-grade multi-asset brokerage and investment platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent access to stocks, ETFs, crypto, forex, commodities, futures and options.
@@ -28,7 +28,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Globe className="h-8 w-8 text-gold-400 mb-3"/>
+              <Globe className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Global Presence</h3>
               <p className="mt-2 text-sm text-white/60">
                 Headquartered in London with offices in Singapore and Dubai. Serving clients in 45 countries across Europe, Asia, and the Middle East.

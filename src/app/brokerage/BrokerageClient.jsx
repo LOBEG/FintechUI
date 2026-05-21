@@ -246,7 +246,7 @@ function BrokerageBoard({ assetClass }) {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[12rem]">
           <Search className="h-4 w-4 absolute left-2 top-1/2 -translate-y-1/2 text-white/40"/>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search symbol or name" className="w-full pl-7 pr-3 py-1.5 rounded bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-gold-400/40"/>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search symbol or name" className="w-full pl-7 pr-3 py-1.5 rounded bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-neon-green/40"/>
         </div>
         <button onClick={load} disabled={loading} className="text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-50">
           {loading ? <Loader2 className="h-3 w-3 animate-spin"/> : <RefreshCw className="h-3 w-3"/>} Refresh
