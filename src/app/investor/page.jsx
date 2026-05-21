@@ -60,7 +60,7 @@ export default function InvestorPortalPage() {
         return () => { mounted = false; clearInterval(id); };
     }, []);
     const reports = buildLiveReports(liveSummary);
-    return (<main className="pb-20 lg:pb-0">
+    return (<main className="pb-20 lg:pb-0 relative min-h-screen bg-gradient-to-br from-blue-950/40 via-slate-950/60 to-indigo-950/40">
       <Navbar />
       <section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>

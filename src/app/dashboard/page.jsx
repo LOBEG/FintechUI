@@ -258,7 +258,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
       ? tradeHistory.filter((tx) => ['invest', 'buy', 'sell', 'brokerage_invest'].includes(tx.type) && tx.status === 'completed').reduce((s, tx) => s + (Number(tx.usdValue) || 0), 0) / completedTrades
       : 0;
 
-    return (<div className="flex">
+    return (<div className="flex relative min-h-screen bg-gradient-to-br from-slate-950/50 via-slate-900/50 to-zinc-950/60">
       <Sidebar />
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <TopBar title={t('tradingDashboard')}/>

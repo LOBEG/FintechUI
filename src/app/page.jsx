@@ -10,7 +10,7 @@ import { Testimonials } from '@/components/landing/Testimonials';
 import { FAQ } from '@/components/landing/FAQ';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 export default function HomePage() {
-    return (<main className="pb-20 lg:pb-0">
+    return (<main className="pb-20 lg:pb-0 relative min-h-screen bg-gradient-to-br from-slate-950/60 via-slate-900/40 to-zinc-900/60">
       <Navbar />
       <Hero />
       <MarketTicker />

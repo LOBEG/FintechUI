@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, ArrowDownLeft, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { api } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
+import { useNotifications } from '@/components/Notifications';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'TON', 'ATOM', 'NEAR', 'APT', 'ARB', 'OP', 'SUI', 'FIL', 'INJ', 'SHIB', 'PEPE', 'BCH', 'ETC', 'XLM', 'ALGO', 'HBAR'];
 
@@ -59,6 +60,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const { notify } = useNotifications();
   const tradingPair = `${symbol}USDT`;
   const fundingPair = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? null : `${fundingSymbol}USDT`;
   const watchPairs = [tradingPair, ...(fundingPair ? [fundingPair] : [])];
@@ -84,6 +86,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
     try {
       const r = await api.post('/api/invest', { symbol, usdAmount: parseFloat(usdAmount), fundingSymbol });
       setSuccess(r.transaction);
+      notify({ level: 'success', title: 'Investment confirmed', message: `Acquired ${r.transaction?.amount?.toFixed(6)} ${r.transaction?.symbol} for $${r.transaction?.usdValue?.toFixed(2)}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
@@ -175,6 +178,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   const [success, setSuccess] = useState(null);
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [beneficiaryId, setBeneficiaryId] = useState('');
+  const { notify } = useNotifications();
   const availableNetworks = NETWORKS[symbol] || [];
   const memoRequired = MEMO_REQUIRED.has(symbol);
   useEffect(() => {
@@ -198,6 +202,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         : { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address, memo, network };
       const r = await api.post('/api/withdraw', payload);
       setSuccess(r.transaction);
+      notify({ level: 'success', title: 'Withdrawal processed', message: `Sent ${r.transaction?.amount} ${r.transaction?.symbol}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
@@ -300,6 +305,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [feeBps, setFeeBps] = useState(20);
+  const { notify } = useNotifications();
   useEffect(() => {
     if (open) {
       setSuccess(null);
@@ -328,6 +334,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
     try {
       const r = await api.post('/api/sell', { symbol, amount: cryptoAmt });
       setSuccess(r);
+      notify({ level: 'success', title: 'Sale complete', message: `Sold ${cryptoAmt} ${symbol} for ~$${r.transaction?.usdValue?.toFixed(2) || '—'}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
@@ -426,6 +433,7 @@ export function BrokerageInvestModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const { notify } = useNotifications();
 
   const [fundingSymbol, setFundingSymbol] = useState('USDT');
   const fundingPair = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? null : `${fundingSymbol}USDT`;
@@ -483,6 +491,7 @@ export function BrokerageInvestModal({
         usdAmount: parseFloat(usdAmount),
       });
       setSuccess(r);
+      notify({ level: 'success', title: 'Order filled', message: `Invested $${usdAmount} in ${symbol}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);

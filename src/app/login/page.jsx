@@ -28,7 +28,7 @@ export default function LoginPage() {
             setBusy(false);
         }
     };
-    return (<main className="min-h-screen flex">
+    return (<main className="min-h-screen flex relative bg-gradient-to-br from-slate-950/50 via-indigo-950/40 to-slate-900/60">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
         <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>

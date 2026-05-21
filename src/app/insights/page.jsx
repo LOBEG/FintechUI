@@ -12,7 +12,7 @@ const insights = [
     { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Markets Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
 ];
 export default function InsightsPage() {
-    return (<main className="pb-20 lg:pb-0">
+    return (<main className="pb-20 lg:pb-0 relative min-h-screen bg-gradient-to-br from-stone-950/60 via-neutral-900/40 to-zinc-950/60">
       <Navbar />
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>

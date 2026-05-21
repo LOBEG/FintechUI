@@ -11,6 +11,7 @@ export const metadata = {
 
 export default function InstitutionalPage() {
     return (<>
+      <div className="relative min-h-screen bg-gradient-to-br from-slate-950/60 via-slate-900/50 to-zinc-950/60">
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -69,5 +70,6 @@ export default function InstitutionalPage() {
       </main>
       <Footer />
       <MobileBottomNav />
+      </div>
     </>);
 }

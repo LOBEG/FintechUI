@@ -249,7 +249,7 @@ export default function AdminPage() {
   const fraudCount24h = fraudAlerts.length;
 
   return (
-    <div className="flex">
+    <div className="flex relative min-h-screen bg-gradient-to-br from-rose-950/20 via-slate-950/60 to-zinc-950/60">
       <AdminSidebar />
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <TopBar title="Admin Console" />

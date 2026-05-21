@@ -47,6 +47,32 @@ export const BROKERAGE_UNIVERSE = {
     { symbol: 'KO',    name: 'The Coca-Cola Company',      exchange: 'NYSE' },
     { symbol: 'PEP',   name: 'PepsiCo, Inc.',              exchange: 'NASDAQ' },
     { symbol: 'DIS',   name: 'The Walt Disney Company',    exchange: 'NYSE' },
+    { symbol: 'WMT',  name: 'Walmart Inc.',                exchange: 'NYSE' },
+    { symbol: 'WFC',  name: 'Wells Fargo & Company',       exchange: 'NYSE' },
+    { symbol: 'GS',   name: 'Goldman Sachs Group, Inc.',   exchange: 'NYSE' },
+    { symbol: 'MS',   name: 'Morgan Stanley',              exchange: 'NYSE' },
+    { symbol: 'PG',   name: 'Procter & Gamble Co.',        exchange: 'NYSE' },
+    { symbol: 'CVX',  name: 'Chevron Corporation',         exchange: 'NYSE' },
+    { symbol: 'T',    name: 'AT&T Inc.',                   exchange: 'NYSE' },
+    { symbol: 'VZ',   name: 'Verizon Communications Inc.', exchange: 'NYSE' },
+    { symbol: 'PFE',  name: 'Pfizer Inc.',                 exchange: 'NYSE' },
+    { symbol: 'MRK',  name: 'Merck & Co., Inc.',           exchange: 'NYSE' },
+    { symbol: 'ABBV', name: 'AbbVie Inc.',                 exchange: 'NYSE' },
+    { symbol: 'LLY',  name: 'Eli Lilly and Company',       exchange: 'NYSE' },
+    { symbol: 'JNJ',  name: 'Johnson & Johnson',           exchange: 'NYSE' },
+    { symbol: 'BMY',  name: 'Bristol-Myers Squibb Co.',    exchange: 'NYSE' },
+    { symbol: 'QCOM', name: 'QUALCOMM Incorporated',       exchange: 'NASDAQ' },
+    { symbol: 'AVGO', name: 'Broadcom Inc.',               exchange: 'NASDAQ' },
+    { symbol: 'TXN',  name: 'Texas Instruments Inc.',      exchange: 'NASDAQ' },
+    { symbol: 'IBM',  name: 'International Business Machines', exchange: 'NYSE' },
+    { symbol: 'CSCO', name: 'Cisco Systems, Inc.',         exchange: 'NASDAQ' },
+    { symbol: 'BA',   name: 'Boeing Company',              exchange: 'NYSE' },
+    { symbol: 'GE',   name: 'GE Aerospace',                exchange: 'NYSE' },
+    { symbol: 'CAT',  name: 'Caterpillar Inc.',            exchange: 'NYSE' },
+    { symbol: 'MMM',  name: '3M Company',                  exchange: 'NYSE' },
+    { symbol: 'NKE',  name: 'NIKE, Inc.',                  exchange: 'NYSE' },
+    { symbol: 'MCD',  name: "McDonald's Corporation",      exchange: 'NYSE' },
+    { symbol: 'SBUX', name: 'Starbucks Corporation',       exchange: 'NASDAQ' },
   ],
   etfs: [
     { symbol: 'SPY',  name: 'SPDR S&P 500 ETF Trust',                exchange: 'NYSE Arca' },
@@ -57,6 +83,12 @@ export const BROKERAGE_UNIVERSE = {
     { symbol: 'EEM',  name: 'iShares MSCI Emerging Markets ETF',      exchange: 'NYSE Arca' },
     { symbol: 'SLV',  name: 'iShares Silver Trust',                   exchange: 'NYSE Arca' },
     { symbol: 'TLT',  name: 'iShares 20+ Year Treasury Bond ETF',     exchange: 'NASDAQ' },
+    { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF',                  exchange: 'NYSE Arca' },
+    { symbol: 'ARKK', name: 'ARK Innovation ETF',                    exchange: 'NYSE Arca' },
+    { symbol: 'XLF',  name: 'Financial Select Sector SPDR Fund',     exchange: 'NYSE Arca' },
+    { symbol: 'XLE',  name: 'Energy Select Sector SPDR Fund',        exchange: 'NYSE Arca' },
+    { symbol: 'XLK',  name: 'Technology Select Sector SPDR Fund',    exchange: 'NYSE Arca' },
+    { symbol: 'XLV',  name: 'Health Care Select Sector SPDR Fund',   exchange: 'NYSE Arca' },
   ],
   indices: [
     { symbol: '^GSPC', name: 'S&P 500',                       exchange: 'Index' },
@@ -83,8 +115,11 @@ export const BROKERAGE_UNIVERSE = {
     { symbol: 'AUDJPY=X', name: 'AUD / JPY', exchange: 'FX' },
     { symbol: 'EURAUD=X', name: 'EUR / AUD', exchange: 'FX' },
     { symbol: 'USDCNY=X', name: 'USD / CNY', exchange: 'FX' },
+    { symbol: 'CHFJPY=X', name: 'CHF / JPY', exchange: 'FX' },
+    { symbol: 'CADJPY=X', name: 'CAD / JPY', exchange: 'FX' },
   ],
   commodities: [
+    { symbol: 'GC=F', name: 'Gold (COMEX front-month)',     exchange: 'COMEX' },
     { symbol: 'SI=F', name: 'Silver (COMEX front-month)',   exchange: 'COMEX' },
     { symbol: 'CL=F', name: 'WTI Crude Oil',                exchange: 'NYMEX' },
     { symbol: 'BZ=F', name: 'Brent Crude Oil',              exchange: 'ICE'   },
@@ -110,6 +145,30 @@ export const BROKERAGE_UNIVERSE = {
     { symbol: '6E=F', name: 'Euro FX Futures',                 exchange: 'CME' },
     { symbol: '6J=F', name: 'Japanese Yen Futures',            exchange: 'CME' },
   ],
+  crypto: [
+    { symbol: 'BTC-USD',  name: 'Bitcoin',        exchange: 'Crypto' },
+    { symbol: 'ETH-USD',  name: 'Ethereum',       exchange: 'Crypto' },
+    { symbol: 'SOL-USD',  name: 'Solana',         exchange: 'Crypto' },
+    { symbol: 'XRP-USD',  name: 'XRP',            exchange: 'Crypto' },
+    { symbol: 'DOGE-USD', name: 'Dogecoin',       exchange: 'Crypto' },
+    { symbol: 'ADA-USD',  name: 'Cardano',        exchange: 'Crypto' },
+    { symbol: 'AVAX-USD', name: 'Avalanche',      exchange: 'Crypto' },
+    { symbol: 'DOT-USD',  name: 'Polkadot',       exchange: 'Crypto' },
+    { symbol: 'MATIC-USD',name: 'Polygon',        exchange: 'Crypto' },
+    { symbol: 'LINK-USD', name: 'Chainlink',      exchange: 'Crypto' },
+    { symbol: 'LTC-USD',  name: 'Litecoin',       exchange: 'Crypto' },
+    { symbol: 'BCH-USD',  name: 'Bitcoin Cash',   exchange: 'Crypto' },
+    { symbol: 'TRX-USD',  name: 'Tron',           exchange: 'Crypto' },
+    { symbol: 'ATOM-USD', name: 'Cosmos',         exchange: 'Crypto' },
+    { symbol: 'NEAR-USD', name: 'NEAR Protocol',  exchange: 'Crypto' },
+    { symbol: 'ARB-USD',  name: 'Arbitrum',       exchange: 'Crypto' },
+    { symbol: 'OP-USD',   name: 'Optimism',       exchange: 'Crypto' },
+    { symbol: 'BNB-USD',  name: 'BNB',            exchange: 'Crypto' },
+    { symbol: 'TON-USD',  name: 'Toncoin',        exchange: 'Crypto' },
+    { symbol: 'UNI-USD',  name: 'Uniswap',        exchange: 'Crypto' },
+    { symbol: 'SHIB-USD', name: 'Shiba Inu',      exchange: 'Crypto' },
+    { symbol: 'APT-USD',  name: 'Aptos',          exchange: 'Crypto' },
+  ],
 };
 
 // Options are accessed via Yahoo's options chain endpoint - the available
@@ -129,7 +188,7 @@ export const OPTIONS_UNDERLIERS = [
   { symbol: 'IWM',  name: 'iShares Russell 2000 ETF' },
 ];
 
-export const ASSET_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
+export const ASSET_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures', 'crypto'];
 
 export function allBrokerageSymbols() {
   return ASSET_CLASSES.flatMap((cls) => BROKERAGE_UNIVERSE[cls].map((r) => ({ ...r, assetClass: cls })));

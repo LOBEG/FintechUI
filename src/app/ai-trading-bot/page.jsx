@@ -13,6 +13,7 @@ export const metadata = {
 export default function AITradingBotPage() {
     return (
       <>
+        <div className="relative min-h-screen bg-gradient-to-br from-violet-950/30 via-slate-950/60 to-indigo-950/40">
         <Navbar />
         <main className="pt-10 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
@@ -21,6 +22,7 @@ export default function AITradingBotPage() {
         </main>
         <Footer />
         <MobileBottomNav />
+        </div>
       </>
     );
 }

@@ -4,7 +4,8 @@ import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
 import { AppBackground } from '@/components/layout/AppBackground';
 import { I18nProvider } from '@/components/I18nProvider';
-import { BRAND_DOMAIN, BRAND_LOGO_URL, BRAND_NAME } from '@/lib/brand';
+import { NotificationsProvider } from '@/components/Notifications';
+import { BRAND_DOMAIN, BRAND_NAME } from '@/lib/brand';
 export const metadata = {
     metadataBase: new URL(`https://${BRAND_DOMAIN}`),
     title: `${BRAND_NAME} - Multi-Asset Brokerage & Investment Platform`,
@@ -35,9 +36,9 @@ export const metadata = {
     alternates: { canonical: '/' },
     manifest: '/site.webmanifest',
     icons: {
-        icon: [{ url: BRAND_LOGO_URL }],
-        shortcut: [BRAND_LOGO_URL],
-        apple: [{ url: BRAND_LOGO_URL }],
+        icon: [{ url: '/image.png' }],
+        shortcut: ['/image.png'],
+        apple: [{ url: '/image.png' }],
     },
     openGraph: {
         title: `${BRAND_NAME} - Institutional Multi-Asset Brokerage`,
@@ -45,19 +46,21 @@ export const metadata = {
         type: 'website',
         url: '/',
         siteName: BRAND_NAME,
-        images: [{ url: BRAND_LOGO_URL, alt: `${BRAND_NAME} logo` }],
+        images: [{ url: '/image.png', alt: `${BRAND_NAME} logo` }],
     },
     twitter: {
         card: 'summary_large_image',
         title: `${BRAND_NAME} - Multi-Asset Brokerage`,
         description: `Search ${BRAND_NAME} to find the official live multi-asset brokerage and investment platform.`,
-        images: [BRAND_LOGO_URL],
+        images: ['/image.png'],
     },
 };
 export const viewport = {
     themeColor: '#04131c',
     width: 'device-width',
     initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
     viewportFit: 'cover',
 };
 export default function RootLayout({ children }) {
@@ -65,12 +68,14 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen font-sans antialiased text-white">
         <Providers>
           <I18nProvider>
-            <AppBackground />
-            <div className="relative z-10 min-h-screen">
-              <SiteBanner />
-              {children}
-              <AIChatWidget />
-            </div>
+            <NotificationsProvider>
+              <AppBackground />
+              <div className="relative z-10 min-h-screen">
+                <SiteBanner />
+                {children}
+                <AIChatWidget />
+              </div>
+            </NotificationsProvider>
           </I18nProvider>
         </Providers>
       </body>

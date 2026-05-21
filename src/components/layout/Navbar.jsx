@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
-import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { BrandLogo } from '@/components/layout/BrandLogo';
 import { useSession } from '@/lib/useSession';
 export function Navbar() {
@@ -31,7 +30,6 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-2">
           <LanguageSelector />
           <ThemeToggle />
-          <Web3ConnectButton />
           {loading ? (
             <span className="btn-ghost text-sm opacity-70">Checking session</span>
           ) : user ? (

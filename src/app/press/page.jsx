@@ -10,6 +10,7 @@ export const metadata = {
 
 export default function PressPage() {
     return (<>
+      <div className="relative min-h-screen bg-gradient-to-br from-neutral-950/60 via-stone-900/40 to-zinc-950/60">
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -83,5 +84,6 @@ export default function PressPage() {
       </main>
       <Footer />
       <MobileBottomNav />
+      </div>
     </>);
 }

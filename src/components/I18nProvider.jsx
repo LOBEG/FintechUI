@@ -29,7 +29,6 @@ export function I18nProvider({ children }) {
   };
 
   const t = (key) => {
-    if (!mounted) return key;
     return getTranslation(lang, key);
   };
 
