@@ -285,7 +285,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                     <td className="py-1 pr-3 text-right">
                       {hasLive ? (
                         <span className="inline-flex items-center gap-1">
-                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-success400 animate-pulse" />
                           ${livePrice.toFixed(4)}
                         </span>
                       ) : `$${livePrice.toFixed(4)}`}

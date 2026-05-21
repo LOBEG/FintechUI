@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function ManagedAccountsPage() {
     return (<>
-      <div className="relative min-h-screen bg-gradient-to-br from-emerald-950/30 via-slate-950/60 to-slate-900/60">
+      <div className="relative min-h-screen bg-gradient-to-br from-accent-success950/30 via-slate-950/60 to-slate-900/60">
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

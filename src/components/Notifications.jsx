@@ -8,9 +8,9 @@ const NotificationsContext = createContext({ notify: () => {} });
 const LEVEL_STYLES = {
   success: {
     icon: CheckCircle2,
-    bar: 'bg-emerald-500',
-    bg: 'bg-emerald-950/90 border-emerald-600/40',
-    text: 'text-emerald-300',
+    bar: 'bg-accent-success500',
+    bg: 'bg-accent-success950/90 border-accent-success600/40',
+    text: 'text-accent-success300',
   },
   info: {
     icon: Info,

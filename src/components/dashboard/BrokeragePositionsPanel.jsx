@@ -69,7 +69,7 @@ export default function BrokeragePositionsPanel() {
         <TrendingUp className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Brokerage positions</h3>
         <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="inline-block h-2 w-2 rounded-full bg-accent-success400 animate-pulse" />
           live
         </span>
       </div>
@@ -113,13 +113,13 @@ export default function BrokeragePositionsPanel() {
                 <td className="py-1.5 pr-3 text-right">
                   {q ? (
                     <span className="inline-flex items-center gap-1">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-success400 animate-pulse" />
                       ${livePrice.toFixed(4)}
                     </span>
                   ) : `$${livePrice.toFixed(4)}`}
                 </td>
                 <td className="py-1.5 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-emerald-400' : 'text-accent-error'}`}>
+                <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-accent-success400' : 'text-accent-error'}`}>
                   {dayPct !== null ? (
                     <span className="inline-flex items-center gap-0.5">
                       {isUp ? '▲' : '▼'}{Math.abs(dayPct).toFixed(2)}%
