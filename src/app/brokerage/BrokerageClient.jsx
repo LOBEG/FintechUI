@@ -8,17 +8,9 @@ import {
 } from 'lucide-react';
 import { getCryptoLogo } from '@/lib/cryptoLogos';
 import { useSession } from '@/lib/useSession';
+import { BROKERAGE_TABS } from './brokerageTabs';
 
-const TABS = [
-  { id: 'stocks',      label: 'Stocks',       blurb: 'Live equities from US primary listings (NYSE, NASDAQ).' },
-  { id: 'etfs',        label: 'ETFs',         blurb: 'Diversified exchange-traded funds across indices, themes and fixed income.' },
-  { id: 'indices',     label: 'Indices',      blurb: 'Major global benchmarks: S&P 500, NASDAQ, Dow, FTSE, Nikkei and more.' },
-  { id: 'forex',       label: 'Forex',        blurb: 'Major and cross currency pairs (G10) with live spot pricing.' },
-  { id: 'commodities', label: 'Commodities',  blurb: 'Metals, energy and agriculturals: gold, silver, oil, gas, copper, wheat.' },
-  { id: 'futures',     label: 'Futures',      blurb: 'E-mini equity index, FX and Treasury futures from CME / CBOT.' },
-  { id: 'options',     label: 'Options',      blurb: 'Live call / put chains on listed equities and ETFs with strikes, IV and OI.' },
-  { id: 'crypto',      label: 'Crypto',       blurb: 'Live Binance spot pricing for the digital-asset desk.' },
-];
+const TABS = BROKERAGE_TABS;
 
 const RANGE_PRESETS = [
   { id: '1d',  interval: '5m',  label: '1D' },
@@ -395,8 +387,6 @@ function OptionsBoard() {
     </div>
   );
 }
-
-export { TABS };
 
 export default function BrokerageClient({ initialTab = 'stocks' }) {
   const { user, loading } = useSession();

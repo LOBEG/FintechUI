@@ -1,4 +1,5 @@
-import DashboardPage, { DASHBOARD_FEATURES } from '../page';
+import DashboardPage from '../page';
+import { DASHBOARD_FEATURES } from '../dashboardFeatures';
 
 export function generateStaticParams() {
   return DASHBOARD_FEATURES
