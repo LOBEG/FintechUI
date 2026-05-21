@@ -80,8 +80,8 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
     return (<svg viewBox={`0 0 ${width} ${height}`} width="100%" height="100%" className="block">
       <defs>
         <linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#00ffa3" stopOpacity="0.35"/>
-          <stop offset="100%" stopColor="#00ffa3" stopOpacity="0"/>
+          <stop offset="0%" stopColor="#10b981" stopOpacity="0.30"/>
+          <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
         </linearGradient>
         <linearGradient id="gridGrad" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="rgba(255,255,255,0.08)"/>
@@ -105,7 +105,7 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
       {candles.map((k, i) => {
             const x = padL + i * cw + cw / 2;
             const isUp = k.c >= k.o;
-            const color = isUp ? '#00ffa3' : '#ff4d6d';
+            const color = isUp ? '#10b981' : '#ef4444';
             const yO = y(k.o);
             const yC = y(k.c);
             const top = Math.min(yO, yC);
@@ -117,9 +117,9 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
         })}
 
       {/* last price line */}
-      <line x1={padL} x2={padL + W} y1={y(last.c)} y2={y(last.c)} stroke={up ? '#00ffa3' : '#ff4d6d'} strokeDasharray="2 3" strokeWidth={1} opacity={0.7}/>
-      <rect x={padL + W - 60} y={y(last.c) - 9} width={56} height={18} rx={4} fill={up ? '#00ffa3' : '#ff4d6d'}/>
-      <text x={padL + W - 32} y={y(last.c) + 4} textAnchor="middle" fontSize="10" fontWeight="700" fill="#05070d">
+      <line x1={padL} x2={padL + W} y1={y(last.c)} y2={y(last.c)} stroke={up ? '#10b981' : '#ef4444'} strokeDasharray="2 3" strokeWidth={1} opacity={0.7}/>
+      <rect x={padL + W - 60} y={y(last.c) - 9} width={56} height={18} rx={4} fill={up ? '#10b981' : '#ef4444'}/>
+      <text x={padL + W - 32} y={y(last.c) + 4} textAnchor="middle" fontSize="10" fontWeight="700" fill="#0a0e14">
         {Math.round(last.c).toLocaleString()}
       </text>
     </svg>);
@@ -148,7 +148,7 @@ export function Sparkline({ width = 120, height = 40, seed = 1, positive = true,
         return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)},${y.toFixed(1)}`;
     })
         .join(' ');
-    const color = positive ? '#00ffa3' : '#ff4d6d';
+    const color = positive ? '#10b981' : '#ef4444';
     return (<svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}>
       <path d={path} fill="none" stroke={color} strokeWidth={1.5}/>
     </svg>);
@@ -175,7 +175,7 @@ export function DonutChart({ size = 180, data, }) {
       </div>
     </div>);
 }
-export function BarChart({ data, width = 320, height = 140, color = '#06d6c4', }) {
+export function BarChart({ data, width = 320, height = 140, color = '#3b82f6', }) {
     const max = Math.max(...data, 1);
     const bw = width / data.length;
     return (<svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height}>
