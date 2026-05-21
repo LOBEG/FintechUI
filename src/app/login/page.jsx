@@ -42,7 +42,7 @@ export default function LoginPage() {
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-green"/> Hardware MFA + passkeys</li>
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-cyan"/> SOC 2 · ISO 27001 · MiCA</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-orange"/> 95% cold storage custody</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-cyan"/> 95% cold storage custody</li>
           </ul>
         </div>
       </section>

@@ -14,11 +14,11 @@ const accounts = [
     { name: 'Tokenized RWA', strategy: 'RWA Index', aum: 86000000, ytd: 7.2, sharpe: 3.05 },
 ];
 const allocation = [
-    { label: 'BTC', value: 38, color: '#f7931a' },
+    { label: 'BTC', value: 38, color: '#06d6c4' },
     { label: 'ETH', value: 24, color: '#627eea' },
-    { label: 'RWA', value: 14, color: '#e6ad26' },
+    { label: 'RWA', value: 14, color: '#00ffa3' },
     { label: 'Stables', value: 16, color: '#26a17b' },
-    { label: 'Alts', value: 8, color: '#ff8a00' },
+    { label: 'Alts', value: 8, color: '#ffffff' },
 ];
 function buildLiveReports(liveSummary) {
     const now = new Date();
@@ -79,7 +79,7 @@ export default function InvestorPortalPage() {
           {[
             { k: 'Total AUM', v: '$848M', icon: Briefcase, accent: 'text-cyan' },
             { k: 'YTD Return', v: '+38.4%', icon: TrendingUp, accent: 'text-neon-green' },
-            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-neon-orange' },
+            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-cyan' },
             { k: 'Clients', v: '412', icon: Users, accent: 'text-white' },
         ].map((s) => {
             const Icon = s.icon;
@@ -105,7 +105,7 @@ export default function InvestorPortalPage() {
             </div>
             <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">+38.4% YTD</span>
           </div>
-          <BarChart data={[5, 9, 4, 12, 8, 15, 11, 18, 14, 22, 17, 26, 21, 29, 34]} color="#e6ad26" height={180}/>
+          <BarChart data={[5, 9, 4, 12, 8, 15, 11, 18, 14, 22, 17, 26, 21, 29, 34]} color="#06d6c4" height={180}/>
         </div>
         <div className="glass-strong p-5">
           <p className="font-semibold">Strategic allocation</p>
@@ -180,7 +180,7 @@ export default function InvestorPortalPage() {
           </div>
         </div>
         <div className="glass-strong p-5">
-          <ShieldCheck className="h-6 w-6 text-neon-orange"/>
+          <ShieldCheck className="h-6 w-6 text-cyan"/>
           <p className="font-semibold mt-3">Secure onboarding · KYC/AML</p>
           <p className="text-sm text-white/65 mt-1">
             White-glove onboarding for institutions. Document collection, UBO verification, source-of-funds, and Chainalysis screening - done in 48 hours.

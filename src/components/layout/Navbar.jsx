@@ -7,16 +7,19 @@ import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { BrandLogo } from '@/components/layout/BrandLogo';
-const nav = [
-    { href: '/brokerage', label: 'Brokerage' },
-    { href: '/#markets', label: 'Markets' },
-    { href: '/login?next=/dashboard', label: 'Trade' },
-    { href: '/login?next=/investor', label: 'Investor Portal' },
-    { href: '/insights', label: 'Insights' },
-    { href: '/login?next=/admin', label: 'Admin' },
-];
+import { useSession } from '@/lib/useSession';
 export function Navbar() {
     const [open, setOpen] = useState(false);
+    const { user, loading } = useSession();
+    const authed = !!user && !loading;
+    const nav = [
+        { href: '/brokerage', label: 'Brokerage' },
+        { href: '/#markets', label: 'Markets' },
+        { href: authed ? '/dashboard/trade' : '/login?next=/dashboard/trade', label: 'Trade' },
+        { href: authed ? '/investor' : '/login?next=/investor', label: 'Investor Portal' },
+        { href: '/insights', label: 'Insights' },
+        { href: authed ? (user?.isAdmin ? '/admin' : '/dashboard') : '/login?next=/admin', label: 'Admin' },
+    ];
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <BrandLogo compact textClassName="text-xl" />
@@ -29,8 +32,16 @@ export function Navbar() {
           <LanguageSelector />
           <ThemeToggle />
           <Web3ConnectButton />
-          <Link href="/login" className="btn-ghost text-sm">Sign in</Link>
-          <Link href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+          {loading ? (
+            <span className="btn-ghost text-sm opacity-70">Checking session</span>
+          ) : user ? (
+            <Link href="/dashboard" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Dashboard</Link>
+          ) : (
+            <>
+              <Link href="/login" className="btn-ghost text-sm">Sign in</Link>
+              <Link href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+            </>
+          )}
         </div>
         <button onClick={() => setOpen(!open)} className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10" aria-label="Toggle menu">
           {open ? <X className="h-5 w-5"/> : <Menu className="h-5 w-5"/>}
@@ -47,8 +58,16 @@ export function Navbar() {
                 <ThemeToggle />
               </div>
               <div className="flex gap-2 pt-2">
-                <Link href="/login" className="btn-ghost flex-1 text-sm">Sign in</Link>
-                <Link href="/signup" className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+                {loading ? (
+                  <span className="btn-ghost flex-1 text-sm opacity-70">Checking session</span>
+                ) : user ? (
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Dashboard</Link>
+                ) : (
+                  <>
+                    <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost flex-1 text-sm">Sign in</Link>
+                    <Link href="/signup" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>)}

@@ -43,7 +43,7 @@ export default function ManagedAccountsPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Award className="h-8 w-8 text-neon-orange mb-3"/>
+              <Award className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Performance-Based Fees</h3>
               <p className="mt-2 text-sm text-white/60">
                 1.5% management fee + 20% performance fee on gains above 8% hurdle. No lock-up. Withdraw quarterly with 30 days notice.

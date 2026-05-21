@@ -42,7 +42,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Users className="h-8 w-8 text-neon-orange mb-3"/>
+              <Users className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Experienced Team</h3>
               <p className="mt-2 text-sm text-white/60">
                  Leadership team from capital markets, brokerage, exchange, custody, and fintech operations.

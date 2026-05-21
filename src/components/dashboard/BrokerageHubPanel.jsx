@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Network, Building2, Globe, Loader2, CheckCircle2, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { Briefcase, Network, Building2, Globe, Loader2, CheckCircle2, ArrowDownLeft, ArrowUpRight, Activity, TrendingUp } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 
 const BROKERS = [
@@ -36,26 +36,39 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   const [settings, setSettings] = useState(null);
   const [preferred, setPreferred] = useState('prime');
   const [positions, setPositions] = useState([]);
+  const [universe, setUniverse] = useState({});
+  const [quotes, setQuotes] = useState([]);
+  const [cryptoMarkets, setCryptoMarkets] = useState([]);
   const [savingBroker, setSavingBroker] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    (async () => {
+    const load = async () => {
       try {
-        const [s, b, p] = await Promise.all([
+        const [s, b, p, u, q, m] = await Promise.all([
           api.get('/api/brokerage/settings').catch(() => null),
           api.get('/api/user/preferred-broker').catch(() => null),
           api.get('/api/brokerage/positions').catch(() => null),
+          fetch('/api/brokerage/universe', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
+          fetch('/api/brokerage/quotes', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
+          fetch('/api/markets', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
         ]);
         if (cancelled) return;
         if (s?.settings) setSettings(s.settings);
         if (b?.preferredBroker) setPreferred(b.preferredBroker);
         if (Array.isArray(p?.positions)) setPositions(p.positions);
+        if (u?.universe) setUniverse(u.universe);
+        if (Array.isArray(q?.quotes)) setQuotes(q.quotes);
+        if (Array.isArray(m?.markets)) setCryptoMarkets(m.markets);
       } catch (_) {}
-    })();
-    return () => { cancelled = true; };
+    };
+    load();
+    const id = setInterval(load, 15_000);
+    return () => { cancelled = true; clearInterval(id); };
   }, [user]);
+
+  const quoteBySymbol = useMemo(() => new Map(quotes.map((q) => [q.symbol, q])), [quotes]);
 
   if (!user) return null;
   if (!settings) return null;
@@ -74,6 +87,11 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   };
 
   const enabledBrokers = BROKERS.filter((b) => integrations[b.id]);
+  const enabledClasses = Object.keys(universe).filter((c) => settings.classes?.[c] !== false);
+  const signalRows = quotes
+    .filter((q) => q.signal && q.price)
+    .slice(0, 8);
+  const cryptoRows = cryptoMarkets.slice(0, 6);
 
   return (
     <motion.section
@@ -120,6 +138,64 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-3">
+        <div className="glass-light p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="h-4 w-4 text-cyan"/>
+            <p className="text-sm font-semibold">Live asset-class coverage</p>
+            <span className="ml-auto text-[10px] text-white/45">{quotes.length} live quotes</span>
+          </div>
+          <div className="space-y-2">
+            {enabledClasses.map((cls) => {
+              const rows = universe[cls] || [];
+              const liveCount = rows.filter((row) => quoteBySymbol.has(row.symbol)).length;
+              return (
+                <div key={cls} className="rounded-lg border border-white/10 bg-white/5 p-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold capitalize">{cls}</span>
+                    <span className="text-[10px] text-neon-green">{liveCount} live</span>
+                    <span className="ml-auto text-[10px] text-white/45">{rows.length} symbols</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {rows.slice(0, 6).map((row) => (
+                      <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{row.symbol}</span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="glass-light p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="h-4 w-4 text-neon-green"/>
+            <p className="text-sm font-semibold">Visible live market signals</p>
+            <span className="ml-auto text-[10px] text-white/45">updated {updatedLabel}</span>
+          </div>
+          <div className="divide-y divide-white/5">
+            {signalRows.map((q) => (
+              <div key={q.symbol} className="py-2 flex items-center gap-3 text-xs">
+                <span className="font-semibold w-20">{q.symbol}</span>
+                <span className="text-white/55 flex-1 truncate">{q.name || q.assetClass}</span>
+                <span className={Number(q.pct) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{Number(q.pct || 0).toFixed(2)}%</span>
+                <span className={`chip border text-[10px] ${q.signal === 'Reduce' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : q.signal === 'Accumulate' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : 'bg-white/5 border-white/10 text-white/70'}`}>{q.signal}</span>
+              </div>
+            ))}
+            {cryptoRows.map((m) => (
+              <div key={m.symbol} className="py-2 flex items-center gap-3 text-xs">
+                <span className="font-semibold w-20">{m.symbol}</span>
+                <span className="text-white/55 flex-1 truncate">{m.name}</span>
+                <span className={Number(m.pct) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{Number(m.pct || 0).toFixed(2)}%</span>
+                <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">crypto live</span>
+              </div>
+            ))}
+            {!signalRows.length && !cryptoRows.length && (
+              <p className="py-2 text-xs text-white/45">Connecting to brokerage and crypto market feeds.</p>
+            )}
+          </div>
+        </div>
       </div>
 
       {enabledBrokers.length > 0 && (

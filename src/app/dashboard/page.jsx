@@ -23,10 +23,11 @@ import { DASHBOARD_FEATURES } from './dashboardFeatures';
 
 // Default watchlist for anonymous visitors and users who haven't pinned
 // anything yet. Logged-in users override this via /api/watchlist.
-const DEFAULT_WATCHLIST_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'DOGEUSDT'];
-// Demo data for anonymous visitors only — logged-in users get real data from /api/wallet
+const DEFAULT_WATCHLIST_SYMBOLS = DEFAULT_TICKER_SYMBOLS;
+const AI_SIGNAL_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'AVAXUSDT', 'LINKUSDT'];
+// Demo data for anonymous visitors only. Logged-in users get real data from /api/wallet
 const DEMO_WALLET_HOLDINGS = [
-    { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#f7931a' },
+    { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#06d6c4' },
     { key: 'ETHUSDT', sym: 'ETH', name: 'Ethereum', bal: 12.41, color: '#627eea' },
     { key: 'SOLUSDT', sym: 'SOL', name: 'Solana',   bal: 84.5,  color: '#14f195' },
     { key: null,      sym: 'USDT', name: 'Tether',   bal: 24800, color: '#26a17b' },
@@ -46,6 +47,33 @@ HASH_TO_FEATURE['bot-section'] = 'analytics';
 HASH_TO_FEATURE['alerts-section'] = 'security';
 HASH_TO_FEATURE['settings-section'] = 'security';
 const DASHBOARD_FEATURE_IDS = new Set(DASHBOARD_FEATURES.map((feature) => feature.id));
+
+function DashboardLiveSignalRow({ symbol }) {
+    const candles = useLiveKlines(symbol, '15m', 96);
+    const signal = useMemo(() => buildMarketSignal(candles), [candles]);
+    const market = candles[candles.length - 1];
+    const meta = SYMBOL_META[symbol] || { sym: symbol.replace(/USDT$/, ''), name: symbol };
+    const tone = signal.tone === 'buy' ? 'text-neon-green' : signal.tone === 'sell' ? 'text-neon-red' : 'text-white/70';
+    const chip = signal.tone === 'buy'
+        ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
+        : signal.tone === 'sell'
+            ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+            : 'bg-white/5 border-white/10 text-white/70';
+    return (
+        <tr className="border-t border-white/5">
+            <td className="py-2 pr-3 font-semibold">{meta.sym}<span className="ml-1 text-[10px] text-white/40">/USDT</span></td>
+            <td className="py-2 pr-3 text-white/60">{meta.name}</td>
+            <td className="py-2 pr-3 font-mono">{signal.last ? formatUSD(signal.last, signal.last < 1 ? 4 : 2) : 'Connecting'}</td>
+            <td className={`py-2 pr-3 font-mono ${signal.pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{signal.last ? formatPct(signal.pct24) : 'Connecting'}</td>
+            <td className={`py-2 pr-3 font-mono ${tone}`}>{signal.rsiVal != null ? signal.rsiVal.toFixed(1) : 'Tracking'}</td>
+            <td className={`py-2 pr-3 font-mono ${tone}`}>{signal.fast != null && signal.slow != null ? (signal.fast > signal.slow ? 'Up' : 'Down') : 'Tracking'}</td>
+            <td className="py-2 pr-3"><span className={`chip border text-[11px] ${chip}`}>{signal.label}</span></td>
+            <td className={market?.live ? 'py-2 text-neon-green text-[11px]' : 'py-2 text-white/45 text-[11px]'}>
+                {market?.live ? '● live' : 'syncing'}
+            </td>
+        </tr>
+    );
+}
 
 export default function DashboardPage({ initialFeature = 'overview' }) {
     const { user, loading } = useSession();
@@ -169,11 +197,11 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     // Wallet: real balances when logged in, demo for anonymous visitors.
     const wallets = useMemo(() => {
         const meta = {
-            BTC: { name: 'Bitcoin', color: '#f7931a', key: 'BTCUSDT' },
+            BTC: { name: 'Bitcoin', color: '#06d6c4', key: 'BTCUSDT' },
             ETH: { name: 'Ethereum', color: '#627eea', key: 'ETHUSDT' },
             SOL: { name: 'Solana', color: '#14f195', key: 'SOLUSDT' },
             XRP: { name: 'XRP', color: '#22c55e', key: 'XRPUSDT' },
-            BNB: { name: 'BNB', color: '#f3ba2f', key: 'BNBUSDT' },
+            BNB: { name: 'BNB', color: '#ffffff', key: 'BNBUSDT' },
             USDT: { name: 'Tether', color: '#26a17b', key: null },
             USDC: { name: 'USD Coin', color: '#2775ca', key: null },
         };
@@ -339,8 +367,8 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
               {DASHBOARD_FEATURES.filter((f) => f.id !== 'overview').map((feature) => (
                 <a key={feature.id} href={featureHref(feature)} className="glass p-4 hover:bg-white/10 transition group">
                    <p className="text-sm font-semibold group-hover:text-neon-green">{feature.label}</p>
-                  <p className="mt-1 text-xs text-white/55">{feature.blurb}</p>
-                   <span className="mt-4 inline-flex text-[11px] text-neon-green">Open →</span>
+                   <p className="mt-1 text-xs text-white/55">{feature.blurb}</p>
+                    <span className="mt-4 inline-flex text-[11px] text-neon-green">Open</span>
                 </a>
               ))}
             </section>
@@ -390,7 +418,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
               <div className="mt-3 glass-light p-3 flex flex-wrap items-center gap-3 text-xs">
                 <span className="text-white/50">Live signal for {selectedMarketMeta.sym}/{quoteSymbol}</span>
                 <span className={`chip border text-[11px] ${tradeSignalChip}`}>{tradeSignal.label}</span>
-                <span className={tradeSignalClass}>RSI {tradeSignal.rsiVal != null ? tradeSignal.rsiVal.toFixed(1) : '—'}</span>
+                <span className={tradeSignalClass}>RSI {tradeSignal.rsiVal != null ? tradeSignal.rsiVal.toFixed(1) : '-'}</span>
                 <span className={tradeSignalClass}>Trend {tradeSignal.fast != null && tradeSignal.slow != null ? (tradeSignal.fast > tradeSignal.slow ? 'Up' : 'Down') : 'Tracking'}</span>
                 <span className={tradeMarket.live ? 'text-neon-green' : 'text-white/45'}>{tradeMarket.live ? '● live' : 'syncing'}</span>
               </div>
@@ -482,6 +510,35 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           {user && activeFeature === 'wallet' && <SandboxOnRampPanel />}
           {user && activeFeature === 'positions' && <OpenOrdersPanel />}
           {user && activeFeature === 'security' && <section id="security-section"><KycPanel /></section>}
+          {user && activeFeature === 'analytics' && (
+            <section className="glass-strong p-5">
+              <div className="flex items-center flex-wrap gap-2 mb-3">
+                <Bot className="h-4 w-4 text-cyan"/>
+                <h3 className="font-display text-lg">Live AI signals</h3>
+                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● per-symbol</span>
+              </div>
+              <p className="text-xs text-white/55 mb-3">Aurelia computes each pair independently from live 15-minute candles, keeping the symbol, price, RSI, trend, and signal visible inside the dashboard.</p>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="text-xs text-white/50 text-left">
+                    <tr>
+                      <th className="py-2 pr-3 font-medium">Pair</th>
+                      <th className="py-2 pr-3 font-medium">Asset</th>
+                      <th className="py-2 pr-3 font-medium">Last</th>
+                      <th className="py-2 pr-3 font-medium">24h</th>
+                      <th className="py-2 pr-3 font-medium">RSI</th>
+                      <th className="py-2 pr-3 font-medium">Trend</th>
+                      <th className="py-2 pr-3 font-medium">Signal</th>
+                      <th className="py-2 font-medium">Feed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {AI_SIGNAL_SYMBOLS.map((symbol) => <DashboardLiveSignalRow key={symbol} symbol={symbol}/>)}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
           {user && activeFeature === 'analytics' && <PortfolioPanel />}
           {user && activeFeature === 'wallet' && <ConvertPanel onConverted={refreshWallet} />}
           {user && activeFeature === 'wallet' && <DcaPanel onChanged={refreshWallet} />}
@@ -540,7 +597,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     </div>);
                 })}
                 {user && Array.isArray(watchlistBases) && watchlistBases.length === 0 && (
-                  <p className="text-[11px] text-white/45 py-3">Tap the ★ on any asset to pin it here.</p>
+                  <p className="text-[11px] text-white/45 py-3">Showing the default live symbols. Tap the star on any market row to build a custom list.</p>
                 )}
               </div>
             </div>
@@ -646,8 +703,8 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       : null
                     : null;
                   const trend = portfolioMarketPct >= 0
-                    ? `Portfolio is up ${portfolioMarketPct.toFixed(2)}% on the day — momentum looks constructive.`
-                    : `Portfolio is down ${Math.abs(portfolioMarketPct).toFixed(2)}% on the day — review stop levels and avoid new aggressive entries.`;
+                    ? `Portfolio is up ${portfolioMarketPct.toFixed(2)}% on the day - momentum looks constructive.`
+                    : `Portfolio is down ${Math.abs(portfolioMarketPct).toFixed(2)}% on the day - review stop levels and avoid new aggressive entries.`;
                   return totalBalance > 0 ? (
                     <div className="mt-3 space-y-3">
                       <div className="grid grid-cols-3 gap-2 text-xs">
@@ -675,7 +732,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     </div>
                   ) : (
                     <div className="mt-3 space-y-2">
-                      <p className="text-xs text-white/55">No positions yet — here are live AI signals you can act on.</p>
+                      <p className="text-xs text-white/55">No positions yet - here are live AI signals you can act on.</p>
                       {(() => {
                         const watch = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
                         return watch.map((s) => {
@@ -747,7 +804,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     const isIn = displayType === 'Buy' || displayType === 'Deposit';
                     return (<tr key={i}>
                         <td className="py-2.5">
-                          <span className={`chip ${isIn ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-orange/15 text-neon-orange'}`}>
+                          <span className={`chip ${isIn ? 'bg-neon-green/15 text-neon-green' : 'bg-cyan/15 text-cyan'}`}>
                             {isIn ? <ArrowDownLeft className="h-3 w-3"/> : <ArrowUpRight className="h-3 w-3"/>}
                             {displayType}
                           </span>

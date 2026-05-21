@@ -175,7 +175,7 @@ export function DonutChart({ size = 180, data, }) {
       </div>
     </div>);
 }
-export function BarChart({ data, width = 320, height = 140, color = '#e6ad26', }) {
+export function BarChart({ data, width = 320, height = 140, color = '#06d6c4', }) {
     const max = Math.max(...data, 1);
     const bw = width / data.length;
     return (<svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height}>

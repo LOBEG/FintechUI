@@ -24,7 +24,7 @@ export function AIBot() {
           <ul className="mt-6 space-y-3 text-sm">
             <li className="flex gap-3"><Zap className="h-5 w-5 text-neon-green flex-shrink-0"/> Live multi-asset pricing, order routing, and transaction records in one account view</li>
             <li className="flex gap-3"><Brain className="h-5 w-5 text-cyan flex-shrink-0"/> AI-assisted monitoring for DCA, momentum, and risk-based allocation decisions</li>
-            <li className="flex gap-3"><LineChart className="h-5 w-5 text-neon-orange flex-shrink-0"/> Portfolio reporting built from deposits, withdrawals, investments, and admin-approved adjustments</li>
+            <li className="flex gap-3"><LineChart className="h-5 w-5 text-cyan flex-shrink-0"/> Portfolio reporting built from deposits, withdrawals, investments, and admin-approved adjustments</li>
             <li className="flex gap-3"><Cpu className="h-5 w-5 text-white flex-shrink-0"/> Secure workflows for verified users across desktop and mobile</li>
           </ul>
         </motion.div>

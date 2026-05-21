@@ -6,7 +6,9 @@ import { CandlestickChart } from '@/components/ui/Charts';
 import { useLiveKlines, useLivePrices } from '@/lib/useLiveData';
 import { formatUSD, formatPct } from '@/lib/utils';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
+import { useSession } from '@/lib/useSession';
 export function Hero() {
+    const { user, loading } = useSession();
     const candles = useLiveKlines('BTCUSDT', '5m', 56);
     const prices = useLivePrices(['BTCUSDT']);
     const btc = prices.BTCUSDT || { price: 0, pct: 0, high: 0, low: 0, live: false };
@@ -39,17 +41,17 @@ export function Hero() {
             <Link href="/brokerage" className="btn-primary">
               Explore Brokerage <ArrowRight className="h-4 w-4"/>
             </Link>
-            <Link href="/signup" className="btn-outline border-cyan/50 text-cyan hover:bg-cyan/10">
-              Open Account
+            <Link href={!loading && user ? '/dashboard' : '/signup'} className="btn-outline border-cyan/50 text-cyan hover:bg-cyan/10">
+              {!loading && user ? 'Open Dashboard' : 'Open Account'}
             </Link>
-            <Link href="/login?next=/investor" className="btn-ghost">
+            <Link href={!loading && user ? '/investor' : '/login?next=/investor'} className="btn-ghost">
               Investor Portal
             </Link>
           </div>
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/60">
             <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-neon-green"/> SOC 2 · ISO 27001</span>
             <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-cyan"/> Live equities, FX, crypto &amp; futures</span>
-            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-neon-orange"/> Smart order routing &amp; risk controls</span>
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-cyan"/> Smart order routing &amp; risk controls</span>
           </div>
         </motion.div>
 

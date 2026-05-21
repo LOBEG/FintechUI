@@ -43,7 +43,7 @@ export default function SpotTradingPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Clock className="h-8 w-8 text-neon-orange mb-3"/>
+              <Clock className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">24/7 Markets</h3>
               <p className="mt-2 text-sm text-white/60">
                 Round-the-clock trading with continuous settlement. Instant GBP, EUR, and USD deposits via bank transfer or card.

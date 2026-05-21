@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { hashPassword, newId, setSessionCookie, publicUser } from '@/lib/server/auth.js';
-import { findUserByEmail, upsertUser, getSettings } from '@/lib/server/store.js';
+import { findUserByEmail, upsertUser, getSettings, addTransaction } from '@/lib/server/store.js';
 import { rateLimitOrJson } from '@/lib/server/rateLimit.js';
 import { ensureReferralCode, resolveReferralCode } from '@/lib/server/referral.js';
 
@@ -36,6 +36,7 @@ export async function POST(req) {
     const referrerId = resolveReferralCode(body.referralCode);
 
     const { hash, salt } = hashPassword(password);
+    const now = Date.now();
     const user = {
       id: newId('user'),
       email,
@@ -43,16 +44,28 @@ export async function POST(req) {
       passwordHash: hash,
       passwordSalt: salt,
       isAdmin: false,
-      createdAt: Date.now(),
-      balances: {},
+      createdAt: now,
+      balances: { USDT: 100 },
       accountStatus: 'active',
-      termsAcceptedAt: Date.now(),
+      termsAcceptedAt: now,
     };
     if (referrerId && referrerId !== user.id) {
       user.referredBy = referrerId;
       user.referredAt = Date.now();
     }
     upsertUser(user);
+    addTransaction({
+      id: newId('tx'),
+      userId: user.id,
+      type: 'deposit',
+      symbol: 'USDT',
+      amount: 100,
+      usdValue: 100,
+      price: 1,
+      status: 'completed',
+      note: 'Automatic signup deposit',
+      createdAt: now,
+    });
     // Give the new account its own referral code so it can refer friends
     // straight away.
     ensureReferralCode(user);

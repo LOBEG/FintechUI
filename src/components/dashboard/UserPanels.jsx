@@ -476,7 +476,7 @@ export function NotificationBell() {
       >
         <Bell className="h-4 w-4"/>
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] bg-neon-orange text-ink-950 font-semibold inline-flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] bg-cyan text-ink-950 font-semibold inline-flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
@@ -501,7 +501,7 @@ export function NotificationBell() {
               {items.map((n) => (
                 <li key={n.id} className={`p-3 ${n.read ? 'opacity-70' : ''}`}>
                   <div className="flex items-start gap-2">
-                    <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 ${n.read ? 'bg-white/20' : 'bg-neon-orange'}`}/>
+                    <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 ${n.read ? 'bg-white/20' : 'bg-cyan'}`}/>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{n.title || (n.kind === 'broadcast' ? 'Broadcast' : 'Notification')}</p>
                       {n.body && <p className="text-xs text-white/65 mt-0.5">{n.body}</p>}
@@ -584,7 +584,7 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
                   <tr key={o.id}>
                     <td className="py-2.5 text-white/55 text-xs">{new Date(o.createdAt).toLocaleString()}</td>
                     <td>
-                      <span className={`chip border ${o.side === 'buy' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' : 'bg-neon-orange/15 text-neon-orange border-neon-orange/30'}`}>{o.side}</span>
+                      <span className={`chip border ${o.side === 'buy' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' : 'bg-cyan/15 text-cyan border-cyan/30'}`}>{o.side}</span>
                     </td>
                     <td className="text-white/80">{o.kind}</td>
                     <td>{o.symbol}</td>
@@ -669,7 +669,7 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
           <div className="grid grid-cols-2 gap-2">
             <div className="flex rounded-lg overflow-hidden border border-white/10">
               <button type="button" onClick={() => setSide('buy')} className={`flex-1 py-2 text-xs ${side === 'buy' ? 'bg-neon-green/20 text-neon-green' : 'bg-white/5 text-white/65'}`}>Buy</button>
-              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-neon-orange/20 text-neon-orange' : 'bg-white/5 text-white/65'}`}>Sell</button>
+              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-cyan/20 text-cyan' : 'bg-white/5 text-white/65'}`}>Sell</button>
             </div>
             <div className="flex rounded-lg overflow-hidden border border-white/10">
               <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-neon-green/15 text-cyan' : 'bg-white/5 text-white/65'}`}>Limit</button>

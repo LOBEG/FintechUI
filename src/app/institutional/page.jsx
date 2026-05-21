@@ -43,7 +43,7 @@ export default function InstitutionalPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Headphones className="h-8 w-8 text-neon-orange mb-3"/>
+              <Headphones className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Dedicated Support</h3>
               <p className="mt-2 text-sm text-white/60">
                 24/7 institutional support desk. Assigned account manager. Direct API integration assistance and co-location options.

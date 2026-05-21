@@ -179,7 +179,7 @@ function QuoteDetail({ q, onClose }) {
           {loading
             ? ' Checking your active session before showing trade actions.'
             : user
-            ? ' Your Oakmont DMG brokerage account is active — place an order from your trading dashboard.'
+            ? ' Your Oakmont DMG brokerage account is active. Place an order from your trading dashboard.'
             : ' To place an order, open a verified Oakmont DMG brokerage account.'}
         </p>
         <div className="mt-3 flex gap-2">
@@ -447,7 +447,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           <p className="text-sm text-white/65 mt-1">Smart order routing to NYSE, NASDAQ, CME, CBOT, COMEX, NYMEX, and global FX venues with real-time fills.</p>
         </div>
         <div className="glass p-4">
-          <Activity className="h-5 w-5 text-neon-orange"/>
+          <Activity className="h-5 w-5 text-cyan"/>
           <h3 className="font-display mt-2">Risk &amp; reporting</h3>
           <p className="text-sm text-white/65 mt-1">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
         </div>

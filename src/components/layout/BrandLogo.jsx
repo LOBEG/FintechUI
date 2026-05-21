@@ -3,9 +3,9 @@ import { BRAND_LOGO_URL, BRAND_NAME } from '@/lib/brand';
 
 export function OakmontLogoMark({ className = 'h-9 w-9' }) {
   return (
-    <span className={`${className} inline-flex items-center justify-center rounded-[1.1rem] bg-[#06111f] border border-cyan/35 shadow-[0_0_34px_rgba(6,214,196,0.22)] overflow-hidden`} aria-hidden="true">
+    <span className={`${className} inline-flex items-center justify-center rounded-[1.1rem] bg-[#03121f] border border-cyan/50 shadow-[0_0_42px_rgba(6,214,196,0.34)] overflow-hidden`} aria-hidden="true">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={BRAND_LOGO_URL} alt={`${BRAND_NAME} logo`} className="h-full w-full object-contain p-0.5"/>
+      <img src={BRAND_LOGO_URL} alt={`${BRAND_NAME} logo`} className="h-full w-full object-cover"/>
     </span>
   );
 }
@@ -14,7 +14,7 @@ export function BrandWordmark({ compact = false, className = '' }) {
   return (
       <span className={`font-display tracking-wide leading-tight whitespace-nowrap ${className}`}>
       <span className="text-gradient-neon">Oakmont</span>
-      <span className="text-white whitespace-nowrap">{compact ? ' DCG' : ' Digital Capital Group'}</span>
+      <span className="text-white whitespace-nowrap">{compact ? ' DMG' : ' Digital Markets Group'}</span>
     </span>
   );
 }

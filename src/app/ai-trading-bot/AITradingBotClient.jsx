@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Zap, Activity, TrendingUp, TrendingDown, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { Bot, Zap, Activity, TrendingUp, TrendingDown, ArrowRight, Sparkles, ShieldCheck, Loader2 } from 'lucide-react';
 import { useLivePrices, useLiveKlines } from '@/lib/useLiveData';
 import { useSession } from '@/lib/useSession';
 import { formatUSD, formatPct } from '@/lib/utils';
@@ -45,11 +45,11 @@ function SignalRow({ symbol }) {
           </span>
         </div>
       </td>
-      <td className="py-2 pr-3 font-mono">{last ? formatUSD(last) : '—'}</td>
-      <td className={`py-2 pr-3 font-mono ${pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{last ? formatPct(pct24) : '—'}</td>
-      <td className="py-2 pr-3 font-mono">{rsiVal != null ? rsiVal.toFixed(1) : '—'}</td>
+      <td className="py-2 pr-3 font-mono">{last ? formatUSD(last) : '-'}</td>
+      <td className={`py-2 pr-3 font-mono ${pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{last ? formatPct(pct24) : '-'}</td>
+      <td className="py-2 pr-3 font-mono">{rsiVal != null ? rsiVal.toFixed(1) : '-'}</td>
       <td className={`py-2 pr-3 font-mono ${fast != null && slow != null ? (fast > slow ? 'text-neon-green' : 'text-neon-red') : 'text-white/45'}`}>
-        {fast != null && slow != null ? (fast > slow ? 'Up' : 'Down') : '—'}
+        {fast != null && slow != null ? (fast > slow ? 'Up' : 'Down') : '-'}
       </td>
       <td className="py-2 pr-3 hidden md:table-cell">
         {path ? (
@@ -66,7 +66,7 @@ function SignalRow({ symbol }) {
 }
 
 export default function AITradingBotClient() {
-  const { user } = useSession();
+  const { user, loading } = useSession();
   const prices = useLivePrices(UNIVERSE);
   const [now, setNow] = useState(() => new Date());
   useEffect(() => { const id = setInterval(() => setNow(new Date()), 15000); return () => clearInterval(id); }, []);
@@ -95,10 +95,12 @@ export default function AITradingBotClient() {
           <br/>across global crypto markets.
         </h1>
         <p className="mt-4 text-white/70 max-w-2xl text-base">
-          Live RSI, momentum, trend bias and 24-hour breadth — recomputed every 15 seconds from primary exchange feeds. Use the signals to inform your manual orders or to configure automated DCA / grid strategies inside your trading dashboard.
+          Live RSI, momentum, trend bias and 24-hour breadth, recomputed every 15 seconds from primary exchange feeds. Use the signals to inform your manual orders or to configure automated DCA / grid strategies inside your trading dashboard.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          {user ? (
+          {loading ? (
+            <span className="btn-ghost opacity-70"><Loader2 className="h-4 w-4 animate-spin"/> Checking session</span>
+          ) : user ? (
             <Link href="/dashboard/analytics" className="btn-primary">Open Bot in Dashboard <ArrowRight className="h-4 w-4"/></Link>
           ) : (
             <>
@@ -171,7 +173,7 @@ export default function AITradingBotClient() {
           </table>
         </div>
         <p className="text-[11px] text-white/45 mt-3">
-          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only — Oakmont DMG does not guarantee any returns and all trading carries risk of loss.
+          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only. Oakmont DMG does not guarantee any returns and all trading carries risk of loss.
         </p>
       </section>
 

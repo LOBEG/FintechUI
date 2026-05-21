@@ -40,7 +40,7 @@ export function Stats() {
             label: 'Tracked Public Assets',
             value: liveReady ? `${aggregate.count}` : 'Connecting',
             icon: Coins,
-            accent: 'text-neon-orange',
+            accent: 'text-cyan',
         },
         {
             label: 'Account Controls',

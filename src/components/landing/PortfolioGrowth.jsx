@@ -3,15 +3,17 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { DonutChart } from '@/components/ui/Charts';
 import { ArrowUpRight, TrendingUp } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 const allocation = [
     { label: 'Stocks', value: 28, color: '#22d3ee' },
-    { label: 'ETFs', value: 22, color: '#c9a24a' },
-    { label: 'Crypto', value: 20, color: '#f7931a' },
+    { label: 'ETFs', value: 22, color: '#06d6c4' },
+    { label: 'Crypto', value: 20, color: '#00ffa3' },
     { label: 'FX', value: 14, color: '#10b981' },
     { label: 'Futures', value: 10, color: '#8b5cf6' },
-    { label: 'Options', value: 6, color: '#ff8a00' },
+    { label: 'Options', value: 6, color: '#ffffff' },
 ];
 export function PortfolioGrowth() {
+    const { user, loading } = useSession();
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
       <div className="grid lg:grid-cols-5 gap-8 items-center">
         <div className="lg:col-span-3">
@@ -49,7 +51,7 @@ export function PortfolioGrowth() {
                 <span className="ml-auto text-white/90 font-medium">{a.value}%</span>
               </div>))}
           </div>
-          <Link href="/login?next=/investor" className="btn-outline mt-5 w-full justify-center text-sm">
+          <Link href={!loading && user ? '/dashboard/analytics' : '/login?next=/investor'} className="btn-outline mt-5 w-full justify-center text-sm">
             Open portfolio dashboard <ArrowUpRight className="h-4 w-4"/>
           </Link>
         </motion.div>
