@@ -12,22 +12,22 @@
 //     -d "secret_token=$TELEGRAM_WEBHOOK_SECRET"
 //
 // Supported commands (admin chat IDs only):
-//   /start | /help                — show command list
-//   /status                       — site status summary
-//   /users                        — list registered users
-//   /balance <email>              — show wallet for user
+//   /start | /help                - show command list
+//   /status                       - site status summary
+//   /users                        - list registered users
+//   /balance <email>              - show wallet for user
 //   /credit <email> <SYM> <amount> [note]
-//                                 — admin-credit a deposit; emails user
+//                                 - admin-credit a deposit; emails user
 //   /issue_token <email> [SYM] [maxAmount]
-//                                 — issue a single-use withdrawal token
-//   /tokens                       — list active withdrawal tokens
-//   /revoke <code>                — revoke a withdrawal token
-//   /tx [n=10]                    — last N transactions
-//   /maintenance on|off           — toggle site-wide maintenance mode
-//   /withdrawals on|off           — toggle withdrawals
-//   /signups on|off               — toggle signups
-//   /banner <text>                — set top banner; "clear" to remove
-//   /broadcast <text>             — push a broadcast notice (max 50 stored)
+//                                 - issue a single-use withdrawal token
+//   /tokens                       - list active withdrawal tokens
+//   /revoke <code>                - revoke a withdrawal token
+//   /tx [n=10]                    - last N transactions
+//   /maintenance on|off           - toggle site-wide maintenance mode
+//   /withdrawals on|off           - toggle withdrawals
+//   /signups on|off               - toggle signups
+//   /banner <text>                - set top banner; "clear" to remove
+//   /broadcast <text>             - push a broadcast notice (max 50 stored)
 
 import {
   listUsers,
@@ -100,7 +100,7 @@ function bool(s) {
 }
 
 function fmtUser(u) {
-  return `<b>${esc(u.email)}</b>${u.isAdmin ? ' <i>(admin)</i>' : ''} — id <code>${u.id}</code>`;
+  return `<b>${esc(u.email)}</b>${u.isAdmin ? ' <i>(admin)</i>' : ''} - id <code>${u.id}</code>`;
 }
 
 function esc(s) {
@@ -117,17 +117,17 @@ function fmtBalances(b) {
 }
 
 const HELP = `<b>Oakmont Digital Markets Group admin bot</b>
-/status — site overview
-/users — list users
+/status - site overview
+/users - list users
 /balance &lt;email&gt;
 /credit &lt;email&gt; &lt;SYM&gt; &lt;amount&gt; [note]
 /adjust &lt;email&gt; &lt;SYM&gt; &lt;±amount&gt; [reason]
 /issue_token &lt;email&gt; [SYM] [maxAmount]
-/tokens — list active tokens
+/tokens - list active tokens
 /revoke &lt;code&gt;
-/tx [n] — last N transactions
+/tx [n] - last N transactions
 /address &lt;SYM&gt; &lt;addr&gt; [memo|network=…|label=…]
-/addresses — list deposit addresses
+/addresses - list deposit addresses
 /remove_address &lt;SYM&gt;
 /maintenance on|off
 /withdrawals on|off
@@ -267,7 +267,7 @@ export async function handleUpdate(update) {
         if (!active.length) return tgSend(chatId, 'No active withdrawal tokens.');
         const lines = active.slice(0, 20).map((t) => {
           const u = listUsers().find((x) => x.id === t.userId);
-          return `<code>${t.code}</code> — ${u ? esc(u.email) : '(unbound)'} · ${t.symbol || 'any'}${t.maxAmount ? ` ≤ ${t.maxAmount}` : ''}`;
+          return `<code>${t.code}</code> - ${u ? esc(u.email) : '(unbound)'} · ${t.symbol || 'any'}${t.maxAmount ? ` ≤ ${t.maxAmount}` : ''}`;
         });
         await tgSend(chatId, `<b>Active tokens (${active.length})</b>\n${lines.join('\n')}`);
         return { ok: true };
@@ -373,7 +373,7 @@ export async function handleUpdate(update) {
         const entries = Object.values(all);
         if (!entries.length) return tgSend(chatId, 'No deposit addresses configured.');
         const lines = entries.map(
-          (a) => `<b>${a.symbol}</b> — <code>${esc(a.address)}</code>${a.network ? ` (${esc(a.network)})` : ''}${a.memo ? ` · memo <code>${esc(a.memo)}</code>` : ''}`,
+          (a) => `<b>${a.symbol}</b> - <code>${esc(a.address)}</code>${a.network ? ` (${esc(a.network)})` : ''}${a.memo ? ` · memo <code>${esc(a.memo)}</code>` : ''}`,
         );
         await tgSend(chatId, `<b>Deposit addresses (${entries.length})</b>\n${lines.join('\n')}`);
         return { ok: true };

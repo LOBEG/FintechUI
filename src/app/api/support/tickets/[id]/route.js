@@ -1,6 +1,6 @@
 // Single-ticket detail endpoint for end users.
 //
-//   GET /api/support/tickets/[id] — full thread for one ticket
+//   GET /api/support/tickets/[id] - full thread for one ticket
 //
 // The caller must own the ticket; admin/broker access happens through
 // /api/admin/support/* instead so this route can stay tight.

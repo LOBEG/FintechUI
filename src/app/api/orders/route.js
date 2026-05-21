@@ -1,4 +1,4 @@
-// Orders API — place, list, cancel limit / stop orders.
+// Orders API - place, list, cancel limit / stop orders.
 //
 // POST   /api/orders      place an order
 // GET    /api/orders      list the current user's orders (open first)

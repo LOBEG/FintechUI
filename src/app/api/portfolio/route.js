@@ -1,4 +1,4 @@
-// GET /api/portfolio — cost-basis P&L per position.
+// GET /api/portfolio - cost-basis P&L per position.
 //
 // Returns the user's current positions enriched with weighted-average
 // cost basis (computed from `transactions.json`), live mark, market
@@ -21,7 +21,7 @@ export async function GET() {
     try {
       marks = symbols.length ? await pricesFor(symbols) : {};
     } catch (_) {
-      // Pricing is best-effort — if Binance is unreachable we still
+      // Pricing is best-effort - if Binance is unreachable we still
       // return the position list so the user can see qty + cost basis.
       marks = {};
     }

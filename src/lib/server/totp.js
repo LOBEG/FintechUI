@@ -1,4 +1,4 @@
-// RFC 6238 TOTP — Time-based One-Time Password.
+// RFC 6238 TOTP - Time-based One-Time Password.
 //
 // Implemented from first principles on top of node:crypto so Oakmont Digital Markets Group
 // doesn't have to take a new dependency. Compatible with Google
@@ -15,7 +15,7 @@ const STEP_SECONDS = 30;
 const DIGITS = 6;
 const DRIFT_WINDOWS = 1;
 
-// RFC 4648 base32 (no padding) — what every authenticator expects.
+// RFC 4648 base32 (no padding) - what every authenticator expects.
 const B32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 export function base32Encode(buf) {
@@ -54,7 +54,7 @@ export function base32Decode(s) {
 
 /**
  * Generate a new 20-byte (160-bit) secret and return both the raw bytes
- * and its base32 encoding — store the base32 on the user record so the
+ * and its base32 encoding - store the base32 on the user record so the
  * provisioning URI can be rebuilt later.
  */
 export function generateSecret() {
@@ -115,7 +115,7 @@ export function provisioningUri({ account, issuer, secretBase32 }) {
 }
 
 /**
- * Cryptographically random one-time recovery codes — 10 codes of 10
+ * Cryptographically random one-time recovery codes - 10 codes of 10
  * hex chars each, used to recover access when the user loses their
  * authenticator. Stored hashed on the user record.
  */

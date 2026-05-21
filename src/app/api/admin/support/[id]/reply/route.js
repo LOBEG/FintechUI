@@ -8,7 +8,7 @@
 // - Pushes a notification into the user's notification centre so the
 //   reply shows up in the bell-icon dropdown alongside trade alerts.
 // - Sends a courtesy email so off-platform users get pinged too.
-// - Writes an audit-log entry — replies are admin actions.
+// - Writes an audit-log entry - replies are admin actions.
 import { NextResponse } from 'next/server';
 import { requireAdmin, newId } from '@/lib/server/auth.js';
 import {
@@ -59,7 +59,7 @@ export async function POST(req, { params }) {
       ticketId: ticket.id,
       createdAt: Date.now(),
     });
-    // Best-effort email fan-out — failure here must not roll back the reply.
+    // Best-effort email fan-out - failure here must not roll back the reply.
     try {
       const u = findUserById(ticket.userId);
       if (u && u.email) {
@@ -67,7 +67,7 @@ export async function POST(req, { params }) {
         const safeBody = escapeHtml(text).replace(/\n/g, '<br/>');
         await sendEmail({
           to: u.email,
-          subject: `Oakmont Digital Markets Group support reply — ${ticket.subject}`,
+          subject: `Oakmont Digital Markets Group support reply - ${ticket.subject}`,
           html: `<p>Hi ${escapeHtml(u.name || u.email)},</p>
 <p>Our support team has replied to your ticket <strong>${safeSubject}</strong>:</p>
 <blockquote style="border-left:3px solid #ccc;padding:0 12px;color:#444">${safeBody}</blockquote>

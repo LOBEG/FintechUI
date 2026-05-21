@@ -1,6 +1,6 @@
 // One-tap convert between two supported assets at the live Binance mid
 // price, plus a small spread (default 50 bps = 0.50%). The spread is the
-// only fee — there is no separate taker bps for convert.
+// only fee - there is no separate taker bps for convert.
 //
 // GET  /api/convert?from=BTC&to=ETH&amount=0.1
 //   → { rate, mid, fromUsd, toAmount, spreadBps, spreadUsd }
@@ -131,7 +131,7 @@ export async function POST(req) {
     upsertUser(user);
 
     const now = Date.now();
-    // Outgoing leg — modelled as a 'sell' so pnl.js realises against
+    // Outgoing leg - modelled as a 'sell' so pnl.js realises against
     // avgCost. USDT outgoing is modelled as 'invest' so the engine does
     // not try to realise USDT P&L.
     const outType = q.fromSym === 'USDT' ? 'invest' : 'sell';
@@ -151,7 +151,7 @@ export async function POST(req) {
       createdAt: now,
     };
     addTransaction(outTx);
-    // Incoming leg — modelled as 'invest' so pnl.js extends the pool.
+    // Incoming leg - modelled as 'invest' so pnl.js extends the pool.
     // USDT incoming is modelled as 'sell' (proceeds), matching the dual
     // role of USDT as the quote currency.
     const inType = q.toSym === 'USDT' ? 'sell' : 'invest';

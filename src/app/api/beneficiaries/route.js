@@ -1,11 +1,11 @@
-// Beneficiary address book — list, add, remove.
+// Beneficiary address book - list, add, remove.
 //
 // Adding a beneficiary triggers an email confirmation. The user must
 // click the link in the email AND then wait out a 48-hour cool-down
 // before the address can receive funds. This is the standard pattern
 // every major broker uses to defeat ATO-and-drain attacks.
 //
-// Sanctioned addresses (OFAC SDN list — see src/lib/server/sanctions.js)
+// Sanctioned addresses (OFAC SDN list - see src/lib/server/sanctions.js)
 // are rejected at create time and at withdraw time.
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
@@ -112,7 +112,7 @@ export async function POST(req) {
       });
       return NextResponse.json({ error: sanctioned }, { status: 400 });
     }
-    // Prevent duplicates per (user, symbol, address, memo) — silently
+    // Prevent duplicates per (user, symbol, address, memo) - silently
     // returning the existing row would mask phishing edits, so be loud.
     const dup = beneficiariesForUser(user.id).find(
       (b) =>
@@ -146,7 +146,7 @@ export async function POST(req) {
     try {
       await sendEmail({
         to: user.email,
-        subject: `Confirm new withdrawal beneficiary — ${symbol}`,
+        subject: `Confirm new withdrawal beneficiary - ${symbol}`,
         html,
         text: `Confirm beneficiary "${label}" for ${symbol} at ${address}. Open ${confirmUrl}. A 48-hour cool-down applies after confirmation.`,
       });

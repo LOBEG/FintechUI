@@ -1,10 +1,10 @@
 // KYC tier ladder + velocity-based withdrawal limits.
 //
 // Tier ladder (matches the problem statement A2 / B1):
-//   Tier 0 — unverified email. No withdrawals at all.
-//   Tier 1 — email verified + phone confirmed. ≤ $1,000 / day, $5,000 / 30 d.
-//   Tier 2 — ID + selfie verified by admin. ≤ $25,000 / day, $100,000 / 30 d.
-//   Tier 3 — proof of address + declared source of funds. Effectively unlimited
+//   Tier 0 - unverified email. No withdrawals at all.
+//   Tier 1 - email verified + phone confirmed. ≤ $1,000 / day, $5,000 / 30 d.
+//   Tier 2 - ID + selfie verified by admin. ≤ $25,000 / day, $100,000 / 30 d.
+//   Tier 3 - proof of address + declared source of funds. Effectively unlimited
 //            (we still apply a $1M/day sanity cap so an admin-side mistake
 //            cannot cause an immediate drain).
 //
@@ -23,7 +23,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const MONTH_MS = 30 * DAY_MS;
 
 /**
- * Per-tier USD limits. `daily` and `monthly` are inclusive ceilings —
+ * Per-tier USD limits. `daily` and `monthly` are inclusive ceilings -
  * the next withdrawal must fit *under* them. Tier-0 is intentionally zero
  * so even a $1 attempted withdrawal is refused for an unverified user.
  */
@@ -35,7 +35,7 @@ export const TIER_LIMITS = Object.freeze({
 });
 
 /**
- * Returns the user's effective KYC tier — capped by their email-verified
+ * Returns the user's effective KYC tier - capped by their email-verified
  * state so a stale `kycTier=2` on an unverified record cannot leak through.
  *
  * @param {object} user

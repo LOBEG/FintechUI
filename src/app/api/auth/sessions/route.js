@@ -1,5 +1,5 @@
 // List the signed-in user's active sessions and let them revoke any one
-// (or all others) — the "sign out everywhere" primitive.
+// (or all others) - the "sign out everywhere" primitive.
 import { NextResponse } from 'next/server';
 import { requireUser, currentSessionId } from '@/lib/server/auth.js';
 import { listSessions, revokeSession } from '@/lib/server/store.js';

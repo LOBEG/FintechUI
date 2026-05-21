@@ -1,4 +1,4 @@
-// Order settler — drives limit and stop orders to fills.
+// Order settler - drives limit and stop orders to fills.
 //
 // Lifecycle
 //   open      → user just placed; settler is monitoring the trigger.
@@ -14,7 +14,7 @@
 //   sell + stop  : fill when price <= triggerPrice (stop loss)
 //
 // Settlement is "best effort, single Node process". We schedule one
-// global setInterval per worker — guarded with globalThis so HMR /
+// global setInterval per worker - guarded with globalThis so HMR /
 // repeated route imports don't spawn duplicates. For multi-process
 // deployments this should move to a dedicated worker + lock file or
 // pg_advisory_lock.
@@ -187,7 +187,7 @@ async function tick() {
     alerts = activePriceAlerts();
     dcas = activeDcas();
   } catch { return; }
-  // Process due DCAs first — they don't depend on a price-cross condition,
+  // Process due DCAs first - they don't depend on a price-cross condition,
   // just on wall-clock time, so we don't need a per-symbol price loop here.
   const now = Date.now();
   for (const d of dcas) {
@@ -245,7 +245,7 @@ async function runDca(dca) {
         id: newId('ntf'),
         userId: user.id,
         kind: 'dca',
-        title: `DCA paused — top up USDT`,
+        title: `DCA paused - top up USDT`,
         body: `Your ${dca.symbol} recurring buy ($${usdAmount}) was paused at ${new Date().toISOString()} because your USDT balance was below the tranche amount.`,
         createdAt: Date.now(),
       });
@@ -254,7 +254,7 @@ async function runDca(dca) {
   }
   const price = await priceFor(dca.symbol);
   if (!price || !isFinite(price)) {
-    // Don't advance — try again next tick.
+    // Don't advance - try again next tick.
     return;
   }
   const { net: netUsd, fee, bps } = applyTakerFee(usdAmount);
@@ -279,7 +279,7 @@ async function runDca(dca) {
     fee,
     feeBps: bps,
     status: 'completed',
-    note: `DCA tranche — ${cryptoAmount} ${dca.symbol} for $${usdAmount} (fee ${fee.toFixed(2)} USDT)`,
+    note: `DCA tranche - ${cryptoAmount} ${dca.symbol} for $${usdAmount} (fee ${fee.toFixed(2)} USDT)`,
     dcaId: dca.id,
     createdAt: Date.now(),
   });

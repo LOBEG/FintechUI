@@ -1,15 +1,15 @@
 // Maker/taker fee model.
 //
 // Brokers charge a small percentage on every fill. Oakmont Digital Markets Group bills every
-// invest (buy) and sell as a "taker" fill at the market price — we never
+// invest (buy) and sell as a "taker" fill at the market price - we never
 // actually rest an order on Binance, so we always pay the taker rate.
 //
 // Fees are quoted in basis points (1 bp = 0.01 %) to avoid floating-point
 // surprises in config. Defaults are competitive with mid-tier retail
 // brokers; ops can override them with env vars.
 //
-//   FEE_TAKER_BPS  — applies to instant market trades (default 20 = 0.20%)
-//   FEE_MAKER_BPS  — applies to resting limit orders that get filled
+//   FEE_TAKER_BPS  - applies to instant market trades (default 20 = 0.20%)
+//   FEE_MAKER_BPS  - applies to resting limit orders that get filled
 //                     (default 10 = 0.10%; not yet used)
 //
 // `applyFee(usd)` returns { net, fee, bps } where net + fee = usd. The

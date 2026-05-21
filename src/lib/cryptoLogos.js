@@ -38,12 +38,12 @@ const logoMap = {
 // symbols ("USDT", "BTC") and trading pairs ("BTCUSDT", "ETHUSDC"). The
 // previous implementation stripped USDT / USDC unconditionally which
 // meant `getCryptoLogo('USDT')` collapsed to an empty string and the
-// stablecoin rendered as a placeholder initial circle everywhere.
+// stablecoin rendered as a fallback initial circle everywhere.
 export function getCryptoLogo(symbol) {
     if (!symbol) return null;
     const u = String(symbol).toUpperCase();
     // Exact match first - this is what fixes USDT / USDC / BUSD showing
-    // a placeholder circle instead of their real logo.
+    // a fallback circle instead of their real logo.
     if (logoMap[u]) return logoMap[u];
     // Otherwise treat it as a pair: strip a trailing quote-currency
     // suffix (USDT / USDC / BUSD / FDUSD / TUSD / DAI) only when it

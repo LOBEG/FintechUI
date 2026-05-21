@@ -3,7 +3,7 @@
 //   POST /api/support/tickets/[id]/messages
 //     body: { body: string }
 //
-// Re-opens a ticket that was previously 'answered' or 'awaiting_user' —
+// Re-opens a ticket that was previously 'answered' or 'awaiting_user' -
 // the desk treats anything the user touches as needing attention again.
 import { NextResponse } from 'next/server';
 import { requireUser, newId } from '@/lib/server/auth.js';

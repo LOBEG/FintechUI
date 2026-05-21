@@ -1,7 +1,7 @@
 // Support tickets endpoint for end users.
 //
-//   GET  /api/support/tickets         — list the caller's tickets
-//   POST /api/support/tickets         — open a new ticket
+//   GET  /api/support/tickets         - list the caller's tickets
+//   POST /api/support/tickets         - open a new ticket
 //                                        body: { subject, body, priority? }
 //
 // Tickets always belong to one user. Admin replies come back via the

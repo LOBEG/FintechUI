@@ -6,7 +6,7 @@
 //
 // Triggering is done by the same background ticker that fills orders
 // (src/lib/server/orders.js → tick()) so we don't open a second Binance
-// stream — one priceFor() per symbol covers both subsystems.
+// stream - one priceFor() per symbol covers both subsystems.
 import { NextResponse } from 'next/server';
 import { requireUser, newId } from '@/lib/server/auth.js';
 import {

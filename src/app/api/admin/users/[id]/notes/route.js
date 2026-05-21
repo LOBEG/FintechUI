@@ -1,12 +1,12 @@
-// Per-user admin notes — free-form context the desk records against a
+// Per-user admin notes - free-form context the desk records against a
 // user account (calls, AML observations, "asked about X on DD/MM").
 //
-//   GET  /api/admin/users/[id]/notes        — list notes for one user
-//   POST /api/admin/users/[id]/notes        — append a note
+//   GET  /api/admin/users/[id]/notes        - list notes for one user
+//   POST /api/admin/users/[id]/notes        - append a note
 //                                             body: { body: string }
 //
 // Notes are append-only by design so the trail is never silently
-// rewritten — see store.addUserNote / notesForUser.
+// rewritten - see store.addUserNote / notesForUser.
 import { NextResponse } from 'next/server';
 import { requireAdmin, newId } from '@/lib/server/auth.js';
 import {

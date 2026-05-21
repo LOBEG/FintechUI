@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
 const CODE_TTL_MS = 30 * 60 * 1000;
 
 function sixDigit() {
-  // 100000..999999 — uniform via rejection: we draw a 24-bit number and
+  // 100000..999999 - uniform via rejection: we draw a 24-bit number and
   // mod, which is fine for a six-digit OTP.
   const n = crypto.randomBytes(3).readUIntBE(0, 3) % 900_000 + 100_000;
   return String(n);
@@ -38,7 +38,7 @@ export async function POST(req) {
     const last = latestVerificationForUser(user.id);
     if (last && Date.now() - last.createdAt < 60_000) {
       return NextResponse.json({
-        error: 'A verification code was just sent — please wait a minute before requesting another.',
+        error: 'A verification code was just sent - please wait a minute before requesting another.',
       }, { status: 429 });
     }
     const code = sixDigit();

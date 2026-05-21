@@ -79,7 +79,7 @@ export async function POST(req) {
     // user may also omit it entirely (manual desk processing).
     if (address) {
       // Always screen against the embedded OFAC sample list, even when
-      // the address comes from a saved beneficiary — the list updates
+      // the address comes from a saved beneficiary - the list updates
       // over time, so a previously-accepted address may now be sanctioned.
       const sanctioned = sanctionsMatchReason(address);
       if (sanctioned) {

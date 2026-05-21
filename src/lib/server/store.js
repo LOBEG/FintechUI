@@ -608,7 +608,7 @@ export function addTicketMessage(id, msg) {
 
 // ---------------- ADMIN/BROKER NOTES ----------------
 // Free-form context that the desk can record against a user account.
-// Notes are append-only — once written they're never edited so the
+// Notes are append-only - once written they're never edited so the
 // audit trail is preserved; deletion happens at retention time only.
 //   { id, userId, authorId, authorEmail, body, createdAt }
 export function listUserNotes() {

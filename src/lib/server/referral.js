@@ -15,7 +15,7 @@
 //     (e.g. settler retries) never double-pay.
 //
 // All operations are best-effort: if the referrer disappears or the
-// rebate is sub-cent we just skip — the referee's flow is never
+// rebate is sub-cent we just skip - the referee's flow is never
 // allowed to fail because of the rebate side-effect.
 
 import crypto from 'node:crypto';
@@ -49,7 +49,7 @@ function generateUniqueCode(existing) {
       .toUpperCase();
     if (code.length >= 6 && !used.has(code)) return code;
   }
-  // Fallback that's guaranteed unique enough — should never trigger.
+  // Fallback that's guaranteed unique enough - should never trigger.
   return `R${Date.now().toString(36).toUpperCase()}`;
 }
 
@@ -74,14 +74,14 @@ export function rebateRateInfo() {
 
 /**
  * Credit a referral rebate, if applicable. Safe to call from any fee-
- * charging route — failures are swallowed and only logged.
+ * charging route - failures are swallowed and only logged.
  *
- *   refereeId  — the user who just paid the fee
- *   feeUsd     — the broker fee charged on the fill, in USDT
- *   sourceTxId — the source transaction id (for idempotency); pass the
+ *   refereeId  - the user who just paid the fee
+ *   feeUsd     - the broker fee charged on the fill, in USDT
+ *   sourceTxId - the source transaction id (for idempotency); pass the
  *                tx.id of the fill so retries don't double-pay.
- *   kind       — short label of the source ('invest', 'sell',
- *                'convert', 'dca', 'order') — purely for the audit row.
+ *   kind       - short label of the source ('invest', 'sell',
+ *                'convert', 'dca', 'order') - purely for the audit row.
  */
 export function creditReferralRebate({ refereeId, feeUsd, sourceTxId, kind }) {
   try {
@@ -131,7 +131,7 @@ export function creditReferralRebate({ refereeId, feeUsd, sourceTxId, kind }) {
     });
     return { rebate, referrerId: referrer.id, txId };
   } catch {
-    // Never propagate — the referee's flow must not fail because of a
+    // Never propagate - the referee's flow must not fail because of a
     // bookkeeping side-effect.
     return null;
   }

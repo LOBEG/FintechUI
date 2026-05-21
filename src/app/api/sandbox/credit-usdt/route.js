@@ -4,7 +4,7 @@
 // each user can call this endpoint *once* to receive that amount of
 // USDT (faucet-style) so they can try the invest flow end-to-end.
 //
-// This is OFF by default — production deployments should leave the env
+// This is OFF by default - production deployments should leave the env
 // var unset so real-money flows remain admin-gated.
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/lib/server/auth.js';

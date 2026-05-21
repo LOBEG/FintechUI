@@ -441,7 +441,7 @@ export function EmailVerifyBanner({ user }) {
 }
 
 // ---- NotificationBell --------------------------------------------------
-// Replaces the placeholder Bell in the top bar. Polls /api/notifications
+// Replaces the notification Bell in the top bar. Polls /api/notifications
 // every 30s and opens a dropdown of unread broadcasts + per-user
 // notifications. Marking-all-read is one click.
 export function NotificationBell() {

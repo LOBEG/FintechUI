@@ -3,13 +3,13 @@
 // random ID if the upstream load balancer didn't already attach one
 // (Cloudflare sends cf-ray; some proxies send x-request-id directly).
 //
-// Kept dependency-free — Next.js middleware runs on the edge runtime
+// Kept dependency-free - Next.js middleware runs on the edge runtime
 // where node:crypto isn't available, so we use Web Crypto via
 // crypto.randomUUID().
 import { NextResponse } from 'next/server';
 
 export const config = {
-  // Skip Next internals + static assets — they don't need request IDs.
+  // Skip Next internals + static assets - they don't need request IDs.
   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
 

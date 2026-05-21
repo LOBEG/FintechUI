@@ -1,10 +1,10 @@
 // User-facing KYC endpoint.
-//   GET  /api/kyc — current tier + 24 h / 30 d usage vs limits + any pending submission
-//   POST /api/kyc — submit a Tier-1/2/3 upgrade request
+//   GET  /api/kyc - current tier + 24 h / 30 d usage vs limits + any pending submission
+//   POST /api/kyc - submit a Tier-1/2/3 upgrade request
 //
 // The payload shape varies by tier; the route validates the minimum
 // required fields and stores the submission for admin review. We never
-// approve automatically — that would defeat the point of KYC.
+// approve automatically - that would defeat the point of KYC.
 import { NextResponse } from 'next/server';
 import { requireUser, newId } from '@/lib/server/auth.js';
 import {
@@ -57,7 +57,7 @@ export async function POST(req) {
       return NextResponse.json({ error: `Submit Tier ${current + 1} first before requesting Tier ${requestedTier}.` }, { status: 400 });
     }
     // Tier-1 requires a verified email (the Tier-0 floor is precisely
-    // "anyone can sign up") — refuse with a clear next step.
+    // "anyone can sign up") - refuse with a clear next step.
     if (requestedTier >= 1 && !user.emailVerifiedAt) {
       return NextResponse.json({ error: 'Verify your email first before applying for KYC.' }, { status: 400 });
     }

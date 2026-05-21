@@ -119,7 +119,7 @@ export default function AdminPage() {
   }, [audit]);
 
   // Wallet hot/cold split from real AUM. If we have no float yet the
-  // donut still renders with a placeholder ratio so the chart isn't blank.
+  // donut still renders with a fallback ratio so the chart isn't blank.
   const walletSplit = useMemo(() => {
     const aum = metrics?.aum || 0;
     if (aum <= 0) {

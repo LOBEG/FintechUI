@@ -1,7 +1,7 @@
 // Admin KYC queue.
-//   GET  /api/admin/kyc — list pending submissions (oldest first) + recently
+//   GET  /api/admin/kyc - list pending submissions (oldest first) + recently
 //                         reviewed (newest first) for context
-//   POST /api/admin/kyc — approve or reject a submission. Approving bumps
+//   POST /api/admin/kyc - approve or reject a submission. Approving bumps
 //                         the user's `kycTier` to the requested tier.
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/server/auth.js';

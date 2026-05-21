@@ -30,7 +30,7 @@ const curatedTestimonials = [
         name: 'Luca Moretti',
         role: 'Managed account client',
         rating: 5,
-        text: 'The platform presents crypto investing with the same clarity I expect from a fintech product: clean portfolio views, direct action points, and transparent reporting instead of placeholder screens or unclear buttons.',
+        text: 'The platform presents crypto investing with the same clarity I expect from a fintech product: clean portfolio views, direct action points, and transparent reporting instead of inactive screens or unclear buttons.',
     },
     {
         id: 'curated-sofia-almeida',

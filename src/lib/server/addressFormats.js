@@ -1,6 +1,6 @@
 // Per-asset deposit address validation.
 //
-// These regexes are intentionally permissive — they catch obvious typos
+// These regexes are intentionally permissive - they catch obvious typos
 // (wrong charset, wrong length) without trying to perform full checksum
 // verification (which would require an asset-specific cryptographic
 // library per chain). The goal is to make it impossible for an admin to

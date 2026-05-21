@@ -421,7 +421,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           Trade everything from <span className="text-gradient-neon">stocks &amp; ETFs</span> to <span className="text-gradient-neon">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
-          Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no placeholders. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
+          Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
         </p>
       </motion.div>
       <div className="flex flex-wrap gap-1.5">

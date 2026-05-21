@@ -1,4 +1,4 @@
-// Admin metrics dashboard — AUM, per-asset float, 24h dep/wd, MAU.
+// Admin metrics dashboard - AUM, per-asset float, 24h dep/wd, MAU.
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/server/auth.js';
 import {
@@ -51,7 +51,7 @@ export async function GET() {
 
     const sum = (arr) => arr.reduce((s, t) => s + (parseFloat(t.usdValue) || 0), 0);
 
-    // Monthly active users — anyone with a session touched in the
+    // Monthly active users - anyone with a session touched in the
     // window. Sessions are 30-day cookies so this is a reasonable
     // approximation. We also count anyone with a tx in the window.
     const mauIds = new Set();

@@ -1,5 +1,5 @@
 // Admin adjusts a user's invested balance. Accepts a signed amount: positive
-// to increase (typical use case — reflect ROI/yield), negative to decrease.
+// to increase (typical use case - reflect ROI/yield), negative to decrease.
 // Records a real transaction of type "adjust" so the change shows up in the
 // user's history and emails the user a notification.
 import { NextResponse } from 'next/server';
@@ -75,7 +75,7 @@ export async function POST(req) {
       has just been applied to your Oakmont Digital Markets Group account.</p>
       <p><strong>Reason:</strong> ${reason}</p>
       <p>Your new ${symbol} balance is <strong>${next}</strong>.</p>
-      <p>— The Oakmont Digital Markets Group team</p>
+      <p>- The Oakmont Digital Markets Group team</p>
     `;
     try {
       await sendEmail({

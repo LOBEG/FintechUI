@@ -1,5 +1,5 @@
 // Admin sets a user's balance to an *absolute* value (not a delta). This
-// is the "control all crypto for all registered users" primitive — useful
+// is the "control all crypto for all registered users" primitive - useful
 // when the admin needs to reconcile a position rather than adjust by a
 // signed delta. Records a `set` transaction so the user sees the change in
 // their history and dashboard, and appends an audit-log entry.
@@ -71,7 +71,7 @@ export async function POST(req) {
           to: user.email,
           subject: `Your Oakmont Digital Markets Group ${symbol} balance was updated`,
           text: `Your Oakmont Digital Markets Group ${symbol} balance has been set to ${target}. Reason: ${reason}.`,
-          html: `<p>Hello ${user.name || ''},</p><p>Your Oakmont Digital Markets Group <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>— The Oakmont Digital Markets Group team</p>`,
+          html: `<p>Hello ${user.name || ''},</p><p>Your Oakmont Digital Markets Group <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>- The Oakmont Digital Markets Group team</p>`,
         });
       } catch (_) {}
     }

@@ -3,7 +3,7 @@
 // Admin typo protection: 0.05 → 0.5 BTC is otherwise permanent. The
 // reversal window is 30 minutes from the original tx; after that, the
 // admin must manually adjust (which is itself audited). The original
-// transaction is NEVER edited — we record a counter-tx of opposite sign
+// transaction is NEVER edited - we record a counter-tx of opposite sign
 // and link the two via `reverses` / `reversedBy`, so the audit chain
 // stays append-only.
 import { NextResponse } from 'next/server';
@@ -55,14 +55,14 @@ export async function POST(req) {
 
     // For credit/adjust the `amount` is positive in the user's favour.
     // To reverse we debit the same crypto amount. If the user has since
-    // spent some of it (e.g. invested), refuse — we'd be creating a
+    // spent some of it (e.g. invested), refuse - we'd be creating a
     // negative balance, which is a far worse bug than a typo.
     const sym = orig.symbol;
     const held = user.balances?.[sym] || 0;
     const refund = parseFloat(orig.amount) || 0;
     if (held + 1e-9 < refund) {
       return NextResponse.json({
-        error: `Cannot reverse — user has only ${held} ${sym} remaining; some was already used.`,
+        error: `Cannot reverse - user has only ${held} ${sym} remaining; some was already used.`,
       }, { status: 409 });
     }
 
@@ -79,7 +79,7 @@ export async function POST(req) {
       price: orig.price,
       usdValue: orig.usdValue,
       status: 'completed',
-      note: `Reversal of ${orig.id}${reason ? ` — ${reason}` : ''}`,
+      note: `Reversal of ${orig.id}${reason ? ` - ${reason}` : ''}`,
       reverses: orig.id,
       adminId: admin.id,
       createdAt: Date.now(),
@@ -87,7 +87,7 @@ export async function POST(req) {
     addTransaction(counter);
 
     // Mark the original so the same tx can't be reversed twice. We do
-    // NOT touch its amount/usdValue/etc. — that would defeat the
+    // NOT touch its amount/usdValue/etc. - that would defeat the
     // immutability promise of the ledger.
     const idx = txs.findIndex((t) => t.id === txId);
     if (idx !== -1) {

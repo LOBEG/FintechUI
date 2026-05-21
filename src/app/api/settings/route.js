@@ -4,7 +4,7 @@ import { getSettings } from '@/lib/server/store.js';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// Public, read-only — used by the UI to react to admin/telegram toggles.
+// Public, read-only - used by the UI to react to admin/telegram toggles.
 export async function GET() {
   const s = getSettings();
   return NextResponse.json({

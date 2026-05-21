@@ -1,12 +1,12 @@
 // DCA (recurring buys).
 //
-//   GET    /api/dca           — list current user's schedules
-//   POST   /api/dca           — create a new schedule
-//   PATCH  /api/dca           — { id, action: 'pause' | 'resume' }
-//   DELETE /api/dca?id=...    — cancel a schedule
+//   GET    /api/dca           - list current user's schedules
+//   POST   /api/dca           - create a new schedule
+//   PATCH  /api/dca           - { id, action: 'pause' | 'resume' }
+//   DELETE /api/dca?id=...    - cancel a schedule
 //
 // Schedules are executed by the order settler (lib/server/orders.js)
-// every 5s — see runDca() there for the per-tranche logic.
+// every 5s - see runDca() there for the per-tranche logic.
 import { NextResponse } from 'next/server';
 import { requireUser, newId } from '@/lib/server/auth.js';
 import {
@@ -23,7 +23,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // Allowed cadences. Keys map to a human-readable label and a
-// millisecond interval. We intentionally cap the floor at "daily" —
+// millisecond interval. We intentionally cap the floor at "daily" -
 // running tighter than that wastes ticks and looks like a bot.
 const INTERVALS = {
   daily:    { ms: 24 * 60 * 60 * 1000,         label: 'Every day' },
@@ -88,7 +88,7 @@ export async function POST(req) {
       intervalMs: INTERVALS[interval].ms,
       status: 'active',
       runs: 0,
-      // First tranche fires on the next tick — settlement is best-effort
+      // First tranche fires on the next tick - settlement is best-effort
       // so we don't try to anchor to a specific weekday.
       nextRunAt: now,
       createdAt: now,

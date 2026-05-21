@@ -1,5 +1,5 @@
 // Admin freezes or unfreezes a user account. Disabled users cannot log in,
-// invest, or withdraw — but their balances and transaction history are
+// invest, or withdraw - but their balances and transaction history are
 // preserved, so a mistaken freeze is non-destructive.
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/server/auth.js';

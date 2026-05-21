@@ -1,5 +1,5 @@
 // Authentication: scrypt password hashing + HMAC-signed session cookies.
-// No external dependencies — uses node:crypto only.
+// No external dependencies - uses node:crypto only.
 
 import crypto from 'node:crypto';
 import { cookies } from 'next/headers';
@@ -17,7 +17,7 @@ const COOKIE_TTL_DAYS = 30;
 function secret() {
   const s = process.env.SESSION_SECRET;
   if (s && s.length >= 16) return s;
-  // In production a missing/short secret is a hard error — silently
+  // In production a missing/short secret is a hard error - silently
   // falling back to a known string would let anyone forge cookies.
   if (process.env.NODE_ENV === 'production') {
     throw new Error(

@@ -8,7 +8,7 @@
 // Why weighted-average instead of FIFO/LIFO?
 //   * It is the same model HMRC's Section 104 pool and most retail
 //     brokers use.
-//   * It is path-independent — `recomputePosition` can be re-run any
+//   * It is path-independent - `recomputePosition` can be re-run any
 //     time against the immutable tx log and gets the same answer.
 //   * It needs only two numbers per symbol (qty, totalCost).
 //
@@ -53,18 +53,18 @@ export function computePositions(userId, transactions = listTransactions()) {
     if (INFLOW.has(t.type)) delta = Number(t.amount) || 0;
     else if (OUTFLOW.has(t.type)) delta = -(Number(t.amount) || 0);
     else if (SIGNED.has(t.type)) delta = Number(t.amount) || 0;
-    else continue; // unknown type — ignore for cost basis
+    else continue; // unknown type - ignore for cost basis
     if (!delta) continue;
 
     const pos = positions[sym] || { qty: 0, totalCost: 0, realised: 0 };
     if (delta > 0) {
-      // Inflow — extend the pool. A zero-price inflow (rare, only if
+      // Inflow - extend the pool. A zero-price inflow (rare, only if
       // priceFor failed at write time) is recorded but does not move
       // avgCost.
       pos.qty += delta;
       pos.totalCost += delta * price;
     } else {
-      // Outflow — reduce the pool pro-rata. We clamp the outflow to
+      // Outflow - reduce the pool pro-rata. We clamp the outflow to
       // the current qty so a buggy/over-withdraw tx can't drive qty
       // negative or invent realised P&L from nothing.
       const out = Math.min(-delta, pos.qty);

@@ -1,9 +1,9 @@
-// 2FA endpoints — enroll, confirm, disable.
+// 2FA endpoints - enroll, confirm, disable.
 //
-//   GET    /api/auth/2fa            — current 2FA status for the user
-//   POST   /api/auth/2fa/enroll     — generate a fresh secret + QR URI
-//   POST   /api/auth/2fa/confirm    — verify the first code and enable
-//   DELETE /api/auth/2fa            — disable (requires current code or password)
+//   GET    /api/auth/2fa            - current 2FA status for the user
+//   POST   /api/auth/2fa/enroll     - generate a fresh secret + QR URI
+//   POST   /api/auth/2fa/confirm    - verify the first code and enable
+//   DELETE /api/auth/2fa            - disable (requires current code or password)
 //
 // We expose all three actions through a single route file using a
 // `?action=` query param to keep the route tree compact.
@@ -91,7 +91,7 @@ export async function POST(req) {
         action: 'totp.enable',
         target: user.email,
       });
-      // Recovery codes are shown ONCE — never persisted in plain text.
+      // Recovery codes are shown ONCE - never persisted in plain text.
       return NextResponse.json({ ok: true, recoveryCodes: recovery });
     }
 

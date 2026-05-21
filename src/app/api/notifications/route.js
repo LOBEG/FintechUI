@@ -1,7 +1,7 @@
 // User-facing notifications endpoint.
 //
-//   GET  /api/notifications        — list, newest first; broadcasts + own
-//   POST /api/notifications/read   — mark id(s) read; body { ids: [...] | 'all' }
+//   GET  /api/notifications        - list, newest first; broadcasts + own
+//   POST /api/notifications/read   - mark id(s) read; body { ids: [...] | 'all' }
 //
 // Admins can push per-user notifications via /api/admin/* endpoints
 // (e.g. the operations dashboard); broadcasts come from settings.

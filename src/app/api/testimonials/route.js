@@ -1,7 +1,7 @@
 // Public: list approved testimonials. Authenticated: post a new one.
 // Users who have at least one successful invest or admin_credit are
 // eligible to post. Newly posted testimonials enter `pending` status and
-// must be approved by an admin — except when AUTO_APPROVE_TESTIMONIALS is
+// must be approved by an admin - except when AUTO_APPROVE_TESTIMONIALS is
 // set to "true", in which case they show up immediately.
 import { NextResponse } from 'next/server';
 import { currentUser, newId } from '@/lib/server/auth.js';
@@ -59,7 +59,7 @@ export async function POST(req) {
     const role = body.role ? String(body.role).slice(0, 80).trim() : '';
     const avatarUrl = cleanAvatarUrl(body.avatarUrl);
     if (text.length < 20) {
-      return NextResponse.json({ error: 'Tell us a bit more — at least 20 characters.' }, { status: 400 });
+      return NextResponse.json({ error: 'Tell us a bit more - at least 20 characters.' }, { status: 400 });
     }
     if (text.length > 600) {
       return NextResponse.json({ error: 'Please keep it under 600 characters.' }, { status: 400 });

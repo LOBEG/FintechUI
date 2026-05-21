@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 // In-memory ring of recently-seen update_ids. ~5k entries ≈ tens of
 // minutes of legitimate traffic on a busy bot, plenty to defeat replays
-// from a single capture. Survives only as long as the process — that's
+// from a single capture. Survives only as long as the process - that's
 // fine because a process restart resets the secret window.
 const SEEN = new Set();
 const SEEN_ORDER = [];

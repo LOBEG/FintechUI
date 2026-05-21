@@ -1,6 +1,6 @@
 // Referral programme dashboard endpoint.
 //
-//   GET /api/referral — returns the caller's code, the share URL, the
+//   GET /api/referral - returns the caller's code, the share URL, the
 //                       list of referees (anonymised email), the total
 //                       rebated to date, and the rebate rate.
 import { NextResponse } from 'next/server';

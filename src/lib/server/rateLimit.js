@@ -61,7 +61,7 @@ export function rateLimitOrJson(req, opts) {
   if (r.ok) return null;
   const seconds = Math.ceil(r.retryAfterMs / 1000);
   return NextResponse.json(
-    { error: `Too many requests — try again in ${seconds}s.` },
+    { error: `Too many requests - try again in ${seconds}s.` },
     {
       status: 429,
       headers: { 'Retry-After': String(seconds) },
