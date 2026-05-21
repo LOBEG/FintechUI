@@ -13,26 +13,26 @@ export function Hero() {
     const prices = useLivePrices(['BTCUSDT']);
     const btc = prices.BTCUSDT || { price: 0, pct: 0, high: 0, low: 0, live: false };
     const live = !!btc.live;
-    const pctClass = btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
+    const pctClass = btc.pct >= 0 ? 'text-accent-success' : 'text-accent-error';
     const lastCandle = candles[candles.length - 1];
     const chartLive = !!lastCandle?.live;
     const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
-      <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
-      <div className="absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl pointer-events-none"/>
+      <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-blue-500/10 blur-3xl pointer-events-none"/>
+      <div className="absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"/>
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-24 lg:pb-24 grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           <span className="chip bg-white/5 border border-white/10 text-white/80">
-            <Sparkles className="h-3.5 w-3.5 text-cyan"/>
+            <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
              Live multi-asset brokerage · stocks · crypto · forex · commodities · futures · options
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[1.05] tracking-tight">
             One brokerage account for{' '}
-            <span className="text-gradient-neon">every market</span>.
+            <span className="text-gradient-primary">every market</span>.
             <br />
             Engineered for{' '}
-            <span className="text-gradient-neon">professional alpha</span>.
+            <span className="text-gradient-primary">professional alpha</span>.
           </h1>
           <p className="mt-5 text-lg text-white/70 max-w-xl">
             Oakmont Digital Markets Group is a regulated multi-asset brokerage. Trade stocks, ETFs, indices, cryptocurrencies, forex, commodities, futures and options from a single live account, with institutional-grade custody, compliant onboarding, and admin-controlled investment servicing.
@@ -41,7 +41,7 @@ export function Hero() {
             <Link href="/brokerage" className="btn-primary">
               Explore Brokerage <ArrowRight className="h-4 w-4"/>
             </Link>
-            <Link href={!loading && user ? '/dashboard' : '/signup'} className="btn-outline border-cyan/50 text-cyan hover:bg-cyan/10">
+            <Link href={!loading && user ? '/dashboard' : '/signup'} className="btn-outline border-blue-500/50 text-blue-400 hover:bg-blue-500/10">
               {!loading && user ? 'Open Dashboard' : 'Open Account'}
             </Link>
             <Link href={!loading && user ? '/investor' : '/login?next=/investor'} className="btn-ghost">
@@ -49,9 +49,9 @@ export function Hero() {
             </Link>
           </div>
           <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/60">
-            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-neon-green"/> SOC 2 · ISO 27001</span>
-            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-cyan"/> Live equities, FX, crypto &amp; futures</span>
-            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-cyan"/> Smart order routing &amp; risk controls</span>
+            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-success"/> SOC 2 · ISO 27001</span>
+            <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-blue-400"/> Live equities, FX, crypto &amp; futures</span>
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-blue-400"/> Smart order routing &amp; risk controls</span>
           </div>
         </motion.div>
 
@@ -65,8 +65,8 @@ export function Hero() {
                 <div>
                   <p className="text-sm font-semibold flex items-center gap-2">
                     BTC / USDT
-                    <span className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-wider ${live ? 'text-neon-green' : 'text-white/40'}`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-neon-green animate-pulse' : 'bg-white/30'}`}/>
+                    <span className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-wider ${live ? 'text-accent-success' : 'text-white/40'}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-accent-success animate-pulse' : 'bg-white/30'}`}/>
                       {live ? 'live' : 'connecting'}
                     </span>
                   </p>
@@ -78,9 +78,9 @@ export function Hero() {
                 <p className={`text-xs ${pctClass}`}>{formatPct(btc.pct)} (24h)</p>
               </div>
             </div>
-            <div className="rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
+            <div className="rounded-xl bg-ink-900/60 border border-slate-700/30 p-2">
               <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
-                <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>{chartLive ? 'Binance live candles' : 'Connecting to Binance candles'}</span>
+                <span className={chartLive ? 'text-accent-success' : 'text-white/45'}>{chartLive ? 'Binance live candles' : 'Connecting to Binance candles'}</span>
                 <span>Updated {chartUpdatedLabel}</span>
               </div>
               <div className="aspect-[16/9]">
@@ -90,11 +90,11 @@ export function Hero() {
             <div className="grid grid-cols-3 gap-2 pt-3">
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h high</p>
-                <p className="text-sm font-semibold text-neon-green">{formatUSD(btc.high || 0)}</p>
+                <p className="text-sm font-semibold text-accent-success">{formatUSD(btc.high || 0)}</p>
               </div>
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h low</p>
-                <p className="text-sm font-semibold text-neon-red">{formatUSD(btc.low || 0)}</p>
+                <p className="text-sm font-semibold text-accent-error">{formatUSD(btc.low || 0)}</p>
               </div>
               <div className="glass-light px-3 py-2 text-center">
                 <p className="text-[10px] text-white/50">24h change</p>
@@ -103,12 +103,12 @@ export function Hero() {
             </div>
           </div>
           <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="hidden md:flex absolute -bottom-6 -left-6 glass p-3 items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-neon-grad inline-flex items-center justify-center text-ink-950">
+            <div className="h-9 w-9 rounded-lg bg-gradient-primary inline-flex items-center justify-center text-white">
               <Sparkles className="h-4 w-4"/>
             </div>
             <div>
               <p className="text-xs text-white/60">Live BTC trend</p>
-              <p className={`text-sm font-semibold ${btc.pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+              <p className={`text-sm font-semibold ${btc.pct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
                 {live ? `${btc.pct >= 0 ? 'Up' : 'Down'} ${formatPct(btc.pct)} today` : 'Connecting to market feed'}
               </p>
             </div>
