@@ -396,19 +396,23 @@ function OptionsBoard() {
   );
 }
 
-export default function BrokerageClient() {
+export { TABS };
+
+export default function BrokerageClient({ initialTab = 'stocks' }) {
   const { user, loading } = useSession();
-  const [tab, setTab] = useState('stocks');
+  const [tab, setTab] = useState(TABS.some((t) => t.id === initialTab) ? initialTab : 'stocks');
   useEffect(() => {
     const requestedTab = new URLSearchParams(window.location.search).get('tab');
-    if (requestedTab && TABS.some((t) => t.id === requestedTab)) setTab(requestedTab);
-  }, []);
+    if (requestedTab && TABS.some((t) => t.id === requestedTab)) {
+      setTab(requestedTab);
+      return;
+    }
+    if (TABS.some((t) => t.id === initialTab)) setTab(initialTab);
+  }, [initialTab]);
   const selectTab = (id) => {
     setTab(id);
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.set('tab', id);
-      window.history.replaceState(null, '', url.toString());
+      window.history.replaceState(null, '', `/brokerage/${id}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -426,9 +430,9 @@ export default function BrokerageClient() {
       </motion.div>
       <div className="flex flex-wrap gap-1.5">
         {TABS.map((t) => (
-          <button key={t.id} onClick={() => selectTab(t.id)} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-gold-400/20 text-gold-300 border border-gold-400/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
+          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-gold-400/20 text-gold-300 border border-gold-400/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
             {t.label}
-          </button>
+          </Link>
         ))}
       </div>
       <p className="text-xs text-white/55">{active.blurb}</p>

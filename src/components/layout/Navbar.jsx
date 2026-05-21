@@ -30,7 +30,7 @@ export function Navbar() {
           <ThemeToggle />
           <Web3ConnectButton />
           <Link href="/login" className="btn-ghost text-sm">Sign in</Link>
-          <Link href="/signup" className="btn-gold text-sm">Create Account</Link>
+          <Link href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
         </div>
         <button onClick={() => setOpen(!open)} className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10" aria-label="Toggle menu">
           {open ? <X className="h-5 w-5"/> : <Menu className="h-5 w-5"/>}
@@ -48,7 +48,7 @@ export function Navbar() {
               </div>
               <div className="flex gap-2 pt-2">
                 <Link href="/login" className="btn-ghost flex-1 text-sm">Sign in</Link>
-                <Link href="/signup" className="btn-gold flex-1 text-sm">Create Account</Link>
+                <Link href="/signup" className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
               </div>
             </div>
           </motion.div>)}

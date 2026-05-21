@@ -1,6 +1,6 @@
 'use client';
-// Fintech-grade layered background. The new style uses angled aurora beams,
-// soft mesh depth and a subtle noise overlay with no network requests.
+// Fintech-grade layered background with a darker vault mesh, market-depth
+// beams and a subtle noise overlay with no network requests.
 //
 // One slow ~40s drift animation is opt-in via prefers-reduced-motion.
 
@@ -15,7 +15,7 @@ export function AppBackground() {
     <div aria-hidden="true" className="app-bg" suppressHydrationWarning>
       <div className="app-bg__base"/>
       <div className="app-bg__blooms"/>
-      <div className="app-bg__conic"/>
+      <div className="app-bg__grid"/>
       <div
         className="app-bg__noise"
         style={{ backgroundImage: `url("${NOISE_SVG}")` }}
@@ -32,33 +32,29 @@ export function AppBackground() {
         .app-bg > div { position: absolute; inset: 0; }
         .app-bg__base {
           background:
-            linear-gradient(120deg, rgba(216, 167, 66, 0.16) 0%, transparent 28%),
-            linear-gradient(300deg, rgba(0, 255, 163, 0.10) 0%, transparent 34%),
-            radial-gradient(100vw 70vh at 80% -10%, rgba(56, 189, 248, 0.13), transparent 62%),
-            radial-gradient(90vw 70vh at -5% 18%, rgba(216, 167, 66, 0.12), transparent 64%),
-            radial-gradient(95vw 65vh at 50% 120%, rgba(15, 23, 42, 0.9), transparent 58%),
-            linear-gradient(150deg, #020713 0%, #07111f 48%, #030815 100%);
+            linear-gradient(118deg, rgba(56, 189, 248, 0.16) 0%, transparent 30%),
+            linear-gradient(252deg, rgba(216, 167, 66, 0.14) 0%, transparent 32%),
+            radial-gradient(90vw 70vh at 78% 0%, rgba(0, 255, 163, 0.11), transparent 62%),
+            radial-gradient(80vw 70vh at 0% 20%, rgba(56, 189, 248, 0.10), transparent 64%),
+            linear-gradient(145deg, #01040b 0%, #06101e 52%, #020611 100%);
         }
         .app-bg__blooms {
           background:
-            radial-gradient(45vw 26vw at 22% 18%, rgba(216, 167, 66, 0.20), transparent 68%),
-            radial-gradient(35vw 22vw at 82% 30%, rgba(34, 211, 238, 0.16), transparent 68%),
-            radial-gradient(38vw 26vw at 56% 82%, rgba(0, 255, 163, 0.12), transparent 68%);
-          filter: blur(70px) saturate(120%);
-          opacity: 0.85;
+            radial-gradient(36vw 24vw at 18% 22%, rgba(56, 189, 248, 0.20), transparent 70%),
+            radial-gradient(34vw 22vw at 84% 34%, rgba(216, 167, 66, 0.18), transparent 70%),
+            radial-gradient(42vw 26vw at 55% 84%, rgba(0, 255, 163, 0.11), transparent 70%);
+          filter: blur(76px) saturate(118%);
+          opacity: 0.78;
           will-change: transform;
         }
-        .app-bg__conic {
-          background: conic-gradient(
-             from 140deg at 68% 24%,
-             rgba(216, 167, 66, 0.10) 0deg,
-             rgba(56, 189, 248, 0.09) 100deg,
-             rgba(0, 255, 163, 0.08) 210deg,
-             rgba(216, 167, 66, 0.10) 360deg
-          );
-          filter: blur(80px);
-          opacity: 0.55;
-          mix-blend-mode: screen;
+        .app-bg__grid {
+          background-image:
+            linear-gradient(rgba(56, 189, 248, 0.055) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(216, 167, 66, 0.045) 1px, transparent 1px),
+            linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.055) 50%, transparent 80%);
+          background-size: 54px 54px, 54px 54px, 100% 100%;
+          mask-image: radial-gradient(circle at 50% 24%, black, transparent 74%);
+          opacity: 0.48;
         }
         .app-bg__noise {
           opacity: 0.05;

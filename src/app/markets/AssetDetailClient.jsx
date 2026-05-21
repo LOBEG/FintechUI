@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Star } from 'lucide-react';
+import { ArrowLeft, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Star, Loader2 } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CandlestickChart } from '@/components/ui/Charts';
@@ -47,7 +47,7 @@ export default function AssetDetailClient({ symbol }) {
   const upper = String(symbol || '').toUpperCase();
   const pair = `${upper}USDT`;
   const meta = SYMBOL_META[pair] || { sym: upper, name: upper, color: '#b8862b' };
-  const { user } = useSession();
+  const { user, loading } = useSession();
   const [interval, setInterval] = useState('1h');
   const prices = useLivePrices([pair]);
   const candles = useLiveKlines(pair, interval, 100);
@@ -57,6 +57,7 @@ export default function AssetDetailClient({ symbol }) {
   const [investOpen, setInvestOpen] = useState(false);
   const [sellOpen, setSellOpen] = useState(false);
   const requireAuth = () => {
+    if (loading) return false;
     if (user) return true;
     window.location.href = `/login?next=/markets/${upper}`;
     return false;
@@ -187,17 +188,22 @@ export default function AssetDetailClient({ symbol }) {
                 <button
                   className="btn-primary w-full justify-center"
                   onClick={() => { if (requireAuth()) setInvestOpen(true); }}
+                  disabled={loading}
                 >
-                  <ArrowDownLeft className="h-4 w-4" /> Buy {meta.sym}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowDownLeft className="h-4 w-4" />} Buy {meta.sym}
                 </button>
                 <button
                   className="btn-secondary w-full justify-center"
                   onClick={() => { if (requireAuth()) setSellOpen(true); }}
-                  disabled={!!user && !(user?.balances?.[meta.sym] > 0)}
+                  disabled={loading || (!!user && !(user?.balances?.[meta.sym] > 0))}
                 >
                   <ArrowUpRight className="h-4 w-4" /> Sell {meta.sym}
                 </button>
-                {!user && <p className="text-xs text-white/55">Sign in to trade {meta.sym}.</p>}
+                {loading ? (
+                  <p className="text-xs text-white/55">Checking your active session…</p>
+                ) : !user ? (
+                  <p className="text-xs text-white/55">Sign in to trade {meta.sym}.</p>
+                ) : null}
               </div>
               <div className="glass-strong p-4">
                 <h3 className="font-display mb-2">About {meta.name}</h3>

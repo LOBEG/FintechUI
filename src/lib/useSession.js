@@ -20,7 +20,7 @@ async function jsonFetch(url, opts = {}) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function jsonFetchWithMinimumDelay(url, opts = {}, minimumMs = 900) {
+async function jsonFetchWithMinimumDelay(url, opts = {}, minimumMs = 1200) {
   const started = Date.now();
   try {
     return await jsonFetch(url, opts);

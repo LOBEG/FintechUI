@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, ChevronDown, LogOut, LogIn } from 'lucide-react';
+import { Search, LogOut, LogIn, UserCircle } from 'lucide-react';
 import { Web3ConnectButton } from '@/components/widgets/Web3ConnectButton';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
@@ -13,7 +13,6 @@ export function TopBar({ title }) {
     const { user, logout } = useSession();
     const router = useRouter();
     const { t } = useI18n();
-    const initials = user ? (user.name || user.email).split(/\s+/).map((s) => s[0]).join('').slice(0, 2).toUpperCase() : 'AV';
     const shortId = user?.id ? `#${user.id.slice(0, 6).toUpperCase()}` : '';
     
     return (<header className="h-16 border-b border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 z-30">
@@ -31,7 +30,9 @@ export function TopBar({ title }) {
           <Web3ConnectButton />
           {user ? (
             <div className="flex items-center gap-2 pl-2">
-              <div title={user.email} className="h-9 w-9 rounded-full bg-gold-grad text-ink-950 inline-flex items-center justify-center font-semibold text-sm">{initials}</div>
+              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-gold-400/30 text-gold-200 inline-flex items-center justify-center">
+                <UserCircle className="h-5 w-5"/>
+              </div>
               <div className="text-xs leading-tight hidden md:block">
                 <div className="font-medium">{user.name || user.email.split('@')[0]}</div>
                 <div className="text-white/45">{shortId || (user.isAdmin ? 'Admin' : 'Member')}</div>
@@ -47,4 +48,3 @@ export function TopBar({ title }) {
       </div>
     </header>);
 }
-

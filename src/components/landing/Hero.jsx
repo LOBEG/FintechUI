@@ -39,7 +39,7 @@ export function Hero() {
             <Link href="/brokerage" className="btn-primary">
               Explore Brokerage <ArrowRight className="h-4 w-4"/>
             </Link>
-            <Link href="/signup" className="btn-gold">
+            <Link href="/signup" className="btn-outline border-cyan/50 text-cyan hover:bg-cyan/10">
               Open Account
             </Link>
             <Link href="/login?next=/investor" className="btn-ghost">
