@@ -18,11 +18,23 @@ async function jsonFetch(url, opts = {}) {
   return data;
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function jsonFetchWithMinimumDelay(url, opts = {}, minimumMs = 900) {
+  const started = Date.now();
+  try {
+    return await jsonFetch(url, opts);
+  } finally {
+    const remaining = minimumMs - (Date.now() - started);
+    if (remaining > 0) await sleep(remaining);
+  }
+}
+
 export const api = {
   get: (u) => jsonFetch(u),
-  post: (u, body) => jsonFetch(u, { method: 'POST', body: JSON.stringify(body || {}) }),
-  patch: (u, body) => jsonFetch(u, { method: 'PATCH', body: JSON.stringify(body || {}) }),
-  del: (u, body) => jsonFetch(u, { method: 'DELETE', body: JSON.stringify(body || {}) }),
+  post: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'POST', body: JSON.stringify(body || {}) }),
+  patch: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'PATCH', body: JSON.stringify(body || {}) }),
+  del: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'DELETE', body: JSON.stringify(body || {}) }),
 };
 
 export function useSession() {

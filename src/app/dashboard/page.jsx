@@ -13,7 +13,7 @@ import { InvestModal, WithdrawModal, SellModal, BrokerageInvestModal } from '@/c
 import BrokerageHubPanel from '@/components/dashboard/BrokerageHubPanel';
 import BrokeragePositionsPanel from '@/components/dashboard/BrokeragePositionsPanel';
 import { useSession, api } from '@/lib/useSession';
-import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, NotificationBell, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, EmptyStateCoach, DcaPanel, ReferralPanel, SupportPanel, SupportContactPanel } from '@/components/dashboard/UserPanels';
+import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, DcaPanel, ReferralPanel, SupportPanel, SupportContactPanel } from '@/components/dashboard/UserPanels';
 import { AvailableCashSelector } from '@/components/dashboard/AvailableCashSelector';
 import { useI18n } from '@/components/I18nProvider';
 
@@ -33,14 +33,25 @@ const DEMO_POSITION_TEMPLATE = [
     { key: 'SOLUSDT', sym: 'SOL/USDT', side: 'SHORT', size: 28,     entry: 184.5 },
     { key: 'XRPUSDT', sym: 'XRP/USDT', side: 'LONG',  size: 4200,   entry: 0.6045 },
 ];
-const DEMO_TRANSACTIONS = [
-    { type: 'Buy', asset: 'BTC', amount: '0.0125', value: 891.1, time: '2m ago', status: 'Filled' },
-    { type: 'Deposit', asset: 'USDT', amount: '5,000.00', value: 5000, time: '1h ago', status: 'Completed' },
-    { type: 'Sell', asset: 'SOL', amount: '12.4', value: 2212.4, time: '3h ago', status: 'Filled' },
-    { type: 'Withdraw', asset: 'ETH', amount: '0.45', value: 1715.42, time: '1d ago', status: 'Completed' },
-    { type: 'Buy', asset: 'XRP', amount: '4,200', value: 2538.24, time: '2d ago', status: 'Filled' },
-];
 const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
+const DASHBOARD_FEATURES = [
+    { id: 'overview', hash: '', label: 'Overview', blurb: 'Portfolio value, cash, P&L and a clean launchpad for every feature.' },
+    { id: 'trade', hash: 'trade-section', label: 'Spot trade', blurb: 'Live chart, order ticket, fees and execution controls.' },
+    { id: 'wallet', hash: 'wallet', label: 'Wallet', blurb: 'Balances, asset cards, funding addresses and live crypto markets.' },
+    { id: 'brokerage', hash: 'brokerage-section', label: 'Brokerage', blurb: 'Stocks, ETFs, forex, futures, options and brokerage positions.' },
+    { id: 'positions', hash: 'positions-section', label: 'Positions', blurb: 'Watchlist and open positions without unrelated dashboard content.' },
+    { id: 'analytics', hash: 'analytics-section', label: 'Analytics', blurb: 'Allocation, P&L, performance stats and AI portfolio intelligence.' },
+    { id: 'history', hash: 'history-section', label: 'History', blurb: 'Transaction history and testimonial tools.' },
+    { id: 'security', hash: 'security-section', label: 'Security', blurb: 'KYC, account safety, saved beneficiaries and platform settings.' },
+    { id: 'support', hash: 'support-section', label: 'Support', blurb: 'Support tickets, contact channels and client service actions.' },
+];
+const HASH_TO_FEATURE = DASHBOARD_FEATURES.reduce((acc, item) => {
+    if (item.hash) acc[item.hash] = item.id;
+    return acc;
+}, {});
+HASH_TO_FEATURE['bot-section'] = 'analytics';
+HASH_TO_FEATURE['alerts-section'] = 'security';
+HASH_TO_FEATURE['settings-section'] = 'security';
 
 export default function DashboardPage() {
     const { user } = useSession();
@@ -51,19 +62,16 @@ export default function DashboardPage() {
     const [interval, setInterval] = useState('5m');
     const [investOpen, setInvestOpen] = useState(false);
     const [investSymbol, setInvestSymbol] = useState('BTC');
+    const [activeFeature, setActiveFeature] = useState('overview');
     
-    // Handle tab navigation from hash on client side
+    // Handle dashboard feature navigation from hash on client side.
     useEffect(() => {
         if (typeof window === 'undefined') return;
         
         const handleHashChange = () => {
             const hash = window.location.hash.slice(1);
-            if (hash) {
-                setTimeout(() => {
-                    const el = document.getElementById(hash);
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            }
+            setActiveFeature(HASH_TO_FEATURE[hash] || 'overview');
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 80);
         };
         
         // Handle initial hash
@@ -220,6 +228,8 @@ export default function DashboardPage() {
         const next = (cashUSDT * pct) / px;
         setAmount(next > 0 ? next.toFixed(6) : '0');
     }, [cashUSDT, effectivePrice, requireAuth]);
+    const activeFeatureMeta = DASHBOARD_FEATURES.find((f) => f.id === activeFeature) || DASHBOARD_FEATURES[0];
+    const featureHref = (feature) => feature.hash ? `/dashboard#${feature.hash}` : '/dashboard';
 
     return (<div className="flex">
       <Sidebar />
@@ -227,7 +237,32 @@ export default function DashboardPage() {
         <TopBar title={t('tradingDashboard')}/>
         <main className="p-4 sm:p-6 space-y-6">
           {user && <EmailVerifyBanner user={user} />}          {/* Portfolio overview */}
-          {user ? <section className="grid lg:grid-cols-4 gap-4">
+          <section className="glass-strong p-4 sm:p-5">
+            <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-[0.24em] text-gold-300/80">Dedicated workspace</p>
+                <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
+                <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
+              </div>
+              <a href="/brokerage" className="btn-gold text-sm self-start lg:self-auto">Open full brokerage</a>
+            </div>
+            <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {DASHBOARD_FEATURES.map((feature) => (
+                <a
+                  key={feature.id}
+                  href={featureHref(feature)}
+                  className={`shrink-0 rounded-xl border px-3 py-2 text-xs sm:text-sm transition ${
+                    activeFeature === feature.id
+                      ? 'bg-gold-500/15 border-gold-400/45 text-gold-200'
+                      : 'bg-white/5 border-white/10 text-white/65 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {feature.label}
+                </a>
+              ))}
+            </div>
+          </section>
+          {activeFeature === 'overview' && (user ? <section className="grid lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-5 lg:col-span-2">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -264,18 +299,30 @@ export default function DashboardPage() {
             <h2 className="mt-1 text-2xl font-display">Create an account to view cash, balances, positions, history, and execution controls.</h2>
             <p className="mt-2 text-sm text-white/60 max-w-2xl">The live chart and market table remain public for transparency. Funding, investing, selling, withdrawals, and portfolio records are available only after secure sign-in.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <a href="/signup" className="btn-primary text-sm">Create Account</a>
+              <a href="/signup" className="btn-gold text-sm">Create Account</a>
               <a href="/login?next=/dashboard" className="btn-ghost text-sm">Sign in</a>
             </div>
-          </section>}
+          </section>)}
+
+          {activeFeature === 'overview' && (
+            <section className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {DASHBOARD_FEATURES.filter((f) => f.id !== 'overview').map((feature) => (
+                <a key={feature.id} href={featureHref(feature)} className="glass p-4 hover:bg-white/10 transition group">
+                  <p className="text-sm font-semibold group-hover:text-gold-200">{feature.label}</p>
+                  <p className="mt-1 text-xs text-white/55">{feature.blurb}</p>
+                  <span className="mt-4 inline-flex text-[11px] text-neon-green">Open dedicated page →</span>
+                </a>
+              ))}
+            </section>
+          )}
 
           {/* Chart + Buy/Sell */}
-          <section id="trade-section" className="grid xl:grid-cols-3 gap-4">
+          {activeFeature === 'trade' && <section id="trade-section" className="grid xl:grid-cols-3 gap-4">
             <div className="xl:col-span-2 glass-strong p-4">
               <div className="flex items-center justify-between flex-wrap gap-3 px-1">
                 <div className="flex items-center gap-3">
                   <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-ink-950 text-sm font-bold bg-white/5 border border-white/10" style={cryptoLogoStyle(selectedMarketMeta.sym) || { background: selectedMarketMeta.color }}>
-                    {!cryptoLogoStyle(selectedMarketMeta.sym) && selectedMarketMeta.sym.slice(0, 1)}
+                    {!cryptoLogoStyle(selectedMarketMeta.sym) && <Wallet className="h-4 w-4 text-white/75"/>}
                     <span className="sr-only">{selectedMarketMeta.name}</span>
                   </span>
                   <div>
@@ -361,15 +408,15 @@ export default function DashboardPage() {
                 </button>
               </div>
             </div>
-          </section>
+          </section>}
 
 
           {/* Asset cards */}
-          {user && <section id="wallet" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {user && activeFeature === 'wallet' && <section id="wallet" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {wallets.slice(0, 4).map((w, i) => (<motion.div key={w.sym} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass p-4">
                 <div className="flex items-center gap-2">
                   <span className="h-9 w-9 rounded-full inline-flex items-center justify-center text-xs font-bold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(w.sym) || { background: w.color }}>
-                    {!cryptoLogoStyle(w.sym) && w.sym.slice(0, 1)}
+                    {!cryptoLogoStyle(w.sym) && <Wallet className="h-4 w-4 text-white/75"/>}
                   </span>
                   <div>
                     <p className="text-sm font-semibold">{w.sym}</p>
@@ -384,37 +431,36 @@ export default function DashboardPage() {
           </section>}
 
           {/* Deposit addresses + markets - only after sign-in for deposit, markets always */}
-          {user && (
+          {user && activeFeature === 'wallet' && (
             <section className="grid xl:grid-cols-2 gap-4">
               <DepositAddressPanel />
               <MarketsPanel onInvest={openInvest} />
             </section>
           )}
-          {user && <BrokerageHubPanel
+          {user && activeFeature === 'brokerage' && <BrokerageHubPanel
             onInvest={(sym, cls) => { if (sym) setBrokerageInvestSymbol(sym); if (cls) setBrokerageInvestClass(cls); setBrokerageInvestOpen(true); }}
             onWithdraw={() => setWithdrawOpen(true)}
           />}
-          {user && <BrokeragePositionsPanel />}
-          {user && <EmptyStateCoach />}
-          {user && <SandboxOnRampPanel />}
-          {user && <OpenOrdersPanel />}
-          {user && <section id="security-section"><KycPanel /></section>}
-          {user && <PortfolioPanel />}
-          {user && <ConvertPanel onConverted={refreshWallet} />}
-          {user && <DcaPanel onChanged={refreshWallet} />}
-          {user && <ReferralPanel />}
-          {user && <section id="alerts-section"><PriceAlertsPanel /></section>}
-          {user && <section id="settings-section"><BeneficiariesPanel /></section>}
-          {user && <SupportPanel />}
-          {user && <SupportContactPanel />}
-          {!user && (
+          {user && activeFeature === 'brokerage' && <BrokeragePositionsPanel />}
+          {user && activeFeature === 'wallet' && <SandboxOnRampPanel />}
+          {user && activeFeature === 'positions' && <OpenOrdersPanel />}
+          {user && activeFeature === 'security' && <section id="security-section"><KycPanel /></section>}
+          {user && activeFeature === 'analytics' && <PortfolioPanel />}
+          {user && activeFeature === 'wallet' && <ConvertPanel onConverted={refreshWallet} />}
+          {user && activeFeature === 'wallet' && <DcaPanel onChanged={refreshWallet} />}
+          {user && activeFeature === 'history' && <ReferralPanel />}
+          {user && activeFeature === 'security' && <section id="alerts-section"><PriceAlertsPanel /></section>}
+          {user && activeFeature === 'security' && <section id="settings-section"><BeneficiariesPanel /></section>}
+          {user && activeFeature === 'support' && <section id="support-section"><SupportPanel /></section>}
+          {user && activeFeature === 'support' && <SupportContactPanel />}
+          {!user && activeFeature === 'wallet' && (
             <section>
               <MarketsPanel onInvest={openInvest} />
             </section>
           )}
 
           {/* Watchlist + Positions */}
-          {user && <section id="positions-section" className="grid xl:grid-cols-3 gap-4">
+          {user && activeFeature === 'positions' && <section id="positions-section" className="grid xl:grid-cols-3 gap-4">
             <div className="glass-strong p-4 xl:col-span-1">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">Watchlist</p>
@@ -431,7 +477,7 @@ export default function DashboardPage() {
                   const canRemove = !!user && Array.isArray(watchlistBases) && watchlistBases.includes(base);
                   return (<div key={s} className="flex items-center gap-3 py-2.5">
                       <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90 bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: meta.color }} aria-label={`Open ${meta.sym} details`}>
-                        {!cryptoLogoStyle(meta.sym) && meta.sym.slice(0, 1)}
+                        {!cryptoLogoStyle(meta.sym) && <Wallet className="h-4 w-4 text-white/75"/>}
                       </a>
                       <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-gold">
                         <p className="text-sm font-medium">{meta.sym}</p>
@@ -514,7 +560,7 @@ export default function DashboardPage() {
           </section>}
 
           {/* Analytics + AI bot + History */}
-          <section id="analytics-section" className="grid xl:grid-cols-3 gap-4">
+          {activeFeature === 'analytics' && <section id="analytics-section" className="grid xl:grid-cols-3 gap-4">
             <div className="glass-strong p-5">
               <p className="font-semibold">Portfolio allocation</p>
               <div className="flex flex-col items-center mt-3">
@@ -634,10 +680,10 @@ export default function DashboardPage() {
                 </>
               )}
             </div>
-          </section>
+          </section>}
 
           {/* Transaction history */}
-          {user && <section id="history-section" className="glass-strong p-4">
+          {user && activeFeature === 'history' && <section id="history-section" className="glass-strong p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Transaction history</p>
               <button className="text-xs text-white/55 hover:text-white flex items-center gap-1"><Eye className="h-3.5 w-3.5"/> View all</button>
@@ -684,12 +730,12 @@ export default function DashboardPage() {
           </section>}
 
           {/* Testimonial composer - for invested users to share feedback */}
-          {user && <TestimonialComposer />}
+          {user && activeFeature === 'history' && <TestimonialComposer />}
 
           {/* Mobile floating action button */}
-          <button onClick={() => openInvest(investSymbol)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
+          {activeFeature === 'trade' && <button onClick={() => openInvest(investSymbol)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
             <Wallet className="h-6 w-6"/>
-          </button>
+          </button>}
         </main>
       </div>
       <MobileBottomNav />

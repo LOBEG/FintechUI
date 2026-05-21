@@ -254,7 +254,7 @@ export function MarketsPanel({ onInvest }) {
                 <td className="py-2.5">
                   <a href={user ? `/markets/${r.symbol}` : authHref(r.symbol)} className="flex items-center gap-2 hover:text-neon-gold">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(r.symbol) || { background: r.color }}>
-                      {!cryptoLogoStyle(r.symbol) && r.symbol.slice(0, 2)}
+                      {!cryptoLogoStyle(r.symbol) && <Wallet className="h-3.5 w-3.5 text-white/75"/>}
                     </span>
                     <div>
                       <div className="font-medium">{r.symbol}</div>

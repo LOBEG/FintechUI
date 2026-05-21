@@ -14,26 +14,26 @@ const wallets = [
 export function Web3ConnectButton() {
     const { user } = useSession();
     const [open, setOpen] = useState(false);
-    const [connected, setConnected] = useState(null);
+    const [notice, setNotice] = useState(null);
     const chooseWallet = (walletName) => {
         if (!user) {
             const wallet = encodeURIComponent(walletName);
             window.location.href = `/login?next=/dashboard&wallet=${wallet}`;
             return;
         }
-        setConnected('0x' + Math.random().toString(16).slice(2, 14));
-        setOpen(false);
+        setNotice(`${walletName} connection is under development. Secure wallet linking is coming soon.`);
     };
     return (<>
       <button onClick={() => setOpen(true)} className="btn-outline text-sm">
         <Wallet className="h-4 w-4"/>
-        {connected ? `${connected.slice(0, 8)}…` : 'Connect Wallet'}
+        Connect Wallet
       </button>
       <AnimatePresence>
         {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] bg-ink-950/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpen(false)}>
             <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 10 }} onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6">
               <h3 className="text-lg font-semibold text-white">Connect a wallet</h3>
               <p className="text-sm text-white/60 mt-1">Choose a supported Web3 wallet to continue.</p>
+              {notice && <p className="mt-3 text-xs text-gold-200 bg-gold-500/10 border border-gold-500/30 rounded-lg px-3 py-2">{notice}</p>}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {wallets.map((w) => (<button key={w.name} onClick={() => chooseWallet(w.name)} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left">
                     <span className="h-9 w-9 rounded-full bg-white bg-center bg-contain bg-no-repeat border border-white/10" style={{ backgroundImage: `url(${w.logo})` }} aria-hidden/>

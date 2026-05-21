@@ -1,36 +1,34 @@
 import Link from 'next/link';
 import { BRAND_NAME } from '@/lib/brand';
 
-// Polished Oakmont DMG monogram. The mark layers a dark navy shield, a
-// soft gold gradient frame, a stylised oak crown and a stacked "O" mark
-// with a chart-baseline accent. It is fully scalable (single SVG) and
-// reused in the public favicon / apple touch icon so the brand identity
-// stays consistent.
+// Oakmont DCG mark: a dimensional capital-ring with an oak-leaf apex and
+// market pulse accent. It stays fully scalable as a single SVG.
 export function OakmontLogoMark({ className = 'h-9 w-9' }) {
   return (
-    <span className={`${className} inline-flex items-center justify-center rounded-xl bg-[#07111f] border border-gold-400/35 shadow-gold overflow-hidden`} aria-hidden="true">
+    <span className={`${className} inline-flex items-center justify-center rounded-2xl bg-[#040b16] border border-gold-300/40 shadow-gold overflow-hidden`} aria-hidden="true">
       <svg viewBox="0 0 64 64" className="h-full w-full" role="img" aria-label={`${BRAND_NAME} logo`}>
         <defs>
-          <linearGradient id="oakmont-shield" x1="8" y1="6" x2="56" y2="60" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#0f1b30"/>
-            <stop offset="100%" stopColor="#05101f"/>
+          <radialGradient id="oakmont-orb" cx="28%" cy="18%" r="78%">
+            <stop offset="0%" stopColor="#1f3b5d"/>
+            <stop offset="52%" stopColor="#081a2c"/>
+            <stop offset="100%" stopColor="#020713"/>
+          </radialGradient>
+          <linearGradient id="oakmont-gold" x1="9" y1="6" x2="55" y2="58" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#fff3bd"/>
+            <stop offset="48%" stopColor="#d8a742"/>
+            <stop offset="100%" stopColor="#765116"/>
           </linearGradient>
-          <linearGradient id="oakmont-gold" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#f7e7a3"/>
-            <stop offset="45%" stopColor="#d4a63f"/>
-            <stop offset="100%" stopColor="#8d641d"/>
+          <linearGradient id="oakmont-cyan" x1="13" y1="52" x2="52" y2="24">
+            <stop offset="0%" stopColor="#00ffa3"/>
+            <stop offset="100%" stopColor="#38bdf8"/>
           </linearGradient>
         </defs>
-        {/* shield body */}
-        <path d="M32 5 L55 12 V31 C55 45 45 55 32 59 C19 55 9 45 9 31 V12 Z" fill="url(#oakmont-shield)" stroke="url(#oakmont-gold)" strokeWidth="1.6"/>
-        {/* oak crown - three stylised leaves */}
-        <path d="M32 14 C28 18 26 21 26 25 C26 26 27 26 27.5 25.4 C28.5 27 30 28 32 28 C34 28 35.5 27 36.5 25.4 C37 26 38 26 38 25 C38 21 36 18 32 14 Z" fill="url(#oakmont-gold)"/>
-        <circle cx="32" cy="30.6" r="1.4" fill="#07111f"/>
-        {/* monogram O */}
-        <circle cx="32" cy="40" r="7.5" fill="none" stroke="url(#oakmont-gold)" strokeWidth="2.2"/>
-        {/* chart baseline accent */}
-        <path d="M20 52 L26 49 L31 51 L37 46 L44 48" stroke="url(#oakmont-gold)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <text x="32" y="40.7" textAnchor="middle" fontFamily="ui-serif, Georgia, 'Times New Roman', serif" fontWeight="700" fontSize="9" fill="#f7e7a3" dominantBaseline="middle">O</text>
+        <circle cx="32" cy="32" r="27" fill="url(#oakmont-orb)" stroke="url(#oakmont-gold)" strokeWidth="1.8"/>
+        <path d="M32 9 C27 15 25 20 26 26 C29 25 32 22 32 17 C32 22 35 25 38 26 C39 20 37 15 32 9Z" fill="url(#oakmont-gold)"/>
+        <path d="M18 41 C21 28 43 28 46 41" fill="none" stroke="url(#oakmont-gold)" strokeWidth="4" strokeLinecap="round"/>
+        <path d="M23 42 L29 37 L34 40 L42 30" fill="none" stroke="url(#oakmont-cyan)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M20 49 H45" stroke="url(#oakmont-gold)" strokeWidth="2" strokeLinecap="round"/>
+        <text x="32" y="37" textAnchor="middle" fontFamily="ui-serif, Georgia, 'Times New Roman', serif" fontWeight="800" fontSize="13" fill="#fff3bd" dominantBaseline="middle">O</text>
       </svg>
     </span>
   );
@@ -38,9 +36,9 @@ export function OakmontLogoMark({ className = 'h-9 w-9' }) {
 
 export function BrandWordmark({ compact = false, className = '' }) {
   return (
-    <span className={`font-display tracking-wide leading-tight whitespace-nowrap ${className}`}>
+      <span className={`font-display tracking-wide leading-tight whitespace-nowrap ${className}`}>
       <span className="text-gradient-gold">Oakmont</span>
-      <span className="text-white whitespace-nowrap">{compact ? ' DMG' : ' Digital Markets Group'}</span>
+      <span className="text-white whitespace-nowrap">{compact ? ' DCG' : ' Digital Capital Group'}</span>
     </span>
   );
 }
