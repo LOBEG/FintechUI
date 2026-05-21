@@ -49,6 +49,11 @@ function fmtVol(v) {
   if (v >= 1e3)  return `${(v/1e3).toFixed(2)}K`;
   return v.toFixed(0);
 }
+function signalTone(signal) {
+  if (['Strong buy', 'Accumulate'].includes(signal)) return 'bg-neon-green/15 border-neon-green/30 text-neon-green';
+  if (['Take profit', 'Reduce'].includes(signal)) return 'bg-neon-red/15 border-neon-red/30 text-neon-red';
+  return 'bg-white/5 border-white/10 text-white/70';
+}
 
 function MiniSpark({ candles }) {
   if (!candles || candles.length < 2) return null;
@@ -108,6 +113,7 @@ function QuoteRow({ q, onOpen }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-white truncate">{q.symbol}</p>
         <p className="text-[11px] text-white/55 truncate">{q.name || q.exchange || ''}</p>
+        <span className={`mt-1 chip border text-[10px] ${signalTone(q.signal)}`}>{q.signal || 'Hold / observe'}</span>
       </div>
       <div className="hidden sm:block"><MiniSpark candles={q._spark}/></div>
       <div className="text-right min-w-[6.5rem]">
@@ -156,7 +162,7 @@ function QuoteDetail({ q, onClose }) {
         </div>
         <div className="flex flex-wrap gap-1 mb-3">
           {RANGE_PRESETS.map((r) => (
-            <button key={r.id} onClick={() => setRangeId(r.id)} className={`px-2 py-1 rounded text-[11px] ${rangeId === r.id ? 'bg-gold-400/20 text-gold-300 border border-gold-400/40' : 'bg-white/5 text-white/65 border border-white/10 hover:bg-white/10'}`}>
+            <button key={r.id} onClick={() => setRangeId(r.id)} className={`px-2 py-1 rounded text-[11px] ${rangeId === r.id ? 'bg-neon-green/15 text-neon-green border border-neon-green/40' : 'bg-white/5 text-white/65 border border-white/10 hover:bg-white/10'}`}>
               {r.label}
             </button>
           ))}
@@ -180,10 +186,10 @@ function QuoteDetail({ q, onClose }) {
           {loading ? (
             <span className="btn-ghost text-xs opacity-70"><Loader2 className="h-3.5 w-3.5 animate-spin"/> Checking session…</span>
           ) : user ? (
-            <Link href="/dashboard" className="btn-gold text-xs">Trade now in Dashboard</Link>
+            <Link href="/dashboard/brokerage" className="btn-primary text-xs">Trade now in Dashboard</Link>
           ) : (
             <>
-              <Link href="/signup" className="btn-gold text-xs">Open Brokerage Account</Link>
+              <Link href="/signup" className="btn-primary text-xs">Open Brokerage Account</Link>
               <Link href="/login?next=/dashboard" className="btn-ghost text-xs">Sign in to Trade</Link>
             </>
           )}
@@ -368,7 +374,7 @@ function OptionsBoard() {
                   </thead>
                   <tbody>
                     {data[side].slice(0, 25).map((c) => (
-                      <tr key={c.contractSymbol} className={`border-t border-white/5 ${c.inTheMoney ? 'bg-gold-500/10' : ''}`}>
+                       <tr key={c.contractSymbol} className={`border-t border-white/5 ${c.inTheMoney ? 'bg-neon-green/10' : ''}`}>
                         <td className="py-1">{c.strike}</td>
                         <td className="py-1 text-right">{c.lastPrice?.toFixed?.(2) ?? '-'}</td>
                         <td className="py-1 text-right">{c.bid?.toFixed?.(2) ?? '-'}</td>
@@ -412,7 +418,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <span className="chip bg-white/5 border border-white/10 text-white/80"><Activity className="h-3.5 w-3.5 text-neon-green"/> Multi-asset brokerage · live market data</span>
         <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-display tracking-tight">
-          Trade everything from <span className="text-gradient-gold">stocks &amp; ETFs</span> to <span className="text-gradient-neon">crypto, FX &amp; futures</span>.
+          Trade everything from <span className="text-gradient-neon">stocks &amp; ETFs</span> to <span className="text-gradient-neon">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
           Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no placeholders. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
@@ -420,7 +426,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       </motion.div>
       <div className="flex flex-wrap gap-1.5">
         {TABS.map((t) => (
-          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-gold-400/20 text-gold-300 border border-gold-400/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
+          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-neon-green/15 text-neon-green border border-neon-green/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
             {t.label}
           </Link>
         ))}
@@ -431,7 +437,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       </section>
       <section className="grid md:grid-cols-3 gap-3">
         <div className="glass p-4">
-          <BarChart3 className="h-5 w-5 text-gold-400"/>
+          <BarChart3 className="h-5 w-5 text-cyan"/>
           <h3 className="font-display mt-2">Brokerage account</h3>
           <p className="text-sm text-white/65 mt-1">Single account, every asset class. Stocks, ETFs, options, futures, forex, commodities and crypto in one balance.</p>
         </div>
@@ -468,7 +474,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
             <div key={v.name} className="glass-light p-3">
               <p className="text-sm font-semibold text-white">{v.name}</p>
               <p className="text-[11px] text-white/55 mt-0.5">{v.desc}</p>
-              <p className="text-[10px] text-gold-300/85 mt-1">{v.cat}</p>
+              <p className="text-[10px] text-cyan/85 mt-1">{v.cat}</p>
             </div>
           ))}
         </div>
@@ -480,9 +486,9 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
         {loading ? (
           <span className="btn-ghost opacity-70"><Loader2 className="h-4 w-4 animate-spin"/> Checking session…</span>
         ) : user ? (
-          <Link href="/dashboard" className="btn-gold">Trade now in your Dashboard <ArrowRight className="h-4 w-4"/></Link>
+          <Link href="/dashboard/brokerage" className="btn-primary">Trade now in your Dashboard <ArrowRight className="h-4 w-4"/></Link>
         ) : (
-          <Link href="/signup" className="btn-gold">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
+          <Link href="/signup" className="btn-primary">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
         )}
       </div>
     </div>

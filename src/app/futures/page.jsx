@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import Link from 'next/link';
 import { LineChart, Percent, Gauge, Lock } from 'lucide-react';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function FuturesPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Futures Trading</span> on Oakmont Digital Markets Group
+            <span className="text-gradient-neon">Futures Trading</span> on Oakmont Digital Markets Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
             Professional derivatives access for clients who understand risk, margin, and liquidation mechanics. Oakmont Digital Markets Group presents futures as a controlled fintech workflow with clear margin visibility, risk alerts, and account-level governance.
@@ -28,7 +29,7 @@ export default function FuturesPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Percent className="h-8 w-8 text-gold-400 mb-3"/>
+              <Percent className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Flexible Leverage</h3>
               <p className="mt-2 text-sm text-white/60">
                 Adjustable leverage from 1x to 100x. Cross-margin and isolated margin modes. Real-time PnL tracking and liquidation alerts.
@@ -50,8 +51,8 @@ export default function FuturesPage() {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-             <a href="/brokerage?tab=futures" className="btn-primary">View Live Futures</a>
-                  <a href="/brokerage?tab=options" className="btn-ghost">View Options Chains</a>
+              <Link href="/brokerage?tab=futures" className="btn-primary">View Live Futures</Link>
+                   <Link href="/brokerage?tab=options" className="btn-ghost">View Options Chains</Link>
           </div>
         </div>
       </main>

@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import Link from 'next/link';
 import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function InstitutionalPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Institutional Services</span>
+            <span className="text-gradient-neon">Institutional Services</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
              Enterprise-grade multi-asset brokerage infrastructure for institutions, family offices, hedge funds, and corporate treasury teams that need live market access, custody coordination, audit-ready records, and controlled operational workflows.
@@ -28,7 +29,7 @@ export default function InstitutionalPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Shield className="h-8 w-8 text-gold-400 mb-3"/>
+              <Shield className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Qualified Custody</h3>
               <p className="mt-2 text-sm text-white/60">
                 Multi-signature cold storage with geographically distributed keys. Lloyds of London insurance up to £100M. SOC 2 Type II audited.
@@ -60,7 +61,7 @@ export default function InstitutionalPage() {
           </div>
           <div className="mt-10">
             <div className="flex flex-wrap gap-4">
-              <a href="/brokerage" className="btn-primary">View Live Brokerage Coverage</a>
+              <Link href="/brokerage" className="btn-primary">View Live Brokerage Coverage</Link>
               <a href="mailto:institutional@oakmontdigitalmarkets.com" className="btn-ghost">Contact Institutional Team</a>
             </div>
           </div>

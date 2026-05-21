@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { brokerageQuotes, BROKERAGE_UNIVERSE, ASSET_CLASSES } from '@/lib/server/brokerage.js';
+import { getBrokerageSettings } from '@/lib/server/store.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,8 @@ export const dynamic = 'force-dynamic';
 // GET /api/brokerage/quotes               (returns the full universe)
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
+  const settings = getBrokerageSettings();
+  const enabledClasses = ASSET_CLASSES.filter((c) => settings.classes?.[c] !== false);
   const raw = searchParams.get('symbols');
   const cls = searchParams.get('class');
   let symbols;
@@ -19,10 +22,10 @@ export async function GET(req) {
       .map((s) => s.trim())
       .filter(Boolean)
       .slice(0, 60);
-  } else if (cls && BROKERAGE_UNIVERSE[cls]) {
+  } else if (cls && BROKERAGE_UNIVERSE[cls] && enabledClasses.includes(cls)) {
     symbols = BROKERAGE_UNIVERSE[cls].map((r) => r.symbol);
   } else {
-    symbols = ASSET_CLASSES.flatMap((c) => BROKERAGE_UNIVERSE[c].map((r) => r.symbol));
+    symbols = enabledClasses.flatMap((c) => BROKERAGE_UNIVERSE[c].map((r) => r.symbol));
   }
   const quotes = await brokerageQuotes(symbols);
   // Attach the curated display name + exchange when we have one so the UI
@@ -33,6 +36,9 @@ export async function GET(req) {
       meta.set(row.symbol, { name: row.name, exchange: row.exchange, assetClass: c });
     }
   }
-  const enriched = quotes.map((q) => ({ ...q, ...(meta.get(q.symbol) || {}) }));
+  const enriched = quotes.map((q) => {
+    const signal = q.pct >= 1 ? 'Accumulate' : q.pct <= -1 ? 'Reduce' : 'Hold / observe';
+    return { ...q, ...(meta.get(q.symbol) || {}), signal };
+  });
   return NextResponse.json({ quotes: enriched, count: enriched.length });
 }

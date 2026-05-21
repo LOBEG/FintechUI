@@ -81,7 +81,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       className="glass-strong p-5 space-y-4"
     >
       <div className="flex items-center gap-2">
-        <Briefcase className="h-4 w-4 text-gold-400"/>
+        <Briefcase className="h-4 w-4 text-cyan"/>
         <h3 className="font-display text-lg">Brokerage hub</h3>
         <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
         <div className="ml-auto flex items-center gap-2">
@@ -102,15 +102,15 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             <div key={b.id} className="glass-light p-3 flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <span className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-gold-300"/>
+                   <Icon className="h-4 w-4 text-cyan"/>
                 </span>
                 <span className="font-semibold text-sm flex-1">{b.name}</span>
                 <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● live</span>
               </div>
               <p className="text-[11px] text-white/55">{b.description}</p>
               <div className="flex flex-wrap gap-1">
-                {b.classes.map((c) => (
-                  <span key={c} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{c}</span>
+                {b.classes.filter((c) => settings.classes?.[c] !== false).map((c) => (
+                  <span key={c} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{c} · live</span>
                 ))}
               </div>
               <div className="flex items-center gap-2 text-[10px] text-white/45 mt-auto">
@@ -133,7 +133,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                 disabled={savingBroker}
                 className={`px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 border ${
                   preferred === b.id
-                    ? 'bg-gold-500/15 border-gold-500/40 text-gold-200'
+                    ? 'bg-neon-green/15 border-neon-green/40 text-neon-green'
                     : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
                 }`}
               >

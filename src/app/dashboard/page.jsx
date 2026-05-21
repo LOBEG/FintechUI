@@ -15,6 +15,7 @@ import { InvestModal, WithdrawModal, SellModal, BrokerageInvestModal } from '@/c
 import BrokerageHubPanel from '@/components/dashboard/BrokerageHubPanel';
 import BrokeragePositionsPanel from '@/components/dashboard/BrokeragePositionsPanel';
 import { useSession, api } from '@/lib/useSession';
+import { buildMarketSignal } from '@/lib/marketSignals';
 import { DepositAddressPanel, MarketsPanel, TestimonialComposer, SandboxOnRampPanel, EmailVerifyBanner, OpenOrdersPanel, BeneficiariesPanel, KycPanel, PortfolioPanel, PriceAlertsPanel, ConvertPanel, DcaPanel, ReferralPanel, SupportPanel, SupportContactPanel } from '@/components/dashboard/UserPanels';
 import { AvailableCashSelector } from '@/components/dashboard/AvailableCashSelector';
 import { useI18n } from '@/components/I18nProvider';
@@ -99,6 +100,8 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     const [brokerageInvestOpen, setBrokerageInvestOpen] = useState(false);
     const [brokerageInvestSymbol, setBrokerageInvestSymbol] = useState('AAPL');
     const [brokerageInvestClass, setBrokerageInvestClass] = useState('stocks');
+    const [watchlistExpanded, setWatchlistExpanded] = useState(false);
+    const [historyExpanded, setHistoryExpanded] = useState(false);
     const [liveWallet, setLiveWallet] = useState(null);
     const refreshWallet = useCallback(async () => {
         if (!user) { setLiveWallet(null); return; }
@@ -125,6 +128,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
         }
         return DEFAULT_WATCHLIST_SYMBOLS;
     }, [user, watchlistBases]);
+    const visibleWatchlistSymbols = watchlistExpanded ? watchlistSymbols : watchlistSymbols.slice(0, 5);
     const removeFromWatchlist = useCallback(async (pair) => {
         if (!user) return;
         const base = pair.endsWith('USDT') ? pair.slice(0, -4) : pair;
@@ -156,6 +160,11 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     const [price, setPrice] = useState('');
     const tradeMarket = livePrices[tradePair] || { price: 0, pct: 0, high: 0, low: 0, vol: 0, quoteVol: 0, live: false };
     const tradePctClass = tradeMarket.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
+    const tradeSignal = useMemo(() => buildMarketSignal(candles, tradeMarket.pct), [candles, tradeMarket.pct]);
+    const tradeSignalClass = tradeSignal.tone === 'buy' ? 'text-neon-green' : tradeSignal.tone === 'sell' ? 'text-neon-red' : 'text-white/75';
+    const tradeSignalChip = tradeSignal.tone === 'buy' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
+      : tradeSignal.tone === 'sell' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+      : 'bg-white/5 border-white/10 text-white/70';
     const effectivePrice = price || (tradeMarket.price ? tradeMarket.price.toFixed(2) : '0');
     // Wallet: real balances when logged in, demo for anonymous visitors.
     const wallets = useMemo(() => {
@@ -244,11 +253,11 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           <section className="glass-strong p-4 sm:p-5">
             <div className="flex flex-col lg:flex-row lg:items-end gap-4">
               <div className="flex-1">
-                <p className="text-xs uppercase tracking-[0.24em] text-gold-300/80">Dedicated workspace</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-cyan/80">Dedicated workspace</p>
                 <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
                 <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
               </div>
-              <Link href="/brokerage" className="btn-gold text-sm self-start lg:self-auto">Open full brokerage</Link>
+              <Link href="/brokerage" className="btn-primary text-sm self-start lg:self-auto">Open full brokerage</Link>
             </div>
             <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {DASHBOARD_FEATURES.map((feature) => (
@@ -257,7 +266,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                   href={featureHref(feature)}
                   className={`shrink-0 rounded-xl border px-3 py-2 text-xs sm:text-sm transition ${
                     activeFeature === feature.id
-                      ? 'bg-gold-500/15 border-gold-400/45 text-gold-200'
+                      ? 'bg-neon-green/15 border-neon-green/45 text-neon-green'
                       : 'bg-white/5 border-white/10 text-white/65 hover:bg-white/10 hover:text-white'
                   }`}
                 >
@@ -273,12 +282,12 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             </section>
           )}
           {showAuthGate && (
-            <section className="glass-strong p-5 border-gold-400/25">
+            <section className="glass-strong p-5 border-cyan/25">
               <p className="text-sm text-white/60">{activeFeatureMeta.label} workspace</p>
               <h2 className="mt-1 text-2xl font-display">Sign in to view live {activeFeatureMeta.label.toLowerCase()} content.</h2>
               <p className="mt-2 text-sm text-white/60 max-w-2xl">Each feature now has its own page on desktop and mobile. Secure account data stays hidden until your session is confirmed.</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <a href="/login?next=/dashboard" className="btn-gold text-sm">Sign in</a>
+                <a href="/login?next=/dashboard" className="btn-primary text-sm">Sign in</a>
                 <a href="/signup" className="btn-outline text-sm">Create account</a>
               </div>
             </section>
@@ -312,7 +321,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <AvailableCashSelector wallets={wallets} livePrices={livePrices} />
             <div className="glass p-5">
               <p className="text-sm text-white/60">{t('openPnL')}</p>
-              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-gold-400' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
+              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-cyan' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
               <p className="text-xs text-white/50 mt-1">{positions.length} {t('openPositions')}</p>
             </div>
           </section> : <section className="glass-strong p-5">
@@ -329,9 +338,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <section className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {DASHBOARD_FEATURES.filter((f) => f.id !== 'overview').map((feature) => (
                 <a key={feature.id} href={featureHref(feature)} className="glass p-4 hover:bg-white/10 transition group">
-                  <p className="text-sm font-semibold group-hover:text-gold-200">{feature.label}</p>
+                   <p className="text-sm font-semibold group-hover:text-neon-green">{feature.label}</p>
                   <p className="mt-1 text-xs text-white/55">{feature.blurb}</p>
-                  <span className="mt-4 inline-flex text-[11px] text-neon-green">Open dedicated page →</span>
+                   <span className="mt-4 inline-flex text-[11px] text-neon-green">Open →</span>
                 </a>
               ))}
             </section>
@@ -377,6 +386,13 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <div className="glass-light p-2 text-center"><p className="text-white/50">24h Low</p><p className="font-semibold mt-0.5">{formatUSD(tradeMarket.low || 0)}</p></div>
                 <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol ({selectedMarketMeta.sym})</p><p className="font-semibold mt-0.5">{(tradeMarket.vol || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
                 <div className="glass-light p-2 text-center"><p className="text-white/50">24h Vol ({quoteSymbol})</p><p className="font-semibold mt-0.5">{formatUSD(tradeMarket.quoteVol || 0)}</p></div>
+              </div>
+              <div className="mt-3 glass-light p-3 flex flex-wrap items-center gap-3 text-xs">
+                <span className="text-white/50">Live signal for {selectedMarketMeta.sym}/{quoteSymbol}</span>
+                <span className={`chip border text-[11px] ${tradeSignalChip}`}>{tradeSignal.label}</span>
+                <span className={tradeSignalClass}>RSI {tradeSignal.rsiVal != null ? tradeSignal.rsiVal.toFixed(1) : '—'}</span>
+                <span className={tradeSignalClass}>Trend {tradeSignal.fast != null && tradeSignal.slow != null ? (tradeSignal.fast > tradeSignal.slow ? 'Up' : 'Down') : 'Tracking'}</span>
+                <span className={tradeMarket.live ? 'text-neon-green' : 'text-white/45'}>{tradeMarket.live ? '● live' : 'syncing'}</span>
               </div>
             </div>
 
@@ -485,10 +501,12 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <div className="glass-strong p-4 xl:col-span-1">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">Watchlist</p>
-                <button className="text-xs text-white/55 hover:text-white">View all</button>
+                <button onClick={() => setWatchlistExpanded((v) => !v)} className="text-xs text-white/55 hover:text-white">
+                  {watchlistExpanded ? 'Show less' : 'View all'}
+                </button>
               </div>
               <div className="mt-3 divide-y divide-white/5">
-                {watchlistSymbols.map((s, i) => {
+                {visibleWatchlistSymbols.map((s, i) => {
                   const meta = SYMBOL_META[s];
                   const d = livePrices[s];
                   if (!meta) return null;
@@ -642,7 +660,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                         <div className="space-y-1.5">
                           {movers.length ? movers.map((m) => (
                             <div key={m.sym} className="glass-light p-2 flex items-center gap-2 text-xs">
-                              <Zap className="h-3.5 w-3.5 text-gold-400"/>
+                               <Zap className="h-3.5 w-3.5 text-cyan"/>
                               <span className="flex-1 font-semibold">{m.sym}</span>
                               <span className={m.deltaPct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{m.deltaPct >= 0 ? '+' : ''}{m.deltaPct.toFixed(2)}%</span>
                             </div>
@@ -652,7 +670,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       <div className="glass-light p-3 text-xs space-y-1.5 border border-neon-green/20">
                         <p className="font-semibold text-neon-green">AI insight</p>
                         <p className="text-white/75">{trend}</p>
-                        {concentration && <p className="text-gold-300">{concentration}</p>}
+                         {concentration && <p className="text-cyan">{concentration}</p>}
                       </div>
                     </div>
                   ) : (
@@ -683,7 +701,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                           );
                         });
                       })()}
-                      <a href="/ai-trading-bot" className="btn-ghost w-full text-xs justify-center">View all live signals</a>
+                      <Link href="/dashboard/analytics" className="btn-ghost w-full text-xs justify-center">View all live signals</Link>
                       <p className="text-[11px] text-white/45 text-center">Fund your wallet to apply these signals to your portfolio automatically.</p>
                     </div>
                   );
@@ -692,7 +710,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <>
                   <div className="mt-3 space-y-2">
                     {['Grid · SOL/USDT', 'DCA · BTC', 'Arbitrage · ETH'].map((s, i) => (<div key={s} className="glass-light p-3 flex items-center gap-3">
-                        <Zap className="h-4 w-4 text-gold-400"/>
+                        <Zap className="h-4 w-4 text-cyan"/>
                         <p className="text-sm flex-1">{s}</p>
                         <span className="text-xs text-neon-green">+{(2.4 + i * 1.7).toFixed(1)}%</span>
                       </div>))}
@@ -707,7 +725,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           {user && activeFeature === 'history' && <section id="history-section" className="glass-strong p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Transaction history</p>
-              <button className="text-xs text-white/55 hover:text-white flex items-center gap-1"><Eye className="h-3.5 w-3.5"/> View all</button>
+              <button onClick={() => setHistoryExpanded((v) => !v)} className="text-xs text-white/55 hover:text-white flex items-center gap-1">
+                <Eye className="h-3.5 w-3.5"/> {historyExpanded ? 'Show less' : 'View all'}
+              </button>
             </div>
             <div className="mt-3 overflow-x-auto -mx-4 px-4">
               <table className="min-w-full text-sm">
@@ -722,7 +742,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {liveWallet?.transactions?.length ? liveWallet.transactions.slice(0, 10).map((t, i) => {
+                  {liveWallet?.transactions?.length ? liveWallet.transactions.slice(0, historyExpanded ? liveWallet.transactions.length : 10).map((t, i) => {
                     const displayType = t.type === 'invest' ? 'Buy' : t.type === 'admin_credit' ? 'Deposit' : t.type === 'withdraw' ? 'Withdraw' : t.type;
                     const isIn = displayType === 'Buy' || displayType === 'Deposit';
                     return (<tr key={i}>

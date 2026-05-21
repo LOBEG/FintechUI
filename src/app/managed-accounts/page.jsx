@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import Link from 'next/link';
 import { Users, Shield, Briefcase, Award } from 'lucide-react';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function ManagedAccountsPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Managed Accounts</span> by Oakmont Digital Markets Group
+            <span className="text-gradient-neon">Managed Accounts</span> by Oakmont Digital Markets Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
             Discretionary multi-asset portfolio management for qualified investors and institutions that need professional allocation, admin-supervised balance changes, risk controls, and live reporting instead of self-directed speculation.
@@ -28,7 +29,7 @@ export default function ManagedAccountsPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Shield className="h-8 w-8 text-gold-400 mb-3"/>
+              <Shield className="h-8 w-8 text-cyan mb-3"/>
               <h3 className="text-lg font-semibold">Segregated Custody</h3>
               <p className="mt-2 text-sm text-white/60">
                 Your assets held in isolated wallets. Qualified custodian with insurance cover up to £10M. Full transparency via real-time dashboard.
@@ -50,8 +51,8 @@ export default function ManagedAccountsPage() {
             </div>
           </div>
           <div className="mt-10 flex gap-4">
-            <a href="/brokerage" className="btn-primary">Review Brokerage Coverage</a>
-            <a href="/institutional" className="btn-ghost">Institutional Services</a>
+            <Link href="/brokerage" className="btn-primary">Review Brokerage Coverage</Link>
+            <Link href="/institutional" className="btn-ghost">Institutional Services</Link>
           </div>
         </div>
       </main>

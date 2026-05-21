@@ -52,7 +52,7 @@ export function AdminOperations() {
     return <div className="glass-strong p-6 flex items-center gap-2 text-sm text-white/65"><Loader2 className="h-4 w-4 animate-spin"/> Loading admin operations…</div>;
   }
   if (!user) {
-    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-gold-400"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-primary text-xs">Sign in</a></div>;
+    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-cyan"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-primary text-xs">Sign in</a></div>;
   }
   if (!user.isAdmin) {
     return <div className="glass-strong p-6 text-sm flex items-center gap-3 text-neon-orange"><AlertCircle className="h-5 w-5"/> Your account is not an administrator. Set <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_EMAIL</code> + <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_PASSWORD</code> environment variables and sign in with that account.</div>;
@@ -1047,6 +1047,7 @@ function BrokerageSettingsPanel() {
     <div className="space-y-4">
       <div>
         <p className="text-xs text-white/55 mb-2">Broker integrations</p>
+        <p className="text-[11px] text-white/45 mb-2">These toggles control live brokerage visibility for users. Crypto prices use Binance, and stocks, ETFs, indices, forex, commodities, futures, and options use Yahoo Finance live endpoints.</p>
         <div className="grid sm:grid-cols-3 gap-2">
           {BROKERAGE_INTEGRATIONS.map(([id, label]) => (
             <label key={id} className="glass-light p-3 flex items-center gap-2 cursor-pointer">
@@ -1054,7 +1055,7 @@ function BrokerageSettingsPanel() {
                 type="checkbox"
                 checked={!!settings.integrations?.[id]}
                 onChange={() => toggleIntegration(id)}
-                className="h-4 w-4 accent-gold-400"
+                className="h-4 w-4 accent-neon-green"
               />
               <span className="text-xs">{label}</span>
             </label>
@@ -1070,7 +1071,7 @@ function BrokerageSettingsPanel() {
                 type="checkbox"
                 checked={!!settings.classes?.[c]}
                 onChange={() => toggleClass(c)}
-                className="h-4 w-4 accent-gold-400"
+                className="h-4 w-4 accent-neon-green"
               />
               <span className="text-xs capitalize">{c}</span>
             </label>

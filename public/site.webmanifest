@@ -2,11 +2,11 @@
   "name": "Oakmont Digital Markets Group",
   "short_name": "Oakmont DMG",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "/apple-icon.svg", "sizes": "180x180", "type": "image/svg+xml" }
+    { "src": "https://chatgpt.com/backend-api/estuary/content?id=file_00000000077071fd9412b5d29cebc511&ts=494268&p=fs&cid=1&sig=ab42fae21655b04d994f8d1c0c81afbe220cd7277ee4780943d0173a8f96d050&v=0", "sizes": "any" },
+    { "src": "https://chatgpt.com/backend-api/estuary/content?id=file_00000000077071fd9412b5d29cebc511&ts=494268&p=fs&cid=1&sig=ab42fae21655b04d994f8d1c0c81afbe220cd7277ee4780943d0173a8f96d050&v=0", "sizes": "180x180" }
   ],
-  "theme_color": "#05070d",
-  "background_color": "#05070d",
+  "theme_color": "#04131c",
+  "background_color": "#04131c",
   "display": "standalone",
   "start_url": "/"
 }
