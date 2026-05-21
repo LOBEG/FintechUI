@@ -83,6 +83,7 @@ export default function BrokeragePositionsPanel() {
               <th className="text-right py-1 pr-3">Qty</th>
               <th className="text-right py-1 pr-3">Avg Price</th>
               <th className="text-right py-1 pr-3">Live Price</th>
+              <th className="text-right py-1 pr-3">Market Value</th>
               <th className="text-right py-1 pr-3">Day %</th>
               <th className="text-right py-1 pr-3">P&amp;L (USD)</th>
               <th className="text-right py-1 pr-3">P&amp;L%</th>
@@ -94,20 +95,30 @@ export default function BrokeragePositionsPanel() {
               const q = liveQuotes[p.symbol];
               const dayPct = q?.pct ?? null;
               const isUp = dayPct !== null && dayPct >= 0;
+              const qty = Number(p.qty) || 0;
+              const avgPrice = Number(p.avgPrice) || 0;
+              const livePrice = Number(q?.price ?? p.livePrice ?? 0);
+              const invested = Number(p.usdInvested) || (qty * avgPrice) || 0;
+              const marketValue = qty * livePrice;
+              const pnlUsd = q ? (marketValue - invested) : Number(p.pnlUsd) || 0;
+              const pnlPct = q
+                ? (invested > 0 ? ((marketValue - invested) / invested) * 100 : 0)
+                : Number(p.pnlPct) || 0;
               return (
               <tr key={p.key} className="border-t border-white/5">
                 <td className="py-1.5 pr-3 font-semibold">{p.symbol}</td>
                 <td className="py-1.5 pr-3 text-white/65">{p.assetClass}</td>
-                <td className="py-1.5 pr-3 text-right">{Number(p.qty).toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
-                <td className="py-1.5 pr-3 text-right">${Number(p.avgPrice || 0).toFixed(4)}</td>
+                <td className="py-1.5 pr-3 text-right">{qty.toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
+                <td className="py-1.5 pr-3 text-right">${avgPrice.toFixed(4)}</td>
                 <td className="py-1.5 pr-3 text-right">
                   {q ? (
                     <span className="inline-flex items-center gap-1">
                       <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      ${Number(q.price || p.livePrice || 0).toFixed(4)}
+                      ${livePrice.toFixed(4)}
                     </span>
-                  ) : `$${Number(p.livePrice || 0).toFixed(4)}`}
+                  ) : `$${livePrice.toFixed(4)}`}
                 </td>
+                <td className="py-1.5 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
                 <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-emerald-400' : 'text-neon-red'}`}>
                   {dayPct !== null ? (
                     <span className="inline-flex items-center gap-0.5">
@@ -115,8 +126,8 @@ export default function BrokeragePositionsPanel() {
                     </span>
                   ) : '—'}
                 </td>
-                <td className={`py-1.5 pr-3 text-right ${Number(p.pnlUsd) >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>${Number(p.pnlUsd).toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${Number(p.pnlPct) >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{Number(p.pnlPct).toFixed(2)}%</td>
+                <td className={`py-1.5 pr-3 text-right ${pnlUsd >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>${pnlUsd.toFixed(2)}</td>
+                <td className={`py-1.5 pr-3 text-right ${pnlPct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{pnlPct.toFixed(2)}%</td>
                 <td className="py-1.5 text-right">
                   {confirmKey === p.key ? (
                     <span className="inline-flex items-center gap-1">

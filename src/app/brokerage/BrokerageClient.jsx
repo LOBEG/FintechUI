@@ -108,20 +108,27 @@ function QuoteRow({ q, onOpen }) {
   return (
     <button
       onClick={() => onOpen(q)}
-      className="w-full text-left glass-light p-3 hover:bg-white/10 transition flex items-center gap-3"
+      className="w-full text-left glass-light p-3 hover:bg-white/10 transition flex flex-col gap-2"
     >
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white truncate">{q.symbol}</p>
-        <p className="text-[11px] text-white/55 truncate">{q.name || q.exchange || ''}</p>
-        <span className={`mt-1 chip border text-[10px] ${signalTone(q.signal)}`}>{q.signal || 'Hold / observe'}</span>
+      <div className="flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-white truncate">{q.symbol}</p>
+          <p className="text-[11px] text-white/55 truncate">{q.name || q.exchange || ''}</p>
+          <span className={`mt-1 chip border text-[10px] ${signalTone(q.signal)}`}>{q.signal || 'Hold / observe'}</span>
+        </div>
+        <div className="hidden sm:block"><MiniSpark candles={q._spark}/></div>
+        <div className="text-right min-w-[6.5rem]">
+          <p className="text-sm font-mono">{fmtPrice(q.price, q.currency)}</p>
+          <p className={`text-[11px] flex items-center gap-1 justify-end ${positive ? 'text-neon-green' : 'text-neon-red'}`}>
+            {positive ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
+            {fmtPct(q.pct)}
+          </p>
+        </div>
       </div>
-      <div className="hidden sm:block"><MiniSpark candles={q._spark}/></div>
-      <div className="text-right min-w-[6.5rem]">
-        <p className="text-sm font-mono">{fmtPrice(q.price, q.currency)}</p>
-        <p className={`text-[11px] flex items-center gap-1 justify-end ${positive ? 'text-neon-green' : 'text-neon-red'}`}>
-          {positive ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
-          {fmtPct(q.pct)}
-        </p>
+      <div className="grid grid-cols-3 gap-1 text-[10px] text-white/60 font-mono border-t border-white/5 pt-2">
+        <div><span className="text-white/40">High </span><span className="text-neon-green">{fmtPrice(q.dayHigh, q.currency)}</span></div>
+        <div><span className="text-white/40">Low </span><span className="text-neon-red">{fmtPrice(q.dayLow, q.currency)}</span></div>
+        <div className="text-right"><span className="text-white/40">Vol </span>{fmtVol(q.volume)}</div>
       </div>
     </button>
   );

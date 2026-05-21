@@ -258,22 +258,45 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                 <th className="text-right py-1 pr-3">Qty</th>
                 <th className="text-right py-1 pr-3">Avg</th>
                 <th className="text-right py-1 pr-3">Live</th>
+                <th className="text-right py-1 pr-3">Market Value</th>
                 <th className="text-right py-1 pr-3">P&amp;L</th>
               </tr>
             </thead>
             <tbody>
-              {positions.map((p) => (
-                <tr key={p.key} className="border-t border-white/5">
-                  <td className="py-1 pr-3 font-semibold">{p.symbol}</td>
-                  <td className="py-1 pr-3 text-white/65">{p.assetClass}</td>
-                  <td className="py-1 pr-3 text-right">{Number(p.qty).toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
-                  <td className="py-1 pr-3 text-right">${Number(p.avgPrice || 0).toFixed(4)}</td>
-                  <td className="py-1 pr-3 text-right">${Number(p.livePrice || 0).toFixed(4)}</td>
-                  <td className={`py-1 pr-3 text-right ${Number(p.pnlUsd) >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
-                    ${Number(p.pnlUsd).toFixed(2)} ({Number(p.pnlPct).toFixed(2)}%)
-                  </td>
-                </tr>
-              ))}
+              {positions.map((p) => {
+                const live = quoteBySymbol.get(p.symbol);
+                const cryptoLive = cryptoMarkets.find((m) => m.symbol === p.symbol);
+                const qty = Number(p.qty) || 0;
+                const avgPrice = Number(p.avgPrice) || 0;
+                const livePrice = Number(live?.price ?? cryptoLive?.price ?? p.livePrice ?? 0);
+                const invested = Number(p.usdInvested) || (qty * avgPrice) || 0;
+                const marketValue = qty * livePrice;
+                const hasLive = !!(live || cryptoLive);
+                const pnlUsd = hasLive ? (marketValue - invested) : Number(p.pnlUsd) || 0;
+                const pnlPct = hasLive
+                  ? (invested > 0 ? ((marketValue - invested) / invested) * 100 : 0)
+                  : Number(p.pnlPct) || 0;
+                return (
+                  <tr key={p.key} className="border-t border-white/5">
+                    <td className="py-1 pr-3 font-semibold">{p.symbol}</td>
+                    <td className="py-1 pr-3 text-white/65">{p.assetClass}</td>
+                    <td className="py-1 pr-3 text-right">{qty.toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
+                    <td className="py-1 pr-3 text-right">${avgPrice.toFixed(4)}</td>
+                    <td className="py-1 pr-3 text-right">
+                      {hasLive ? (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          ${livePrice.toFixed(4)}
+                        </span>
+                      ) : `$${livePrice.toFixed(4)}`}
+                    </td>
+                    <td className="py-1 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
+                    <td className={`py-1 pr-3 text-right ${pnlUsd >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                      ${pnlUsd.toFixed(2)} ({pnlPct.toFixed(2)}%)
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
