@@ -984,7 +984,7 @@ function DeleteUserForm({ users, onDone }) {
 
 const BROKERAGE_INTEGRATIONS = [
   ['prime', 'Oakmont Prime'],
-  ['crypto', 'Oakmont DMG Crypto Desk (Binance)'],
+  ['crypto', 'Oakmont Digital Markets Group Crypto Desk (Binance)'],
   ['multiAsset', 'Oakmont Multi-Asset Desk (Yahoo Finance)'],
 ];
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];

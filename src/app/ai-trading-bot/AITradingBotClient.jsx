@@ -101,7 +101,7 @@ export default function AITradingBotClient() {
           {loading ? (
             <span className="btn-ghost opacity-70"><Loader2 className="h-4 w-4 animate-spin"/> Checking session</span>
           ) : user ? (
-            <Link href="/dashboard/analytics" className="btn-primary">Open Bot in Dashboard <ArrowRight className="h-4 w-4"/></Link>
+             <Link href="/dashboard/analytics#live-signals" className="btn-primary">Open Bot in Dashboard <ArrowRight className="h-4 w-4"/></Link>
           ) : (
             <>
               <Link href="/signup" className="btn-primary">Activate AI Bot <ArrowRight className="h-4 w-4"/></Link>
@@ -173,7 +173,7 @@ export default function AITradingBotClient() {
           </table>
         </div>
         <p className="text-[11px] text-white/45 mt-3">
-          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only. Oakmont DMG does not guarantee any returns and all trading carries risk of loss.
+          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only. Oakmont Digital Markets Group does not guarantee any returns and all trading carries risk of loss.
         </p>
       </section>
 

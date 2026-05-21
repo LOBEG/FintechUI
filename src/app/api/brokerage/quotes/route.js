@@ -38,7 +38,8 @@ export async function GET(req) {
   }
   const enriched = quotes.map((q) => {
     const signal = q.pct >= 1 ? 'Accumulate' : q.pct <= -1 ? 'Reduce' : 'Hold / observe';
-    return { ...q, ...(meta.get(q.symbol) || {}), signal };
+    const signalTone = signal === 'Accumulate' ? 'buy' : signal === 'Reduce' ? 'sell' : 'neutral';
+    return { ...q, ...(meta.get(q.symbol) || {}), signal, signalTone, live: true };
   });
   return NextResponse.json({ quotes: enriched, count: enriched.length });
 }

@@ -30,37 +30,22 @@ module.exports = {
           900: '#0b1530',
           950: '#070d22',
         },
-        gold: {
-          50: '#fff8e1',
-          100: '#ffeeb0',
-          200: '#ffe187',
-          300: '#fdd05a',
-          400: '#f6c244',
-          500: '#e6ad26',
-          600: '#c08a14',
-          700: '#8d6310',
-        },
         neon: {
           green: '#00ffa3',
           greenDark: '#00c98b',
-          orange: '#ff8a00',
-          orangeDark: '#ff6a00',
           red: '#ff4d6d',
         },
         cyan: '#06d6c4',
       },
       boxShadow: {
         glow: '0 0 40px -10px rgba(0, 255, 163, 0.35)',
-        gold: '0 0 40px -10px rgba(230, 173, 38, 0.45)',
         soft: '0 8px 30px rgba(0, 0, 0, 0.35)',
       },
       backgroundImage: {
         'gradient-radial':
-          'radial-gradient(ellipse at top, rgba(0,255,163,0.10), transparent 50%), radial-gradient(ellipse at bottom right, rgba(230,173,38,0.10), transparent 50%)',
-        'gold-grad':
-          'linear-gradient(135deg, #fff3c0 0%, #e6ad26 40%, #8d6310 100%)',
+          'radial-gradient(ellipse at top, rgba(0,255,163,0.10), transparent 50%), radial-gradient(ellipse at bottom right, rgba(6,214,196,0.12), transparent 50%)',
         'neon-grad':
-          'linear-gradient(135deg, #00ffa3 0%, #00c98b 50%, #ff8a00 100%)',
+          'linear-gradient(135deg, #00ffa3 0%, #00c98b 50%, #06d6c4 100%)',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

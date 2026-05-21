@@ -13,7 +13,7 @@ export function TopBar({ title }) {
     const { user, logout } = useSession();
     const router = useRouter();
     const { t } = useI18n();
-    const shortId = user?.id ? `#${user.id.slice(0, 6).toUpperCase()}` : '';
+    const memberLabel = user?.isAdmin ? 'Admin' : 'Member';
     
     return (<header className="h-16 border-b border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 z-30">
       <div className="h-full px-4 sm:px-6 flex items-center gap-3">
@@ -35,7 +35,7 @@ export function TopBar({ title }) {
               </div>
               <div className="text-xs leading-tight hidden md:block">
                 <div className="font-medium">{user.name || user.email.split('@')[0]}</div>
-                <div className="text-white/45">{shortId || (user.isAdmin ? 'Admin' : 'Member')}</div>
+                <div className="text-white/45">{memberLabel}</div>
               </div>
               <button onClick={async () => { await logout(); router.push('/'); }} aria-label={t('logout')} title={t('logout')} className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10">
                 <LogOut className="h-4 w-4"/>

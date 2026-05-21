@@ -284,6 +284,59 @@ export default function AdminPage() {
             })}
           </section>
 
+          <section id="brokerage" className="glass-strong p-4 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div>
+                <p className="font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-cyan"/> Live brokerage signals</p>
+                <p className="text-xs text-white/55">
+                  {metrics?.brokerage?.liveQuotes || 0} live quotes across {metrics?.brokerage?.symbols || 0} visible symbols
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 text-[11px]">
+                {(metrics?.brokerage?.enabledClasses || []).map((cls) => (
+                  <span key={cls} className="chip bg-white/5 border border-white/10 text-white/70 capitalize">{cls}</span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-3 grid sm:grid-cols-3 gap-2 text-xs">
+              {['Accumulate', 'Hold / observe', 'Reduce'].map((name) => (
+                <div key={name} className="glass-light p-3">
+                  <p className="text-white/55">{name}</p>
+                  <p className="text-2xl font-display mt-1">{metrics?.brokerage?.signalCounts?.[name] || 0}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 overflow-x-auto -mx-4 px-4">
+              <table className="min-w-full text-sm">
+                <thead className="text-xs text-white/50 text-left">
+                  <tr>
+                    <th className="py-2 font-medium">Symbol</th>
+                    <th className="py-2 font-medium">Asset</th>
+                    <th className="py-2 font-medium">Class</th>
+                    <th className="py-2 font-medium">Price</th>
+                    <th className="py-2 font-medium">24h</th>
+                    <th className="py-2 font-medium">Signal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {(metrics?.brokerage?.signals || []).map((row) => (
+                    <tr key={row.symbol}>
+                      <td className="py-2.5 font-semibold">{row.symbol}</td>
+                      <td className="text-white/70">{row.name}</td>
+                      <td className="capitalize text-white/60">{row.assetClass}</td>
+                      <td>{formatUSD(row.price || 0)}</td>
+                      <td className={(row.pct || 0) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{(row.pct || 0).toFixed(2)}%</td>
+                      <td><span className={`chip border ${row.signal === 'Reduce' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : row.signal === 'Accumulate' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : 'bg-white/5 border-white/10 text-white/70'}`}>{row.signal}</span></td>
+                    </tr>
+                  ))}
+                  {!(metrics?.brokerage?.signals || []).length && (
+                    <tr><td colSpan={6} className="py-6 text-center text-white/45">Awaiting live brokerage quotes.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           {/* Revenue analytics - bar chart of live 14-day USD flow */}
           <section id="revenue" className="grid xl:grid-cols-3 gap-4">
             <div className="glass-strong p-5 xl:col-span-2">

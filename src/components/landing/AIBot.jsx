@@ -1,14 +1,17 @@
 'use client';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Bot, Zap, Brain, LineChart, Cpu, ShieldCheck } from 'lucide-react';
 import { Sparkline } from '@/components/ui/Charts';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
+import { useSession } from '@/lib/useSession';
 const strategies = [
     { name: 'Crypto DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3, symbol: 'BTC' },
     { name: 'Equity momentum watch · AAPL', ret: 'Live', win: 'Brokerage feed active', seed: 7, icon: LineChart },
     { name: 'Cross-asset portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: ShieldCheck },
 ];
 export function AIBot() {
+    const { user, loading } = useSession();
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
       <div className="grid lg:grid-cols-2 gap-10 items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
@@ -27,6 +30,14 @@ export function AIBot() {
             <li className="flex gap-3"><LineChart className="h-5 w-5 text-cyan flex-shrink-0"/> Portfolio reporting built from deposits, withdrawals, investments, and admin-approved adjustments</li>
             <li className="flex gap-3"><Cpu className="h-5 w-5 text-white flex-shrink-0"/> Secure workflows for verified users across desktop and mobile</li>
           </ul>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href={!loading && user ? '/dashboard/analytics#live-signals' : '/ai-trading-bot'} className="btn-primary">
+              View all live signals
+            </Link>
+            <Link href={!loading && user ? '/dashboard/analytics#live-signals' : '/signup'} className="btn-ghost">
+              {!loading && user ? 'Open bot in dashboard' : 'Create account'}
+            </Link>
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="glass-strong p-5">

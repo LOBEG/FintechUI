@@ -22,7 +22,7 @@ export function Navbar() {
     ];
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <BrandLogo compact textClassName="text-xl" />
+        <BrandLogo compact textClassName="text-[clamp(0.86rem,2.4vw,1.25rem)]" />
         <nav className="hidden lg:flex items-center gap-1">
           {nav.map((n) => (<Link key={n.href} href={n.href} className="px-3 py-2 text-sm text-white/70 hover:text-white rounded-lg hover:bg-white/5 transition">
               {n.label}

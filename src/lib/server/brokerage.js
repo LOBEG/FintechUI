@@ -15,7 +15,7 @@ const CHART_CACHE = new Map(); // key  -> { at, data }
 const QUOTE_TTL_MS = 10_000;
 const CHART_TTL_MS = 15_000;
 
-const UA = 'Mozilla/5.0 (compatible; OakmontDMG/1.0; +https://oakmontdigitalmarkets.com)';
+const UA = 'Mozilla/5.0 (compatible; OakmontDigitalMarketsGroup/1.0; +https://oakmontdigitalmarkets.com)';
 
 // Curated, broker-grade symbol universe.  Live quotes are sourced from
 // Yahoo Finance's public chart endpoint; the company / display metadata

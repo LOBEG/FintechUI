@@ -43,6 +43,9 @@ function SignupForm() {
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
           <h1 className="text-2xl font-display">Create your Oakmont Digital Markets Group account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
+          <div className="mt-4 rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2 text-sm text-white/80">
+            <Gift className="inline h-4 w-4 text-cyan mr-1"/> New verified accounts receive an automatic $100 USDT trading credit after signup.
+          </div>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">Full name</span>
@@ -104,7 +107,8 @@ function SignupForm() {
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">
             {[
-            'Spot, futures & OTC desk',
+             'Automatic $100 USDT trading credit',
+             'Spot, futures & OTC desk',
             'AI Trading Bot · Aurelia',
             'Managed portfolios & yield',
             'Institutional API · FIX 4.4',

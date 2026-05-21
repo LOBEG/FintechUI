@@ -404,7 +404,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
 const BROKER_OPTIONS = [
   { id: 'prime', label: 'Oakmont Prime' },
-  { id: 'crypto', label: 'Oakmont DMG Crypto Desk (Binance)' },
+  { id: 'crypto', label: 'Oakmont Digital Markets Group Crypto Desk (Binance)' },
   { id: 'multiAsset', label: 'Oakmont Multi-Asset Desk (Yahoo Finance)' },
 ];
 

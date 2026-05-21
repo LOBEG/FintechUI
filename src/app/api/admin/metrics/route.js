@@ -6,8 +6,10 @@ import {
   listTransactions,
   listTokens,
   listSessions,
+  getBrokerageSettings,
 } from '@/lib/server/store.js';
 import { pricesFor } from '@/lib/server/prices.js';
+import { allBrokerageSymbols, brokerageQuotes, ASSET_CLASSES } from '@/lib/server/brokerage.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -41,6 +43,23 @@ export async function GET() {
       })
       .sort((a, b) => b.usdValue - a.usdValue);
     const aum = perAsset.reduce((s, x) => s + x.usdValue, 0);
+    const brokerageSettings = getBrokerageSettings();
+    const brokerageUniverse = allBrokerageSymbols()
+      .filter((row) => brokerageSettings.classes?.[row.assetClass] !== false);
+    const brokerageQuotesLive = await brokerageQuotes(brokerageUniverse.map((row) => row.symbol));
+    const brokerageQuoteMeta = new Map(brokerageUniverse.map((row) => [row.symbol, row]));
+    const brokerageSignals = brokerageQuotesLive.map((q) => {
+      const meta = brokerageQuoteMeta.get(q.symbol) || {};
+      const signal = q.pct >= 1 ? 'Accumulate' : q.pct <= -1 ? 'Reduce' : 'Hold / observe';
+      return {
+        symbol: q.symbol,
+        name: meta.name || q.symbol,
+        assetClass: meta.assetClass || 'brokerage',
+        price: q.price,
+        pct: q.pct,
+        signal,
+      };
+    });
 
     // 24h flow.
     const now = Date.now();
@@ -84,6 +103,17 @@ export async function GET() {
         expired: tokens.filter((t) => t.status === 'expired' || (t.expiresAt && now > t.expiresAt && t.status === 'active')).length,
       },
       transactions: { total: txs.length, last24h: last24h.length },
+      brokerage: {
+        generatedAt: Date.now(),
+        enabledClasses: ASSET_CLASSES.filter((c) => brokerageSettings.classes?.[c] !== false),
+        symbols: brokerageUniverse.length,
+        liveQuotes: brokerageSignals.length,
+        signals: brokerageSignals.slice(0, 12),
+        signalCounts: brokerageSignals.reduce((acc, row) => {
+          acc[row.signal] = (acc[row.signal] || 0) + 1;
+          return acc;
+        }, {}),
+      },
     });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: err.status || 500 });

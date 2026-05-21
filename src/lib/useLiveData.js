@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 
 // --- Symbol metadata (display name & brand color) ---
 export const SYMBOL_META = {
-  BTCUSDT:  { sym: 'BTC',   name: 'Bitcoin',    color: '#f7931a' },
+  BTCUSDT:  { sym: 'BTC',   name: 'Bitcoin',    color: '#06d6c4' },
   ETHUSDT:  { sym: 'ETH',   name: 'Ethereum',   color: '#627eea' },
   SOLUSDT:  { sym: 'SOL',   name: 'Solana',     color: '#14f195' },
   XRPUSDT:  { sym: 'XRP',   name: 'XRP',        color: '#23292f' },
-  BNBUSDT:  { sym: 'BNB',   name: 'BNB',        color: '#f3ba2f' },
+  BNBUSDT:  { sym: 'BNB',   name: 'BNB',        color: '#00c98b' },
   ADAUSDT:  { sym: 'ADA',   name: 'Cardano',    color: '#0033ad' },
-  DOGEUSDT: { sym: 'DOGE',  name: 'Dogecoin',   color: '#c2a633' },
+  DOGEUSDT: { sym: 'DOGE',  name: 'Dogecoin',   color: '#38bdf8' },
   AVAXUSDT: { sym: 'AVAX',  name: 'Avalanche',  color: '#e84142' },
   LTCUSDT:  { sym: 'LTC',   name: 'Litecoin',   color: '#345d9d' },
   TRXUSDT:  { sym: 'TRX',   name: 'TRON',       color: '#ef0027' },

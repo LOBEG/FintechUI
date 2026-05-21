@@ -22,7 +22,7 @@ function page(title, body) {
        <div style="max-width:480px;padding:32px;border:1px solid #1f2937;border-radius:12px;background:#0b1220">
          <h1 style="font-size:20px;margin:0 0 12px">${title}</h1>
          <div style="font-size:14px;color:#cbd5e1;line-height:1.5">${body}</div>
-         <p style="margin-top:24px"><a href="/dashboard" style="color:#facc15;text-decoration:none">→ Back to dashboard</a></p>
+         <p style="margin-top:24px"><a href="/dashboard" style="color:#06d6c4;text-decoration:none">Back to dashboard</a></p>
        </div>
      </body></html>`,
     { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } },

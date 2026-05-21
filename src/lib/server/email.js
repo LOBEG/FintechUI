@@ -52,7 +52,7 @@ function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#0b1020;border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden">
         <tr><td style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,0.06)">
           <div style="font-size:18px;font-weight:600;letter-spacing:.04em">
-            <span style="background:linear-gradient(90deg,#f7e7a3,#d4a63f,#8d641d);-webkit-background-clip:text;background-clip:text;color:transparent">Oakmont</span> Digital Markets Group
+            <span style="background:linear-gradient(90deg,#00ffa3,#06d6c4,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent">Oakmont</span> Digital Markets Group
           </div>
         </td></tr>
         <tr><td style="padding:28px">

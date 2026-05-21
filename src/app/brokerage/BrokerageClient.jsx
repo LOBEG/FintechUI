@@ -179,8 +179,8 @@ function QuoteDetail({ q, onClose }) {
           {loading
             ? ' Checking your active session before showing trade actions.'
             : user
-            ? ' Your Oakmont DMG brokerage account is active. Place an order from your trading dashboard.'
-            : ' To place an order, open a verified Oakmont DMG brokerage account.'}
+            ? ' Your Oakmont Digital Markets Group brokerage account is active. Place an order from your trading dashboard.'
+            : ' To place an order, open a verified Oakmont Digital Markets Group brokerage account.'}
         </p>
         <div className="mt-3 flex gap-2">
           {loading ? (
@@ -454,32 +454,23 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       </section>
       <section className="glass-strong p-4 sm:p-5">
         <div className="flex items-center flex-wrap gap-2 mb-3">
-          <h2 className="font-display text-xl">Brokerage venues &amp; routing partners</h2>
-          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● live aggregation</span>
+          <h2 className="font-display text-xl">Live asset class status</h2>
+          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● visible to users</span>
         </div>
         <p className="text-sm text-white/65 max-w-3xl">
-          Oakmont Digital Markets Group aggregates liquidity across regulated brokerages and exchanges so a single Oakmont account can express any view. Execution is routed by asset class to the venue with best price, depth and settlement at the time of order.
+          Oakmont Digital Markets Group displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
         </p>
         <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
-          {[
-            { name: 'Charles Schwab',       desc: 'US equities, ETFs, options',       cat: 'Stocks · ETFs · Options' },
-            { name: 'Fidelity',             desc: 'US equities, mutual funds, fixed income', cat: 'Stocks · Funds · Bonds' },
-            { name: 'Interactive Brokers',  desc: 'Global multi-asset prime',          cat: 'Stocks · Futures · FX · Options' },
-            { name: 'Coinbase',             desc: 'USD-regulated crypto exchange',     cat: 'Crypto spot · Custody' },
-            { name: 'Binance',              desc: 'Deepest global crypto liquidity',   cat: 'Crypto spot · Live feed' },
-            { name: 'Kraken',               desc: 'EU / US crypto + crypto derivatives', cat: 'Crypto · Margin · Futures' },
-            { name: 'OANDA',                desc: 'Institutional FX & CFD pricing',    cat: 'Forex · Commodities · Indices' },
-            { name: 'Forex.com',            desc: 'Retail FX & CFD execution',         cat: 'Forex · Commodities · Indices' },
-          ].map((v) => (
-            <div key={v.name} className="glass-light p-3">
-              <p className="text-sm font-semibold text-white">{v.name}</p>
-              <p className="text-[11px] text-white/55 mt-0.5">{v.desc}</p>
-              <p className="text-[10px] text-cyan/85 mt-1">{v.cat}</p>
+          {TABS.map((v) => (
+            <div key={v.id} className="glass-light p-3">
+              <p className="text-sm font-semibold text-white">{v.label}</p>
+              <p className="text-[11px] text-white/55 mt-0.5">{v.blurb}</p>
+              <p className="text-[10px] text-cyan/85 mt-1">Live symbols and user-visible signals</p>
             </div>
           ))}
         </div>
         <p className="mt-4 text-[11px] text-white/45">
-          Venue list is illustrative of the brokerage and exchange partners Oakmont Digital Markets Group aggregates for live pricing and routing. Specific routing is determined per-order in line with our best execution policy and disclosed on every fill.
+          No placeholder venue list is shown. Live availability is determined by the brokerage and crypto market data feeds.
         </p>
       </section>
       <div className="text-center pt-2">

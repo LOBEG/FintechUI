@@ -25,19 +25,6 @@ import { DASHBOARD_FEATURES } from './dashboardFeatures';
 // anything yet. Logged-in users override this via /api/watchlist.
 const DEFAULT_WATCHLIST_SYMBOLS = DEFAULT_TICKER_SYMBOLS;
 const AI_SIGNAL_SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'ADAUSDT', 'AVAXUSDT', 'LINKUSDT'];
-// Demo data for anonymous visitors only. Logged-in users get real data from /api/wallet
-const DEMO_WALLET_HOLDINGS = [
-    { key: 'BTCUSDT', sym: 'BTC', name: 'Bitcoin', bal: 1.245, color: '#06d6c4' },
-    { key: 'ETHUSDT', sym: 'ETH', name: 'Ethereum', bal: 12.41, color: '#627eea' },
-    { key: 'SOLUSDT', sym: 'SOL', name: 'Solana',   bal: 84.5,  color: '#14f195' },
-    { key: null,      sym: 'USDT', name: 'Tether',   bal: 24800, color: '#26a17b' },
-];
-const DEMO_POSITION_TEMPLATE = [
-    { key: 'BTCUSDT', sym: 'BTC/USDT', side: 'LONG',  size: 0.4521, entry: 69284.12 },
-    { key: 'ETHUSDT', sym: 'ETH/USDT', side: 'LONG',  size: 4.2,    entry: 3712.55 },
-    { key: 'SOLUSDT', sym: 'SOL/USDT', side: 'SHORT', size: 28,     entry: 184.5 },
-    { key: 'XRPUSDT', sym: 'XRP/USDT', side: 'LONG',  size: 4200,   entry: 0.6045 },
-];
 const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
 const HASH_TO_FEATURE = DASHBOARD_FEATURES.reduce((acc, item) => {
     if (item.hash) acc[item.hash] = item.id;
@@ -219,13 +206,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             });
         }
         if (user) return [];
-        // Anonymous visitors see demo data
-        return DEMO_WALLET_HOLDINGS.map((w) => {
-            const market = w.key ? livePrices[w.key] : null;
-            const px = w.key ? (market?.price ?? 0) : 1;
-            const openPx = w.key ? (market?.open ?? px) : 1;
-            return { ...w, price: px, openPrice: openPx, value: w.bal * px, openValue: w.bal * openPx };
-        });
+        return [];
     }, [liveWallet, livePrices, user]);
     const totalBalance = wallets.reduce((s, w) => s + w.value, 0);
     const portfolioOpenValue = wallets.reduce((s, w) => s + (w.openValue ?? w.value), 0);
@@ -238,22 +219,10 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
 
     // Live positions w/ mark + PnL (demo for anonymous, empty for logged-in without positions)
     const positions = useMemo(() => {
-        if (!user) {
-            // Anonymous visitors see demo positions
-            return DEMO_POSITION_TEMPLATE.map((p) => {
-                const mark = livePrices[p.key]?.price ?? p.entry;
-                const direction = p.side === 'LONG' ? 1 : -1;
-                const pnl = (mark - p.entry) * p.size * direction;
-                const roe = p.entry ? ((mark - p.entry) / p.entry) * 100 * direction : 0;
-                return { ...p, mark, pnl, roe };
-            });
-        }
-        // Logged-in users: real positions would come from an API endpoint
-        // For now, return empty array until /api/positions is implemented
         return [];
     }, [user, livePrices]);
     const openPnl = positions.reduce((s, p) => s + p.pnl, 0);
-    const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : (user ? 0 : DEMO_WALLET_HOLDINGS.find((w) => w.sym === 'USDT').bal);
+    const cashUSDT = liveWallet ? (liveWallet.balances?.USDT || 0) : 0;
     const userBalances = liveWallet?.balances || {};
     const orderValue = (parseFloat(amount || '0') || 0) * (parseFloat(effectivePrice || '0') || 0);
     const handleTradePairChange = useCallback((pair) => {
@@ -271,6 +240,23 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     const activeFeatureMeta = DASHBOARD_FEATURES.find((f) => f.id === activeFeature) || DASHBOARD_FEATURES[0];
     const featureHref = (feature) => feature.path || '/dashboard';
     const showAuthGate = !loading && !user && !['overview', 'trade', 'wallet'].includes(activeFeature);
+    const tradeHistory = liveWallet?.transactions || [];
+    const analyticsSeries = useMemo(() => {
+      const days = 14;
+      const buckets = new Array(days).fill(0);
+      const now = Date.now();
+      const dayMs = 86_400_000;
+      for (const tx of tradeHistory) {
+        if (!['invest', 'buy', 'sell', 'brokerage_invest'].includes(tx.type) || !tx.createdAt) continue;
+        const age = Math.floor((now - tx.createdAt) / dayMs);
+        if (age >= 0 && age < days) buckets[days - 1 - age] += Number(tx.usdValue) || 0;
+      }
+      return buckets;
+    }, [tradeHistory]);
+    const completedTrades = tradeHistory.filter((tx) => ['invest', 'buy', 'sell', 'brokerage_invest'].includes(tx.type) && tx.status === 'completed').length;
+    const averageTradeValue = completedTrades
+      ? tradeHistory.filter((tx) => ['invest', 'buy', 'sell', 'brokerage_invest'].includes(tx.type) && tx.status === 'completed').reduce((s, tx) => s + (Number(tx.usdValue) || 0), 0) / completedTrades
+      : 0;
 
     return (<div className="flex">
       <Sidebar />
@@ -285,7 +271,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
                 <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
               </div>
-              <Link href="/brokerage" className="btn-primary text-sm self-start lg:self-auto">Open full brokerage</Link>
+              <Link href={user ? '/dashboard/brokerage' : '/brokerage'} className="btn-primary text-sm self-start lg:self-auto">Open full brokerage</Link>
             </div>
             <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {DASHBOARD_FEATURES.map((feature) => (
@@ -304,7 +290,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             </div>
           </section>
           {loading && (
-            <section className="glass-strong p-5">
+            <section id="live-signals" className="glass-strong p-5">
               <p className="text-sm text-white/60">Checking secure session…</p>
               <h2 className="mt-1 text-2xl font-display">Preparing your dedicated workspace.</h2>
             </section>
@@ -674,13 +660,17 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <div className="glass-strong p-5">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">P&L · last 30 days</p>
-                <span className={`text-xs ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl + 6900)}</span>
+                <span className={`text-xs ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</span>
               </div>
-              <BarChart data={[12, 18, 9, 22, 14, 28, 19, 31, 24, 36, 28, 41, 33, 22, 38]} color="#00ffa3"/>
+              {analyticsSeries.some((v) => v > 0) ? (
+                <BarChart data={analyticsSeries} color="#00ffa3"/>
+              ) : (
+                <div className="h-[160px] flex items-center justify-center text-sm text-white/45">No completed trades yet.</div>
+              )}
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
-                <div className="glass-light p-2 text-center"><p className="text-white/50">Win rate</p><p className="font-semibold mt-1">68%</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">Trades</p><p className="font-semibold mt-1">142</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">Avg ROE</p><p className="font-semibold mt-1 text-neon-green">+2.4%</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">Win rate</p><p className="font-semibold mt-1">{completedTrades ? 'Live' : '-'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">Trades</p><p className="font-semibold mt-1">{completedTrades}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">Avg value</p><p className="font-semibold mt-1 text-neon-green">{averageTradeValue ? formatUSD(averageTradeValue) : '-'}</p></div>
               </div>
             </div>
 
@@ -758,7 +748,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                           );
                         });
                       })()}
-                      <Link href="/dashboard/analytics" className="btn-ghost w-full text-xs justify-center">View all live signals</Link>
+                       <Link href="/dashboard/analytics#live-signals" className="btn-ghost w-full text-xs justify-center">View all live signals</Link>
                       <p className="text-[11px] text-white/45 text-center">Fund your wallet to apply these signals to your portfolio automatically.</p>
                     </div>
                   );

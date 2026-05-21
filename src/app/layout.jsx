@@ -4,10 +4,11 @@ import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { SiteBanner } from '@/components/layout/SiteBanner';
 import { AppBackground } from '@/components/layout/AppBackground';
 import { I18nProvider } from '@/components/I18nProvider';
-import { BRAND_LOGO_URL } from '@/lib/brand';
+import { BRAND_DOMAIN, BRAND_LOGO_URL, BRAND_NAME } from '@/lib/brand';
 export const metadata = {
-    title: 'Oakmont Digital Markets Group - Multi-Asset Brokerage & Investment Platform',
-    description: 'Oakmont Digital Markets Group is a fintech-grade multi-asset brokerage for live stocks, ETFs, indices, crypto, forex, commodities, futures and options market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
+    metadataBase: new URL(`https://${BRAND_DOMAIN}`),
+    title: `${BRAND_NAME} - Multi-Asset Brokerage & Investment Platform`,
+    description: `${BRAND_NAME} is a fintech-grade multi-asset brokerage for live stocks, ETFs, indices, crypto, forex, commodities, futures and options market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.`,
     keywords: [
         'brokerage',
         'stocks',
@@ -18,7 +19,10 @@ export const metadata = {
         'futures',
         'options',
         'trading',
-        'Oakmont Digital Markets Group',
+        BRAND_NAME,
+        'Oakmont Digital Markets Group brokerage',
+        'Oakmont Digital Markets Group trading',
+        'Oakmont Digital Markets Group investment platform',
         'digital assets',
         'multi-asset',
         'institutional',
@@ -27,7 +31,8 @@ export const metadata = {
         'investment',
         'fintech',
     ],
-    authors: [{ name: 'Oakmont Digital Markets Group' }],
+    authors: [{ name: BRAND_NAME }],
+    alternates: { canonical: '/' },
     manifest: '/site.webmanifest',
     icons: {
         icon: [{ url: BRAND_LOGO_URL }],
@@ -35,16 +40,24 @@ export const metadata = {
         apple: [{ url: BRAND_LOGO_URL }],
     },
     openGraph: {
-        title: 'Oakmont Digital Markets Group - Institutional Multi-Asset Brokerage',
+        title: `${BRAND_NAME} - Institutional Multi-Asset Brokerage`,
         description: 'Live stocks, ETFs, crypto, forex, commodities, futures and options access, secure account operations, managed portfolios, and reporting infrastructure for verified clients.',
         type: 'website',
+        url: '/',
+        siteName: BRAND_NAME,
+        images: [{ url: BRAND_LOGO_URL, alt: `${BRAND_NAME} logo` }],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: `${BRAND_NAME} - Multi-Asset Brokerage`,
+        description: `Search ${BRAND_NAME} to find the official live multi-asset brokerage and investment platform.`,
+        images: [BRAND_LOGO_URL],
     },
 };
 export const viewport = {
     themeColor: '#04131c',
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
     viewportFit: 'cover',
 };
 export default function RootLayout({ children }) {

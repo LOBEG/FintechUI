@@ -15,7 +15,7 @@ const BROKERS = [
   },
   {
     id: 'crypto',
-    name: 'Oakmont DMG Crypto Desk (Binance)',
+    name: 'Oakmont Digital Markets Group Crypto Desk (Binance)',
     description: 'Spot crypto liquidity routed through Binance.',
     classes: ['crypto'],
     source: 'Binance public API',
@@ -37,6 +37,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   const [preferred, setPreferred] = useState('prime');
   const [positions, setPositions] = useState([]);
   const [universe, setUniverse] = useState({});
+  const [optionsUnderliers, setOptionsUnderliers] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [cryptoMarkets, setCryptoMarkets] = useState([]);
   const [savingBroker, setSavingBroker] = useState(false);
@@ -59,6 +60,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
         if (b?.preferredBroker) setPreferred(b.preferredBroker);
         if (Array.isArray(p?.positions)) setPositions(p.positions);
         if (u?.universe) setUniverse(u.universe);
+        if (Array.isArray(u?.optionsUnderliers)) setOptionsUnderliers(u.optionsUnderliers);
         if (Array.isArray(q?.quotes)) setQuotes(q.quotes);
         if (Array.isArray(m?.markets)) setCryptoMarkets(m.markets);
       } catch (_) {}
@@ -87,11 +89,17 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   };
 
   const enabledBrokers = BROKERS.filter((b) => integrations[b.id]);
-  const enabledClasses = Object.keys(universe).filter((c) => settings.classes?.[c] !== false);
+  const enabledClasses = [
+    ...Object.keys(universe).filter((c) => settings.classes?.[c] !== false),
+    ...(integrations.crypto ? ['crypto'] : []),
+    ...(settings.classes?.options !== false && optionsUnderliers.length ? ['options'] : []),
+  ];
   const signalRows = quotes
     .filter((q) => q.signal && q.price)
-    .slice(0, 8);
-  const cryptoRows = cryptoMarkets.slice(0, 6);
+    .map((q) => ({ ...q, kind: q.assetClass || 'brokerage' }));
+  const cryptoRows = cryptoMarkets
+    .filter((m) => Number(m.price) > 0)
+    .map((m) => ({ ...m, kind: 'crypto', signal: m.signal || (Number(m.pct) >= 1 ? 'Accumulate' : Number(m.pct) <= -1 ? 'Reduce' : 'Hold / observe') }));
 
   return (
     <motion.section
@@ -149,8 +157,16 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
           </div>
           <div className="space-y-2">
             {enabledClasses.map((cls) => {
-              const rows = universe[cls] || [];
-              const liveCount = rows.filter((row) => quoteBySymbol.has(row.symbol)).length;
+              const rows = cls === 'crypto'
+                ? cryptoMarkets.map((row) => ({ symbol: row.symbol, name: row.name, signal: row.signal }))
+                : cls === 'options'
+                  ? optionsUnderliers
+                  : (universe[cls] || []);
+              const liveCount = cls === 'crypto'
+                ? rows.filter((row) => Number(cryptoMarkets.find((m) => m.symbol === row.symbol)?.price) > 0).length
+                : cls === 'options'
+                  ? rows.length
+                  : rows.filter((row) => quoteBySymbol.has(row.symbol)).length;
               return (
                 <div key={cls} className="rounded-lg border border-white/10 bg-white/5 p-2">
                   <div className="flex items-center gap-2">
@@ -159,8 +175,17 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                     <span className="ml-auto text-[10px] text-white/45">{rows.length} symbols</span>
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    {rows.slice(0, 6).map((row) => (
-                      <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{row.symbol}</span>
+                    {rows.map((row) => {
+                      const liveQuote = quoteBySymbol.get(row.symbol);
+                      const cryptoQuote = cls === 'crypto' ? cryptoMarkets.find((m) => m.symbol === row.symbol) : null;
+                      const signal = liveQuote?.signal || cryptoQuote?.signal;
+                      return (
+                      <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">
+                        {row.symbol}{signal ? ` · ${signal}` : ''}
+                      </span>
+                    );})}
+                    {!rows.length && (
+                      <span className="text-[10px] text-white/45">Awaiting live symbols.</span>
                     ))}
                   </div>
                 </div>
@@ -188,7 +213,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                 <span className="font-semibold w-20">{m.symbol}</span>
                 <span className="text-white/55 flex-1 truncate">{m.name}</span>
                 <span className={Number(m.pct) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{Number(m.pct || 0).toFixed(2)}%</span>
-                <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">crypto live</span>
+                <span className={`chip border text-[10px] ${m.signal === 'Reduce' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : m.signal === 'Accumulate' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : 'bg-white/5 border-white/10 text-white/70'}`}>{m.signal}</span>
               </div>
             ))}
             {!signalRows.length && !cryptoRows.length && (

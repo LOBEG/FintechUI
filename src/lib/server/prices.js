@@ -16,13 +16,13 @@ export const KNOWN_SYMBOLS = [
 
 // Human-readable metadata for the markets page.
 export const SYMBOL_INFO = {
-  BTC:  { name: 'Bitcoin',     color: '#f7931a' },
+  BTC:  { name: 'Bitcoin',     color: '#06d6c4' },
   ETH:  { name: 'Ethereum',    color: '#627eea' },
   SOL:  { name: 'Solana',      color: '#14f195' },
   XRP:  { name: 'XRP',         color: '#22c55e' },
-  BNB:  { name: 'BNB',         color: '#f3ba2f' },
+  BNB:  { name: 'BNB',         color: '#00c98b' },
   ADA:  { name: 'Cardano',     color: '#0033ad' },
-  DOGE: { name: 'Dogecoin',    color: '#c2a633' },
+  DOGE: { name: 'Dogecoin',    color: '#38bdf8' },
   AVAX: { name: 'Avalanche',   color: '#e84142' },
   DOT:  { name: 'Polkadot',    color: '#e6007a' },
   LINK: { name: 'Chainlink',   color: '#2a5ada' },
@@ -39,7 +39,7 @@ export const SYMBOL_INFO = {
   SUI:  { name: 'Sui',         color: '#4ca3ff' },
   FIL:  { name: 'Filecoin',    color: '#0090ff' },
   INJ:  { name: 'Injective',   color: '#00f2fe' },
-  SHIB: { name: 'Shiba Inu',   color: '#ffa409' },
+  SHIB: { name: 'Shiba Inu',   color: '#ef4444' },
   PEPE: { name: 'Pepe',        color: '#43a047' },
   BCH:  { name: 'Bitcoin Cash',color: '#8dc351' },
   ETC:  { name: 'Ethereum Classic', color: '#3ab83a' },

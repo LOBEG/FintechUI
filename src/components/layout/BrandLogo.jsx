@@ -10,18 +10,19 @@ export function OakmontLogoMark({ className = 'h-9 w-9' }) {
   );
 }
 
-export function BrandWordmark({ compact = false, className = '' }) {
+export function BrandWordmark({ className = '' }) {
+  const [, ...rest] = BRAND_NAME.split(' ');
   return (
-      <span className={`font-display tracking-wide leading-tight whitespace-nowrap ${className}`}>
+      <span className={`font-display tracking-wide leading-tight whitespace-nowrap min-w-0 ${className}`}>
       <span className="text-gradient-neon">Oakmont</span>
-      <span className="text-white whitespace-nowrap">{compact ? ' DMG' : ' Digital Markets Group'}</span>
+      <span className="text-white whitespace-nowrap"> {rest.join(' ')}</span>
     </span>
   );
 }
 
 export function BrandLogo({ href = '/', compact = false, className = '', markClassName = 'h-9 w-9', textClassName = 'text-xl' }) {
   return (
-    <Link href={href} className={`flex items-center gap-2 group ${className}`}>
+    <Link href={href} className={`flex items-center gap-2 group min-w-0 ${className}`}>
       <OakmontLogoMark className={markClassName}/>
       <BrandWordmark compact={compact} className={textClassName}/>
     </Link>

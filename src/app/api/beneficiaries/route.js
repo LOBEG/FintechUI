@@ -141,7 +141,7 @@ export async function POST(req) {
     const confirmUrl = `${appUrl}/api/beneficiaries/confirm?id=${encodeURIComponent(b.id)}&token=${encodeURIComponent(token)}`;
     const html = `<p>Confirm new withdrawal beneficiary "<b>${escapeHtml(label)}</b>" for ${symbol}:</p>` +
       `<p style="font-family:Menlo,monospace;background:#11172a;color:#fff;padding:8px;border-radius:6px">${escapeHtml(address)}${memo ? ` · memo ${escapeHtml(memo)}` : ''}${network ? ` · ${escapeHtml(network)}` : ''}</p>` +
-      `<p><a href="${confirmUrl}" style="background:#facc15;color:#111;padding:10px 16px;border-radius:8px;text-decoration:none">Confirm beneficiary</a></p>` +
+      `<p><a href="${confirmUrl}" style="background:#06d6c4;color:#03121f;padding:10px 16px;border-radius:8px;text-decoration:none">Confirm beneficiary</a></p>` +
       `<p>Even after confirmation, this address cannot receive funds for <b>48 hours</b>. If you did not add this beneficiary, ignore this email and rotate your password immediately.</p>`;
     try {
       await sendEmail({
