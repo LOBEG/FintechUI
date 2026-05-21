@@ -10,15 +10,15 @@ import { BrandLogo } from '@/components/layout/BrandLogo';
 const items = [
     { href: '/dashboard', label: 'overview', icon: LayoutDashboard },
     { href: '/brokerage', label: 'brokerage', icon: Briefcase },
-    { href: '/dashboard#trade-section', label: 'trade', icon: CandlestickChart },
-    { href: '/dashboard#wallet', label: 'wallet', icon: Wallet },
-    { href: '/dashboard#positions-section', label: 'positions', icon: Briefcase },
-    { href: '/dashboard#history-section', label: 'history', icon: History },
-    { href: '/dashboard#analytics-section', label: 'analytics', icon: PieChart },
-    { href: '/dashboard#bot-section', label: 'aiBot', icon: Bot },
-    { href: '/dashboard#alerts-section', label: 'alerts', icon: Bell },
-    { href: '/dashboard#security-section', label: 'security', icon: ShieldCheck },
-    { href: '/dashboard#settings-section', label: 'settings', icon: Settings },
+    { href: '/dashboard/trade', label: 'trade', icon: CandlestickChart },
+    { href: '/dashboard/wallet', label: 'wallet', icon: Wallet },
+    { href: '/dashboard/positions', label: 'positions', icon: Briefcase },
+    { href: '/dashboard/history', label: 'history', icon: History },
+    { href: '/dashboard/analytics', label: 'analytics', icon: PieChart },
+    { href: '/dashboard/analytics', label: 'aiBot', icon: Bot },
+    { href: '/dashboard/security', label: 'alerts', icon: Bell },
+    { href: '/dashboard/security', label: 'security', icon: ShieldCheck },
+    { href: '/dashboard/security', label: 'settings', icon: Settings },
 ];
 
 export function Sidebar() {

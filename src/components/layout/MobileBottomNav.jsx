@@ -7,15 +7,15 @@ import { useI18n } from '@/components/I18nProvider';
 
 const items = [
     { href: '/brokerage', label: 'brokerage', icon: Briefcase, fallback: 'Brokerage' },
-    { href: '/dashboard#trade-section', label: 'trade', icon: TrendingUp },
-    { href: '/dashboard#wallet', label: 'wallet', icon: Wallet },
-    { href: '/dashboard#positions-section', label: 'positions', icon: ListOrdered },
-    { href: '/dashboard#history-section', label: 'history', icon: History },
-    { href: '/dashboard#analytics-section', label: 'analytics', icon: BarChart3 },
-    { href: '/dashboard#bot-section', label: 'aiBot', icon: Bot },
-    { href: '/dashboard#alerts-section', label: 'alerts', icon: Bell },
-    { href: '/dashboard#security-section', label: 'security', icon: Shield },
-    { href: '/dashboard#settings-section', label: 'settings', icon: Settings },
+    { href: '/dashboard/trade', label: 'trade', icon: TrendingUp },
+    { href: '/dashboard/wallet', label: 'wallet', icon: Wallet },
+    { href: '/dashboard/positions', label: 'positions', icon: ListOrdered },
+    { href: '/dashboard/history', label: 'history', icon: History },
+    { href: '/dashboard/analytics', label: 'analytics', icon: BarChart3 },
+    { href: '/dashboard/analytics', label: 'aiBot', icon: Bot },
+    { href: '/dashboard/security', label: 'alerts', icon: Bell },
+    { href: '/dashboard/security', label: 'security', icon: Shield },
+    { href: '/dashboard/security', label: 'settings', icon: Settings },
 ];
 
 export function MobileBottomNav() {
@@ -26,7 +26,7 @@ export function MobileBottomNav() {
       <ul className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory">
         {items.map((it) => {
             const Icon = it.icon;
-            const active = pathname === it.href.split('#')[0];
+            const active = pathname === it.href;
             const label = it.fallback ? (t(it.label) === it.label ? it.fallback : t(it.label)) : t(it.label);
             return (<li key={it.href} className="snap-start">
               <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1 py-2.5 px-4 text-[11px] min-w-[72px]', active ? 'text-neon-green' : 'text-white/60 hover:text-white')}>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Wallet, Plus, Bot, Eye, Star, Zap, } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
@@ -35,15 +36,15 @@ const DEMO_POSITION_TEMPLATE = [
 ];
 const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d', '1w'];
 const DASHBOARD_FEATURES = [
-    { id: 'overview', hash: '', label: 'Overview', blurb: 'Portfolio value, cash, P&L and a clean launchpad for every feature.' },
-    { id: 'trade', hash: 'trade-section', label: 'Spot trade', blurb: 'Live chart, order ticket, fees and execution controls.' },
-    { id: 'wallet', hash: 'wallet', label: 'Wallet', blurb: 'Balances, asset cards, funding addresses and live crypto markets.' },
-    { id: 'brokerage', hash: 'brokerage-section', label: 'Brokerage', blurb: 'Stocks, ETFs, forex, futures, options and brokerage positions.' },
-    { id: 'positions', hash: 'positions-section', label: 'Positions', blurb: 'Watchlist and open positions without unrelated dashboard content.' },
-    { id: 'analytics', hash: 'analytics-section', label: 'Analytics', blurb: 'Allocation, P&L, performance stats and AI portfolio intelligence.' },
-    { id: 'history', hash: 'history-section', label: 'History', blurb: 'Transaction history and testimonial tools.' },
-    { id: 'security', hash: 'security-section', label: 'Security', blurb: 'KYC, account safety, saved beneficiaries and platform settings.' },
-    { id: 'support', hash: 'support-section', label: 'Support', blurb: 'Support tickets, contact channels and client service actions.' },
+    { id: 'overview', path: '/dashboard', hash: '', label: 'Overview', blurb: 'Portfolio value, cash, P&L and a clean launchpad for every feature.' },
+    { id: 'trade', path: '/dashboard/trade', hash: 'trade-section', label: 'Spot trade', blurb: 'Live chart, order ticket, fees and execution controls.' },
+    { id: 'wallet', path: '/dashboard/wallet', hash: 'wallet', label: 'Wallet', blurb: 'Balances, asset cards, funding addresses and live crypto markets.' },
+    { id: 'brokerage', path: '/dashboard/brokerage', hash: 'brokerage-section', label: 'Brokerage', blurb: 'Stocks, ETFs, forex, futures, options and brokerage positions.' },
+    { id: 'positions', path: '/dashboard/positions', hash: 'positions-section', label: 'Positions', blurb: 'Watchlist and open positions without unrelated dashboard content.' },
+    { id: 'analytics', path: '/dashboard/analytics', hash: 'analytics-section', label: 'Analytics', blurb: 'Allocation, P&L, performance stats and AI portfolio intelligence.' },
+    { id: 'history', path: '/dashboard/history', hash: 'history-section', label: 'History', blurb: 'Transaction history and testimonial tools.' },
+    { id: 'security', path: '/dashboard/security', hash: 'security-section', label: 'Security', blurb: 'KYC, account safety, saved beneficiaries and platform settings.' },
+    { id: 'support', path: '/dashboard/support', hash: 'support-section', label: 'Support', blurb: 'Support tickets, contact channels and client service actions.' },
 ];
 const HASH_TO_FEATURE = DASHBOARD_FEATURES.reduce((acc, item) => {
     if (item.hash) acc[item.hash] = item.id;
@@ -52,9 +53,13 @@ const HASH_TO_FEATURE = DASHBOARD_FEATURES.reduce((acc, item) => {
 HASH_TO_FEATURE['bot-section'] = 'analytics';
 HASH_TO_FEATURE['alerts-section'] = 'security';
 HASH_TO_FEATURE['settings-section'] = 'security';
+const DASHBOARD_FEATURE_IDS = new Set(DASHBOARD_FEATURES.map((feature) => feature.id));
 
-export default function DashboardPage() {
-    const { user } = useSession();
+export { DASHBOARD_FEATURES };
+
+export default function DashboardPage({ initialFeature = 'overview' }) {
+    const { user, loading } = useSession();
+    const pathname = usePathname();
     const { t } = useI18n();
     const [side, setSide] = useState('buy');
     const [orderType, setOrderType] = useState('limit');
@@ -62,15 +67,23 @@ export default function DashboardPage() {
     const [interval, setInterval] = useState('5m');
     const [investOpen, setInvestOpen] = useState(false);
     const [investSymbol, setInvestSymbol] = useState('BTC');
-    const [activeFeature, setActiveFeature] = useState('overview');
+    const [activeFeature, setActiveFeature] = useState(DASHBOARD_FEATURE_IDS.has(initialFeature) ? initialFeature : 'overview');
     
     // Handle dashboard feature navigation from hash on client side.
     useEffect(() => {
         if (typeof window === 'undefined') return;
+        const pathFeature = pathname?.startsWith('/dashboard/')
+            ? pathname.split('/').filter(Boolean)[1]
+            : null;
+        if (pathFeature && DASHBOARD_FEATURE_IDS.has(pathFeature)) {
+            setActiveFeature(pathFeature);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
         
         const handleHashChange = () => {
             const hash = window.location.hash.slice(1);
-            setActiveFeature(HASH_TO_FEATURE[hash] || 'overview');
+            setActiveFeature(HASH_TO_FEATURE[hash] || (DASHBOARD_FEATURE_IDS.has(initialFeature) ? initialFeature : 'overview'));
             setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 80);
         };
         
@@ -80,12 +93,13 @@ export default function DashboardPage() {
         // Listen for hash changes
         window.addEventListener('hashchange', handleHashChange);
         return () => window.removeEventListener('hashchange', handleHashChange);
-    }, []);
+    }, [initialFeature, pathname]);
     const requireAuth = useCallback(() => {
+        if (loading) return false;
         if (user) return true;
         window.location.href = '/login?next=/dashboard';
         return false;
-    }, [user]);
+    }, [loading, user]);
     const openInvest = useCallback((sym) => {
         if (!requireAuth()) return;
         if (sym) setInvestSymbol(sym);
@@ -229,7 +243,8 @@ export default function DashboardPage() {
         setAmount(next > 0 ? next.toFixed(6) : '0');
     }, [cashUSDT, effectivePrice, requireAuth]);
     const activeFeatureMeta = DASHBOARD_FEATURES.find((f) => f.id === activeFeature) || DASHBOARD_FEATURES[0];
-    const featureHref = (feature) => feature.hash ? `/dashboard#${feature.hash}` : '/dashboard';
+    const featureHref = (feature) => feature.path || '/dashboard';
+    const showAuthGate = !loading && !user && !['overview', 'trade', 'wallet'].includes(activeFeature);
 
     return (<div className="flex">
       <Sidebar />
@@ -262,7 +277,24 @@ export default function DashboardPage() {
               ))}
             </div>
           </section>
-          {activeFeature === 'overview' && (user ? <section className="grid lg:grid-cols-4 gap-4">
+          {loading && (
+            <section className="glass-strong p-5">
+              <p className="text-sm text-white/60">Checking secure session…</p>
+              <h2 className="mt-1 text-2xl font-display">Preparing your dedicated workspace.</h2>
+            </section>
+          )}
+          {showAuthGate && (
+            <section className="glass-strong p-5 border-gold-400/25">
+              <p className="text-sm text-white/60">{activeFeatureMeta.label} workspace</p>
+              <h2 className="mt-1 text-2xl font-display">Sign in to view live {activeFeatureMeta.label.toLowerCase()} content.</h2>
+              <p className="mt-2 text-sm text-white/60 max-w-2xl">Each feature now has its own page on desktop and mobile. Secure account data stays hidden until your session is confirmed.</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a href="/login?next=/dashboard" className="btn-gold text-sm">Sign in</a>
+                <a href="/signup" className="btn-outline text-sm">Create account</a>
+              </div>
+            </section>
+          )}
+          {!loading && activeFeature === 'overview' && (user ? <section className="grid lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-strong p-5 lg:col-span-2">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -299,7 +331,7 @@ export default function DashboardPage() {
             <h2 className="mt-1 text-2xl font-display">Create an account to view cash, balances, positions, history, and execution controls.</h2>
             <p className="mt-2 text-sm text-white/60 max-w-2xl">The live chart and market table remain public for transparency. Funding, investing, selling, withdrawals, and portfolio records are available only after secure sign-in.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <a href="/signup" className="btn-gold text-sm">Create Account</a>
+              <a href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</a>
               <a href="/login?next=/dashboard" className="btn-ghost text-sm">Sign in</a>
             </div>
           </section>)}
