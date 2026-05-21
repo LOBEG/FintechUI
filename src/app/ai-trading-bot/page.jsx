@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Bot, Zap, Target, TrendingUp } from 'lucide-react';
 
 export const metadata = {
-    title: 'AI Trading Bot - Oakmont Digital Capital Group',
+    title: 'AI Trading Bot - Oakmont Digital Markets Group',
     description: 'Automated crypto trading powered by machine learning and quantitative strategies.',
 };
 
@@ -14,10 +14,10 @@ export default function AITradingBotPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-neon">AI Trading Bot</span> by Oakmont Digital Capital Group
+            <span className="text-gradient-neon">AI Trading Bot</span> by Oakmont Digital Markets Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            AI-assisted trading tools for monitoring live crypto markets, building disciplined DCA plans, and reviewing risk signals before action. Oakmont Digital Capital Group keeps automation inside account controls, transparent records, and client-approved execution workflows.
+            AI-assisted trading tools for monitoring live crypto markets, building disciplined DCA plans, and reviewing risk signals before action. Oakmont Digital Markets Group keeps automation inside account controls, transparent records, and client-approved execution workflows.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">

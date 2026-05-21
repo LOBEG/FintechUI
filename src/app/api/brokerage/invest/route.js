@@ -16,6 +16,7 @@ import {
 import { applyTakerFee } from '@/lib/server/fees.js';
 import { creditReferralRebate } from '@/lib/server/referral.js';
 import { sendInvestEmail } from '@/lib/server/email.js';
+import { priceFor, isSupportedSymbol } from '@/lib/server/prices.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -58,10 +59,22 @@ export async function POST(req) {
       );
     }
     const roundedUsd = Math.round(usdAmount * 100) / 100;
-    const usdt = user.balances?.USDT || 0;
-    if (usdt + 1e-9 < roundedUsd) {
+    const fundingSymbol = String(body.fundingSymbol || 'USDT').toUpperCase();
+    if (!isSupportedSymbol(fundingSymbol)) {
+      return NextResponse.json({ error: 'Unsupported funding asset' }, { status: 400 });
+    }
+    let fundingPrice = 1;
+    if (fundingSymbol !== 'USDT') {
+      fundingPrice = await priceFor(fundingSymbol);
+      if (!fundingPrice || !isFinite(fundingPrice)) {
+        return NextResponse.json({ error: 'Unable to fetch funding asset price' }, { status: 503 });
+      }
+    }
+    const fundingBal = user.balances?.[fundingSymbol] || 0;
+    const fundingNeeded = roundedUsd / fundingPrice;
+    if (fundingBal + 1e-9 < fundingNeeded) {
       return NextResponse.json(
-        { error: `Insufficient USDT. Available: ${usdt.toFixed(2)}` },
+        { error: `Insufficient ${fundingSymbol}. Available: ${fundingBal.toFixed(8)} (${(fundingBal * fundingPrice).toFixed(2)} USD)` },
         { status: 400 },
       );
     }
@@ -74,7 +87,7 @@ export async function POST(req) {
     const qty = Math.floor((netUsd / price) * 1e6) / 1e6;
 
     user.balances = user.balances || {};
-    user.balances.USDT = Math.max(0, usdt - roundedUsd);
+    user.balances[fundingSymbol] = Math.max(0, fundingBal - fundingNeeded);
     if (broker) user.preferredBroker = broker;
     upsertUser(user);
 
@@ -101,13 +114,14 @@ export async function POST(req) {
       symbol,
       assetClass,
       broker: broker || user.preferredBroker || null,
+      fundingSymbol,
       amount: qty,
       price,
       usdValue: roundedUsd,
       fee,
       feeBps: bps,
       status: 'completed',
-      note: `Invested ${roundedUsd.toFixed(2)} USDT into ${symbol} (${assetClass}) at ${price.toFixed(4)} (fee ${fee.toFixed(2)} USDT)`,
+      note: `Invested ${roundedUsd.toFixed(2)} USD via ${fundingSymbol} into ${symbol} (${assetClass}) at ${price.toFixed(4)} (fee ${fee.toFixed(2)} USDT)`,
       createdAt: Date.now(),
     };
     addTransaction(tx);

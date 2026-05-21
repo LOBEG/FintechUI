@@ -69,9 +69,9 @@ export async function POST(req) {
       try {
         await sendEmail({
           to: user.email,
-          subject: `Your Oakmont Digital Capital Group ${symbol} balance was updated`,
-          text: `Your Oakmont Digital Capital Group ${symbol} balance has been set to ${target}. Reason: ${reason}.`,
-          html: `<p>Hello ${user.name || ''},</p><p>Your Oakmont Digital Capital Group <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>— The Oakmont Digital Capital Group team</p>`,
+          subject: `Your Oakmont Digital Markets Group ${symbol} balance was updated`,
+          text: `Your Oakmont Digital Markets Group ${symbol} balance has been set to ${target}. Reason: ${reason}.`,
+          html: `<p>Hello ${user.name || ''},</p><p>Your Oakmont Digital Markets Group <strong>${symbol}</strong> balance has been set to <strong>${target} ${symbol}</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>— The Oakmont Digital Markets Group team</p>`,
         });
       } catch (_) {}
     }

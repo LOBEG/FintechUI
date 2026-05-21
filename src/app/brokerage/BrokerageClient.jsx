@@ -7,6 +7,7 @@ import {
   Activity, ArrowRight, X, Loader2, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { getCryptoLogo } from '@/lib/cryptoLogos';
+import { useSession } from '@/lib/useSession';
 
 const TABS = [
   { id: 'stocks',      label: 'Stocks',       blurb: 'Live equities from US primary listings (NYSE, NASDAQ).' },
@@ -129,6 +130,7 @@ function QuoteRow({ q, onOpen }) {
 }
 
 function QuoteDetail({ q, onClose }) {
+  const { user } = useSession();
   const [rangeId, setRangeId] = useState('1mo');
   const range = RANGE_PRESETS.find((r) => r.id === rangeId) || RANGE_PRESETS[2];
   const [chart, setChart] = useState(null);
@@ -175,11 +177,20 @@ function QuoteDetail({ q, onClose }) {
           <div className="glass-light p-2"><p className="text-white/50">Volume</p><p className="font-mono text-sm">{fmtVol(q.volume)}</p></div>
         </div>
         <p className="mt-4 text-[11px] text-white/45">
-          Live quote sourced from primary exchange feed. To place an order, open a verified Oakmont DCG brokerage account.
+          Live quote sourced from primary exchange feed.
+          {user
+            ? ' Place an order from your trading dashboard.'
+            : ' To place an order, open a verified Oakmont DMG brokerage account.'}
         </p>
         <div className="mt-3 flex gap-2">
-          <Link href="/signup" className="btn-gold text-xs">Open Brokerage Account</Link>
-          <Link href="/login?next=/dashboard" className="btn-ghost text-xs">Sign in to Trade</Link>
+          {user ? (
+            <Link href="/dashboard" className="btn-gold text-xs">Trade now in Dashboard</Link>
+          ) : (
+            <>
+              <Link href="/signup" className="btn-gold text-xs">Open Brokerage Account</Link>
+              <Link href="/login?next=/dashboard" className="btn-ghost text-xs">Sign in to Trade</Link>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -382,6 +393,7 @@ function OptionsBoard() {
 }
 
 export default function BrokerageClient() {
+  const { user } = useSession();
   const [tab, setTab] = useState('stocks');
   useEffect(() => {
     const requestedTab = new URLSearchParams(window.location.search).get('tab');
@@ -396,7 +408,7 @@ export default function BrokerageClient() {
           Trade everything from <span className="text-gradient-gold">stocks &amp; ETFs</span> to <span className="text-gradient-neon">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
-          Oakmont Digital Capital Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no placeholders. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
+          Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no placeholders. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
         </p>
       </motion.div>
       <div className="flex flex-wrap gap-1.5">
@@ -433,7 +445,7 @@ export default function BrokerageClient() {
           <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● live aggregation</span>
         </div>
         <p className="text-sm text-white/65 max-w-3xl">
-          Oakmont Digital Capital Group aggregates liquidity across regulated brokerages and exchanges so a single Oakmont account can express any view. Execution is routed by asset class to the venue with best price, depth and settlement at the time of order.
+          Oakmont Digital Markets Group aggregates liquidity across regulated brokerages and exchanges so a single Oakmont account can express any view. Execution is routed by asset class to the venue with best price, depth and settlement at the time of order.
         </p>
         <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
           {[
@@ -454,11 +466,15 @@ export default function BrokerageClient() {
           ))}
         </div>
         <p className="mt-4 text-[11px] text-white/45">
-          Venue list is illustrative of the brokerage and exchange partners Oakmont Digital Capital Group aggregates for live pricing and routing. Specific routing is determined per-order in line with our best execution policy and disclosed on every fill.
+          Venue list is illustrative of the brokerage and exchange partners Oakmont Digital Markets Group aggregates for live pricing and routing. Specific routing is determined per-order in line with our best execution policy and disclosed on every fill.
         </p>
       </section>
       <div className="text-center pt-2">
-        <Link href="/signup" className="btn-gold">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
+        {user ? (
+          <Link href="/dashboard" className="btn-gold">Trade now in your Dashboard <ArrowRight className="h-4 w-4"/></Link>
+        ) : (
+          <Link href="/signup" className="btn-gold">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
+        )}
       </div>
     </div>
   );

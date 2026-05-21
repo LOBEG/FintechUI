@@ -40,7 +40,7 @@ export function Web3ConnectButton() {
                     <span className="text-sm font-medium">{w.name}</span>
                   </button>))}
               </div>
-              <p className="mt-4 text-xs text-white/40">By connecting, you agree to Oakmont Digital Capital Group Terms of Service & Privacy Policy.</p>
+              <p className="mt-4 text-xs text-white/40">By connecting, you agree to Oakmont Digital Markets Group Terms of Service & Privacy Policy.</p>
             </motion.div>
           </motion.div>)}
       </AnimatePresence>

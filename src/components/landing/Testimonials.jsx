@@ -9,7 +9,7 @@ const curatedTestimonials = [
         name: 'Amara Okafor',
         role: 'Private investor',
         rating: 5,
-        text: 'Oakmont Digital Capital Group gave me the confidence to move from scattered exchange balances into a more disciplined investment workflow. I can follow my allocation, review account activity, and understand what is happening across each strategy before making a decision.',
+        text: 'Oakmont Digital Markets Group gave me the confidence to move from scattered exchange balances into a more disciplined investment workflow. I can follow my allocation, review account activity, and understand what is happening across each strategy before making a decision.',
     },
     {
         id: 'curated-daniel-mercer',
@@ -37,7 +37,7 @@ const curatedTestimonials = [
         name: 'Sofia Almeida',
         role: 'Long-term investor',
         rating: 5,
-        text: 'I use Oakmont Digital Capital Group to monitor market opportunities and keep my decisions organised. The experience makes it easy to separate browsing public market data from actual account activity once I sign in.',
+        text: 'I use Oakmont Digital Markets Group to monitor market opportunities and keep my decisions organised. The experience makes it easy to separate browsing public market data from actual account activity once I sign in.',
     },
     {
         id: 'curated-ethan-brooks',
@@ -58,7 +58,7 @@ const curatedTestimonials = [
         name: 'Hannah Weiss',
         role: 'Investment account holder',
         rating: 5,
-        text: 'Oakmont Digital Capital Group gives the platform a premium feel while keeping the workflow straightforward. The reporting, account controls, and market access make crypto investing feel more organised and accountable.',
+        text: 'Oakmont Digital Markets Group gives the platform a premium feel while keeping the workflow straightforward. The reporting, account controls, and market access make crypto investing feel more organised and accountable.',
     },
 ];
 
@@ -112,7 +112,7 @@ export function Testimonials() {
                 )}
                 <div>
                   <p className="text-sm font-semibold">{t.name}</p>
-                  <p className="text-xs text-white/55">{t.role || 'Oakmont Digital Capital Group investor'}</p>
+                  <p className="text-xs text-white/55">{t.role || 'Oakmont Digital Markets Group investor'}</p>
                 </div>
                 <div className="ml-auto flex">
                   {Array.from({ length: t.rating || 5 }).map((_, k) => (<Star key={k} className="h-3.5 w-3.5 text-gold-400 fill-gold-400"/>))}

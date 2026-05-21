@@ -34,30 +34,55 @@ function Modal({ open, onClose, title, icon, children }) {
   );
 }
 
+// List of crypto assets a user may choose to spend FROM. The picker
+// defaults to whichever asset has the largest USD balance, falling back
+// to USDT for new accounts.
+const FUNDING_OPTIONS = ['USDT', 'USDC', 'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'BCH'];
+
+function pickDefaultFunding(walletBalances = {}, prices = {}) {
+  let best = null;
+  let bestUsd = 0;
+  for (const sym of FUNDING_OPTIONS) {
+    const bal = Number(walletBalances[sym]) || 0;
+    if (bal <= 0) continue;
+    const px = sym === 'USDT' || sym === 'USDC' ? 1 : (prices[`${sym}USDT`]?.price || 0);
+    const usd = bal * px;
+    if (usd > bestUsd) { bestUsd = usd; best = sym; }
+  }
+  return best || 'USDT';
+}
+
 export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', walletBalances = {} }) {
   const [symbol, setSymbol] = useState(defaultSymbol);
-  const quoteCurrency = 'USDT';
+  const [fundingSymbol, setFundingSymbol] = useState('USDT');
   const [usdAmount, setUsdAmount] = useState('100');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const tradingPair = `${symbol}${quoteCurrency}`;
-  const prices = useLivePrices([tradingPair]);
+  const tradingPair = `${symbol}USDT`;
+  const fundingPair = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? null : `${fundingSymbol}USDT`;
+  const watchPairs = [tradingPair, ...(fundingPair ? [fundingPair] : [])];
+  const prices = useLivePrices(watchPairs);
   const px = prices[tradingPair]?.price || 0;
+  const fundingPx = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 1 : (prices[fundingPair]?.price || 0);
   const estCrypto = px ? parseFloat(usdAmount || '0') / px : 0;
-  const availableQuote = walletBalances[quoteCurrency] || 0;
-  useEffect(() => { 
-    if (open) { 
-      setSuccess(null); 
-      setError(null); 
+  const fundingBal = walletBalances[fundingSymbol] || 0;
+  const fundingUsd = fundingBal * fundingPx;
+  const fundingNeeded = fundingPx ? parseFloat(usdAmount || '0') / fundingPx : 0;
+  useEffect(() => {
+    if (open) {
+      setSuccess(null);
+      setError(null);
       setSymbol(defaultSymbol || 'BTC');
-    } 
+      setFundingSymbol(pickDefaultFunding(walletBalances, prices));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, defaultSymbol]);
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true); setError(null);
     try {
-      const r = await api.post('/api/invest', { symbol, usdAmount: parseFloat(usdAmount) });
+      const r = await api.post('/api/invest', { symbol, usdAmount: parseFloat(usdAmount), fundingSymbol });
       setSuccess(r.transaction);
       onSuccess && onSuccess(r);
     } catch (err) {
@@ -79,29 +104,41 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
       ) : (
         <form onSubmit={submit} className="space-y-3">
           <p className="text-xs text-white/60">
-             Spend {quoteCurrency} from your wallet to buy crypto at the live Binance price.
-            Available {quoteCurrency}: <strong>{availableQuote.toFixed(quoteCurrency === 'BTC' || quoteCurrency === 'ETH' ? 8 : 2)}</strong>
-            {availableQuote === 0 && <span className="text-neon-orange"> (insufficient balance)</span>}.
+            Spend any crypto from your wallet to buy another at the live Binance price.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block">
+              <span className="text-xs text-white/55">Buy (target)</span>
+              <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+                {SUPPORTED.filter((s) => s !== fundingSymbol).map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-xs text-white/55">Spend (funding)</span>
+              <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+                {FUNDING_OPTIONS.filter((s) => s !== symbol).map((s) => (
+                  <option key={s} value={s} className="bg-ink-900">{s} ({(walletBalances[s] || 0).toFixed(s === 'USDT' || s === 'USDC' ? 2 : 6)})</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <p className="text-[11px] text-white/55">
+            Available {fundingSymbol}: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</strong>
+            {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
+            {fundingUsd <= 0 && <span className="text-neon-orange"> (insufficient)</span>}
           </p>
           <label className="block">
-            <span className="text-xs text-white/55">Trading pair</span>
-             <div className="mt-1">
-               <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
-                 {SUPPORTED.map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
-               </select>
-             </div>
-          </label>
-          <label className="block">
-            <span className="text-xs text-white/55">{quoteCurrency} amount</span>
+            <span className="text-xs text-white/55">USD amount</span>
             <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
-            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `${px.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${quoteCurrency}` : '-'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `${px.toLocaleString(undefined, { maximumFractionDigits: 6 })} USDT` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated {symbol}</span><span>{estCrypto.toFixed(8)}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
           {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy || !px || availableQuote === 0} className="btn-primary w-full justify-center disabled:opacity-60" title={availableQuote === 0 ? `Insufficient ${quoteCurrency}` : ''}>
-            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest ${usdAmount} ${quoteCurrency} into ${symbol}`}
+          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60" title={fundingUsd < parseFloat(usdAmount || '0') ? `Insufficient ${fundingSymbol}` : ''}>
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>
         </form>
       )}
@@ -180,7 +217,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         <form onSubmit={submit} className="space-y-3">
           <div className="flex gap-2 text-xs items-start bg-gold-500/10 border border-gold-500/30 text-gold-200 rounded-lg p-3">
             <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
-            <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Capital Group administrator.</p>
+            <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Markets Group administrator.</p>
           </div>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>
@@ -367,7 +404,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
 const BROKER_OPTIONS = [
   { id: 'prime', label: 'Oakmont Prime' },
-  { id: 'crypto', label: 'Oakmont DCG Crypto Desk (Binance)' },
+  { id: 'crypto', label: 'Oakmont DMG Crypto Desk (Binance)' },
   { id: 'multiAsset', label: 'Oakmont Multi-Asset Desk (Yahoo Finance)' },
 ];
 
@@ -390,9 +427,15 @@ export function BrokerageInvestModal({
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const availableUsdt = walletBalances.USDT || 0;
+  const [fundingSymbol, setFundingSymbol] = useState('USDT');
+  const fundingPair = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? null : `${fundingSymbol}USDT`;
+  const fundingPrices = useLivePrices(fundingPair ? [fundingPair] : []);
+  const fundingPx = fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 1 : (fundingPrices[fundingPair]?.price || 0);
+  const fundingBal = walletBalances[fundingSymbol] || 0;
+  const fundingUsd = fundingBal * fundingPx;
   const px = quote?.price || 0;
   const estQty = px ? parseFloat(usdAmount || '0') / px : 0;
+  const fundingNeeded = fundingPx ? parseFloat(usdAmount || '0') / fundingPx : 0;
 
   useEffect(() => {
     if (!open) return;
@@ -400,6 +443,7 @@ export function BrokerageInvestModal({
     setAssetClass(defaultClass || 'stocks');
     setSymbol(defaultSymbol || 'AAPL');
     setBroker(preferredBroker || 'prime');
+    setFundingSymbol(pickDefaultFunding(walletBalances, fundingPrices));
     let cancelled = false;
     api.get('/api/brokerage/universe').then((r) => {
       if (!cancelled && r?.universe) setUniverse(r.universe);
@@ -435,6 +479,7 @@ export function BrokerageInvestModal({
         symbol,
         assetClass,
         broker,
+        fundingSymbol,
         usdAmount: parseFloat(usdAmount),
       });
       setSuccess(r);
@@ -462,9 +507,21 @@ export function BrokerageInvestModal({
       ) : (
         <form onSubmit={submit} className="space-y-3">
           <p className="text-xs text-white/60">
-            Spend USDT to buy a brokerage instrument at the live price. Available USDT: <strong>{availableUsdt.toFixed(2)}</strong>
-            {availableUsdt === 0 && <span className="text-neon-orange"> (insufficient balance)</span>}.
+            Spend any crypto from your wallet to buy a brokerage instrument at the live price.
           </p>
+          <label className="block">
+            <span className="text-xs text-white/55">Spend (funding)</span>
+            <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              {FUNDING_OPTIONS.map((s) => (
+                <option key={s} value={s} className="bg-ink-900">{s} ({(walletBalances[s] || 0).toFixed(s === 'USDT' || s === 'USDC' ? 2 : 6)})</option>
+              ))}
+            </select>
+            <span className="block text-[11px] text-white/55 mt-1">
+              Available: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)} {fundingSymbol}</strong>
+              {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
+              {fundingUsd <= 0 && <span className="text-neon-orange"> (insufficient)</span>}
+            </span>
+          </label>
           <label className="block">
             <span className="text-xs text-white/55">Broker</span>
             <select value={broker} onChange={(e) => setBroker(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
@@ -484,16 +541,17 @@ export function BrokerageInvestModal({
             </select>
           </label>
           <label className="block">
-            <span className="text-xs text-white/55">USDT amount</span>
+            <span className="text-xs text-white/55">USD amount</span>
             <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `$${px.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated qty</span><span>{estQty ? estQty.toFixed(6) : '-'}</span></div>
+            <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
           {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy || !px || availableUsdt === 0} className="btn-primary w-full justify-center disabled:opacity-60">
-            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest ${usdAmount} USDT into ${symbol}`}
+          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60">
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>
         </form>
       )}

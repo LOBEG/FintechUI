@@ -5,8 +5,8 @@ import { SiteBanner } from '@/components/layout/SiteBanner';
 import { AppBackground } from '@/components/layout/AppBackground';
 import { I18nProvider } from '@/components/I18nProvider';
 export const metadata = {
-    title: 'Oakmont Digital Capital Group - Multi-Asset Brokerage & Investment Platform',
-    description: 'Oakmont Digital Capital Group is a fintech-grade multi-asset brokerage for live stocks, ETFs, indices, crypto, forex, commodities, futures and options market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
+    title: 'Oakmont Digital Markets Group - Multi-Asset Brokerage & Investment Platform',
+    description: 'Oakmont Digital Markets Group is a fintech-grade multi-asset brokerage for live stocks, ETFs, indices, crypto, forex, commodities, futures and options market data, secure trading workflows, managed account servicing, compliance controls, and transparent client reporting.',
     keywords: [
         'brokerage',
         'stocks',
@@ -17,7 +17,7 @@ export const metadata = {
         'futures',
         'options',
         'trading',
-        'Oakmont Digital Capital Group',
+        'Oakmont Digital Markets Group',
         'digital assets',
         'multi-asset',
         'institutional',
@@ -26,7 +26,7 @@ export const metadata = {
         'investment',
         'fintech',
     ],
-    authors: [{ name: 'Oakmont Digital Capital Group' }],
+    authors: [{ name: 'Oakmont Digital Markets Group' }],
     manifest: '/site.webmanifest',
     icons: {
         icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
@@ -34,7 +34,7 @@ export const metadata = {
         apple: [{ url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' }],
     },
     openGraph: {
-        title: 'Oakmont Digital Capital Group - Institutional Multi-Asset Brokerage',
+        title: 'Oakmont Digital Markets Group - Institutional Multi-Asset Brokerage',
         description: 'Live stocks, ETFs, crypto, forex, commodities, futures and options access, secure account operations, managed portfolios, and reporting infrastructure for verified clients.',
         type: 'website',
     },
@@ -43,7 +43,7 @@ export const viewport = {
     themeColor: '#05070d',
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 5,
+    maximumScale: 1,
     viewportFit: 'cover',
 };
 export default function RootLayout({ children }) {

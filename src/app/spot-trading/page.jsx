@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { TrendingUp, Zap, Shield, Clock } from 'lucide-react';
 
 export const metadata = {
-    title: 'Crypto Brokerage - Oakmont Digital Capital Group',
-    description: 'Trade BTC, ETH, USDT and major digital assets from the live Oakmont Digital Capital Group brokerage hub.',
+    title: 'Crypto Brokerage - Oakmont Digital Markets Group',
+    description: 'Trade BTC, ETH, USDT and major digital assets from the live Oakmont Digital Markets Group brokerage hub.',
 };
 
 export default function SpotTradingPage() {
@@ -14,7 +14,7 @@ export default function SpotTradingPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-gold">Spot Trading</span> on Oakmont Digital Capital Group
+            <span className="text-gradient-gold">Spot Trading</span> on Oakmont Digital Markets Group
           </h1>
           <p className="mt-4 text-lg text-white/70">
             Trade Bitcoin, Ethereum, and supported digital assets through a live market interface built for transparent pricing, user-level account controls, portfolio records, and secure settlement workflows.

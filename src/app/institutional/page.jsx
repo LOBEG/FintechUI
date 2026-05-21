@@ -4,7 +4,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
-    title: 'Institutional Services - Oakmont Digital Capital Group',
+    title: 'Institutional Services - Oakmont Digital Markets Group',
     description: 'Enterprise multi-asset brokerage, custody coordination, reporting and execution services for institutions, family offices, and corporate treasury.',
 };
 
@@ -61,7 +61,7 @@ export default function InstitutionalPage() {
           <div className="mt-10">
             <div className="flex flex-wrap gap-4">
               <a href="/brokerage" className="btn-primary">View Live Brokerage Coverage</a>
-              <a href="mailto:institutional@oakmontdigitalcapital.com" className="btn-ghost">Contact Institutional Team</a>
+              <a href="mailto:institutional@oakmontdigitalmarkets.com" className="btn-ghost">Contact Institutional Team</a>
             </div>
           </div>
         </div>

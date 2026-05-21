@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw, Briefcase } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw, Briefcase, Gauge } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 
@@ -85,6 +85,7 @@ export function AdminOperations() {
           ['tx', `Tx (${transactions.length})`, CheckCircle2],
           ['audit', 'Audit log', FileText],
           ['kyc', 'KYC queue', BadgeCheck],
+          ['limits', 'Withdraw limits', Gauge],
           ['metrics', 'Metrics', BarChart3],
           ['exports', 'CSV exports', Download],
           ['brokerage', 'Brokerage settings', Briefcase],
@@ -109,6 +110,7 @@ export function AdminOperations() {
       {tab === 'tx' && <TxList transactions={transactions} users={users} onDone={refresh}/>}
       {tab === 'audit' && <AuditLogPanel/>}
       {tab === 'kyc' && <KycQueuePanel/>}
+      {tab === 'limits' && <WithdrawLimitsForm users={users} onDone={refresh}/>}
       {tab === 'metrics' && <MetricsPanel/>}
       {tab === 'exports' && <ExportsPanel/>}
       {tab === 'brokerage' && <BrokerageSettingsPanel/>}
@@ -509,7 +511,7 @@ function TestimonialsPanel({ testimonials, onDone }) {
           <div className="flex-1 min-w-[200px]">
             <div className="flex items-center gap-2 text-xs">
               <strong className="text-white">{t.name}</strong>
-              <span className="text-white/55">{t.role || 'Oakmont Digital Capital Group investor'}</span>
+              <span className="text-white/55">{t.role || 'Oakmont Digital Markets Group investor'}</span>
               <span className={`chip ${t.status === 'approved' ? 'bg-neon-green/15 text-neon-green' : t.status === 'pending' ? 'bg-gold-500/15 text-gold-200' : 'bg-neon-red/15 text-neon-red'}`}>{t.status}</span>
               <span className="text-gold-300">{'★'.repeat(t.rating || 5)}</span>
             </div>
@@ -619,6 +621,67 @@ function StatusForm({ users, onDone }) {
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
       <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Updating…</> : status === 'disabled' ? 'Freeze account' : 'Unfreeze account'}
+      </button>
+    </form>
+  );
+}
+
+function WithdrawLimitsForm({ users, onDone }) {
+  const [email, setEmail] = useState('');
+  const [daily, setDaily] = useState('');
+  const [monthly, setMonthly] = useState('');
+  const [perTx, setPerTx] = useState('');
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const target = users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  const existing = target?.withdrawalLimitOverride || null;
+  const apply = async (clear = false) => {
+    setBusy(true); setMsg(null);
+    try {
+      const body = clear
+        ? { email, clear: true }
+        : { email, daily: daily === '' ? null : daily, monthly: monthly === '' ? null : monthly, perTx: perTx === '' ? null : perTx, note: note || null };
+      const r = await api.post('/api/admin/withdraw-limits', body);
+      setMsg({ kind: 'ok', text: clear ? `Override cleared for ${email}.` : `Limits updated for ${email}.` });
+      if (clear) { setDaily(''); setMonthly(''); setPerTx(''); setNote(''); }
+      onDone && onDone();
+    } catch (err) { setMsg({ kind: 'err', text: err.message }); }
+    finally { setBusy(false); }
+  };
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); apply(false); }} className="grid sm:grid-cols-2 gap-3">
+      <p className="sm:col-span-2 text-xs text-white/55">Override the per-user withdrawal cap. Values are USD. Leave a field <em>blank</em> to fall back to the user&apos;s tier default. Setting <code className="px-1 py-0.5 rounded bg-white/10">daily = 0</code> and <code className="px-1 py-0.5 rounded bg-white/10">monthly = 0</code> pauses withdrawals entirely. Every change is recorded in the audit log.</p>
+      <label className="block sm:col-span-2">
+        <span className="text-xs text-white/55">User email</span>
+        <input list="adm-users-wl" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+        <datalist id="adm-users-wl">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
+        {existing && (
+          <p className="mt-1 text-[11px] text-gold-300">Active override: daily {existing.daily ?? '—'} · monthly {existing.monthly ?? '—'} · per-tx {existing.perTx ?? '—'}{existing.setBy ? ` · set by ${existing.setBy}` : ''}</p>
+        )}
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Daily limit (USD)</span>
+        <input type="number" min="0" step="any" value={daily} onChange={(e) => setDaily(e.target.value)} placeholder="leave blank for tier default" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Monthly limit (USD)</span>
+        <input type="number" min="0" step="any" value={monthly} onChange={(e) => setMonthly(e.target.value)} placeholder="leave blank for tier default" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Per-transaction limit (USD)</span>
+        <input type="number" min="0" step="any" value={perTx} onChange={(e) => setPerTx(e.target.value)} placeholder="leave blank for no per-tx cap" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      <label className="block">
+        <span className="text-xs text-white/55">Note (audit log)</span>
+        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. enhanced due diligence" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
+      </label>
+      {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      <button disabled={busy} className="btn-primary justify-center disabled:opacity-60">
+        {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save limits'}
+      </button>
+      <button type="button" disabled={busy || !existing} onClick={() => apply(true)} className="btn-outline justify-center disabled:opacity-40">
+        Clear override
       </button>
     </form>
   );
@@ -921,7 +984,7 @@ function DeleteUserForm({ users, onDone }) {
 
 const BROKERAGE_INTEGRATIONS = [
   ['prime', 'Oakmont Prime'],
-  ['crypto', 'Oakmont DCG Crypto Desk (Binance)'],
+  ['crypto', 'Oakmont DMG Crypto Desk (Binance)'],
   ['multiAsset', 'Oakmont Multi-Asset Desk (Yahoo Finance)'],
 ];
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];

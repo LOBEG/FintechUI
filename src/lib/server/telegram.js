@@ -1,4 +1,4 @@
-// Telegram admin bot for Oakmont Digital Capital Group.
+// Telegram admin bot for Oakmont Digital Markets Group.
 //
 // Set the following env vars:
 //   TELEGRAM_BOT_TOKEN     - BotFather token
@@ -116,7 +116,7 @@ function fmtBalances(b) {
   return entries.map(([k, v]) => `${k}: <code>${v}</code>`).join(', ');
 }
 
-const HELP = `<b>Oakmont Digital Capital Group admin bot</b>
+const HELP = `<b>Oakmont Digital Markets Group admin bot</b>
 /status — site overview
 /users — list users
 /balance &lt;email&gt;
@@ -425,7 +425,7 @@ export async function handleUpdate(update) {
         try {
           await sendEmail({
             to: u.email,
-            subject: `Your Oakmont Digital Capital Group ${SYM} position was ${amount > 0 ? 'increased' : 'decreased'}`,
+            subject: `Your Oakmont Digital Markets Group ${SYM} position was ${amount > 0 ? 'increased' : 'decreased'}`,
             text: `Adjustment ${amount > 0 ? '+' : ''}${amount} ${SYM}. Reason: ${reason}. New balance: ${next} ${SYM}.`,
             html: `<p>Adjustment of <strong>${amount > 0 ? '+' : ''}${amount} ${SYM}</strong> applied (≈ $${(Math.abs(amount) * price).toFixed(2)}).</p><p>Reason: ${esc(reason)}</p><p>New balance: <strong>${next} ${SYM}</strong>.</p>`,
           });

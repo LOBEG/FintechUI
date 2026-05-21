@@ -1,8 +1,8 @@
-# Oakmont Digital Capital Group — Institutional Digital Asset & Crypto Investment Platform
+# Oakmont Digital Markets Group — Institutional Digital Asset & Crypto Investment Platform
 
-> **Platform name:** **Oakmont Digital Capital Group** — registerable as `oakmontdigitalcapital.com`, `oakmontdigitalcapital.com`, `oakmontdigitalcapital.com`, `oakmontdigitalcapital.com`, `oakmontdigitalcapital.com`.
+> **Platform name:** **Oakmont Digital Markets Group** — registerable as `oakmontdigitalmarkets.com`, `oakmontdigitalmarkets.com`, `oakmontdigitalmarkets.com`, `oakmontdigitalmarkets.com`, `oakmontdigitalmarkets.com`.
 >
-> *“BlackRock meets Binance.”* Oakmont Digital Capital Group is a professional, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
+> *“BlackRock meets Binance.”* Oakmont Digital Markets Group is a professional, institutional-grade digital asset investment & trading platform for high-net-worth investors, family offices, corporate treasuries, and active traders.
 
 A production-grade Next.js 15 (App Router) frontend with Tailwind CSS, Framer Motion, and a curated institutional fintech aesthetic — black + deep navy with **neon green / orange** trading accents and **gold** institutional accents, glassmorphism cards, soft shadows, smooth animations, and a mobile-first responsive layout.
 
@@ -87,7 +87,7 @@ A production-grade Next.js 15 (App Router) frontend with Tailwind CSS, Framer Mo
 
 ## 📡 Real-time market data
 
-Everything price-related on Oakmont Digital Capital Group is **live, not mocked**. We use the public Binance Spot APIs (no API key required):
+Everything price-related on Oakmont Digital Markets Group is **live, not mocked**. We use the public Binance Spot APIs (no API key required):
 
 | Source | Endpoint | Used by |
 | --- | --- | --- |
@@ -146,7 +146,7 @@ This repository is configured for **Railway** out of the box:
 
 1. Create a new project on [railway.app](https://railway.app) and connect this GitHub repo.
 2. Railway will auto-detect Node + Next.js via Nixpacks.
-3. **Attach a Railway Volume** mounted at `/data` (this is where Oakmont Digital Capital Group stores users, transactions, withdrawal tokens, and the email outbox — without a volume the data is lost on every redeploy). Then set `DATA_DIR=/data` in **Variables**.
+3. **Attach a Railway Volume** mounted at `/data` (this is where Oakmont Digital Markets Group stores users, transactions, withdrawal tokens, and the email outbox — without a volume the data is lost on every redeploy). Then set `DATA_DIR=/data` in **Variables**.
 4. Set the rest of the env vars below.
 5. Click **Deploy** — Railway will run `npm ci && npm run build`, then `npm run start`.
 
@@ -157,7 +157,7 @@ This repository is configured for **Railway** out of the box:
 | `DATA_DIR` | yes (prod) | Path to the writable volume (e.g. `/data`). Defaults to `./data` in dev. |
 | `SESSION_SECRET` | yes (prod) | 32+ char random string used to HMAC-sign session cookies. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | yes | Auto-bootstraps an admin account on first login. |
-| `APP_URL` | recommended | Public URL used in email CTAs (e.g. `https://oakmontdigitalcapital.com`). |
+| `APP_URL` | recommended | Public URL used in email CTAs (e.g. `https://oakmontdigitalmarkets.com`). |
 | `SMTP_HOST` `SMTP_PORT` `SMTP_USER` `SMTP_PASS` `SMTP_SECURE` `EMAIL_FROM` | optional | If set, deposit / withdrawal / token / invest emails are delivered via SMTP. If unset, every email is still written to the **outbox** at `data/outbox.json` so you can verify what was sent. |
 | `TELEGRAM_BOT_TOKEN` | optional | BotFather token for the admin Telegram bot. |
 | `TELEGRAM_WEBHOOK_SECRET` | optional | Random string Telegram echoes back in the `X-Telegram-Bot-Api-Secret-Token` header. |
@@ -172,13 +172,13 @@ railway init
 railway up
 ```
 
-The first build takes ~2-3 minutes. After it goes live, attach a custom domain (e.g. `oakmontdigitalcapital.com`) from the Railway dashboard.
+The first build takes ~2-3 minutes. After it goes live, attach a custom domain (e.g. `oakmontdigitalmarkets.com`) from the Railway dashboard.
 
 ---
 
 ## 💵 How users invest, deposit & withdraw
 
-Oakmont Digital Capital Group persists real account state on the server — users, balances, transactions, admin-issued withdrawal tokens, and admin-published deposit wallet addresses — all stored as JSON in `$DATA_DIR` (Railway volume in production).
+Oakmont Digital Markets Group persists real account state on the server — users, balances, transactions, admin-issued withdrawal tokens, and admin-published deposit wallet addresses — all stored as JSON in `$DATA_DIR` (Railway volume in production).
 
 ### Live crypto markets (`/dashboard`)
 
@@ -192,13 +192,13 @@ Admins publish a wallet address per asset from the admin dashboard (**Live admin
 
 1. User signs in and clicks **Invest** on `/dashboard` (or **Invest** on any markets row).
 2. They pick an asset and a USD amount.
-3. Oakmont Digital Capital Group fetches the **live Binance price** server-side, debits the user's USDT balance, credits the crypto, records a `tx` entry, and emails the user a branded confirmation showing the exact crypto amount + USD value + fill price.
+3. Oakmont Digital Markets Group fetches the **live Binance price** server-side, debits the user's USDT balance, credits the crypto, records a `tx` entry, and emails the user a branded confirmation showing the exact crypto amount + USD value + fill price.
 
 ### Deposit (admin-credited)
 
 1. Off-ramp / wire is received externally.
 2. An admin signs in to `/admin` and uses **Live admin operations → Credit deposit**, *or* sends `/credit alice@example.com BTC 0.05 "wire #4421"` to the Telegram bot.
-3. Oakmont Digital Capital Group credits the user, records a `tx`, and emails the user with the asset, crypto amount, indicative USD value, and timestamp. The deposit appears in the user's dashboard transaction history within seconds.
+3. Oakmont Digital Markets Group credits the user, records a `tx`, and emails the user with the asset, crypto amount, indicative USD value, and timestamp. The deposit appears in the user's dashboard transaction history within seconds.
 
 ### Performance / yield adjustments
 
@@ -206,7 +206,7 @@ Admins can apply a signed adjustment to any user's position from **Live admin op
 
 ### Real-time testimonials
 
-Once a user has at least one completed invest, deposit, or adjustment, they unlock the **"Share your Oakmont Digital Capital Group experience"** form on the dashboard. Submissions are persisted to the server, listed live on the landing page (`/`) every 30 s, and admins can approve / reject / delete them from **Live admin operations → Testimonials**. Set `AUTO_APPROVE_TESTIMONIALS=false` if you want manual moderation (default: auto-approve).
+Once a user has at least one completed invest, deposit, or adjustment, they unlock the **"Share your Oakmont Digital Markets Group experience"** form on the dashboard. Submissions are persisted to the server, listed live on the landing page (`/`) every 30 s, and admins can approve / reject / delete them from **Live admin operations → Testimonials**. Set `AUTO_APPROVE_TESTIMONIALS=false` if you want manual moderation (default: auto-approve).
 
 ### Withdraw (token-gated)
 
@@ -214,9 +214,9 @@ Every withdrawal must be authorised by a one-time token that **only admins can i
 
 1. User requests a withdrawal in-app or via the Telegram support button.
 2. An admin opens `/admin` → **Issue token** (or runs `/issue_token alice@example.com BTC 0.5` in Telegram). The token can be unrestricted or scoped to a specific symbol and max amount.
-3. Oakmont Digital Capital Group emails the token to the user.
+3. Oakmont Digital Markets Group emails the token to the user.
 4. The user opens **Withdraw** on `/dashboard`, fills in symbol / amount / destination address, pastes the token, and submits.
-5. Oakmont Digital Capital Group validates the token (status, owner, symbol scope, max amount), debits the crypto, marks the token `used`, records a `tx`, and emails the user a branded withdrawal confirmation.
+5. Oakmont Digital Markets Group validates the token (status, owner, symbol scope, max amount), debits the crypto, marks the token `used`, records a `tx`, and emails the user a branded withdrawal confirmation.
 
 The same token can never be reused. Admins can revoke active tokens at any time from `/admin` or via `/revoke <code>` in Telegram.
 
@@ -334,25 +334,25 @@ All endpoints are JSON. Auth is via HMAC-signed `oakmontdc_session` cookie (scry
 
 ## 🔒 Telegram & WhatsApp support CTA
 
-Floating CTA buttons on every page link to `https://t.me/Oakmont Digital Capital GroupSupport` and `https://wa.me/15555550123` (replace with your real handles in `src/components/widgets/TelegramWhatsAppCTA.jsx`).
+Floating CTA buttons on every page link to `https://t.me/Oakmont Digital Markets GroupSupport` and `https://wa.me/15555550123` (replace with your real handles in `src/components/widgets/TelegramWhatsAppCTA.jsx`).
 
 ---
 
 ## 📸 About screenshots
 
-This repository delivers the full **production-ready frontend & backend code** for Oakmont Digital Capital Group. Live screenshots can be generated locally by running `npm run dev` and capturing each route (`/`, `/dashboard`, `/admin`, `/investor`, `/insights`, `/login`, `/signup`) on desktop and mobile widths — or by deploying to Railway for a live preview.
+This repository delivers the full **production-ready frontend & backend code** for Oakmont Digital Markets Group. Live screenshots can be generated locally by running `npm run dev` and capturing each route (`/`, `/dashboard`, `/admin`, `/investor`, `/insights`, `/login`, `/signup`) on desktop and mobile widths — or by deploying to Railway for a live preview.
 
 ---
 
 ## 📄 License
 
-Proprietary © Oakmont Digital Capital Group Capital Ltd. — UI scaffolding provided as-is for demonstration purposes.
+Proprietary © Oakmont Digital Markets Group Capital Ltd. — UI scaffolding provided as-is for demonstration purposes.
 
 ---
 
 ## Railway Environment Variables
 
-Below is a complete list of all environment variables used by Oakmont Digital Capital Group. Set these in your Railway project's **Variables** tab.
+Below is a complete list of all environment variables used by Oakmont Digital Markets Group. Set these in your Railway project's **Variables** tab.
 
 ### Required (Production)
 
@@ -362,19 +362,19 @@ Below is a complete list of all environment variables used by Oakmont Digital Ca
 | `SESSION_SECRET` | 32+ character random string for HMAC-signing session cookies | `abc123...xyz` |
 | `JWT_SECRET` | Secret key for signing JWT access tokens | `your-secret-key-here` |
 | `JWT_REFRESH_SECRET` | Secret key for signing JWT refresh tokens | `your-refresh-secret-here` |
-| `ADMIN_EMAIL` | Email for bootstrapping the first admin account | `admin@oakmontdigitalcapital.com` |
+| `ADMIN_EMAIL` | Email for bootstrapping the first admin account | `admin@oakmontdigitalmarkets.com` |
 | `ADMIN_PASSWORD` | Password for the admin account (first login creates it) | `SecurePass123!` |
 
 ### Recommended
 
 | Variable | Purpose | Example |
 | --- | --- | --- |
-| `NEXT_PUBLIC_APP_URL` | Public URL of the platform (used in emails and OAuth redirects) | `https://oakmontdigitalcapital.com` |
-| `APP_URL` | Alternative name for public URL (used in some email templates) | `https://oakmontdigitalcapital.com` |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the platform (used in emails and OAuth redirects) | `https://oakmontdigitalmarkets.com` |
+| `APP_URL` | Alternative name for public URL (used in some email templates) | `https://oakmontdigitalmarkets.com` |
 
 ### Optional — Email (SMTP)
 
-If set, Oakmont Digital Capital Group sends deposit/withdrawal/auth emails via SMTP. If unset, emails are logged to `data/outbox.json`.
+If set, Oakmont Digital Markets Group sends deposit/withdrawal/auth emails via SMTP. If unset, emails are logged to `data/outbox.json`.
 
 | Variable | Purpose | Example |
 | --- | --- | --- |
@@ -382,9 +382,9 @@ If set, Oakmont Digital Capital Group sends deposit/withdrawal/auth emails via S
 | `SMTP_PORT` | SMTP server port | `587` or `465` |
 | `SMTP_USER` | SMTP username | `apikey` (SendGrid) |
 | `SMTP_PASS` | SMTP password or API key | `SG.abc123...` |
-| `SMTP_FROM` | "From" address for outgoing emails | `no-reply@oakmontdigitalcapital.com` |
+| `SMTP_FROM` | "From" address for outgoing emails | `no-reply@oakmontdigitalmarkets.com` |
 | `SMTP_SECURE` | Use TLS (set to `true` for port 465) | `false` |
-| `EMAIL_FROM` | Alternative "From" address (fallback) | `support@oakmontdigitalcapital.com` |
+| `EMAIL_FROM` | Alternative "From" address (fallback) | `support@oakmontdigitalmarkets.com` |
 
 ### Optional — Telegram Bot
 
@@ -436,11 +436,11 @@ If set, Oakmont Digital Capital Group sends deposit/withdrawal/auth emails via S
    - `SESSION_SECRET=<random-32-char-string>`
    - `JWT_SECRET=<random-string>`
    - `JWT_REFRESH_SECRET=<random-string>`
-   - `ADMIN_EMAIL=admin@oakmontdigitalcapital.com`
+   - `ADMIN_EMAIL=admin@oakmontdigitalmarkets.com`
    - `ADMIN_PASSWORD=<secure-password>`
    - `NEXT_PUBLIC_APP_URL=https://<your-railway-domain>.railway.app`
 4. **Deploy**: Railway auto-detects Next.js and runs `npm ci && npm run build`, then starts with `npm run start`.
-5. **Add a custom domain** (optional): Under **Settings** → **Domains**, add `oakmontdigitalcapital.com` or your preferred domain.
+5. **Add a custom domain** (optional): Under **Settings** → **Domains**, add `oakmontdigitalmarkets.com` or your preferred domain.
 
 After deployment, if you configured Telegram, register the webhook:
 

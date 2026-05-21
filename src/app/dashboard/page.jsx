@@ -545,17 +545,56 @@ export default function DashboardPage() {
             <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
                 <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Oakmont AI Bot</p>
-                {user ? (
-                  <span className="chip bg-white/5 text-white/60 border border-white/10">Configuring</span>
-                ) : (
-                  <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Demo</span>
-                )}
+                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
               </div>
               {user ? (
-                <div className="mt-3 text-center py-6">
-                  <p className="text-sm text-white/60">AI Bot is being configured for your portfolio.</p>
-                  <p className="text-xs text-white/45 mt-2">Strategies will appear once your portfolio has assets.</p>
-                </div>
+                (() => {
+                  const top = [...wallets].sort((a, b) => b.value - a.value).slice(0, 4);
+                  const movers = [...wallets]
+                    .filter((w) => w.openValue > 0)
+                    .map((w) => ({ ...w, deltaPct: ((w.value - w.openValue) / w.openValue) * 100 }))
+                    .sort((a, b) => Math.abs(b.deltaPct) - Math.abs(a.deltaPct))
+                    .slice(0, 3);
+                  const concentration = totalBalance > 0
+                    ? top.length && top[0].value / totalBalance >= 0.5
+                      ? `Concentration alert: ${top[0].sym} is ${((top[0].value / totalBalance) * 100).toFixed(0)}% of your portfolio. Consider rebalancing.`
+                      : null
+                    : null;
+                  const trend = portfolioMarketPct >= 0
+                    ? `Portfolio is up ${portfolioMarketPct.toFixed(2)}% on the day — momentum looks constructive.`
+                    : `Portfolio is down ${Math.abs(portfolioMarketPct).toFixed(2)}% on the day — review stop levels and avoid new aggressive entries.`;
+                  return totalBalance > 0 ? (
+                    <div className="mt-3 space-y-3">
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="glass-light p-2 text-center"><p className="text-white/50">Total value</p><p className="font-semibold mt-1 font-mono">{formatUSD(totalBalance)}</p></div>
+                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h P/L</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketChange >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{portfolioMarketChange >= 0 ? '+' : ''}{formatUSD(portfolioMarketChange)}</p></div>
+                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h %</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketPct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{portfolioMarketPct >= 0 ? '+' : ''}{portfolioMarketPct.toFixed(2)}%</p></div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-white/55 mb-1">Top movers</p>
+                        <div className="space-y-1.5">
+                          {movers.length ? movers.map((m) => (
+                            <div key={m.sym} className="glass-light p-2 flex items-center gap-2 text-xs">
+                              <Zap className="h-3.5 w-3.5 text-gold-400"/>
+                              <span className="flex-1 font-semibold">{m.sym}</span>
+                              <span className={m.deltaPct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{m.deltaPct >= 0 ? '+' : ''}{m.deltaPct.toFixed(2)}%</span>
+                            </div>
+                          )) : <p className="text-xs text-white/45">Awaiting price action…</p>}
+                        </div>
+                      </div>
+                      <div className="glass-light p-3 text-xs space-y-1.5 border border-neon-green/20">
+                        <p className="font-semibold text-neon-green">AI insight</p>
+                        <p className="text-white/75">{trend}</p>
+                        {concentration && <p className="text-gold-300">{concentration}</p>}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-3 text-center py-6">
+                      <p className="text-sm text-white/60">Fund your wallet to activate AI insights.</p>
+                      <p className="text-xs text-white/45 mt-2">The bot analyses your portfolio in real time once you hold a position.</p>
+                    </div>
+                  );
+                })()
               ) : (
                 <>
                   <div className="mt-3 space-y-2">

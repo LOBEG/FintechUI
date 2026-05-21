@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Terms of Service - Oakmont Digital Capital Group',
-    description: 'Oakmont Digital Capital Group Terms of Service and platform user agreement.',
+    title: 'Terms of Service - Oakmont Digital Markets Group',
+    description: 'Oakmont Digital Markets Group Terms of Service and platform user agreement.',
 };
 
 export default function TermsPage() {
@@ -20,7 +20,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">1. Acceptance of Terms</h2>
               <p className="mt-2">
-                By accessing or using the Oakmont Digital Capital Group platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree, you may not use the platform.
+                By accessing or using the Oakmont Digital Markets Group platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree, you may not use the platform.
               </p>
             </section>
 
@@ -41,7 +41,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">4. Trading Risks</h2>
               <p className="mt-2">
-                Digital assets are highly volatile. You acknowledge the risk of total loss and that Oakmont Digital Capital Group does not provide investment advice. All trading decisions are your sole responsibility.
+                Digital assets are highly volatile. You acknowledge the risk of total loss and that Oakmont Digital Markets Group does not provide investment advice. All trading decisions are your sole responsibility.
               </p>
             </section>
 
@@ -55,14 +55,14 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">6. Prohibited Activities</h2>
               <p className="mt-2">
-                You may not use the platform for money laundering, fraud, market manipulation, or any unlawful activity. Oakmont Digital Capital Group reserves the right to suspend accounts and report suspicious activity to authorities.
+                You may not use the platform for money laundering, fraud, market manipulation, or any unlawful activity. Oakmont Digital Markets Group reserves the right to suspend accounts and report suspicious activity to authorities.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-display text-white">7. Limitation of Liability</h2>
               <p className="mt-2">
-                Oakmont Digital Capital Group is not liable for losses resulting from market volatility, third-party service failures, or force majeure events. Maximum liability is limited to fees paid in the 12 months prior to the claim.
+                Oakmont Digital Markets Group is not liable for losses resulting from market volatility, third-party service failures, or force majeure events. Maximum liability is limited to fees paid in the 12 months prior to the claim.
               </p>
             </section>
 
@@ -76,7 +76,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">9. Contact</h2>
               <p className="mt-2">
-                For questions regarding these Terms, contact <a href="mailto:legal@oakmontdigitalcapital.com" className="text-neon-green hover:underline">legal@oakmontdigitalcapital.com</a>.
+                For questions regarding these Terms, contact <a href="mailto:legal@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">legal@oakmontdigitalmarkets.com</a>.
               </p>
             </section>
           </div>

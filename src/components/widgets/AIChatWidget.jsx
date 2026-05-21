@@ -3,20 +3,20 @@ import { useState } from 'react';
 import { Bot, Send, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 const seed = [
-    { role: 'ai', text: 'Hi, I’m Aurelia, Oakmont Digital Capital Group’s AI trading assistant. Ask me about crypto investing, trading order types, risk management, portfolio allocation, deposits, withdrawals, or how to start safely on Oakmont Digital Capital Group.' },
+    { role: 'ai', text: 'Hi, I’m Aurelia, Oakmont Digital Markets Group’s AI trading assistant. Ask me about crypto investing, trading order types, risk management, portfolio allocation, deposits, withdrawals, or how to start safely on Oakmont Digital Markets Group.' },
 ];
 const investmentKnowledge = [
     {
         keywords: ['start', 'begin', 'new', 'account', 'signup', 'sign up', 'login', 'create'],
-        text: 'To start on Oakmont Digital Capital Group, create an account or sign in first. New users can review public live markets, but investing, selling, wallet funding, watchlists, and trading controls unlock only after secure authentication. Start small, verify your account details, and review risk before placing any order.',
+        text: 'To start on Oakmont Digital Markets Group, create an account or sign in first. New users can review public live markets, but investing, selling, wallet funding, watchlists, and trading controls unlock only after secure authentication. Start small, verify your account details, and review risk before placing any order.',
     },
     {
         keywords: ['invest', 'investment', 'portfolio', 'allocate', 'allocation'],
-        text: 'A sound crypto investment plan starts with clear objectives, time horizon, risk tolerance, and position sizing. Many investors use diversified allocation across core assets such as BTC/ETH, stablecoins for liquidity, and smaller satellite positions only when they understand the volatility. Oakmont Digital Capital Group keeps execution and portfolio records inside the signed-in account experience.',
+        text: 'A sound crypto investment plan starts with clear objectives, time horizon, risk tolerance, and position sizing. Many investors use diversified allocation across core assets such as BTC/ETH, stablecoins for liquidity, and smaller satellite positions only when they understand the volatility. Oakmont Digital Markets Group keeps execution and portfolio records inside the signed-in account experience.',
     },
     {
         keywords: ['trade', 'trading', 'buy', 'sell', 'execute', 'execution'],
-        text: 'Trading is different from long-term investing: define your entry, exit, invalidation level, and maximum loss before placing a buy or sell. On Oakmont Digital Capital Group, public users can study the market first, while authenticated users get the complete trade ticket, selected asset context, balances, order controls, and account records.',
+        text: 'Trading is different from long-term investing: define your entry, exit, invalidation level, and maximum loss before placing a buy or sell. On Oakmont Digital Markets Group, public users can study the market first, while authenticated users get the complete trade ticket, selected asset context, balances, order controls, and account records.',
     },
     {
         keywords: ['market', 'limit', 'stop', 'order type', 'order'],
@@ -28,7 +28,7 @@ const investmentKnowledge = [
     },
     {
         keywords: ['dca', 'dollar cost', 'average'],
-        text: 'Dollar-cost averaging spreads purchases across time instead of investing everything at once. It can reduce timing pressure in volatile markets, but it does not remove downside risk. Oakmont Digital Capital Group presents DCA as an account-based strategy workflow so users can monitor allocation and execution history after signing in.',
+        text: 'Dollar-cost averaging spreads purchases across time instead of investing everything at once. It can reduce timing pressure in volatile markets, but it does not remove downside risk. Oakmont Digital Markets Group presents DCA as an account-based strategy workflow so users can monitor allocation and execution history after signing in.',
     },
     {
         keywords: ['btc', 'bitcoin'],
@@ -44,7 +44,7 @@ const investmentKnowledge = [
     },
     {
         keywords: ['deposit', 'withdraw', 'wallet', 'connect'],
-        text: 'Wallet and funding actions should happen only inside a secure authenticated account. When you choose a wallet from the landing page, Oakmont Digital Capital Group routes you to sign in or create an account first so deposits, withdrawals, addresses, and records stay tied to your profile.',
+        text: 'Wallet and funding actions should happen only inside a secure authenticated account. When you choose a wallet from the landing page, Oakmont Digital Markets Group routes you to sign in or create an account first so deposits, withdrawals, addresses, and records stay tied to your profile.',
     },
     {
         keywords: ['fee', 'fees', 'spread', 'slippage'],
@@ -56,8 +56,8 @@ const investmentKnowledge = [
     },
 ];
 const fallbackReplies = [
-    'I can help with crypto investing, trading order types, asset selection, wallet funding, risk management, portfolio allocation, and how Oakmont Digital Capital Group routes account-only actions. Tell me the asset or trading concept you want to understand.',
-    'For fintech-standard safety, Oakmont Digital Capital Group lets public users review markets first, then routes investing, selling, trading, and wallet actions through secure sign-in or account creation. Ask me about market, limit, stop, DCA, portfolio risk, or a specific asset.',
+    'I can help with crypto investing, trading order types, asset selection, wallet funding, risk management, portfolio allocation, and how Oakmont Digital Markets Group routes account-only actions. Tell me the asset or trading concept you want to understand.',
+    'For fintech-standard safety, Oakmont Digital Markets Group lets public users review markets first, then routes investing, selling, trading, and wallet actions through secure sign-in or account creation. Ask me about market, limit, stop, DCA, portfolio risk, or a specific asset.',
     'A good trading question includes the asset, time horizon, risk limit, and order type you are considering. I can explain the framework and risks, but I cannot guarantee returns or provide personalised financial advice.',
 ];
 

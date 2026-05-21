@@ -51,9 +51,9 @@ export async function POST(req) {
     });
     await sendEmail({
       to: user.email,
-      subject: 'Your Oakmont Digital Capital Group verification code',
-      text: `Your Oakmont Digital Capital Group verification code is ${code}. It expires in 30 minutes. If you did not request this, ignore this email.`,
-      html: `<p>Your Oakmont Digital Capital Group verification code is <strong style="font-size:20px;letter-spacing:2px">${code}</strong></p><p>It expires in 30 minutes. If you did not request this, ignore this email.</p>`,
+      subject: 'Your Oakmont Digital Markets Group verification code',
+      text: `Your Oakmont Digital Markets Group verification code is ${code}. It expires in 30 minutes. If you did not request this, ignore this email.`,
+      html: `<p>Your Oakmont Digital Markets Group verification code is <strong style="font-size:20px;letter-spacing:2px">${code}</strong></p><p>It expires in 30 minutes. If you did not request this, ignore this email.</p>`,
     });
     // Mark the user as having had verification initiated so the dashboard
     // banner can switch to "check your inbox".

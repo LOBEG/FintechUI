@@ -62,7 +62,7 @@ export function DepositAddressPanel() {
   // No addresses published by admin → hide the card entirely (empty-state-collapse).
   if (addresses.length === 0) return null;
   return (
-    <section className="glass-strong p-5">
+    <section className="glass-strong p-5 max-w-4xl">
       <div className="flex items-center gap-2 mb-3">
         <Wallet className="h-4 w-4 text-gold-400"/>
         <h3 className="font-display text-lg">Deposit crypto</h3>
@@ -74,7 +74,7 @@ export function DepositAddressPanel() {
             {addresses.map((a) => {
               const memoRequired = MEMO_REQUIRED.has(a.symbol);
               return (
-                <li key={a.symbol} className="glass-light p-3 flex flex-col gap-2">
+                <li key={a.symbol} className="glass-light p-3 flex flex-col gap-2 min-h-[160px]">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">{a.symbol}</span>
                     {a.network && <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{a.network}</span>}
@@ -86,7 +86,11 @@ export function DepositAddressPanel() {
                   <div className="flex gap-3 items-start">
                     <AddressQR value={a.address}/>
                     <div className="flex flex-col gap-1 min-w-0 flex-1">
-                      <code className="font-mono text-xs break-all text-white/85">{a.address}</code>
+                      {a.address ? (
+                        <code className="font-mono text-xs break-all text-white/85 select-all">{a.address}</code>
+                      ) : (
+                        <span className="block h-4 w-full rounded bg-white/5 animate-pulse" aria-hidden="true"/>
+                      )}
                       {a.memo && <div className="text-[11px] text-gold-300">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
                       {memoRequired && (
                         <div className="flex gap-1.5 items-start text-[11px] text-neon-red bg-neon-red/10 border border-neon-red/30 rounded px-2 py-1.5">
@@ -351,11 +355,11 @@ export function TestimonialComposer() {
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
         <MessageSquare className="h-4 w-4 text-gold-400"/>
-        <h3 className="font-display text-lg">Share your Oakmont Digital Capital Group experience</h3>
+        <h3 className="font-display text-lg">Share your Oakmont Digital Markets Group experience</h3>
       </div>
-      <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Capital Group landing page.</p>
+      <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Markets Group landing page.</p>
       <form onSubmit={submit} className="space-y-2">
-        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on Oakmont Digital Capital Group?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
+        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on Oakmont Digital Markets Group?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
         <div className="flex gap-2 flex-wrap">
           <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) - e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <input type="url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="Public photo URL (optional, https only)" className="flex-1 min-w-[240px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
@@ -1431,7 +1435,7 @@ export function EmptyStateCoach() {
         </button>
       </div>
       <p className="text-xs text-white/55 mb-4">
-        Welcome to Oakmont Digital Capital Group. Complete these three steps to unlock the full broker dashboard.
+        Welcome to Oakmont Digital Markets Group. Complete these three steps to unlock the full broker dashboard.
       </p>
       <ol className="space-y-3">
         {steps.map((s, i) => (
@@ -1824,7 +1828,7 @@ export function SupportPanel() {
         </button>
       </header>
       <p className="text-xs text-white/55 mt-1">
-        Ask the Oakmont Digital Capital Group desk anything - KYC, deposits, withdrawals, trade issues.
+        Ask the Oakmont Digital Markets Group desk anything - KYC, deposits, withdrawals, trade issues.
       </p>
       {showForm && (
         <form id="support-new-form" onSubmit={onCreate} className="mt-3 space-y-2">
@@ -1894,7 +1898,7 @@ export function SupportPanel() {
                         <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-gold-500/10 border border-gold-500/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
                           <div className="flex items-center justify-between mb-0.5 text-[10px]">
                             <span className={m.authorRole === 'staff' ? 'text-gold-400' : 'text-white/55'}>
-                              {m.authorRole === 'staff' ? 'Oakmont Digital Capital Group support' : 'You'}
+                              {m.authorRole === 'staff' ? 'Oakmont Digital Markets Group support' : 'You'}
                             </span>
                             <span className="text-white/35">{fmtTime(m.createdAt)}</span>
                           </div>
@@ -1949,8 +1953,8 @@ export function SupportPanel() {
 export function SupportContactPanel() {
   const { user } = useSession();
   const telegramUrl = typeof window !== 'undefined' 
-    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/Oakmont Digital Capital GroupSupport')
-    : 'https://t.me/Oakmont Digital Capital GroupSupport';
+    ? (process.env.NEXT_PUBLIC_TELEGRAM_SUPPORT_URL || 'https://t.me/Oakmont Digital Markets GroupSupport')
+    : 'https://t.me/Oakmont Digital Markets GroupSupport';
   const whatsappUrl = typeof window !== 'undefined'
     ? (process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT_URL || 'https://wa.me/15555550123')
     : 'https://wa.me/15555550123';

@@ -1,4 +1,4 @@
-// Email delivery for Oakmont Digital Capital Group.
+// Email delivery for Oakmont Digital Markets Group.
 // - Uses nodemailer + SMTP when SMTP_HOST/SMTP_USER/SMTP_PASS are set.
 // - Always appends to the `outbox.json` file so admins can audit what
 //   was attempted and dev environments still see "what would have been sent".
@@ -35,7 +35,7 @@ async function getTransporter() {
 }
 
 function fromAddress() {
-  return process.env.EMAIL_FROM || 'Oakmont Digital Capital Group <no-reply@oakmontdigitalcapital.com>';
+  return process.env.EMAIL_FROM || 'Oakmont Digital Markets Group <no-reply@oakmontdigitalmarkets.com>';
 }
 
 function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
@@ -52,7 +52,7 @@ function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#0b1020;border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden">
         <tr><td style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,0.06)">
           <div style="font-size:18px;font-weight:600;letter-spacing:.04em">
-            <span style="background:linear-gradient(90deg,#f7e7a3,#d4a63f,#8d641d);-webkit-background-clip:text;background-clip:text;color:transparent">Oakmont</span> Digital Capital Group
+            <span style="background:linear-gradient(90deg,#f7e7a3,#d4a63f,#8d641d);-webkit-background-clip:text;background-clip:text;color:transparent">Oakmont</span> Digital Markets Group
           </div>
         </td></tr>
         <tr><td style="padding:28px">
@@ -62,7 +62,7 @@ function brandedTemplate({ title, intro, rows = [], cta, ctaUrl, footer }) {
           ${cta && ctaUrl ? `<p style="margin:18px 0 0"><a href="${ctaUrl}" style="display:inline-block;padding:11px 18px;border-radius:10px;background:linear-gradient(135deg,#00ffa3,#00d68a);color:#05070d;text-decoration:none;font-weight:600">${cta}</a></p>` : ''}
         </td></tr>
         <tr><td style="padding:18px 28px;border-top:1px solid rgba(255,255,255,0.06);color:#7a8290;font-size:11px">
-          ${footer || 'You are receiving this because you have an Oakmont Digital Capital Group account. Oakmont Digital Capital Group never asks for your password or 2FA codes by email.'}
+          ${footer || 'You are receiving this because you have an Oakmont Digital Markets Group account. Oakmont Digital Markets Group never asks for your password or 2FA codes by email.'}
         </td></tr>
       </table>
     </td></tr>
@@ -115,10 +115,10 @@ function fmtUsd(n) {
 
 export async function sendDepositEmail({ user, symbol, amount, price, note }) {
   const usd = amount * price;
-  const text = `Deposit received: ${fmt(amount)} ${symbol} (≈ ${fmtUsd(usd)}). New balance reflected in your Oakmont Digital Capital Group wallet.`;
+  const text = `Deposit received: ${fmt(amount)} ${symbol} (≈ ${fmtUsd(usd)}). New balance reflected in your Oakmont Digital Markets Group wallet.`;
   const html = brandedTemplate({
     title: 'Deposit confirmed',
-    intro: `Your Oakmont Digital Capital Group wallet has been credited with the funds below.${note ? ` <br/><span style="color:#9aa1ad">${note}</span>` : ''}`,
+    intro: `Your Oakmont Digital Markets Group wallet has been credited with the funds below.${note ? ` <br/><span style="color:#9aa1ad">${note}</span>` : ''}`,
     rows: [
       { k: 'Asset', v: symbol },
       { k: 'Amount', v: `${fmt(amount)} ${symbol}` },
@@ -137,7 +137,7 @@ export async function sendWithdrawEmail({ user, symbol, amount, price, address, 
   const text = `Withdrawal processed: ${fmt(amount)} ${symbol} (≈ ${fmtUsd(usd)}).`;
   const html = brandedTemplate({
     title: 'Withdrawal processed',
-    intro: `Your withdrawal request was authorised by Oakmont Digital Capital Group and has been submitted on-chain.${note ? `<br/><span style="color:#9aa1ad">${note}</span>` : ''}`,
+    intro: `Your withdrawal request was authorised by Oakmont Digital Markets Group and has been submitted on-chain.${note ? `<br/><span style="color:#9aa1ad">${note}</span>` : ''}`,
     rows: [
       { k: 'Asset', v: symbol },
       { k: 'Amount', v: `${fmt(amount)} ${symbol}` },
@@ -148,7 +148,7 @@ export async function sendWithdrawEmail({ user, symbol, amount, price, address, 
     cta: 'View transactions',
     ctaUrl: `${process.env.APP_URL || ''}/dashboard`,
     footer:
-      'If you did not initiate this withdrawal, contact Oakmont Digital Capital Group support immediately via the in-app chat or Telegram support button.',
+      'If you did not initiate this withdrawal, contact Oakmont Digital Markets Group support immediately via the in-app chat or Telegram support button.',
   });
   return sendEmail({ to: user.email, subject: `Withdrawal processed - ${fmt(amount)} ${symbol}`, html, text });
 }
@@ -157,7 +157,7 @@ export async function sendInvestEmail({ user, symbol, cryptoAmount, usdAmount, p
   const text = `Investment confirmed: ${fmtUsd(usdAmount)} → ${fmt(cryptoAmount)} ${symbol} @ ${fmtUsd(price)}.`;
   const html = brandedTemplate({
     title: 'Investment confirmed',
-    intro: 'Your Oakmont Digital Capital Group investment has executed at the live market price.',
+    intro: 'Your Oakmont Digital Markets Group investment has executed at the live market price.',
     rows: [
       { k: 'USD invested', v: fmtUsd(usdAmount) },
       { k: 'Asset acquired', v: symbol },
@@ -175,11 +175,11 @@ export async function sendWithdrawalTokenEmail({ user, code, symbol, maxAmount }
   const scope = symbol
     ? `${symbol}${maxAmount ? ` up to ${fmt(maxAmount)}` : ''}`
     : 'any supported asset';
-  const text = `Your Oakmont Digital Capital Group withdrawal authorisation token: ${code}. Scope: ${scope}.`;
+  const text = `Your Oakmont Digital Markets Group withdrawal authorisation token: ${code}. Scope: ${scope}.`;
   const html = brandedTemplate({
     title: 'Withdrawal authorisation token',
     intro:
-      'An Oakmont Digital Capital Group administrator has issued the one-time authorisation token below. Enter it on the withdrawal screen to release your funds. Tokens are single-use.',
+      'An Oakmont Digital Markets Group administrator has issued the one-time authorisation token below. Enter it on the withdrawal screen to release your funds. Tokens are single-use.',
     rows: [
       { k: 'Token', v: `<span style="font-family:Menlo,monospace;background:#11172a;padding:4px 8px;border-radius:6px">${code}</span>` },
       { k: 'Scope', v: scope },
@@ -188,7 +188,7 @@ export async function sendWithdrawalTokenEmail({ user, code, symbol, maxAmount }
     cta: 'Withdraw now',
     ctaUrl: `${process.env.APP_URL || ''}/dashboard`,
     footer:
-      'Never share this token. Oakmont Digital Capital Group support will never ask for it. If you did not request a withdrawal, ignore this email.',
+      'Never share this token. Oakmont Digital Markets Group support will never ask for it. If you did not request a withdrawal, ignore this email.',
   });
-  return sendEmail({ to: user.email, subject: 'Oakmont Digital Capital Group withdrawal authorisation token', html, text });
+  return sendEmail({ to: user.email, subject: 'Oakmont Digital Markets Group withdrawal authorisation token', html, text });
 }

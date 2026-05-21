@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'AML Policy - Oakmont Digital Capital Group',
-    description: 'Oakmont Digital Capital Group Anti-Money Laundering policy and compliance procedures.',
+    title: 'AML Policy - Oakmont Digital Markets Group',
+    description: 'Oakmont Digital Markets Group Anti-Money Laundering policy and compliance procedures.',
 };
 
 export default function AMLPage() {
@@ -20,7 +20,7 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">1. Commitment to AML Compliance</h2>
               <p className="mt-2">
-                Oakmont Digital Capital Group is committed to preventing money laundering and terrorist financing. We comply with the UK Money Laundering Regulations 2017, 5th Anti-Money Laundering Directive, and FCA guidance.
+                Oakmont Digital Markets Group is committed to preventing money laundering and terrorist financing. We comply with the UK Money Laundering Regulations 2017, 5th Anti-Money Laundering Directive, and FCA guidance.
               </p>
             </section>
 
@@ -62,7 +62,7 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">7. Contact</h2>
               <p className="mt-2">
-                For AML enquiries, contact our MLRO at <a href="mailto:compliance@oakmontdigitalcapital.com" className="text-neon-green hover:underline">compliance@oakmontdigitalcapital.com</a>.
+                For AML enquiries, contact our MLRO at <a href="mailto:compliance@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">compliance@oakmontdigitalmarkets.com</a>.
               </p>
             </section>
           </div>

@@ -526,7 +526,7 @@ export default function AdminPage() {
           {/* Settings anchor — links from sidebar land here */}
           <section id="settings" className="glass-strong p-5">
             <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-gold-400"/> Console settings</p>
-            <p className="text-xs text-white/55 mt-1">Operational controls for the Oakmont Digital Capital Group admin console. Adjust polling cadence and reload live data without leaving the page.</p>
+            <p className="text-xs text-white/55 mt-1">Operational controls for the Oakmont Digital Markets Group admin console. Adjust polling cadence and reload live data without leaving the page.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button onClick={refresh} disabled={refreshing} className="btn-outline text-sm inline-flex items-center gap-1 disabled:opacity-60">
                 {refreshing ? <Loader2 className="h-4 w-4 animate-spin"/> : <RefreshCw className="h-4 w-4"/>} Refresh all panels

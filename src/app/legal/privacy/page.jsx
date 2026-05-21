@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Privacy Policy - Oakmont Digital Capital Group',
-    description: 'Oakmont Digital Capital Group Privacy Policy and data protection practices.',
+    title: 'Privacy Policy - Oakmont Digital Markets Group',
+    description: 'Oakmont Digital Markets Group Privacy Policy and data protection practices.',
 };
 
 export default function PrivacyPage() {
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-2xl font-display text-white">5. Your Rights</h2>
               <p className="mt-2">
-                Under GDPR, you have the right to access, correct, delete, or port your data. You may object to processing or withdraw consent. Contact <a href="mailto:privacy@oakmontdigitalcapital.com" className="text-neon-green hover:underline">privacy@oakmontdigitalcapital.com</a> to exercise your rights.
+                Under GDPR, you have the right to access, correct, delete, or port your data. You may object to processing or withdraw consent. Contact <a href="mailto:privacy@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">privacy@oakmontdigitalmarkets.com</a> to exercise your rights.
               </p>
             </section>
 
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-2xl font-display text-white">8. Contact</h2>
               <p className="mt-2">
-                For privacy enquiries, contact our Data Protection Officer at <a href="mailto:privacy@oakmontdigitalcapital.com" className="text-neon-green hover:underline">privacy@oakmontdigitalcapital.com</a>.
+                For privacy enquiries, contact our Data Protection Officer at <a href="mailto:privacy@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">privacy@oakmontdigitalmarkets.com</a>.
               </p>
             </section>
           </div>

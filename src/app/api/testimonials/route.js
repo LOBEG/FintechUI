@@ -19,7 +19,7 @@ function publicView(t) {
   return {
     id: t.id,
     name: t.name,
-    role: t.role || 'Oakmont Digital Capital Group investor',
+    role: t.role || 'Oakmont Digital Markets Group investor',
     text: t.text,
     rating: t.rating || 5,
     avatarUrl: cleanAvatarUrl(t.avatarUrl) || null,

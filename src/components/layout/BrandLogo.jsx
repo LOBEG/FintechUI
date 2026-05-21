@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { BRAND_NAME } from '@/lib/brand';
 
-// Polished Oakmont DCG monogram. The mark layers a dark navy shield, a
-// soft gold gradient frame, a stylised oak crown and a stacked "O / DCG"
-// monogram. It is fully scalable (single SVG) and reused in the public
-// favicon / apple touch icon so the brand identity stays consistent.
+// Polished Oakmont DMG monogram. The mark layers a dark navy shield, a
+// soft gold gradient frame, a stylised oak crown and a stacked "O" mark
+// with a chart-baseline accent. It is fully scalable (single SVG) and
+// reused in the public favicon / apple touch icon so the brand identity
+// stays consistent.
 export function OakmontLogoMark({ className = 'h-9 w-9' }) {
   return (
     <span className={`${className} inline-flex items-center justify-center rounded-xl bg-[#07111f] border border-gold-400/35 shadow-gold overflow-hidden`} aria-hidden="true">
@@ -27,8 +28,8 @@ export function OakmontLogoMark({ className = 'h-9 w-9' }) {
         <circle cx="32" cy="30.6" r="1.4" fill="#07111f"/>
         {/* monogram O */}
         <circle cx="32" cy="40" r="7.5" fill="none" stroke="url(#oakmont-gold)" strokeWidth="2.2"/>
-        {/* DCG underscore */}
-        <path d="M22 52 H42" stroke="url(#oakmont-gold)" strokeWidth="2" strokeLinecap="round"/>
+        {/* chart baseline accent */}
+        <path d="M20 52 L26 49 L31 51 L37 46 L44 48" stroke="url(#oakmont-gold)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
         <text x="32" y="40.7" textAnchor="middle" fontFamily="ui-serif, Georgia, 'Times New Roman', serif" fontWeight="700" fontSize="9" fill="#f7e7a3" dominantBaseline="middle">O</text>
       </svg>
     </span>
@@ -37,9 +38,9 @@ export function OakmontLogoMark({ className = 'h-9 w-9' }) {
 
 export function BrandWordmark({ compact = false, className = '' }) {
   return (
-    <span className={`font-display tracking-wide leading-tight ${className}`}>
+    <span className={`font-display tracking-wide leading-tight whitespace-nowrap ${className}`}>
       <span className="text-gradient-gold">Oakmont</span>
-      <span className="text-white">{compact ? ' DCG' : ' Digital Capital Group'}</span>
+      <span className="text-white whitespace-nowrap">{compact ? ' DMG' : ' Digital Markets Group'}</span>
     </span>
   );
 }

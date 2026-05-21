@@ -106,6 +106,10 @@ export function kycSummary(user) {
  * Throws an Error with .status if the user is not allowed to withdraw the
  * given USD amount. Otherwise returns the kycSummary (callers may log it).
  *
+ * Admin overrides: if `user.withdrawalLimitOverride = { daily, monthly,
+ * perTx }` is set, that override is enforced INSTEAD of (and on top of)
+ * the tier defaults. A `null` field falls through to the tier default.
+ *
  * @param {object} user
  * @param {number} usdAmount
  */
@@ -123,21 +127,44 @@ export function assertWithdrawAllowed(user, usdAmount) {
     throw err;
   }
   const summary = kycSummary(u);
-  if (summary.tier === 0) {
+  // Apply admin-issued override on top of the tier defaults. The override
+  // can either tighten OR loosen the cap; the operator is trusted.
+  const ov = u.withdrawalLimitOverride || null;
+  if (ov) {
+    if (Number.isFinite(ov.perTx) && usd > ov.perTx) {
+      const err = new Error(`Per-transaction withdrawal limit is $${Number(ov.perTx).toLocaleString()}.`);
+      err.status = 403;
+      throw err;
+    }
+    if (Number.isFinite(ov.daily)) {
+      summary.daily.limit = ov.daily;
+      summary.daily.remaining = Math.max(0, ov.daily - summary.daily.used);
+    }
+    if (Number.isFinite(ov.monthly)) {
+      summary.monthly.limit = ov.monthly;
+      summary.monthly.remaining = Math.max(0, ov.monthly - summary.monthly.used);
+    }
+    summary.label = `${summary.label} · admin override`;
+    if (ov.daily === 0 && ov.monthly === 0) {
+      const err = new Error('Withdrawals are paused on this account by an administrator.');
+      err.status = 403;
+      throw err;
+    }
+  } else if (summary.tier === 0) {
     const err = new Error('Withdrawals require KYC verification. Submit your phone number to reach Tier 1.');
     err.status = 403;
     throw err;
   }
   if (usd > summary.daily.remaining) {
     const err = new Error(
-      `Daily withdrawal limit reached for ${summary.label}. Used $${summary.daily.used.toFixed(2)} of $${summary.daily.limit.toLocaleString()}. Upgrade your KYC tier to raise this cap.`,
+      `Daily withdrawal limit reached for ${summary.label}. Used $${summary.daily.used.toFixed(2)} of $${summary.daily.limit.toLocaleString()}. Upgrade your KYC tier or contact support to raise this cap.`,
     );
     err.status = 403;
     throw err;
   }
   if (usd > summary.monthly.remaining) {
     const err = new Error(
-      `30-day withdrawal limit reached for ${summary.label}. Used $${summary.monthly.used.toFixed(2)} of $${summary.monthly.limit.toLocaleString()}. Upgrade your KYC tier to raise this cap.`,
+      `30-day withdrawal limit reached for ${summary.label}. Used $${summary.monthly.used.toFixed(2)} of $${summary.monthly.limit.toLocaleString()}. Upgrade your KYC tier or contact support to raise this cap.`,
     );
     err.status = 403;
     throw err;

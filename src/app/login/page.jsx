@@ -38,7 +38,7 @@ export default function LoginPage() {
           <h2 className="mt-10 text-3xl font-display leading-tight">
             Welcome back to the<br /><span className="text-gradient-gold">professional management of digital wealth</span>.
           </h2>
-          <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Capital Group investments.</p>
+          <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Markets Group investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-green"/> Hardware MFA + passkeys</li>
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-gold-400"/> SOC 2 · ISO 27001 · MiCA</li>
@@ -48,7 +48,7 @@ export default function LoginPage() {
       </section>
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
-          <h1 className="text-2xl font-display">Sign in to Oakmont Digital Capital Group</h1>
+          <h1 className="text-2xl font-display">Sign in to Oakmont Digital Markets Group</h1>
           <p className="text-sm text-white/60 mt-1">Welcome back. Please enter your details.</p>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
@@ -82,7 +82,7 @@ export default function LoginPage() {
           </div>
           <div className="mt-3"><Web3ConnectButton /></div>
           <p className="mt-5 text-xs text-white/55 text-center">
-            New to Oakmont Digital Capital Group? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
+            New to Oakmont Digital Markets Group? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
           </p>
         </motion.div>
       </section>

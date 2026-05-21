@@ -41,7 +41,7 @@ function SignupForm() {
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
-          <h1 className="text-2xl font-display">Create your Oakmont Digital Capital Group account</h1>
+          <h1 className="text-2xl font-display">Create your Oakmont Digital Markets Group account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
@@ -81,7 +81,7 @@ function SignupForm() {
             </label>
             <label className="flex items-start gap-2 text-xs text-white/60">
               <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 accent-neon-green"/>
-              I agree to the Oakmont Digital Capital Group Terms of Service, Privacy Policy, and Risk Disclosure.
+              I agree to the Oakmont Digital Markets Group Terms of Service, Privacy Policy, and Risk Disclosure.
             </label>
             {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-gold w-full disabled:opacity-60">
@@ -99,7 +99,7 @@ function SignupForm() {
         <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-gold-500/10 blur-3xl"/>
         <div className="relative max-w-md">
           <h2 className="text-3xl font-display leading-tight">
-            Join <span className="text-gradient-gold">4.1M+ investors</span><br />on Oakmont Digital Capital Group.
+            Join <span className="text-gradient-gold">4.1M+ investors</span><br />on Oakmont Digital Markets Group.
           </h2>
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">

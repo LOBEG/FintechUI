@@ -98,3 +98,14 @@
     linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+/* Prevent iOS Safari from zooming when focusing form fields. The 16px
+   threshold is the documented break-even on mobile WebKit. */
+@media (max-width: 640px) {
+  input, select, textarea { font-size: 16px; }
+}
+
+/* Reserve space for the iPhone home-indicator under the fixed bottom
+   navigation. The MobileBottomNav already extends behind the safe area
+   thanks to its translucent background. */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
