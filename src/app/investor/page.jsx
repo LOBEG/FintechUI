@@ -64,11 +64,11 @@ export default function InvestorPortalPage() {
       <Navbar />
       <section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">
+          <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">
             <Building2 className="h-3.5 w-3.5"/> Institutional Investor Portal
           </span>
           <h1 className="mt-4 text-3xl sm:text-4xl font-display">
-            <span className="text-gradient-neon">Oakmont Digital Markets Group</span> Asset Management
+            <span className="text-gradient-primary">Oakmont Digital Markets Group</span> Asset Management
           </h1>
           <p className="mt-2 text-white/65 max-w-3xl">
             Oakmont Digital Markets Group Asset Management combines live multi-asset market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent brokerage operating platform rather than a basic trading app.
@@ -77,9 +77,9 @@ export default function InvestorPortalPage() {
 
         <div className="mt-8 grid lg:grid-cols-4 gap-4">
           {[
-            { k: 'Total AUM', v: '$848M', icon: Briefcase, accent: 'text-cyan' },
-            { k: 'YTD Return', v: '+38.4%', icon: TrendingUp, accent: 'text-neon-green' },
-            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-cyan' },
+            { k: 'Total AUM', v: '$848M', icon: Briefcase, accent: 'text-blue-400' },
+            { k: 'YTD Return', v: '+38.4%', icon: TrendingUp, accent: 'text-accent-success' },
+            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-blue-400' },
             { k: 'Clients', v: '412', icon: Users, accent: 'text-white' },
         ].map((s) => {
             const Icon = s.icon;
@@ -103,7 +103,7 @@ export default function InvestorPortalPage() {
               <p className="font-semibold">Portfolio performance</p>
               <p className="text-xs text-white/55">Cumulative monthly returns · last 15 months</p>
             </div>
-            <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">+38.4% YTD</span>
+            <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">+38.4% YTD</span>
           </div>
           <BarChart data={[5, 9, 4, 12, 8, 15, 11, 18, 14, 22, 17, 26, 21, 29, 34]} color="#06d6c4" height={180}/>
         </div>
@@ -144,7 +144,7 @@ export default function InvestorPortalPage() {
                     <td className="py-2.5 font-medium">{a.name}</td>
                     <td className="text-white/70">{a.strategy}</td>
                     <td>{formatUSD(a.aum, 0)}</td>
-                    <td className="text-neon-green">+{a.ytd}%</td>
+                    <td className="text-accent-success">+{a.ytd}%</td>
                     <td>{a.sharpe}</td>
                   </tr>))}
               </tbody>
@@ -156,19 +156,19 @@ export default function InvestorPortalPage() {
       {/* Markets intelligence + Risk + KYC */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6 grid lg:grid-cols-3 gap-4">
         <div className="glass-strong p-5">
-          <Brain className="h-6 w-6 text-neon-green"/>
+          <Brain className="h-6 w-6 text-accent-success"/>
           <p className="font-semibold mt-3">Markets Intelligence</p>
           <p className="text-sm text-white/65 mt-1">
             Oakmont Intelligence delivers proprietary signals, regime detection, and adaptive risk overlays sourced from 200+ on-chain & off-chain datasets.
           </p>
           <ul className="mt-3 text-sm text-white/70 space-y-1.5">
-            <li>• Regime detection: <span className="text-neon-green">Risk-On</span></li>
-            <li>• Macro signal: <span className="text-cyan">Constructive</span></li>
+            <li>• Regime detection: <span className="text-accent-success">Risk-On</span></li>
+            <li>• Macro signal: <span className="text-blue-400">Constructive</span></li>
             <li>• Liquidity score: <span className="text-white">8.2 / 10</span></li>
           </ul>
         </div>
         <div className="glass-strong p-5">
-          <PieIcon className="h-6 w-6 text-cyan"/>
+          <PieIcon className="h-6 w-6 text-blue-400"/>
           <p className="font-semibold mt-3">Risk management</p>
           <p className="text-sm text-white/65 mt-1">
             Stress tests, VaR (95%), drawdown analytics, scenario simulation, and concentration limits - reviewed daily by the risk committee.
@@ -180,7 +180,7 @@ export default function InvestorPortalPage() {
           </div>
         </div>
         <div className="glass-strong p-5">
-          <ShieldCheck className="h-6 w-6 text-cyan"/>
+          <ShieldCheck className="h-6 w-6 text-blue-400"/>
           <p className="font-semibold mt-3">Secure onboarding · KYC/AML</p>
           <p className="text-sm text-white/65 mt-1">
             White-glove onboarding for institutions. Document collection, UBO verification, source-of-funds, and Chainalysis screening - done in 48 hours.
@@ -192,7 +192,7 @@ export default function InvestorPortalPage() {
             'Sanctions & PEP screening',
             'Travel Rule compliance',
         ].map((s) => (<p key={s} className="text-xs text-white/70 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-neon-green"/> {s}
+                <span className="h-1.5 w-1.5 rounded-full bg-accent-success"/> {s}
               </p>))}
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function InvestorPortalPage() {
           </div>
           <div className="mt-5 grid lg:grid-cols-4 gap-3">
             {reports.map((r) => (<div key={r.name} className="glass-light p-3 flex items-center gap-3">
-                <FileText className="h-4 w-4 text-cyan"/>
+                <FileText className="h-4 w-4 text-blue-400"/>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{r.name}</p>
                   <p className="text-[11px] text-white/55">{r.date} · {r.status}</p>

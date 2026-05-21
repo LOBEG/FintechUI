@@ -21,9 +21,9 @@ function SignalRow({ symbol }) {
   const liveCandle = candles[candles.length - 1];
   const live = !!liveCandle?.live;
   const base = symbol.replace(/USDT$/, '');
-  const tone = sig.tone === 'buy' ? 'text-neon-green' : sig.tone === 'sell' ? 'text-neon-red' : 'text-white/70';
-  const chipBg = sig.tone === 'buy' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
-    : sig.tone === 'sell' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+  const tone = sig.tone === 'buy' ? 'text-accent-success' : sig.tone === 'sell' ? 'text-accent-error' : 'text-white/70';
+  const chipBg = sig.tone === 'buy' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success'
+    : sig.tone === 'sell' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error'
     : 'bg-white/5 border-white/10 text-white/70';
   // Tiny sparkline of the last 30 closes.
   const tail = closes.slice(-30);
@@ -39,16 +39,16 @@ function SignalRow({ symbol }) {
       <td className="py-2 pr-3">
         <div className="flex items-center gap-2">
           <span className="font-semibold">{base}</span>
-          <span className={`inline-flex items-center gap-1 text-[10px] ${live ? 'text-neon-green' : 'text-white/40'}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-neon-green animate-pulse' : 'bg-white/30'}`}/>
+          <span className={`inline-flex items-center gap-1 text-[10px] ${live ? 'text-accent-success' : 'text-white/40'}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-accent-success animate-pulse' : 'bg-white/30'}`}/>
             {live ? 'live' : 'sync'}
           </span>
         </div>
       </td>
       <td className="py-2 pr-3 font-mono">{last ? formatUSD(last) : '-'}</td>
-      <td className={`py-2 pr-3 font-mono ${pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{last ? formatPct(pct24) : '-'}</td>
+      <td className={`py-2 pr-3 font-mono ${pct24 >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{last ? formatPct(pct24) : '-'}</td>
       <td className="py-2 pr-3 font-mono">{rsiVal != null ? rsiVal.toFixed(1) : '-'}</td>
-      <td className={`py-2 pr-3 font-mono ${fast != null && slow != null ? (fast > slow ? 'text-neon-green' : 'text-neon-red') : 'text-white/45'}`}>
+      <td className={`py-2 pr-3 font-mono ${fast != null && slow != null ? (fast > slow ? 'text-accent-success' : 'text-accent-error') : 'text-white/45'}`}>
         {fast != null && slow != null ? (fast > slow ? 'Up' : 'Down') : '-'}
       </td>
       <td className="py-2 pr-3 hidden md:table-cell">
@@ -80,18 +80,18 @@ export default function AITradingBotClient() {
     if (p.pct >= 0) up++; else down++;
   }
   const breadthPct = total ? (up / total) * 100 : 0;
-  const bias = breadthPct >= 60 ? { label: 'Risk-On', tone: 'text-neon-green' }
-    : breadthPct <= 40 ? { label: 'Risk-Off', tone: 'text-neon-red' }
-    : { label: 'Mixed', tone: 'text-cyan' };
+  const bias = breadthPct >= 60 ? { label: 'Risk-On', tone: 'text-accent-success' }
+    : breadthPct <= 40 ? { label: 'Risk-Off', tone: 'text-accent-error' }
+    : { label: 'Mixed', tone: 'text-blue-400' };
 
   return (
     <>
       <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="chip bg-white/5 border border-white/10 text-white/80">
-          <Sparkles className="h-3.5 w-3.5 text-cyan"/> Oakmont Intelligence · Oakmont Digital Markets Group
+          <Sparkles className="h-3.5 w-3.5 text-blue-400"/> Oakmont Intelligence · Oakmont Digital Markets Group
         </span>
         <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display leading-tight">
-          <span className="text-gradient-neon">Real-time market signals</span>
+          <span className="text-gradient-primary">Real-time market signals</span>
           <br/>across global crypto markets.
         </h1>
         <p className="mt-4 text-white/70 max-w-2xl text-base">
@@ -113,34 +113,34 @@ export default function AITradingBotClient() {
 
       <section className="mt-10 grid sm:grid-cols-3 gap-3">
         <div className="glass-strong p-4">
-          <div className="flex items-center gap-2 text-white/60 text-xs"><Activity className="h-4 w-4 text-neon-green"/> Market breadth (24h)</div>
+          <div className="flex items-center gap-2 text-white/60 text-xs"><Activity className="h-4 w-4 text-accent-success"/> Market breadth (24h)</div>
           <p className={`mt-2 text-2xl font-mono ${bias.tone}`}>{bias.label}</p>
           <p className="text-xs text-white/55 mt-1">{up} of {total} tracked pairs are up. Breadth {breadthPct.toFixed(0)}%.</p>
         </div>
         <div className="glass-strong p-4">
-          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingUp className="h-4 w-4 text-cyan"/> Top mover</div>
+          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingUp className="h-4 w-4 text-blue-400"/> Top mover</div>
           {(() => {
             const ranked = UNIVERSE.map((s) => ({ s, p: prices[s] })).filter((x) => x.p && isFinite(x.p.pct)).sort((a, b) => b.p.pct - a.p.pct);
             const m = ranked[0];
             if (!m) return <p className="mt-2 text-white/45 text-sm">Connecting…</p>;
             return (
               <>
-                <p className="mt-2 text-2xl font-mono text-neon-green">{m.s.replace(/USDT$/, '')}</p>
-                <p className="text-xs text-neon-green mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
+                <p className="mt-2 text-2xl font-mono text-accent-success">{m.s.replace(/USDT$/, '')}</p>
+                <p className="text-xs text-accent-success mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
               </>
             );
           })()}
         </div>
         <div className="glass-strong p-4">
-          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingDown className="h-4 w-4 text-neon-red"/> Worst performer</div>
+          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingDown className="h-4 w-4 text-accent-error"/> Worst performer</div>
           {(() => {
             const ranked = UNIVERSE.map((s) => ({ s, p: prices[s] })).filter((x) => x.p && isFinite(x.p.pct)).sort((a, b) => a.p.pct - b.p.pct);
             const m = ranked[0];
             if (!m) return <p className="mt-2 text-white/45 text-sm">Connecting…</p>;
             return (
               <>
-                <p className="mt-2 text-2xl font-mono text-neon-red">{m.s.replace(/USDT$/, '')}</p>
-                <p className="text-xs text-neon-red mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
+                <p className="mt-2 text-2xl font-mono text-accent-error">{m.s.replace(/USDT$/, '')}</p>
+                <p className="text-xs text-accent-error mt-1">{formatPct(m.p.pct)} · {formatUSD(m.p.price)}</p>
               </>
             );
           })()}
@@ -149,9 +149,9 @@ export default function AITradingBotClient() {
 
       <section className="mt-8 glass-strong p-5">
         <div className="flex items-center gap-2 mb-3">
-          <Bot className="h-4 w-4 text-neon-green"/>
+          <Bot className="h-4 w-4 text-accent-success"/>
           <h2 className="font-display text-lg">Live signal table</h2>
-          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● real-time</span>
+          <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● real-time</span>
           <span className="ml-auto text-[11px] text-white/50">Updated {now.toLocaleTimeString()}</span>
         </div>
         <div className="overflow-x-auto">
@@ -187,7 +187,7 @@ export default function AITradingBotClient() {
           const Icon = c.icon;
           return (
             <div key={c.title} className="glass-strong p-5">
-              <Icon className="h-7 w-7 text-cyan mb-3"/>
+              <Icon className="h-7 w-7 text-blue-400 mb-3"/>
               <h3 className="font-semibold">{c.title}</h3>
               <p className="text-xs text-white/60 mt-2">{c.desc}</p>
             </div>

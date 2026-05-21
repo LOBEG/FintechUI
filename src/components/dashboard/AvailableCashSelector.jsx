@@ -73,7 +73,7 @@ export function AvailableCashSelector({ wallets, livePrices }) {
           {!cryptoLogoStyle(currentAsset.sym) && currentAsset.sym.slice(0, 1)}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="text-2xl font-display text-neon-green truncate">{displayValue}</p>
+          <p className="text-2xl font-display text-accent-success truncate">{displayValue}</p>
           <p className="text-xs text-white/50">{subtitle}</p>
         </div>
         <ChevronDown className={`h-4 w-4 text-white/40 transition-transform ${open ? 'rotate-180' : ''}`}/>
@@ -95,15 +95,15 @@ export function AvailableCashSelector({ wallets, livePrices }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full left-0 right-0 mt-2 z-[90] rounded-xl border border-cyan/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 z-[90] rounded-xl border border-blue-500/20 bg-navy-900/95 p-2 shadow-xl backdrop-blur-xl max-h-[300px] overflow-y-auto"
             >
-              <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-cyan">{t('selectAsset')}</p>
+              <p className="px-3 pb-2 pt-1 text-[11px] uppercase tracking-[0.2em] text-blue-400">{t('selectAsset')}</p>
               {wallets?.length ? wallets.map((w) => (
                 <button
                   key={w.sym}
                   onClick={() => selectAsset(w)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm hover:bg-cyan/10 transition-colors ${
-                    selected?.sym === w.sym ? 'bg-cyan/10' : ''
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm hover:bg-blue-500/10 transition-colors ${
+                    selected?.sym === w.sym ? 'bg-blue-500/10' : ''
                   }`}
                 >
                   <span

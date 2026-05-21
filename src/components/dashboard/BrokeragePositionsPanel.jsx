@@ -66,14 +66,14 @@ export default function BrokeragePositionsPanel() {
       className="glass-strong p-5"
     >
       <div className="flex items-center gap-2 mb-3">
-        <TrendingUp className="h-4 w-4 text-cyan"/>
+        <TrendingUp className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Brokerage positions</h3>
-        <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 flex items-center gap-1">
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           live
         </span>
       </div>
-      {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2 mb-2">{error}</p>}
+      {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2 mb-2">{error}</p>}
       <div className="overflow-x-auto">
         <table className="min-w-full text-xs">
           <thead className="text-white/55">
@@ -119,22 +119,22 @@ export default function BrokeragePositionsPanel() {
                   ) : `$${livePrice.toFixed(4)}`}
                 </td>
                 <td className="py-1.5 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-emerald-400' : 'text-neon-red'}`}>
+                <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-emerald-400' : 'text-accent-error'}`}>
                   {dayPct !== null ? (
                     <span className="inline-flex items-center gap-0.5">
                       {isUp ? '▲' : '▼'}{Math.abs(dayPct).toFixed(2)}%
                     </span>
                   ) : '—'}
                 </td>
-                <td className={`py-1.5 pr-3 text-right ${pnlUsd >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>${pnlUsd.toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${pnlPct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{pnlPct.toFixed(2)}%</td>
+                <td className={`py-1.5 pr-3 text-right ${pnlUsd >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>${pnlUsd.toFixed(2)}</td>
+                <td className={`py-1.5 pr-3 text-right ${pnlPct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{pnlPct.toFixed(2)}%</td>
                 <td className="py-1.5 text-right">
                   {confirmKey === p.key ? (
                     <span className="inline-flex items-center gap-1">
                       <button
                         onClick={() => liquidate(p)}
                         disabled={busyKey === p.key}
-                        className="px-2 py-1 rounded bg-neon-red text-ink-950 text-[11px] font-semibold disabled:opacity-60"
+                        className="px-2 py-1 rounded bg-accent-error text-ink-950 text-[11px] font-semibold disabled:opacity-60"
                       >
                         {busyKey === p.key ? <Loader2 className="h-3 w-3 animate-spin inline"/> : 'Confirm'}
                       </button>

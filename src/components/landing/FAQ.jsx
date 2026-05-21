@@ -25,7 +25,7 @@ export function FAQ() {
             return (<div key={f.q} className="glass overflow-hidden">
               <button onClick={() => setOpen(isOpen ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
                 <span className="font-medium">{f.q}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180 text-neon-green' : 'text-white/60'}`}/>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180 text-accent-success' : 'text-white/60'}`}/>
               </button>
               <AnimatePresence initial={false}>
                 {isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>

@@ -21,7 +21,7 @@ export function AdminSidebar() {
       <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-white/5">
         <OakmontLogoMark className="h-10 w-10"/>
         <BrandWordmark compact className="text-xl truncate"/>
-        <span className="ml-auto text-[10px] uppercase tracking-wider text-cyan font-semibold">Admin</span>
+        <span className="ml-auto text-[10px] uppercase tracking-wider text-blue-400 font-semibold">Admin</span>
       </Link>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {items.map((it) => {

@@ -107,9 +107,9 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       className="glass-strong p-5 space-y-4"
     >
       <div className="flex items-center gap-2">
-        <Briefcase className="h-4 w-4 text-cyan"/>
+        <Briefcase className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Brokerage hub</h3>
-        <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={() => onInvest && onInvest('AAPL', 'stocks')} className="btn-ghost text-xs">
             <ArrowDownLeft className="h-3.5 w-3.5"/> Invest
@@ -128,10 +128,10 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             <div key={b.id} className="glass-light p-3 flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <span className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center">
-                   <Icon className="h-4 w-4 text-cyan"/>
+                   <Icon className="h-4 w-4 text-blue-400"/>
                 </span>
                 <span className="font-semibold text-sm flex-1">{b.name}</span>
-                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● live</span>
+                <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● live</span>
               </div>
               <p className="text-[11px] text-white/55">{b.description}</p>
               <div className="flex flex-wrap gap-1">
@@ -151,7 +151,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       <div className="grid lg:grid-cols-2 gap-3">
         <div className="glass-light p-3">
           <div className="flex items-center gap-2 mb-2">
-            <Activity className="h-4 w-4 text-cyan"/>
+            <Activity className="h-4 w-4 text-blue-400"/>
             <p className="text-sm font-semibold">Live asset-class coverage</p>
             <span className="ml-auto text-[10px] text-white/45">{quotes.length} live quotes</span>
           </div>
@@ -171,7 +171,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                 <div key={cls} className="rounded-lg border border-white/10 bg-white/5 p-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-semibold capitalize">{cls}</span>
-                    <span className="text-[10px] text-neon-green">{liveCount} live</span>
+                    <span className="text-[10px] text-accent-success">{liveCount} live</span>
                     <span className="ml-auto text-[10px] text-white/45">{rows.length} symbols</span>
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
@@ -196,7 +196,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
         </div>
         <div className="glass-light p-3">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="h-4 w-4 text-neon-green"/>
+            <TrendingUp className="h-4 w-4 text-accent-success"/>
             <p className="text-sm font-semibold">Visible live market signals</p>
             <span className="ml-auto text-[10px] text-white/45">updated {updatedLabel}</span>
           </div>
@@ -205,16 +205,16 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
               <div key={q.symbol} className="py-2 flex items-center gap-3 text-xs">
                 <span className="font-semibold w-20">{q.symbol}</span>
                 <span className="text-white/55 flex-1 truncate">{q.name || q.assetClass}</span>
-                <span className={Number(q.pct) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{Number(q.pct || 0).toFixed(2)}%</span>
-                <span className={`chip border text-[10px] ${q.signal === 'Reduce' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : q.signal === 'Accumulate' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : 'bg-white/5 border-white/10 text-white/70'}`}>{q.signal}</span>
+                <span className={Number(q.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}>{Number(q.pct || 0).toFixed(2)}%</span>
+                <span className={`chip border text-[10px] ${q.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : q.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/70'}`}>{q.signal}</span>
               </div>
             ))}
             {cryptoRows.map((m) => (
               <div key={m.symbol} className="py-2 flex items-center gap-3 text-xs">
                 <span className="font-semibold w-20">{m.symbol}</span>
                 <span className="text-white/55 flex-1 truncate">{m.name}</span>
-                <span className={Number(m.pct) >= 0 ? 'text-neon-green' : 'text-neon-red'}>{Number(m.pct || 0).toFixed(2)}%</span>
-                <span className={`chip border text-[10px] ${m.signal === 'Reduce' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : m.signal === 'Accumulate' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : 'bg-white/5 border-white/10 text-white/70'}`}>{m.signal}</span>
+                <span className={Number(m.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}>{Number(m.pct || 0).toFixed(2)}%</span>
+                <span className={`chip border text-[10px] ${m.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : m.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/70'}`}>{m.signal}</span>
               </div>
             ))}
             {!signalRows.length && !cryptoRows.length && (
@@ -235,7 +235,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                 disabled={savingBroker}
                 className={`px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 border ${
                   preferred === b.id
-                    ? 'bg-neon-green/15 border-neon-green/40 text-neon-green'
+                    ? 'bg-accent-success/15 border-accent-success/40 text-accent-success'
                     : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
                 }`}
               >
@@ -291,7 +291,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                       ) : `$${livePrice.toFixed(4)}`}
                     </td>
                     <td className="py-1 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
-                    <td className={`py-1 pr-3 text-right ${pnlUsd >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                    <td className={`py-1 pr-3 text-right ${pnlUsd >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
                       ${pnlUsd.toFixed(2)} ({pnlPct.toFixed(2)}%)
                     </td>
                   </tr>

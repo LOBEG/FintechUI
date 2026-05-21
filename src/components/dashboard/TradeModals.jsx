@@ -93,10 +93,10 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
     } finally { setBusy(false); }
   };
   return (
-    <Modal open={open} onClose={onClose} title="Invest in crypto" icon={<ArrowDownLeft className="h-4 w-4 text-neon-green"/>}>
+    <Modal open={open} onClose={onClose} title="Invest in crypto" icon={<ArrowDownLeft className="h-4 w-4 text-accent-success"/>}>
       {success ? (
         <div className="text-center py-6">
-          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <CheckCircle2 className="h-10 w-10 text-accent-success mx-auto"/>
           <p className="mt-3 font-semibold">Investment confirmed</p>
           <p className="text-sm text-white/65 mt-1">
             Acquired <strong>{success.amount.toFixed(8)} {success.symbol}</strong> for ${success.usdValue.toFixed(2)} at ${success.price.toFixed(2)}.
@@ -128,18 +128,18 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
           <p className="text-[11px] text-white/55">
             Available {fundingSymbol}: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</strong>
             {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
-            {fundingUsd <= 0 && <span className="text-cyan"> (insufficient)</span>}
+            {fundingUsd <= 0 && <span className="text-blue-400"> (insufficient)</span>}
           </p>
           <label className="block">
             <span className="text-xs text-white/55">USD amount</span>
-            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `${px.toLocaleString(undefined, { maximumFractionDigits: 6 })} USDT` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated {symbol}</span><span>{estCrypto.toFixed(8)}</span></div>
             <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60" title={fundingUsd < parseFloat(usdAmount || '0') ? `Insufficient ${fundingSymbol}` : ''}>
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>
@@ -209,10 +209,10 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
     } finally { setBusy(false); }
   };
   return (
-    <Modal open={open} onClose={onClose} title="Withdraw crypto" icon={<ArrowUpRight className="h-4 w-4 text-cyan"/>}>
+    <Modal open={open} onClose={onClose} title="Withdraw crypto" icon={<ArrowUpRight className="h-4 w-4 text-blue-400"/>}>
       {success ? (
         <div className="text-center py-6">
-          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <CheckCircle2 className="h-10 w-10 text-accent-success mx-auto"/>
           <p className="mt-3 font-semibold">Withdrawal processed</p>
           <p className="text-sm text-white/65 mt-1">Sent <strong>{success.amount} {success.symbol}</strong>{success.address ? ` to ${success.address}` : ''}.</p>
           <p className="text-xs text-white/45 mt-2">A confirmation email has been sent.</p>
@@ -220,7 +220,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
-          <div className="flex gap-2 text-xs items-start bg-neon-green/10 border border-neon-green/30 text-cyan rounded-lg p-3">
+          <div className="flex gap-2 text-xs items-start bg-accent-success/10 border border-accent-success/30 text-blue-400 rounded-lg p-3">
             <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
             <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Markets Group administrator.</p>
           </div>
@@ -234,7 +234,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Amount ({symbol})</span>
-            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-cyan/40"/>
+            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500/40"/>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Saved beneficiary</span>
@@ -255,7 +255,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           {!beneficiaryId && (
             <label className="block">
               <span className="text-xs text-white/55">Destination address (optional)</span>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-cyan/40"/>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500/40"/>
             </label>
           )}
           {!beneficiaryId && availableNetworks.length > 1 && (
@@ -266,21 +266,21 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
                   <option key={n} value={n} className="bg-ink-900">{n}</option>
                 ))}
               </select>
-              <span className="text-[11px] text-cyan/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
+              <span className="text-[11px] text-blue-400/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
             </label>
           )}
           {!beneficiaryId && memoRequired && (
             <label className="block">
-              <span className="text-xs text-white/55">Destination tag / memo <span className="text-neon-red">(required for {symbol})</span></span>
-              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-cyan/40"/>
-              <span className="text-[11px] text-neon-red mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
+              <span className="text-xs text-white/55">Destination tag / memo <span className="text-accent-error">(required for {symbol})</span></span>
+              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-blue-500/40"/>
+              <span className="text-[11px] text-accent-error mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
             </label>
           )}
           <label className="block">
             <span className="text-xs text-white/55">Admin authorisation token</span>
-            <input value={tokenCode} onChange={(e) => setTokenCode(e.target.value.toUpperCase())} required placeholder="e.g. K3WJ9PXTV2NQ7M5BNCRA" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-cyan/40 tracking-wider"/>
+            <input value={tokenCode} onChange={(e) => setTokenCode(e.target.value.toUpperCase())} required placeholder="e.g. K3WJ9PXTV2NQ7M5BNCRA" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-blue-500/40 tracking-wider"/>
           </label>
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy} className="btn w-full justify-center bg-cyan text-ink-950 hover:shadow-glow disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Processing…</> : `Withdraw ${amount || ''} ${symbol}`}
           </button>
@@ -342,10 +342,10 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
   };
 
   return (
-    <Modal open={open} onClose={onClose} title="Sell crypto" icon={<ArrowUpRight className="h-4 w-4 text-neon-green"/>}>
+    <Modal open={open} onClose={onClose} title="Sell crypto" icon={<ArrowUpRight className="h-4 w-4 text-accent-success"/>}>
       {success ? (
         <div className="text-center py-6">
-          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <CheckCircle2 className="h-10 w-10 text-accent-success mx-auto"/>
           <p className="mt-3 font-semibold">Sell filled</p>
           <p className="text-sm text-white/65 mt-1">
             Sold <strong>{success.transaction.amount} {success.transaction.symbol}</strong> for{' '}
@@ -375,7 +375,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
                 onChange={(e) => setAmount(e.target.value)}
                 inputMode="decimal"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-16 py-2 text-sm outline-none focus:border-neon-green/40"
+                className="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-16 py-2 text-sm outline-none focus:border-accent-success/40"
               />
               <button
                 type="button"
@@ -393,7 +393,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
             <div className="flex justify-between"><span className="text-white/60">Fee ({(feeBps / 100).toFixed(2)}%)</span><span>−${feeUsd.toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold pt-1 border-t border-white/10"><span>You receive</span><span>${netUsd.toFixed(2)} USDT</span></div>
           </div>
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy || !px || cryptoAmt <= 0 || cryptoAmt > held} className="btn-primary w-full justify-center disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Selling…</> : `Sell ${cryptoAmt || ''} ${symbol}`}
           </button>
@@ -501,10 +501,10 @@ export function BrokerageInvestModal({
   const rows = universe[assetClass] || [];
 
   return (
-    <Modal open={open} onClose={onClose} title="Invest via brokerage" icon={<ArrowDownLeft className="h-4 w-4 text-neon-green"/>}>
+    <Modal open={open} onClose={onClose} title="Invest via brokerage" icon={<ArrowDownLeft className="h-4 w-4 text-accent-success"/>}>
       {success ? (
         <div className="text-center py-6">
-          <CheckCircle2 className="h-10 w-10 text-neon-green mx-auto"/>
+          <CheckCircle2 className="h-10 w-10 text-accent-success mx-auto"/>
           <p className="mt-3 font-semibold">Order filled</p>
           <p className="text-sm text-white/65 mt-1">
             Acquired <strong>{Number(success.transaction.amount).toLocaleString(undefined, { maximumFractionDigits: 6 })} {success.transaction.symbol}</strong>{' '}
@@ -528,7 +528,7 @@ export function BrokerageInvestModal({
             <span className="block text-[11px] text-white/55 mt-1">
               Available: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)} {fundingSymbol}</strong>
               {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
-              {fundingUsd <= 0 && <span className="text-cyan"> (insufficient)</span>}
+              {fundingUsd <= 0 && <span className="text-blue-400"> (insufficient)</span>}
             </span>
           </label>
           <label className="block">
@@ -551,14 +551,14 @@ export function BrokerageInvestModal({
           </label>
           <label className="block">
             <span className="text-xs text-white/55">USD amount</span>
-            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
           </label>
           <div className="glass-light p-3 text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `$${px.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated qty</span><span>{estQty ? estQty.toFixed(6) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>

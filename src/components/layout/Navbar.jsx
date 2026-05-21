@@ -33,11 +33,11 @@ export function Navbar() {
           {loading ? (
             <span className="btn-ghost text-sm opacity-70">Checking session</span>
           ) : user ? (
-            <Link href="/dashboard" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Dashboard</Link>
+            <Link href="/dashboard" className="btn-outline text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Dashboard</Link>
           ) : (
             <>
               <Link href="/login" className="btn-ghost text-sm">Sign in</Link>
-              <Link href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+              <Link href="/signup" className="btn-outline text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Create Account</Link>
             </>
           )}
         </div>
@@ -59,11 +59,11 @@ export function Navbar() {
                 {loading ? (
                   <span className="btn-ghost flex-1 text-sm opacity-70">Checking session</span>
                 ) : user ? (
-                  <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Dashboard</Link>
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Dashboard</Link>
                 ) : (
                   <>
                     <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost flex-1 text-sm">Sign in</Link>
-                    <Link href="/signup" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</Link>
+                    <Link href="/signup" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Create Account</Link>
                   </>
                 )}
               </div>

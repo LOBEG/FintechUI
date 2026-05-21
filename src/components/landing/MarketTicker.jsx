@@ -30,7 +30,7 @@ export function MarketTicker() {
                 </span>
                 <span className="text-sm font-semibold text-white">{a.sym}</span>
                 <span className="text-sm text-white/80">{formatUSD(a.price, a.price < 1 ? 4 : 2)}</span>
-                <span className={`text-xs ${a.change >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(a.change)}</span>
+                <span className={`text-xs ${a.change >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{formatPct(a.change)}</span>
               </div>);
             })}
           </div>

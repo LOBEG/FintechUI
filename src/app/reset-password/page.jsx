@@ -41,17 +41,17 @@ function ResetPasswordInner() {
         <h1 className="text-2xl font-display">Choose a new password</h1>
         <p className="text-sm text-white/60 mt-1">Your new password takes effect immediately. All other sessions stay signed in &mdash; revoke them from Sessions &amp; devices.</p>
         {!token || !code ? (
-          <p className="mt-6 text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">This reset link is incomplete. Request a new one from the <Link href="/forgot-password" className="underline">Forgot password</Link> page.</p>
+          <p className="mt-6 text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">This reset link is incomplete. Request a new one from the <Link href="/forgot-password" className="underline">Forgot password</Link> page.</p>
         ) : done ? (
           <div className="mt-6 glass-light p-4 text-sm">
-            <p className="flex items-center gap-2 text-neon-green"><ShieldCheck className="h-4 w-4"/> Password updated.</p>
+            <p className="flex items-center gap-2 text-accent-success"><ShieldCheck className="h-4 w-4"/> Password updated.</p>
             <p className="mt-2 text-white/70">Redirecting you to sign in…</p>
           </div>
         ) : (
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">New password</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Lock className="h-4 w-4 text-white/40"/>
                 <input type={show ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="bg-transparent outline-none text-sm flex-1"/>
                 <button type="button" onClick={() => setShow(!show)} aria-label="Toggle password visibility">
@@ -61,19 +61,19 @@ function ResetPasswordInner() {
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Confirm new password</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Lock className="h-4 w-4 text-white/40"/>
                 <input type={show ? 'text' : 'password'} autoComplete="new-password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter password" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
-            {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+            {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-primary w-full mt-2 disabled:opacity-60">
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Updating…</> : 'Update password'}
             </button>
           </form>
         )}
         <p className="mt-5 text-xs text-white/55 text-center">
-          <Link href="/login" className="text-neon-green hover:underline">Back to sign in</Link>
+          <Link href="/login" className="text-accent-success hover:underline">Back to sign in</Link>
         </p>
       </motion.div>
     </main>

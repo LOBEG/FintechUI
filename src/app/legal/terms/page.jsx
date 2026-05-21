@@ -76,7 +76,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">9. Contact</h2>
               <p className="mt-2">
-                For questions regarding these Terms, contact <a href="mailto:legal@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">legal@oakmontdigitalmarkets.com</a>.
+                For questions regarding these Terms, contact <a href="mailto:legal@oakmontdigitalmarkets.com" className="text-accent-success hover:underline">legal@oakmontdigitalmarkets.com</a>.
               </p>
             </section>
           </div>

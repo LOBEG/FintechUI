@@ -34,18 +34,18 @@ export default function LoginPage() {
     return (<main className="min-h-screen flex relative bg-gradient-to-br from-stone-950 via-zinc-900 to-neutral-950">
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
-        <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
-        <div className="absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
+        <div className="absolute -top-40 -left-20 h-[420px] w-[420px] rounded-full bg-accent-success/10 blur-3xl"/>
+        <div className="absolute -bottom-40 -right-20 h-[420px] w-[420px] rounded-full bg-accent-success/10 blur-3xl"/>
         <div className="relative max-w-md">
           <BrandLogo textClassName="text-2xl" />
           <h2 className="mt-10 text-3xl font-display leading-tight">
-            Welcome back to the<br /><span className="text-gradient-neon">professional management of digital wealth</span>.
+            Welcome back to the<br /><span className="text-gradient-primary">professional management of digital wealth</span>.
           </h2>
           <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Markets Group investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-neon-green"/> Hardware MFA + passkeys</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-cyan"/> SOC 2 · ISO 27001 · MiCA</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-cyan"/> 95% cold storage custody</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-accent-success"/> Hardware MFA + passkeys</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-blue-400"/> SOC 2 · ISO 27001 · MiCA</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-blue-400"/> 95% cold storage custody</li>
           </ul>
         </div>
       </section>
@@ -56,14 +56,14 @@ export default function LoginPage() {
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">Email</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Mail className="h-4 w-4 text-white/40"/>
                 <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@firm.com" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Password</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Lock className="h-4 w-4 text-white/40"/>
                 <input type={show ? 'text' : 'password'} autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="bg-transparent outline-none text-sm flex-1"/>
                 <button type="button" onClick={() => setShow(!show)} aria-label="Toggle password visibility">
@@ -75,7 +75,7 @@ export default function LoginPage() {
               <label className="inline-flex items-center gap-2"><input type="checkbox" className="accent-neon-green"/> Remember me</label>
               <Link href="/forgot-password" className="hover:text-white">Forgot password?</Link>
             </div>
-            {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+            {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-primary w-full mt-2 disabled:opacity-60">
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Signing in…</> : 'Sign in'}
             </button>
@@ -84,7 +84,7 @@ export default function LoginPage() {
             <span className="flex-1 h-px bg-white/10"/> sign in to continue <span className="flex-1 h-px bg-white/10"/>
           </div>
           <p className="mt-5 text-xs text-white/55 text-center">
-            New to Oakmont Digital Markets Group? <Link href="/signup" className="text-neon-green hover:underline">Create an account</Link>
+            New to Oakmont Digital Markets Group? <Link href="/signup" className="text-accent-success hover:underline">Create an account</Link>
           </p>
         </motion.div>
       </section>

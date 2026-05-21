@@ -29,7 +29,7 @@ export function MobileBottomNav() {
             const active = pathname === it.href;
             const label = it.fallback ? (t(it.label) === it.label ? it.fallback : t(it.label)) : t(it.label);
             return (<li key={it.href} className="snap-start">
-              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1 py-2.5 px-4 text-[11px] min-w-[72px]', active ? 'text-neon-green' : 'text-white/60 hover:text-white')}>
+              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1 py-2.5 px-4 text-[11px] min-w-[72px]', active ? 'text-accent-success' : 'text-white/60 hover:text-white')}>
                 <Icon className="h-5 w-5"/>
                 <span>{label}</span>
               </Link>

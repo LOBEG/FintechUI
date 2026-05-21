@@ -86,30 +86,30 @@ export function AIChatWidget() {
       <AnimatePresence>
         {open && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-ink-950/45 backdrop-blur-sm z-[55]" aria-label="Close markets assistant"/>)}
       </AnimatePresence>
-      <motion.button drag dragMomentum={false} dragElastic={0.08} onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileDrag={{ scale: 1.08 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-neon-grad shadow-glow flex items-center justify-center text-ink-950 cursor-grab active:cursor-grabbing touch-none" aria-label="Open markets assistant">
+      <motion.button drag dragMomentum={false} dragElastic={0.08} onClick={() => setOpen(!open)} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileDrag={{ scale: 1.08 }} className="fixed bottom-5 left-5 z-[60] h-14 w-14 rounded-full bg-gradient-primary shadow-glow flex items-center justify-center text-ink-950 cursor-grab active:cursor-grabbing touch-none" aria-label="Open markets assistant">
         {open ? <X className="h-6 w-6"/> : <Bot className="h-6 w-6"/>}
       </motion.button>
       <AnimatePresence>
-        {open && (<motion.div drag dragListener={false} dragControls={dragControls} dragMomentum={false} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-4 right-4 lg:left-5 lg:right-auto z-[60] w-[calc(100vw-2rem)] max-w-md lg:w-96 bg-navy-900 border border-cyan/20 shadow-[0_30px_90px_rgba(0,0,0,0.55)] rounded-2xl overflow-hidden flex flex-col h-[70vh] lg:h-[480px]">
+        {open && (<motion.div drag dragListener={false} dragControls={dragControls} dragMomentum={false} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-4 right-4 lg:left-5 lg:right-auto z-[60] w-[calc(100vw-2rem)] max-w-md lg:w-96 bg-navy-900 border border-blue-500/20 shadow-[0_30px_90px_rgba(0,0,0,0.55)] rounded-2xl overflow-hidden flex flex-col h-[70vh] lg:h-[480px]">
             <div onPointerDown={(event) => dragControls.start(event)} className="px-4 py-3 border-b border-white/10 flex items-center gap-2 cursor-move select-none touch-none">
-              <span className="h-8 w-8 rounded-lg bg-neon-grad inline-flex items-center justify-center text-ink-950">
+              <span className="h-8 w-8 rounded-lg bg-gradient-primary inline-flex items-center justify-center text-ink-950">
                 <Sparkles className="h-4 w-4"/>
               </span>
               <div>
                 <p className="text-sm font-semibold">Oakmont Intelligence</p>
                 <p className="text-[11px] text-white/50">Drag this panel anywhere</p>
               </div>
-              <span className="ml-auto chip bg-neon-green/15 text-neon-green border border-neon-green/30">● Online</span>
+              <span className="ml-auto chip bg-accent-success/15 text-accent-success border border-accent-success/30">● Online</span>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2 no-scrollbar">
               {msgs.map((m, i) => (<div key={i} className={m.role === 'user'
-                    ? 'ml-auto max-w-[80%] px-3 py-2 rounded-2xl rounded-br-md bg-neon-green text-ink-950 text-sm'
+                    ? 'ml-auto max-w-[80%] px-3 py-2 rounded-2xl rounded-br-md bg-accent-success text-ink-950 text-sm'
                     : 'mr-auto max-w-[85%] px-3 py-2 rounded-2xl rounded-bl-md bg-white/5 border border-white/10 text-sm text-white/90'}>
                   {m.text}
                 </div>))}
             </div>
             <div className="p-3 border-t border-white/10 flex gap-2">
-              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-cyan/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
+              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-blue-500/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
               <button onClick={send} className="btn-primary !px-3 !py-2"><Send className="h-4 w-4"/></button>
             </div>
           </motion.div>)}

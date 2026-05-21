@@ -30,7 +30,7 @@ export function TopBar({ title }) {
           {user && <NotificationBell />}
           {user ? (
             <div className="flex items-center gap-2 pl-2">
-              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-neon-green/30 text-cyan inline-flex items-center justify-center">
+              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-blue-500/30 text-blue-400 inline-flex items-center justify-center">
                 <UserCircle className="h-5 w-5"/>
               </div>
               <div className="text-xs leading-tight hidden md:block">

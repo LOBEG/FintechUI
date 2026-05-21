@@ -88,10 +88,10 @@ export function Testimonials() {
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
       <div className="max-w-2xl">
         <span className="chip bg-white/5 border border-white/10 text-white/80 inline-flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-neon-green animate-pulse"/> Client investment voices
+          <span className="h-1.5 w-1.5 rounded-full bg-accent-success animate-pulse"/> Client investment voices
         </span>
         <h2 className="mt-4 text-3xl sm:text-4xl font-display">
-          Trusted by investors who want a <span className="text-gradient-neon">clearer crypto journey</span>.
+          Trusted by investors who want a <span className="text-gradient-primary">clearer crypto journey</span>.
         </h2>
         <p className="mt-3 text-white/65">
           Read detailed client experiences around account visibility, disciplined investing, transparent reporting, and authenticated trading controls.
@@ -100,13 +100,13 @@ export function Testimonials() {
       {displayItems.length ? (
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           {displayItems.map((t, i) => (<motion.div key={(t.id || t.name) + i} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06 }} className={i === 0 ? 'glass p-6 md:col-span-2 bg-white/[0.04]' : 'glass p-6'}>
-               <Quote className="h-6 w-6 text-cyan/70"/>
+               <Quote className="h-6 w-6 text-blue-400/70"/>
                <p className={i === 0 ? 'mt-3 text-lg text-white/85 leading-relaxed' : 'mt-3 text-white/80 leading-relaxed'}>{t.text}</p>
                <div className="mt-4 flex items-center gap-3">
                  {t.avatarUrl ? (
                    <div className="h-12 w-12 rounded-full bg-cover bg-center border border-white/10" style={{ backgroundImage: `url(${t.avatarUrl})` }} aria-label={`${t.name} profile photo`}/>
                 ) : (
-                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 inline-flex items-center justify-center text-cyan font-semibold text-sm">
+                  <div className="h-12 w-12 rounded-full bg-white/5 border border-white/10 inline-flex items-center justify-center text-blue-400 font-semibold text-sm">
                     {(t.name || 'O').split(' ').map((p) => p[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()}
                   </div>
                 )}
@@ -115,7 +115,7 @@ export function Testimonials() {
                   <p className="text-xs text-white/55">{t.role || 'Oakmont Digital Markets Group investor'}</p>
                 </div>
                 <div className="ml-auto flex">
-                  {Array.from({ length: t.rating || 5 }).map((_, k) => (<Star key={k} className="h-3.5 w-3.5 text-cyan fill-cyan"/>))}
+                  {Array.from({ length: t.rating || 5 }).map((_, k) => (<Star key={k} className="h-3.5 w-3.5 text-blue-400 fill-cyan"/>))}
                 </div>
               </div>
             </motion.div>))}

@@ -50,8 +50,8 @@ function fmtVol(v) {
   return v.toFixed(0);
 }
 function signalTone(signal) {
-  if (['Strong buy', 'Accumulate'].includes(signal)) return 'bg-neon-green/15 border-neon-green/30 text-neon-green';
-  if (['Take profit', 'Reduce'].includes(signal)) return 'bg-neon-red/15 border-neon-red/30 text-neon-red';
+  if (['Strong buy', 'Accumulate'].includes(signal)) return 'bg-accent-success/15 border-accent-success/30 text-accent-success';
+  if (['Take profit', 'Reduce'].includes(signal)) return 'bg-accent-error/15 border-accent-error/30 text-accent-error';
   return 'bg-white/5 border-white/10 text-white/70';
 }
 
@@ -119,15 +119,15 @@ function QuoteRow({ q, onOpen }) {
         <div className="hidden sm:block"><MiniSpark candles={q._spark}/></div>
         <div className="text-right min-w-[6.5rem]">
           <p className="text-sm font-mono">{fmtPrice(q.price, q.currency)}</p>
-          <p className={`text-[11px] flex items-center gap-1 justify-end ${positive ? 'text-neon-green' : 'text-neon-red'}`}>
+          <p className={`text-[11px] flex items-center gap-1 justify-end ${positive ? 'text-accent-success' : 'text-accent-error'}`}>
             {positive ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
             {fmtPct(q.pct)}
           </p>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-1 text-[10px] text-white/60 font-mono border-t border-white/5 pt-2">
-        <div><span className="text-white/40">High </span><span className="text-neon-green">{fmtPrice(q.dayHigh, q.currency)}</span></div>
-        <div><span className="text-white/40">Low </span><span className="text-neon-red">{fmtPrice(q.dayLow, q.currency)}</span></div>
+        <div><span className="text-white/40">High </span><span className="text-accent-success">{fmtPrice(q.dayHigh, q.currency)}</span></div>
+        <div><span className="text-white/40">Low </span><span className="text-accent-error">{fmtPrice(q.dayLow, q.currency)}</span></div>
         <div className="text-right"><span className="text-white/40">Vol </span>{fmtVol(q.volume)}</div>
       </div>
     </button>
@@ -163,13 +163,13 @@ function QuoteDetail({ q, onClose }) {
           </div>
           <p className="text-right">
             <span className="text-2xl font-mono">{fmtPrice(q.price, q.currency)}</span>
-            <span className={`block text-sm ${positive ? 'text-neon-green' : 'text-neon-red'}`}>{fmtPct(q.pct)} · {fmtPrice(q.change, q.currency)}</span>
+            <span className={`block text-sm ${positive ? 'text-accent-success' : 'text-accent-error'}`}>{fmtPct(q.pct)} · {fmtPrice(q.change, q.currency)}</span>
           </p>
           <button onClick={onClose} className="h-8 w-8 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center" aria-label="Close"><X className="h-4 w-4"/></button>
         </div>
         <div className="flex flex-wrap gap-1 mb-3">
           {RANGE_PRESETS.map((r) => (
-            <button key={r.id} onClick={() => setRangeId(r.id)} className={`px-2 py-1 rounded text-[11px] ${rangeId === r.id ? 'bg-neon-green/15 text-neon-green border border-neon-green/40' : 'bg-white/5 text-white/65 border border-white/10 hover:bg-white/10'}`}>
+            <button key={r.id} onClick={() => setRangeId(r.id)} className={`px-2 py-1 rounded text-[11px] ${rangeId === r.id ? 'bg-accent-success/15 text-accent-success border border-accent-success/40' : 'bg-white/5 text-white/65 border border-white/10 hover:bg-white/10'}`}>
               {r.label}
             </button>
           ))}
@@ -177,8 +177,8 @@ function QuoteDetail({ q, onClose }) {
         <FullChart candles={chart?.candles}/>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
           <div className="glass-light p-2"><p className="text-white/50">Prev close</p><p className="font-mono text-sm">{fmtPrice(q.previousClose, q.currency)}</p></div>
-          <div className="glass-light p-2"><p className="text-white/50">Day high</p><p className="font-mono text-sm text-neon-green">{fmtPrice(q.dayHigh, q.currency)}</p></div>
-          <div className="glass-light p-2"><p className="text-white/50">Day low</p><p className="font-mono text-sm text-neon-red">{fmtPrice(q.dayLow, q.currency)}</p></div>
+          <div className="glass-light p-2"><p className="text-white/50">Day high</p><p className="font-mono text-sm text-accent-success">{fmtPrice(q.dayHigh, q.currency)}</p></div>
+          <div className="glass-light p-2"><p className="text-white/50">Day low</p><p className="font-mono text-sm text-accent-error">{fmtPrice(q.dayLow, q.currency)}</p></div>
           <div className="glass-light p-2"><p className="text-white/50">Volume</p><p className="font-mono text-sm">{fmtVol(q.volume)}</p></div>
         </div>
         <p className="mt-4 text-[11px] text-white/45">
@@ -253,7 +253,7 @@ function BrokerageBoard({ assetClass }) {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[12rem]">
           <Search className="h-4 w-4 absolute left-2 top-1/2 -translate-y-1/2 text-white/40"/>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search symbol or name" className="w-full pl-7 pr-3 py-1.5 rounded bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-neon-green/40"/>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search symbol or name" className="w-full pl-7 pr-3 py-1.5 rounded bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-accent-success/40"/>
         </div>
         <button onClick={load} disabled={loading} className="text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-50">
           {loading ? <Loader2 className="h-3 w-3 animate-spin"/> : <RefreshCw className="h-3 w-3"/>} Refresh
@@ -311,7 +311,7 @@ function CryptoBoard() {
             </div>
             <div className="text-right">
               <p className="text-sm font-mono">{fmtPrice(r.price)}</p>
-              <p className={`text-[11px] ${positive ? 'text-neon-green' : 'text-neon-red'}`}>{fmtPct(r.pct)}</p>
+              <p className={`text-[11px] ${positive ? 'text-accent-success' : 'text-accent-error'}`}>{fmtPct(r.pct)}</p>
             </div>
           </Link>
         );
@@ -381,7 +381,7 @@ function OptionsBoard() {
                   </thead>
                   <tbody>
                     {data[side].slice(0, 25).map((c) => (
-                       <tr key={c.contractSymbol} className={`border-t border-white/5 ${c.inTheMoney ? 'bg-neon-green/10' : ''}`}>
+                       <tr key={c.contractSymbol} className={`border-t border-white/5 ${c.inTheMoney ? 'bg-accent-success/10' : ''}`}>
                         <td className="py-1">{c.strike}</td>
                         <td className="py-1 text-right">{c.lastPrice?.toFixed?.(2) ?? '-'}</td>
                         <td className="py-1 text-right">{c.bid?.toFixed?.(2) ?? '-'}</td>
@@ -423,9 +423,9 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14 space-y-6">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <span className="chip bg-white/5 border border-white/10 text-white/80"><Activity className="h-3.5 w-3.5 text-neon-green"/> Multi-asset brokerage · live market data</span>
+        <span className="chip bg-white/5 border border-white/10 text-white/80"><Activity className="h-3.5 w-3.5 text-accent-success"/> Multi-asset brokerage · live market data</span>
         <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-display tracking-tight">
-          Trade everything from <span className="text-gradient-neon">stocks &amp; ETFs</span> to <span className="text-gradient-neon">crypto, FX &amp; futures</span>.
+          Trade everything from <span className="text-gradient-primary">stocks &amp; ETFs</span> to <span className="text-gradient-primary">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
           Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
@@ -433,7 +433,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       </motion.div>
       <div className="flex flex-wrap gap-1.5">
         {TABS.map((t) => (
-          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-neon-green/15 text-neon-green border border-neon-green/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
+          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-accent-success/15 text-accent-success border border-accent-success/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
             {t.label}
           </Link>
         ))}
@@ -444,17 +444,17 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       </section>
       <section className="grid md:grid-cols-3 gap-3">
         <div className="glass p-4">
-          <BarChart3 className="h-5 w-5 text-cyan"/>
+          <BarChart3 className="h-5 w-5 text-blue-400"/>
           <h3 className="font-display mt-2">Brokerage account</h3>
           <p className="text-sm text-white/65 mt-1">Single account, every asset class. Stocks, ETFs, options, futures, forex, commodities and crypto in one balance.</p>
         </div>
         <div className="glass p-4">
-          <LineChart className="h-5 w-5 text-neon-green"/>
+          <LineChart className="h-5 w-5 text-accent-success"/>
           <h3 className="font-display mt-2">Live execution</h3>
           <p className="text-sm text-white/65 mt-1">Smart order routing to NYSE, NASDAQ, CME, CBOT, COMEX, NYMEX, and global FX venues with real-time fills.</p>
         </div>
         <div className="glass p-4">
-          <Activity className="h-5 w-5 text-cyan"/>
+          <Activity className="h-5 w-5 text-blue-400"/>
           <h3 className="font-display mt-2">Risk &amp; reporting</h3>
           <p className="text-sm text-white/65 mt-1">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
         </div>
@@ -462,7 +462,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
       <section className="glass-strong p-4 sm:p-5">
         <div className="flex items-center flex-wrap gap-2 mb-3">
           <h2 className="font-display text-xl">Live asset class status</h2>
-          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● visible to users</span>
+          <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● visible to users</span>
         </div>
         <p className="text-sm text-white/65 max-w-3xl">
           Oakmont Digital Markets Group displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
@@ -472,7 +472,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
             <div key={v.id} className="glass-light p-3">
               <p className="text-sm font-semibold text-white">{v.label}</p>
               <p className="text-[11px] text-white/55 mt-0.5">{v.blurb}</p>
-              <p className="text-[10px] text-cyan/85 mt-1">Live symbols and user-visible signals</p>
+              <p className="text-[10px] text-blue-400/85 mt-1">Live symbols and user-visible signals</p>
             </div>
           ))}
         </div>

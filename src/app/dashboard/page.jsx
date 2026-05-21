@@ -40,22 +40,22 @@ function DashboardLiveSignalRow({ symbol }) {
     const signal = useMemo(() => buildMarketSignal(candles), [candles]);
     const market = candles[candles.length - 1];
     const meta = SYMBOL_META[symbol] || { sym: symbol.replace(/USDT$/, ''), name: symbol };
-    const tone = signal.tone === 'buy' ? 'text-neon-green' : signal.tone === 'sell' ? 'text-neon-red' : 'text-white/70';
+    const tone = signal.tone === 'buy' ? 'text-accent-success' : signal.tone === 'sell' ? 'text-accent-error' : 'text-white/70';
     const chip = signal.tone === 'buy'
-        ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
+        ? 'bg-accent-success/15 border-accent-success/30 text-accent-success'
         : signal.tone === 'sell'
-            ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+            ? 'bg-accent-error/15 border-accent-error/30 text-accent-error'
             : 'bg-white/5 border-white/10 text-white/70';
     return (
         <tr className="border-t border-white/5">
             <td className="py-2 pr-3 font-semibold">{meta.sym}<span className="ml-1 text-[10px] text-white/40">/USDT</span></td>
             <td className="py-2 pr-3 text-white/60">{meta.name}</td>
             <td className="py-2 pr-3 font-mono">{signal.last ? formatUSD(signal.last, signal.last < 1 ? 4 : 2) : 'Connecting'}</td>
-            <td className={`py-2 pr-3 font-mono ${signal.pct24 >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{signal.last ? formatPct(signal.pct24) : 'Connecting'}</td>
+            <td className={`py-2 pr-3 font-mono ${signal.pct24 >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{signal.last ? formatPct(signal.pct24) : 'Connecting'}</td>
             <td className={`py-2 pr-3 font-mono ${tone}`}>{signal.rsiVal != null ? signal.rsiVal.toFixed(1) : 'Tracking'}</td>
             <td className={`py-2 pr-3 font-mono ${tone}`}>{signal.fast != null && signal.slow != null ? (signal.fast > signal.slow ? 'Up' : 'Down') : 'Tracking'}</td>
             <td className="py-2 pr-3"><span className={`chip border text-[11px] ${chip}`}>{signal.label}</span></td>
-            <td className={market?.live ? 'py-2 text-neon-green text-[11px]' : 'py-2 text-white/45 text-[11px]'}>
+            <td className={market?.live ? 'py-2 text-accent-success text-[11px]' : 'py-2 text-white/45 text-[11px]'}>
                 {market?.live ? '● live' : 'syncing'}
             </td>
         </tr>
@@ -174,11 +174,11 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     const [price, setPrice] = useState('');
     const tradeMarket = livePrices[tradePair] || { price: 0, pct: 0, high: 0, low: 0, vol: 0, quoteVol: 0, live: false };
-    const tradePctClass = tradeMarket.pct >= 0 ? 'text-neon-green' : 'text-neon-red';
+    const tradePctClass = tradeMarket.pct >= 0 ? 'text-accent-success' : 'text-accent-error';
     const tradeSignal = useMemo(() => buildMarketSignal(candles, tradeMarket.pct), [candles, tradeMarket.pct]);
-    const tradeSignalClass = tradeSignal.tone === 'buy' ? 'text-neon-green' : tradeSignal.tone === 'sell' ? 'text-neon-red' : 'text-white/75';
-    const tradeSignalChip = tradeSignal.tone === 'buy' ? 'bg-neon-green/15 border-neon-green/30 text-neon-green'
-      : tradeSignal.tone === 'sell' ? 'bg-neon-red/15 border-neon-red/30 text-neon-red'
+    const tradeSignalClass = tradeSignal.tone === 'buy' ? 'text-accent-success' : tradeSignal.tone === 'sell' ? 'text-accent-error' : 'text-white/75';
+    const tradeSignalChip = tradeSignal.tone === 'buy' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success'
+      : tradeSignal.tone === 'sell' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error'
       : 'bg-white/5 border-white/10 text-white/70';
     const effectivePrice = price || (tradeMarket.price ? tradeMarket.price.toFixed(2) : '0');
     // Wallet: real balances when logged in, demo for anonymous visitors.
@@ -267,7 +267,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           <section className="glass-strong p-4 sm:p-5">
             <div className="flex flex-col lg:flex-row lg:items-end gap-4">
               <div className="flex-1">
-                  <p className="text-xs uppercase tracking-[0.24em] text-cyan/80">Dedicated workspace</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-blue-400/80">Dedicated workspace</p>
                 <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
                 <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
               </div>
@@ -280,7 +280,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                   href={featureHref(feature)}
                   className={`shrink-0 rounded-xl border px-3 py-2 text-xs sm:text-sm transition ${
                     activeFeature === feature.id
-                      ? 'bg-neon-green/15 border-neon-green/45 text-neon-green'
+                      ? 'bg-accent-success/15 border-accent-success/45 text-accent-success'
                       : 'bg-white/5 border-white/10 text-white/65 hover:bg-white/10 hover:text-white'
                   }`}
                 >
@@ -296,7 +296,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             </section>
           )}
           {showAuthGate && (
-            <section className="glass-strong p-5 border-cyan/25">
+            <section className="glass-strong p-5 border-blue-500/25">
               <p className="text-sm text-white/60">{activeFeatureMeta.label} workspace</p>
               <h2 className="mt-1 text-2xl font-display">Sign in to view live {activeFeatureMeta.label.toLowerCase()} content.</h2>
               <p className="mt-2 text-sm text-white/60 max-w-2xl">Each feature now has its own page on desktop and mobile. Secure account data stays hidden until your session is confirmed.</p>
@@ -312,12 +312,12 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <div>
                   <p className="text-sm text-white/60 flex items-center gap-2">
                     {t('totalPortfolioValue')}
-                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-neon-green">
-                      <span className="h-1.5 w-1.5 rounded-full bg-neon-green animate-pulse"/> live
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-accent-success">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent-success animate-pulse"/> live
                     </span>
                   </p>
                   <p className="text-3xl sm:text-4xl font-display mt-1">{formatUSD(totalBalance)}</p>
-                  <p className={`text-sm mt-1 ${portfolioMarketChange >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                  <p className={`text-sm mt-1 ${portfolioMarketChange >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
                     {portfolioMarketChange >= 0 ? '+' : ''}{formatUSD(portfolioMarketChange)} live 24h movement ({portfolioMarketPct >= 0 ? '+' : ''}{portfolioMarketPct.toFixed(2)}%)
                   </p>
                 </div>
@@ -335,7 +335,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <AvailableCashSelector wallets={wallets} livePrices={livePrices} />
             <div className="glass p-5">
               <p className="text-sm text-white/60">{t('openPnL')}</p>
-              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-cyan' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
+              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-blue-400' : 'text-accent-error'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
               <p className="text-xs text-white/50 mt-1">{positions.length} {t('openPositions')}</p>
             </div>
           </section> : <section className="glass-strong p-5">
@@ -343,7 +343,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <h2 className="mt-1 text-2xl font-display">Create an account to view cash, balances, positions, history, and execution controls.</h2>
             <p className="mt-2 text-sm text-white/60 max-w-2xl">The live chart and market table remain public for transparency. Funding, investing, selling, withdrawals, and portfolio records are available only after secure sign-in.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <a href="/signup" className="btn-outline text-sm border-cyan/50 text-cyan hover:bg-cyan/10">Create Account</a>
+              <a href="/signup" className="btn-outline text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Create Account</a>
               <a href="/login?next=/dashboard" className="btn-ghost text-sm">Sign in</a>
             </div>
           </section>)}
@@ -352,9 +352,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <section className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
               {DASHBOARD_FEATURES.filter((f) => f.id !== 'overview').map((feature) => (
                 <a key={feature.id} href={featureHref(feature)} className="glass p-4 hover:bg-white/10 transition group">
-                   <p className="text-sm font-semibold group-hover:text-neon-green">{feature.label}</p>
+                   <p className="text-sm font-semibold group-hover:text-accent-success">{feature.label}</p>
                    <p className="mt-1 text-xs text-white/55">{feature.blurb}</p>
-                    <span className="mt-4 inline-flex text-[11px] text-neon-green">Open</span>
+                    <span className="mt-4 inline-flex text-[11px] text-accent-success">Open</span>
                 </a>
               ))}
             </section>
@@ -384,9 +384,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     </button>))}
                 </div>
               </div>
-              <div className="mt-3 rounded-xl bg-ink-900/60 border border-cyan/10 p-2">
+              <div className="mt-3 rounded-xl bg-ink-900/60 border border-blue-500/10 p-2">
                 <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
-                  <span className={chartLive ? 'text-neon-green' : 'text-white/45'}>
+                  <span className={chartLive ? 'text-accent-success' : 'text-white/45'}>
                     {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
                   </span>
                   <span>Updated {chartUpdatedLabel}</span>
@@ -406,17 +406,17 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <span className={`chip border text-[11px] ${tradeSignalChip}`}>{tradeSignal.label}</span>
                 <span className={tradeSignalClass}>RSI {tradeSignal.rsiVal != null ? tradeSignal.rsiVal.toFixed(1) : '-'}</span>
                 <span className={tradeSignalClass}>Trend {tradeSignal.fast != null && tradeSignal.slow != null ? (tradeSignal.fast > tradeSignal.slow ? 'Up' : 'Down') : 'Tracking'}</span>
-                <span className={tradeMarket.live ? 'text-neon-green' : 'text-white/45'}>{tradeMarket.live ? '● live' : 'syncing'}</span>
+                <span className={tradeMarket.live ? 'text-accent-success' : 'text-white/45'}>{tradeMarket.live ? '● live' : 'syncing'}</span>
               </div>
             </div>
 
             {/* Buy/Sell panel */}
             <div className="glass-strong p-4">
               <div className="grid grid-cols-2 rounded-xl bg-white/5 p-1">
-                <button onClick={() => (user ? setSide('buy') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'buy' ? 'bg-neon-green text-ink-950' : 'text-white/70'}`}>
+                <button onClick={() => (user ? setSide('buy') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'buy' ? 'bg-accent-success text-ink-950' : 'text-white/70'}`}>
                   {t('buy')}
                 </button>
-                <button onClick={() => (user ? setSide('sell') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'sell' ? 'bg-neon-red text-white' : 'text-white/70'}`}>
+                <button onClick={() => (user ? setSide('sell') : requireAuth())} className={`py-2 rounded-lg text-sm font-medium ${side === 'sell' ? 'bg-accent-error text-white' : 'text-white/70'}`}>
                   {t('sell')}
                 </button>
               </div>
@@ -428,7 +428,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
               <div className="mt-4 space-y-3">
                 <label className="block">
                   <span className="text-xs text-white/55">Trading pair</span>
-                  <select value={tradePair} onChange={(e) => handleTradePairChange(e.target.value)} disabled={!user} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/50 disabled:opacity-50">
+                  <select value={tradePair} onChange={(e) => handleTradePairChange(e.target.value)} disabled={!user} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/50 disabled:opacity-50">
                     {pairOptions.map((pair) => {
                       const meta = SYMBOL_META[pair];
                       return <option key={pair} value={pair} className="bg-ink-900">{meta.sym} / {quoteSymbol} · {meta.name}</option>;
@@ -454,7 +454,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     if (!requireAuth()) return;
                     if (side === 'buy') openInvest(investSymbol);
                     else setSellOpen(true);
-                }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-neon-green text-ink-950 hover:shadow-glow' : 'bg-neon-red text-white'}`}>
+                }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-accent-success text-ink-950 hover:shadow-glow' : 'bg-accent-error text-white'}`}>
                   {user ? (side === 'buy' ? `${t('buy')} ${investSymbol}` : `${t('sell')} ${investSymbol}`) : t('trade')}
                 </button>
               </div>
@@ -499,9 +499,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           {user && activeFeature === 'analytics' && (
             <section className="glass-strong p-5">
               <div className="flex items-center flex-wrap gap-2 mb-3">
-                <Bot className="h-4 w-4 text-cyan"/>
+                <Bot className="h-4 w-4 text-blue-400"/>
                 <h3 className="font-display text-lg">Live market signals</h3>
-                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30 text-[10px]">● per-symbol</span>
+                <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● per-symbol</span>
               </div>
               <p className="text-xs text-white/55 mb-3">Oakmont Intelligence computes each pair independently from live 15-minute candles, keeping the symbol, price, RSI, trend, and signal visible inside the dashboard.</p>
               <div className="overflow-x-auto">
@@ -561,19 +561,19 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       <a href={`/markets/${base}`} className="h-8 w-8 rounded-full inline-flex items-center justify-center text-[11px] font-bold text-ink-950 hover:opacity-90 bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: meta.color }} aria-label={`Open ${meta.sym} details`}>
                         {!cryptoLogoStyle(meta.sym) && <Wallet className="h-4 w-4 text-white/75"/>}
                       </a>
-                      <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-neon-green">
+                      <a href={`/markets/${base}`} className="flex-1 min-w-0 hover:text-accent-success">
                         <p className="text-sm font-medium">{meta.sym}</p>
                         <p className="text-[11px] text-white/50 truncate">{meta.name}</p>
                       </a>
                       <Sparkline seed={i + 4} positive={pct >= 0} width={70} height={28}/>
                       <div className="text-right">
                         <p className="text-sm">{formatUSD(px, px < 1 ? 4 : 2)}</p>
-                        <p className={`text-[11px] ${pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(pct)}</p>
+                        <p className={`text-[11px] ${pct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{formatPct(pct)}</p>
                       </div>
                       {canRemove && (
                         <button
                           onClick={() => removeFromWatchlist(s)}
-                          className="ml-1 p-1 text-neon-green/80 hover:text-neon-green"
+                          className="ml-1 p-1 text-accent-success/80 hover:text-accent-success"
                           aria-label={`Remove ${meta.sym} from watchlist`}
                           title="Remove from watchlist"
                         >
@@ -615,7 +615,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                         return (<tr key={p.sym}>
                           <td className="py-2.5 font-medium">{p.sym}</td>
                           <td>
-                            <span className={`chip ${p.side === 'LONG' ? 'bg-neon-green/15 text-neon-green' : 'bg-neon-red/15 text-neon-red'}`}>
+                            <span className={`chip ${p.side === 'LONG' ? 'bg-accent-success/15 text-accent-success' : 'bg-accent-error/15 text-accent-error'}`}>
                               {p.side === 'LONG' ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
                               {p.side}
                             </span>
@@ -623,8 +623,8 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                           <td>{p.size}</td>
                           <td>{formatUSD(p.entry, p.entry < 1 ? 4 : 2)}</td>
                           <td>{formatUSD(p.mark, p.mark < 1 ? 4 : 2)}</td>
-                          <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
-                          <td className={pos ? 'text-neon-green' : 'text-neon-red'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
+                          <td className={pos ? 'text-accent-success' : 'text-accent-error'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
+                          <td className={pos ? 'text-accent-success' : 'text-accent-error'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
                           <td className="text-right">
                             <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Close</button>
                           </td>
@@ -660,7 +660,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <div className="glass-strong p-5">
               <div className="flex items-center justify-between">
                 <p className="font-semibold">P&L · last 30 days</p>
-                <span className={`text-xs ${openPnl >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</span>
+                <span className={`text-xs ${openPnl >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</span>
               </div>
               {analyticsSeries.some((v) => v > 0) ? (
                 <BarChart data={analyticsSeries} color="#00ffa3"/>
@@ -670,14 +670,14 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
                 <div className="glass-light p-2 text-center"><p className="text-white/50">Win rate</p><p className="font-semibold mt-1">{completedTrades ? 'Live' : '-'}</p></div>
                 <div className="glass-light p-2 text-center"><p className="text-white/50">Trades</p><p className="font-semibold mt-1">{completedTrades}</p></div>
-                <div className="glass-light p-2 text-center"><p className="text-white/50">Avg value</p><p className="font-semibold mt-1 text-neon-green">{averageTradeValue ? formatUSD(averageTradeValue) : '-'}</p></div>
+                <div className="glass-light p-2 text-center"><p className="text-white/50">Avg value</p><p className="font-semibold mt-1 text-accent-success">{averageTradeValue ? formatUSD(averageTradeValue) : '-'}</p></div>
               </div>
             </div>
 
             <div id="bot-section" className="glass-strong p-5">
               <div className="flex items-center justify-between">
-                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-neon-green"/> Oakmont Markets Intelligence</p>
-                <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
+                <p className="font-semibold flex items-center gap-2"><Bot className="h-4 w-4 text-accent-success"/> Oakmont Markets Intelligence</p>
+                <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
               </div>
               {user ? (
                 (() => {
@@ -699,25 +699,25 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     <div className="mt-3 space-y-3">
                       <div className="grid grid-cols-3 gap-2 text-xs">
                         <div className="glass-light p-2 text-center"><p className="text-white/50">Total value</p><p className="font-semibold mt-1 font-mono">{formatUSD(totalBalance)}</p></div>
-                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h P/L</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketChange >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{portfolioMarketChange >= 0 ? '+' : ''}{formatUSD(portfolioMarketChange)}</p></div>
-                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h %</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketPct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{portfolioMarketPct >= 0 ? '+' : ''}{portfolioMarketPct.toFixed(2)}%</p></div>
+                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h P/L</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketChange >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{portfolioMarketChange >= 0 ? '+' : ''}{formatUSD(portfolioMarketChange)}</p></div>
+                        <div className="glass-light p-2 text-center"><p className="text-white/50">24h %</p><p className={`font-semibold mt-1 font-mono ${portfolioMarketPct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{portfolioMarketPct >= 0 ? '+' : ''}{portfolioMarketPct.toFixed(2)}%</p></div>
                       </div>
                       <div>
                         <p className="text-xs text-white/55 mb-1">Top movers</p>
                         <div className="space-y-1.5">
                           {movers.length ? movers.map((m) => (
                             <div key={m.sym} className="glass-light p-2 flex items-center gap-2 text-xs">
-                               <Zap className="h-3.5 w-3.5 text-cyan"/>
+                               <Zap className="h-3.5 w-3.5 text-blue-400"/>
                               <span className="flex-1 font-semibold">{m.sym}</span>
-                              <span className={m.deltaPct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{m.deltaPct >= 0 ? '+' : ''}{m.deltaPct.toFixed(2)}%</span>
+                              <span className={m.deltaPct >= 0 ? 'text-accent-success' : 'text-accent-error'}>{m.deltaPct >= 0 ? '+' : ''}{m.deltaPct.toFixed(2)}%</span>
                             </div>
                           )) : <p className="text-xs text-white/45">Awaiting price action…</p>}
                         </div>
                       </div>
-                      <div className="glass-light p-3 text-xs space-y-1.5 border border-neon-green/20">
-                        <p className="font-semibold text-neon-green">Market insight</p>
+                      <div className="glass-light p-3 text-xs space-y-1.5 border border-accent-success/20">
+                        <p className="font-semibold text-accent-success">Market insight</p>
                         <p className="text-white/75">{trend}</p>
-                         {concentration && <p className="text-cyan">{concentration}</p>}
+                         {concentration && <p className="text-blue-400">{concentration}</p>}
                       </div>
                     </div>
                   ) : (
@@ -737,13 +737,13 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                           );
                           const pct = Number(p.pct) || 0;
                           const tone = pct >= 1 ? 'Accumulate' : pct <= -1 ? 'Take Profit' : 'Hold';
-                          const tcol = pct >= 1 ? 'text-neon-green' : pct <= -1 ? 'text-neon-red' : 'text-white/70';
+                          const tcol = pct >= 1 ? 'text-accent-success' : pct <= -1 ? 'text-accent-error' : 'text-white/70';
                           return (
                             <div key={s} className="glass-light p-3 flex items-center gap-3">
                               <Zap className={`h-4 w-4 ${tcol}`}/>
                               <p className="text-sm flex-1 font-semibold">{sym}</p>
-                              <span className={`text-xs ${pct >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>{formatPct(pct)}</span>
-                              <span className={`chip text-[10px] border ${pct >= 1 ? 'bg-neon-green/15 border-neon-green/30 text-neon-green' : pct <= -1 ? 'bg-neon-red/15 border-neon-red/30 text-neon-red' : 'bg-white/5 border-white/10 text-white/70'}`}>{tone}</span>
+                              <span className={`text-xs ${pct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{formatPct(pct)}</span>
+                              <span className={`chip text-[10px] border ${pct >= 1 ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : pct <= -1 ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : 'bg-white/5 border-white/10 text-white/70'}`}>{tone}</span>
                             </div>
                           );
                         });
@@ -757,9 +757,9 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <>
                   <div className="mt-3 space-y-2">
                     {['Grid · SOL/USDT', 'DCA · BTC', 'Arbitrage · ETH'].map((s, i) => (<div key={s} className="glass-light p-3 flex items-center gap-3">
-                        <Zap className="h-4 w-4 text-cyan"/>
+                        <Zap className="h-4 w-4 text-blue-400"/>
                         <p className="text-sm flex-1">{s}</p>
-                        <span className="text-xs text-neon-green">+{(2.4 + i * 1.7).toFixed(1)}%</span>
+                        <span className="text-xs text-accent-success">+{(2.4 + i * 1.7).toFixed(1)}%</span>
                       </div>))}
                   </div>
                   <button className="btn-outline w-full mt-3 text-sm">Configure strategies</button>
@@ -794,7 +794,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     const isIn = displayType === 'Buy' || displayType === 'Deposit';
                     return (<tr key={i}>
                         <td className="py-2.5">
-                          <span className={`chip ${isIn ? 'bg-neon-green/15 text-neon-green' : 'bg-cyan/15 text-cyan'}`}>
+                          <span className={`chip ${isIn ? 'bg-accent-success/15 text-accent-success' : 'bg-blue-500/15 text-blue-400'}`}>
                             {isIn ? <ArrowDownLeft className="h-3 w-3"/> : <ArrowUpRight className="h-3 w-3"/>}
                             {displayType}
                           </span>
@@ -821,7 +821,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           {user && activeFeature === 'history' && <TestimonialComposer />}
 
           {/* Mobile floating action button */}
-          {activeFeature === 'trade' && <button onClick={() => openInvest(investSymbol)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-neon-grad text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
+          {activeFeature === 'trade' && <button onClick={() => openInvest(investSymbol)} className="lg:hidden fixed bottom-24 right-5 z-30 h-14 w-14 rounded-full bg-gradient-primary text-ink-950 shadow-glow inline-flex items-center justify-center" aria-label="Quick trade">
             <Wallet className="h-6 w-6"/>
           </button>}
         </main>
@@ -836,7 +836,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
 function Field({ label, value, onChange, disabled, }) {
     return (<label className="block">
       <span className="text-xs text-white/55">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/50 disabled:opacity-50"/>
+      <input value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/50 disabled:opacity-50"/>
     </label>);
 }
 function Row({ k, v }) {

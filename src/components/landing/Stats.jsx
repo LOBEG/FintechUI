@@ -28,19 +28,19 @@ export function Stats() {
             label: '24h Trading Volume',
             value: aggregate.vol > 0 ? formatBigUSD(aggregate.vol) : 'Connecting',
             icon: BarChart3,
-            accent: 'text-neon-green',
+            accent: 'text-accent-success',
         },
         {
             label: 'Live Price Feed',
             value: liveReady ? 'Binance' : 'Connecting',
             icon: Users,
-            accent: 'text-cyan',
+            accent: 'text-blue-400',
         },
         {
             label: 'Tracked Public Assets',
             value: liveReady ? `${aggregate.count}` : 'Connecting',
             icon: Coins,
-            accent: 'text-cyan',
+            accent: 'text-blue-400',
         },
         {
             label: 'Account Controls',

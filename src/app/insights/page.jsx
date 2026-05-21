@@ -6,9 +6,9 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Sparkline } from '@/components/ui/Charts';
 const insights = [
-    { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Markets Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-neon-green' },
-    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-cyan' },
-    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-cyan' },
+    { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Markets Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-accent-success' },
+    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-blue-400' },
+    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-blue-400' },
     { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Markets Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
 ];
 export default function InsightsPage() {
@@ -16,11 +16,11 @@ export default function InsightsPage() {
       <Navbar />
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">
+          <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">
             <Brain className="h-3.5 w-3.5"/> Market Insights
           </span>
           <h1 className="mt-4 text-3xl sm:text-4xl font-display">
-            Institutional <span className="text-gradient-neon">research & intelligence</span>.
+            Institutional <span className="text-gradient-primary">research & intelligence</span>.
           </h1>
           <p className="mt-2 text-white/65 max-w-2xl">
             Daily macro briefings, on-chain analytics, and curated market intelligence from the Oakmont Digital Markets Group research desk and Oakmont Intelligence.
@@ -38,7 +38,7 @@ export default function InsightsPage() {
             <p className="mt-2 text-sm text-white/65">{i.desc}</p>
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-white/60">
-                <TrendingUp className="h-4 w-4 text-neon-green"/> 1,284 reads
+                <TrendingUp className="h-4 w-4 text-accent-success"/> 1,284 reads
               </div>
               <Sparkline seed={idx + 11} positive width={120} height={32}/>
             </div>
@@ -53,7 +53,7 @@ export default function InsightsPage() {
         ].map((c) => {
             const Icon = c.icon;
             return (<div key={c.t} className="glass p-5">
-              <Icon className="h-5 w-5 text-cyan"/>
+              <Icon className="h-5 w-5 text-blue-400"/>
               <p className="mt-3 font-semibold">{c.t}</p>
               <p className="text-sm text-white/65 mt-1">{c.d}</p>
             </div>);

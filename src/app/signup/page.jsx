@@ -53,28 +53,28 @@ function SignupForm() {
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>
             <label className="block">
               <span className="text-xs text-white/55">Full name</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <User className="h-4 w-4 text-white/40"/>
                 <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Alexandra Vance" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Email</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Mail className="h-4 w-4 text-white/40"/>
                 <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@firm.com" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Password</span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Lock className="h-4 w-4 text-white/40"/>
                 <input type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="bg-transparent outline-none text-sm flex-1"/>
               </div>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Referral code <span className="text-white/35">(optional)</span></span>
-              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-neon-green/40">
+              <div className="mt-1 flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 focus-within:border-accent-success/40">
                 <Gift className="h-4 w-4 text-white/40"/>
                 <input
                   value={referralCode}
@@ -90,23 +90,23 @@ function SignupForm() {
               <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 accent-neon-green"/>
               I agree to the Oakmont Digital Markets Group Terms of Service, Privacy Policy, and Risk Disclosure.
             </label>
-            {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+            {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-primary w-full disabled:opacity-60">
               {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Creating…</> : 'Create account'}
             </button>
           </form>
           <p className="mt-5 text-xs text-white/55 text-center">
-            Already have an account? <Link href="/login" className="text-neon-green hover:underline">Sign in</Link>
+            Already have an account? <Link href="/login" className="text-accent-success hover:underline">Sign in</Link>
           </p>
         </motion.div>
       </section>
       <section className="hidden lg:flex w-1/2 relative items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-30"/>
-        <div className="absolute -top-20 -right-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
-        <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-neon-green/10 blur-3xl"/>
+        <div className="absolute -top-20 -right-20 h-[420px] w-[420px] rounded-full bg-accent-success/10 blur-3xl"/>
+        <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-accent-success/10 blur-3xl"/>
         <div className="relative max-w-md">
           <h2 className="text-3xl font-display leading-tight">
-            Join <span className="text-gradient-neon">4.1M+ investors</span><br />on Oakmont Digital Markets Group.
+            Join <span className="text-gradient-primary">4.1M+ investors</span><br />on Oakmont Digital Markets Group.
           </h2>
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">
@@ -118,11 +118,11 @@ function SignupForm() {
             'Institutional API · FIX 4.4',
             'Multi-jurisdiction compliance',
         ].map((f) => (<li key={f} className="flex gap-2">
-                <Check className="h-5 w-5 text-neon-green"/> {f}
+                <Check className="h-5 w-5 text-accent-success"/> {f}
               </li>))}
           </ul>
           <div className="mt-6 chip bg-white/5 border border-white/10 text-white/70">
-            <ShieldCheck className="h-3.5 w-3.5 text-neon-green"/> Bank-grade security · SOC 2 · ISO 27001
+            <ShieldCheck className="h-3.5 w-3.5 text-accent-success"/> Bank-grade security · SOC 2 · ISO 27001
           </div>
         </div>
       </section>

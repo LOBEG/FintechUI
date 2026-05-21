@@ -15,7 +15,7 @@ export default function PressPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            <span className="text-gradient-neon">Press</span> & Media
+            <span className="text-gradient-primary">Press</span> & Media
           </h1>
           <p className="mt-4 text-lg text-white/70">
             Media resources for Oakmont Digital Markets Group, a fintech-grade multi-asset brokerage focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
@@ -23,7 +23,7 @@ export default function PressPage() {
           <div className="mt-10 space-y-6">
             <div className="glass p-6 rounded-xl">
               <div className="flex items-start gap-4">
-                <Newspaper className="h-8 w-8 text-neon-green shrink-0"/>
+                <Newspaper className="h-8 w-8 text-accent-success shrink-0"/>
                 <div>
                   <h3 className="text-lg font-semibold">Platform overview</h3>
                   <p className="mt-1 text-sm text-white/50">Company profile</p>
@@ -35,7 +35,7 @@ export default function PressPage() {
             </div>
             <div className="glass p-6 rounded-xl">
               <div className="flex items-start gap-4">
-                <Newspaper className="h-8 w-8 text-cyan shrink-0"/>
+                <Newspaper className="h-8 w-8 text-blue-400 shrink-0"/>
                 <div>
                   <h3 className="text-lg font-semibold">Security and compliance posture</h3>
                   <p className="mt-1 text-sm text-white/50">Operational controls</p>
@@ -47,7 +47,7 @@ export default function PressPage() {
             </div>
             <div className="glass p-6 rounded-xl">
               <div className="flex items-start gap-4">
-                <Newspaper className="h-8 w-8 text-cyan shrink-0"/>
+                <Newspaper className="h-8 w-8 text-blue-400 shrink-0"/>
                 <div>
                   <h3 className="text-lg font-semibold">Market data and reporting</h3>
                   <p className="mt-1 text-sm text-white/50">Live data infrastructure</p>
@@ -60,22 +60,22 @@ export default function PressPage() {
           </div>
           <div className="mt-10 grid sm:grid-cols-2 gap-6">
             <div className="glass p-6 rounded-xl">
-              <Download className="h-8 w-8 text-neon-green mb-3"/>
+              <Download className="h-8 w-8 text-accent-success mb-3"/>
               <h3 className="text-lg font-semibold">Media Kit</h3>
               <p className="mt-2 text-sm text-white/60">
                 Logos, brand guidelines, and company fact sheet.
               </p>
-              <a href="#" className="mt-4 inline-flex items-center text-sm text-neon-green hover:underline">
+              <a href="#" className="mt-4 inline-flex items-center text-sm text-accent-success hover:underline">
                 Download Kit →
               </a>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Mail className="h-8 w-8 text-cyan mb-3"/>
+              <Mail className="h-8 w-8 text-blue-400 mb-3"/>
               <h3 className="text-lg font-semibold">Media Enquiries</h3>
               <p className="mt-2 text-sm text-white/60">
                 For press enquiries, contact our communications team.
               </p>
-              <a href="mailto:press@oakmontdigitalmarkets.com" className="mt-4 inline-flex items-center text-sm text-neon-green hover:underline">
+              <a href="mailto:press@oakmontdigitalmarkets.com" className="mt-4 inline-flex items-center text-sm text-accent-success hover:underline">
                 press@oakmontdigitalmarkets.com →
               </a>
             </div>

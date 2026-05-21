@@ -65,9 +65,9 @@ export function DepositAddressPanel() {
   return (
     <section className="glass-strong p-5 max-w-3xl">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-cyan"/>
+        <Wallet className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Deposit crypto</h3>
-        <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
       </div>
       <>
           <p className="text-xs text-white/55 mb-3">Send the listed crypto to the address shown. Once your deposit clears it will be credited to your account and appear in your transaction history.</p>
@@ -81,7 +81,7 @@ export function DepositAddressPanel() {
                     {a.network && <span className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{a.network}</span>}
                     {a.label && <span className="text-[10px] text-white/45">{a.label}</span>}
                     <button onClick={() => copy(a.symbol, a.address)} className="ml-auto h-7 w-7 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center" aria-label="Copy address">
-                      {copied === a.symbol ? <Check className="h-3.5 w-3.5 text-neon-green"/> : <Copy className="h-3.5 w-3.5"/>}
+                      {copied === a.symbol ? <Check className="h-3.5 w-3.5 text-accent-success"/> : <Copy className="h-3.5 w-3.5"/>}
                     </button>
                   </div>
                   <div className="flex gap-3 items-start">
@@ -92,9 +92,9 @@ export function DepositAddressPanel() {
                       ) : (
                         <span className="block h-4 w-full rounded bg-white/5 animate-pulse" aria-hidden="true"/>
                       )}
-                      {a.memo && <div className="text-[11px] text-cyan">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
+                      {a.memo && <div className="text-[11px] text-blue-400">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
                       {memoRequired && (
-                        <div className="flex gap-1.5 items-start text-[11px] text-neon-red bg-neon-red/10 border border-neon-red/30 rounded px-2 py-1.5">
+                        <div className="flex gap-1.5 items-start text-[11px] text-accent-error bg-accent-error/10 border border-accent-error/30 rounded px-2 py-1.5">
                           <ShieldAlert className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
                           <span>
                             {a.symbol} requires a destination tag / memo. Sending without it will result in <strong>permanent loss</strong> of funds.
@@ -215,7 +215,7 @@ export function MarketsPanel({ onInvest }) {
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <h3 className="font-display text-lg">All crypto markets</h3>
-        <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">● live</span>
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
         <div className="ml-auto flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
           <Search className="h-3.5 w-3.5 text-white/50"/>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search asset…" className="bg-transparent outline-none text-sm w-32"/>
@@ -244,7 +244,7 @@ export function MarketsPanel({ onInvest }) {
                   <td className="py-2.5 w-6">
                     <button
                       onClick={() => toggleFavourite(r.symbol)}
-                      className={fav ? 'text-neon-green' : 'text-white/35 hover:text-white/70'}
+                      className={fav ? 'text-accent-success' : 'text-white/35 hover:text-white/70'}
                       aria-label={fav ? `Remove ${r.symbol} from watchlist` : `Add ${r.symbol} to watchlist`}
                       title={fav ? 'Remove from watchlist' : 'Add to watchlist'}
                     >
@@ -253,7 +253,7 @@ export function MarketsPanel({ onInvest }) {
                   </td>
                 )}
                 <td className="py-2.5">
-                  <a href={user ? `/markets/${r.symbol}` : authHref(r.symbol)} className="flex items-center gap-2 hover:text-neon-green">
+                  <a href={user ? `/markets/${r.symbol}` : authHref(r.symbol)} className="flex items-center gap-2 hover:text-accent-success">
                     <span className="h-6 w-6 rounded-full inline-flex items-center justify-center text-[10px] font-semibold text-ink-950 bg-white/5 border border-white/10" style={cryptoLogoStyle(r.symbol) || { background: r.color }}>
                       {!cryptoLogoStyle(r.symbol) && <Wallet className="h-3.5 w-3.5 text-white/75"/>}
                     </span>
@@ -264,12 +264,12 @@ export function MarketsPanel({ onInvest }) {
                   </a>
                 </td>
                 <td>{r.price ? `$${r.price.toLocaleString(undefined, { maximumFractionDigits: r.price < 1 ? 6 : 2 })}` : 'Connecting'}</td>
-                <td className={r.pct >= 0 ? 'text-neon-green' : 'text-neon-red'}>{r.pct >= 0 ? '+' : ''}{r.pct?.toFixed(2)}%</td>
+                <td className={r.pct >= 0 ? 'text-accent-success' : 'text-accent-error'}>{r.pct >= 0 ? '+' : ''}{r.pct?.toFixed(2)}%</td>
                 <td className="hidden md:table-cell text-white/70">{r.high ? `$${r.high.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'Connecting'}</td>
                 <td className="hidden md:table-cell text-white/70">{r.low ? `$${r.low.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : 'Connecting'}</td>
                 <td className="hidden lg:table-cell text-white/55">{r.volume ? `$${(r.volume / 1e6).toFixed(2)}M` : 'Connecting'}</td>
                 <td className="text-right">
-                  <button onClick={() => handleInvest(r.symbol)} className="px-2.5 py-1 rounded bg-neon-green/15 text-neon-green hover:bg-neon-green/25 text-xs">Invest</button>
+                  <button onClick={() => handleInvest(r.symbol)} className="px-2.5 py-1 rounded bg-accent-success/15 text-accent-success hover:bg-accent-success/25 text-xs">Invest</button>
                 </td>
               </tr>
               );
@@ -312,15 +312,15 @@ export function SandboxOnRampPanel({ onClaimed }) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-2">
-        <Wallet className="h-4 w-4 text-cyan"/>
+        <Wallet className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Sandbox starter funds</h3>
-        <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">test only</span>
+        <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">test only</span>
       </div>
       <p className="text-xs text-white/55 mb-3">
         This deployment has the sandbox on-ramp enabled. Claim {info.amount} USDT of practice funds to try the invest flow.
         These are <strong>not real funds</strong> and cannot be withdrawn on-chain.
       </p>
-      {msg && <p className={`text-xs px-3 py-2 mb-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+      {msg && <p className={`text-xs px-3 py-2 mb-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
       <button onClick={claim} disabled={busy} className="btn-primary disabled:opacity-60">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Claiming…</> : `Claim ${info.amount} USDT`}
       </button>
@@ -355,24 +355,24 @@ export function TestimonialComposer() {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <MessageSquare className="h-4 w-4 text-cyan"/>
+        <MessageSquare className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Share your Oakmont Digital Markets Group experience</h3>
       </div>
       <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Markets Group landing page.</p>
       <form onSubmit={submit} className="space-y-2">
-        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on Oakmont Digital Markets Group?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 min-h-[90px]"/>
+        <textarea required minLength={20} maxLength={600} value={text} onChange={(e) => setText(e.target.value)} placeholder="What stands out about trading and investing on Oakmont Digital Markets Group?" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40 min-h-[90px]"/>
         <div className="flex gap-2 flex-wrap">
           <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Your role (optional) - e.g. Portfolio Manager" className="flex-1 min-w-[200px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <input type="url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="Public photo URL (optional, https only)" className="flex-1 min-w-[240px] bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
           <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button type="button" key={n} onClick={() => setRating(n)} aria-label={`${n} stars`}>
-                <Star className={`h-4 w-4 ${n <= rating ? 'text-cyan fill-cyan' : 'text-white/30'}`}/>
+                <Star className={`h-4 w-4 ${n <= rating ? 'text-blue-400 fill-cyan' : 'text-white/30'}`}/>
               </button>
             ))}
           </div>
         </div>
-        {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+        {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
         <button disabled={busy} className="btn-primary justify-center disabled:opacity-60">
           {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Posting…</> : 'Post testimonial'}
         </button>
@@ -410,8 +410,8 @@ export function EmailVerifyBanner({ user }) {
     } finally { setBusy(false); }
   };
   return (
-    <section className="glass border border-neon-green/30 bg-neon-green/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-      <ShieldAlert className="h-5 w-5 text-cyan shrink-0"/>
+    <section className="glass border border-accent-success/30 bg-accent-success/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+      <ShieldAlert className="h-5 w-5 text-blue-400 shrink-0"/>
       <div className="flex-1">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
         <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
@@ -427,7 +427,7 @@ export function EmailVerifyBanner({ user }) {
             onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             inputMode="numeric"
             placeholder="123456"
-            className="w-28 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-neon-green/40 tracking-widest text-center"
+            className="w-28 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-accent-success/40 tracking-widest text-center"
           />
           <button disabled={busy || code.length !== 6} className="btn-primary text-sm disabled:opacity-60">
             {busy ? <Loader2 className="h-4 w-4 animate-spin"/> : 'Verify'}
@@ -435,7 +435,7 @@ export function EmailVerifyBanner({ user }) {
         </form>
       )}
       {msg && (
-        <span className={`text-xs ${msg.kind === 'ok' ? 'text-neon-green' : 'text-neon-red'}`}>{msg.text}</span>
+        <span className={`text-xs ${msg.kind === 'ok' ? 'text-accent-success' : 'text-accent-error'}`}>{msg.text}</span>
       )}
     </section>
   );
@@ -562,7 +562,7 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
             className="ml-auto btn-primary text-xs"
           >+ New limit / stop order</button>
         </div>
-        {msg && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
+        {msg && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
         {orders.length === 0 ? (
           <p className="text-sm text-white/55">No orders yet. Place a limit order to buy the dip or take profit at a target price.</p>
         ) : (
@@ -585,7 +585,7 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
                   <tr key={o.id}>
                     <td className="py-2.5 text-white/55 text-xs">{new Date(o.createdAt).toLocaleString()}</td>
                     <td>
-                      <span className={`chip border ${o.side === 'buy' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' : 'bg-cyan/15 text-cyan border-cyan/30'}`}>{o.side}</span>
+                      <span className={`chip border ${o.side === 'buy' ? 'bg-accent-success/15 text-accent-success border-accent-success/30' : 'bg-blue-500/15 text-blue-400 border-blue-500/30'}`}>{o.side}</span>
                     </td>
                     <td className="text-white/80">{o.kind}</td>
                     <td>{o.symbol}</td>
@@ -596,8 +596,8 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
                     <td>
                       <span className={`chip border ${
                         o.status === 'open' ? 'bg-white/5 text-white/80 border-white/10' :
-                        o.status === 'filled' ? 'bg-neon-green/15 text-neon-green border-neon-green/30' :
-                        o.status === 'rejected' ? 'bg-neon-red/15 text-neon-red border-neon-red/30' :
+                        o.status === 'filled' ? 'bg-accent-success/15 text-accent-success border-accent-success/30' :
+                        o.status === 'rejected' ? 'bg-accent-error/15 text-accent-error border-accent-error/30' :
                         'bg-white/5 text-white/55 border-white/10'
                       }`}>{o.status}</span>
                       {o.rejectedReason && <span className="block text-[10px] text-white/45 mt-1">{o.rejectedReason}</span>}
@@ -669,12 +669,12 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
         <form onSubmit={submit} className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div className="flex rounded-lg overflow-hidden border border-white/10">
-              <button type="button" onClick={() => setSide('buy')} className={`flex-1 py-2 text-xs ${side === 'buy' ? 'bg-neon-green/20 text-neon-green' : 'bg-white/5 text-white/65'}`}>Buy</button>
-              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-cyan/20 text-cyan' : 'bg-white/5 text-white/65'}`}>Sell</button>
+              <button type="button" onClick={() => setSide('buy')} className={`flex-1 py-2 text-xs ${side === 'buy' ? 'bg-accent-success/20 text-accent-success' : 'bg-white/5 text-white/65'}`}>Buy</button>
+              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-white/65'}`}>Sell</button>
             </div>
             <div className="flex rounded-lg overflow-hidden border border-white/10">
-              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-neon-green/15 text-cyan' : 'bg-white/5 text-white/65'}`}>Limit</button>
-              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-neon-green/15 text-cyan' : 'bg-white/5 text-white/65'}`}>Stop</button>
+              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-accent-success/15 text-blue-400' : 'bg-white/5 text-white/65'}`}>Limit</button>
+              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-accent-success/15 text-blue-400' : 'bg-white/5 text-white/65'}`}>Stop</button>
             </div>
           </div>
           <label className="block">
@@ -685,21 +685,21 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Trigger price (USD)</span>
-            <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="e.g. 65000" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+            <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="e.g. 65000" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
           </label>
           {side === 'buy' ? (
             <label className="block">
               <span className="text-xs text-white/55">USD to spend at fill</span>
-              <input value={usd} onChange={(e) => setUsd(e.target.value)} required inputMode="decimal" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+              <input value={usd} onChange={(e) => setUsd(e.target.value)} required inputMode="decimal" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
             </label>
           ) : (
             <label className="block">
               <span className="text-xs text-white/55">Quantity of {symbol} to sell</span>
-              <input value={qty} onChange={(e) => setQty(e.target.value)} required inputMode="decimal" placeholder="e.g. 0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"/>
+              <input value={qty} onChange={(e) => setQty(e.target.value)} required inputMode="decimal" placeholder="e.g. 0.05" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
             </label>
           )}
           <p className="text-[11px] text-white/55">{hint} A taker fee applies on fill.</p>
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Placing…</> : `Place ${kind} ${side} order`}
           </button>
@@ -755,7 +755,7 @@ export function BeneficiariesPanel() {
         <p className="text-xs text-white/55 mb-3">
           Whitelisted addresses pass an OFAC sanctions check and a 48-hour security cool-down after email confirmation before they can receive funds.
         </p>
-        {msg && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
+        {msg && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2 mb-2">{msg}</p>}
         {items.length === 0 ? (
           <p className="text-sm text-white/55">No saved beneficiaries yet.</p>
         ) : (
@@ -780,8 +780,8 @@ export function BeneficiariesPanel() {
                       {b.memo && <span className="block text-white/40">memo: {b.memo}</span>}
                     </td>
                     <td>
-                      {b.status === 'active' && <span className="chip bg-neon-green/15 text-neon-green border border-neon-green/30">active</span>}
-                      {b.status === 'cooling-down' && <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
+                      {b.status === 'active' && <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">active</span>}
+                      {b.status === 'cooling-down' && <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
                       {b.status === 'pending-email' && <span className="chip bg-white/5 text-white/65 border border-white/10">awaiting email</span>}
                     </td>
                     <td className="text-right">
@@ -861,7 +861,7 @@ function AddBeneficiaryModal({ open, onClose, onAdded }) {
               <input value={memo} onChange={(e) => setMemo(e.target.value)} required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none font-mono"/>
             </label>
           )}
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <p className="text-[11px] text-white/55">After saving, check your email for the confirmation link. A 48-hour cool-down then applies before the first withdrawal.</p>
           <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save & send confirmation email'}
@@ -902,7 +902,7 @@ export function KycPanel() {
       <section className="glass-strong p-5">
         <div className="flex items-center flex-wrap gap-2 mb-3">
           <h3 className="font-display text-lg">KYC verification</h3>
-          <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">{summary.label}</span>
+          <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">{summary.label}</span>
           {pendingSubmission && (
             <span className="chip bg-white/5 border border-white/10 text-white/65">Tier {pendingSubmission.requestedTier} pending</span>
           )}
@@ -935,7 +935,7 @@ function UsageBar({ title, used, limit, pct }) {
       </div>
       <div className="h-2 bg-white/5 rounded-full overflow-hidden">
         <div
-          className={`h-full ${pct > 90 ? 'bg-neon-red' : pct > 70 ? 'bg-neon-green' : 'bg-neon-green'}`}
+          className={`h-full ${pct > 90 ? 'bg-accent-error' : pct > 70 ? 'bg-accent-success' : 'bg-accent-success'}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -1021,7 +1021,7 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
               </label>
             </>
           )}
-          {error && <p className="text-xs text-neon-red bg-neon-red/10 border border-neon-red/30 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
           <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-60">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Submitting…</> : `Submit for Tier ${requestedTier} review`}
           </button>
@@ -1104,11 +1104,11 @@ export function PortfolioPanel({ refreshKey }) {
                     <td className="font-mono text-xs">${fmtMoney(p.avgCost)}</td>
                     <td className="font-mono text-xs">${fmtMoney(p.mark)}</td>
                     <td className="font-mono text-xs">${fmtMoney(p.marketValue)}</td>
-                    <td className={`font-mono text-xs ${up ? 'text-neon-green' : 'text-neon-red'}`}>
+                    <td className={`font-mono text-xs ${up ? 'text-accent-success' : 'text-accent-error'}`}>
                       {up ? '+' : ''}${fmtMoney(p.unrealised)}
                       <span className="text-white/45"> ({up ? '+' : ''}{p.unrealisedPct.toFixed(2)}%)</span>
                     </td>
-                    <td className={`font-mono text-xs ${p.realised >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                    <td className={`font-mono text-xs ${p.realised >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
                       {p.realised >= 0 ? '+' : ''}${fmtMoney(p.realised)}
                     </td>
                   </tr>
@@ -1123,7 +1123,7 @@ export function PortfolioPanel({ refreshKey }) {
 }
 
 function Stat({ label, value, sub, accent }) {
-  const colour = accent === 'green' ? 'text-neon-green' : accent === 'red' ? 'text-neon-red' : '';
+  const colour = accent === 'green' ? 'text-accent-success' : accent === 'red' ? 'text-accent-error' : '';
   return (
     <div className="rounded-lg bg-white/5 border border-white/10 p-3">
       <div className="text-[11px] uppercase tracking-wide text-white/45">{label}</div>
@@ -1224,11 +1224,11 @@ export function PriceAlertsPanel() {
           className="bg-white/5 border border-white/10 rounded px-2 py-1.5"
           placeholder="80000"
         />
-        <button type="submit" disabled={busy} className="rounded bg-neon-green/90 text-black font-medium px-3 py-1.5 disabled:opacity-60">
+        <button type="submit" disabled={busy} className="rounded bg-accent-success/90 text-black font-medium px-3 py-1.5 disabled:opacity-60">
           {busy ? 'Adding…' : 'Add alert'}
         </button>
       </form>
-      {error && <p className="text-xs text-neon-red mb-2">{error}</p>}
+      {error && <p className="text-xs text-accent-error mb-2">{error}</p>}
       {active.length === 0 ? (
         <p className="text-sm text-white/55">No active alerts. We&apos;ll email and ping the in-app inbox the moment any rule triggers.</p>
       ) : (
@@ -1236,7 +1236,7 @@ export function PriceAlertsPanel() {
           {active.map((a) => (
             <li key={a.id} className="flex items-center justify-between gap-2 rounded border border-white/5 bg-white/[0.03] px-3 py-1.5">
               <span><b>{a.symbol}</b> {a.op === 'gt' ? '≥' : '≤'} ${Number(a.threshold).toLocaleString()}</span>
-              <button onClick={() => cancel(a.id)} className="text-xs text-white/55 hover:text-neon-red">Cancel</button>
+              <button onClick={() => cancel(a.id)} className="text-xs text-white/55 hover:text-accent-error">Cancel</button>
             </li>
           ))}
         </ul>
@@ -1248,7 +1248,7 @@ export function PriceAlertsPanel() {
             {history.map((a) => (
               <li key={a.id} className="flex items-center justify-between text-xs text-white/55">
                 <span>{a.symbol} {a.op === 'gt' ? '≥' : '≤'} ${Number(a.threshold).toLocaleString()}</span>
-                <span className={a.status === 'triggered' ? 'text-neon-green' : 'text-white/45'}>
+                <span className={a.status === 'triggered' ? 'text-accent-success' : 'text-white/45'}>
                   {a.status}{a.triggeredPrice ? ` @ $${Number(a.triggeredPrice).toLocaleString()}` : ''}
                 </span>
               </li>
@@ -1313,7 +1313,7 @@ export function ConvertPanel({ onConverted } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <ArrowRightLeft className="h-4 w-4 text-cyan"/>
+        <ArrowRightLeft className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Convert</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">live mid + spread</span>
       </div>
@@ -1359,7 +1359,7 @@ export function ConvertPanel({ onConverted } = {}) {
             <button
               type="button"
               onClick={() => setAmount(String(fromBalance))}
-              className="ml-2 text-neon-green hover:underline"
+              className="ml-2 text-accent-success hover:underline"
             >
               max: {fromBalance}
             </button>
@@ -1383,7 +1383,7 @@ export function ConvertPanel({ onConverted } = {}) {
           </div>
         )}
         {previewBusy && !preview && <p className="text-[11px] text-white/45">Fetching live rate…</p>}
-        {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>{msg.text}</p>}
+        {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
         <button
           disabled={busy || !preview || fromBalance + 1e-9 < parseFloat(amount || '0')}
           className="btn-primary justify-center disabled:opacity-60 w-full"
@@ -1426,11 +1426,11 @@ export function EmptyStateCoach() {
     },
   ];
   return (
-    <section className="glass-strong p-5 border border-neon-green/20">
+    <section className="glass-strong p-5 border border-accent-success/20">
       <div className="flex items-center gap-2 mb-3">
-        <Rocket className="h-4 w-4 text-cyan"/>
+        <Rocket className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Start here</h3>
-        <span className="chip bg-neon-green/15 text-cyan border border-neon-green/30">new account</span>
+        <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">new account</span>
         <button
           type="button"
           onClick={() => setDismissed(true)}
@@ -1447,7 +1447,7 @@ export function EmptyStateCoach() {
         {steps.map((s, i) => (
           <li key={s.title} className="flex gap-3">
             <span
-              className={`h-7 w-7 shrink-0 rounded-full inline-flex items-center justify-center text-xs font-semibold ${s.done ? 'bg-neon-green/20 text-neon-green border border-neon-green/40' : 'bg-white/5 text-white/70 border border-white/15'}`}
+              className={`h-7 w-7 shrink-0 rounded-full inline-flex items-center justify-center text-xs font-semibold ${s.done ? 'bg-accent-success/20 text-accent-success border border-accent-success/40' : 'bg-white/5 text-white/70 border border-white/15'}`}
               aria-hidden
             >
               {s.done ? <Check className="h-3.5 w-3.5"/> : i + 1}
@@ -1533,7 +1533,7 @@ export function DcaPanel({ onChanged } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-cyan" aria-hidden/>
+        <Wallet className="h-4 w-4 text-blue-400" aria-hidden/>
         <h3 className="font-display text-lg">Recurring buys (DCA)</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">{active.length} active</span>
       </div>
@@ -1595,7 +1595,7 @@ export function DcaPanel({ onChanged } = {}) {
       {msg && (
         <p
           role={msg.kind === 'err' ? 'alert' : 'status'}
-          className={`text-xs mb-3 px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}
+          className={`text-xs mb-3 px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}
         >
           {msg.text}
         </p>
@@ -1618,9 +1618,9 @@ export function DcaPanel({ onChanged } = {}) {
                     <button type="button" onClick={() => action(d.id, 'pause')} className="text-xs text-white/70 hover:text-white">Pause</button>
                   )}
                   {d.status === 'paused' && (
-                    <button type="button" onClick={() => action(d.id, 'resume')} className="text-xs text-neon-green hover:underline">Resume</button>
+                    <button type="button" onClick={() => action(d.id, 'resume')} className="text-xs text-accent-success hover:underline">Resume</button>
                   )}
-                  <button type="button" onClick={() => cancel(d.id)} className="text-xs text-neon-red hover:underline">Cancel</button>
+                  <button type="button" onClick={() => cancel(d.id)} className="text-xs text-accent-error hover:underline">Cancel</button>
                 </span>
               </li>
             ))}
@@ -1693,7 +1693,7 @@ export function ReferralPanel() {
             className="btn-ghost text-[11px] px-2 py-1 inline-flex items-center gap-1"
             aria-label="Copy referral code"
           >
-            {copied ? <Check className="h-3.5 w-3.5 text-neon-green"/> : <Copy className="h-3.5 w-3.5"/>}
+            {copied ? <Check className="h-3.5 w-3.5 text-accent-success"/> : <Copy className="h-3.5 w-3.5"/>}
             <span>Copy</span>
           </button>
         </div>
@@ -1721,7 +1721,7 @@ export function ReferralPanel() {
               <li key={r.id} className="flex items-center justify-between gap-2 bg-white/5 border border-white/10 rounded px-2 py-1">
                 <span className="capitalize">{r.kind || 'fee'}</span>
                 <span className="text-white/55">${Number(r.feeUsd || 0).toFixed(2)} fee</span>
-                <span className="text-neon-green">+${Number(r.rebateUsd || 0).toFixed(2)}</span>
+                <span className="text-accent-success">+${Number(r.rebateUsd || 0).toFixed(2)}</span>
               </li>
             ))}
           </ul>
@@ -1736,9 +1736,9 @@ export function ReferralPanel() {
 // post follow-ups, and close the ticket once their issue is sorted.
 // Admin replies arrive over the existing notification centre.
 const TICKET_STATUS_COPY = {
-  open: { label: 'Open', tone: 'text-neon-green' },
-  awaiting_user: { label: 'Awaiting you', tone: 'text-cyan' },
-  answered: { label: 'Answered', tone: 'text-neon-green' },
+  open: { label: 'Open', tone: 'text-accent-success' },
+  awaiting_user: { label: 'Awaiting you', tone: 'text-blue-400' },
+  answered: { label: 'Answered', tone: 'text-accent-success' },
   closed: { label: 'Closed', tone: 'text-white/45' },
 };
 function fmtTime(ms) {
@@ -1821,7 +1821,7 @@ export function SupportPanel() {
   return (
     <section className="glass-strong p-5">
       <header className="flex items-center gap-2">
-        <LifeBuoy className="h-4 w-4 text-cyan"/>
+        <LifeBuoy className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-base">Support</h3>
         <button
           type="button"
@@ -1843,7 +1843,7 @@ export function SupportPanel() {
             onChange={(e) => setForm({ ...form, subject: e.target.value })}
             placeholder="Short subject (e.g. Deposit not credited)"
             maxLength={200}
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"
           />
           <textarea
             value={form.body}
@@ -1851,7 +1851,7 @@ export function SupportPanel() {
             placeholder="Describe the issue in detail - include tx ids and timestamps where you can."
             maxLength={4000}
             rows={4}
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-neon-green/40 resize-y"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40 resize-y"
           />
           <div className="flex items-center gap-2">
             <label className="text-[11px] text-white/55">Priority</label>
@@ -1872,7 +1872,7 @@ export function SupportPanel() {
         </form>
       )}
       {msg && (
-        <p className={`mt-3 text-xs rounded-lg border px-3 py-2 ${msg.kind === 'ok' ? 'bg-neon-green/10 border-neon-green/30 text-neon-green' : 'bg-neon-red/10 border-neon-red/30 text-neon-red'}`}>
+        <p className={`mt-3 text-xs rounded-lg border px-3 py-2 ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>
           {msg.text}
         </p>
       )}
@@ -1901,9 +1901,9 @@ export function SupportPanel() {
                   <div id={`tkt-${t.id}-body`} className="px-3 pb-3 space-y-2">
                     <ul className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
                       {(t.messages || []).map((m) => (
-                        <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-neon-green/10 border border-neon-green/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
+                        <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-accent-success/10 border border-accent-success/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
                           <div className="flex items-center justify-between mb-0.5 text-[10px]">
-                            <span className={m.authorRole === 'staff' ? 'text-cyan' : 'text-white/55'}>
+                            <span className={m.authorRole === 'staff' ? 'text-blue-400' : 'text-white/55'}>
                               {m.authorRole === 'staff' ? 'Oakmont Digital Markets Group support' : 'You'}
                             </span>
                             <span className="text-white/35">{fmtTime(m.createdAt)}</span>
@@ -1919,7 +1919,7 @@ export function SupportPanel() {
                           onChange={(e) => setReply(e.target.value)}
                           placeholder="Reply…"
                           maxLength={4000}
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-neon-green/40"
+                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-accent-success/40"
                         />
                         <button
                           type="button"
@@ -1970,7 +1970,7 @@ export function SupportContactPanel() {
   return (
     <section id="support-section" className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <LifeBuoy className="h-4 w-4 text-cyan"/>
+        <LifeBuoy className="h-4 w-4 text-blue-400"/>
         <h3 className="font-display text-lg">Contact Support</h3>
       </div>
       <p className="text-sm text-white/60 mb-4">Need help? Reach out to our support team via your preferred channel.</p>

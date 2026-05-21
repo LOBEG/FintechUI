@@ -8,13 +8,13 @@ export function SiteBanner() {
   return (
     <>
       {s.maintenanceMode && (
-        <div className="relative z-40 bg-neon-red/15 border-b border-neon-red/30 text-neon-red text-xs sm:text-sm px-4 py-2 text-center">
+        <div className="relative z-40 bg-accent-error/15 border-b border-accent-error/30 text-accent-error text-xs sm:text-sm px-4 py-2 text-center">
           <AlertTriangle className="inline h-4 w-4 mr-2 -mt-0.5" />
           <strong>Maintenance mode</strong> - Oakmont Digital Markets Group is currently in read-only mode. Trading, investments and withdrawals are temporarily paused.
         </div>
       )}
       {s.banner && !s.maintenanceMode && (
-        <div className="relative z-40 bg-neon-green/15 border-b border-neon-green/30 text-cyan text-xs sm:text-sm px-4 py-2 text-center">
+        <div className="relative z-40 bg-accent-success/15 border-b border-accent-success/30 text-blue-400 text-xs sm:text-sm px-4 py-2 text-center">
           <Megaphone className="inline h-4 w-4 mr-2 -mt-0.5" />
           {s.banner}
         </div>

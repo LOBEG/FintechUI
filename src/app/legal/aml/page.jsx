@@ -62,7 +62,7 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">7. Contact</h2>
               <p className="mt-2">
-                For AML enquiries, contact our MLRO at <a href="mailto:compliance@oakmontdigitalmarkets.com" className="text-neon-green hover:underline">compliance@oakmontdigitalmarkets.com</a>.
+                For AML enquiries, contact our MLRO at <a href="mailto:compliance@oakmontdigitalmarkets.com" className="text-accent-success hover:underline">compliance@oakmontdigitalmarkets.com</a>.
               </p>
             </section>
           </div>
