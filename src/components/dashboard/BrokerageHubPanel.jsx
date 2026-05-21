@@ -180,13 +180,14 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                       const cryptoQuote = cls === 'crypto' ? cryptoMarkets.find((m) => m.symbol === row.symbol) : null;
                       const signal = liveQuote?.signal || cryptoQuote?.signal;
                       return (
-                      <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">
-                        {row.symbol}{signal ? ` · ${signal}` : ''}
-                      </span>
-                    );})}
+                        <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">
+                          {row.symbol}{signal ? ` · ${signal}` : ''}
+                        </span>
+                      );
+                    })}
                     {!rows.length && (
                       <span className="text-[10px] text-white/45">Awaiting live symbols.</span>
-                    ))}
+                    )}
                   </div>
                 </div>
               );
