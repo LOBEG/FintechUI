@@ -33,10 +33,10 @@ export function Navbar() {
         : [];
     const nav = [...publicNav, ...authedNav];
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <BrandLogo compact textClassName="text-[clamp(1.05rem,2.6vw,1.5rem)]" markClassName="h-11 w-11 sm:h-12 sm:w-12" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+        <BrandLogo compact textClassName="text-[clamp(1.05rem,2.6vw,1.45rem)]" markClassName="h-10 w-10 sm:h-11 sm:w-11" />
         <nav className="hidden lg:flex items-center gap-1">
-          {nav.map((n) => (<Link key={n.href} href={n.href} className="px-3 py-2 text-sm text-white/70 hover:text-white rounded-lg hover:bg-white/5 transition">
+          {nav.map((n) => (<Link key={n.href} href={n.href} className="px-3 py-2 text-sm text-white/70 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-300 ease-out hover:-translate-y-0.5">
               {n.label}
             </Link>))}
         </nav>
@@ -54,15 +54,15 @@ export function Navbar() {
             </>
           )}
         </div>
-        <button onClick={() => setOpen(!open)} className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10" aria-label="Toggle menu">
+        <button onClick={() => setOpen(!open)} className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 transition-all duration-300 ease-out active:scale-95" aria-label="Toggle menu">
           {open ? <X className="h-5 w-5"/> : <Menu className="h-5 w-5"/>}
         </button>
       </div>
       <AnimatePresence>
-        {open && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden overflow-hidden border-t border-white/5">
+        {open && (<motion.div initial={{ height: 0, opacity: 0, y: -8 }} animate={{ height: 'auto', opacity: 1, y: 0 }} exit={{ height: 0, opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="lg:hidden overflow-hidden border-t border-white/5">
             <div className="px-4 py-4 space-y-4 bg-ink-950/90 backdrop-blur-xl">
               <div className="space-y-2">
-                {publicNav.map((n) => (<Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-white/80 hover:bg-white/5">
+                {publicNav.map((n) => (<Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-white/80 hover:bg-white/5 transition-all duration-300 ease-out hover:translate-x-1">
                     {n.label}
                   </Link>))}
               </div>
@@ -70,7 +70,7 @@ export function Navbar() {
                 <div className="border-t border-white/5 pt-3">
                   <p className="px-3 pb-2 text-[11px] uppercase tracking-[0.2em] text-white/35">Account</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {authedNav.map((n) => (<Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-white/80 hover:bg-white/5">
+                    {authedNav.map((n) => (<Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-white/80 hover:bg-white/5 transition-all duration-300 ease-out hover:-translate-y-0.5">
                         {n.label}
                       </Link>))}
                   </div>

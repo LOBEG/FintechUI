@@ -44,12 +44,12 @@ const groups = [
     },
 ];
 export function Footer() {
-    return (<footer className="relative mt-24 border-t border-white/5 bg-ink-950/80">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
+    return (<footer className="relative mt-20 sm:mt-24 border-t border-white/5 bg-ink-950/80">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 sm:gap-10">
           <div className="col-span-2">
             <BrandLogo compact textClassName="text-xl" />
-            <p className="mt-4 text-sm text-white/60 max-w-xs">
+            <p className="mt-4 text-sm text-white/60 max-w-xs leading-relaxed">
               Institutional-grade multi-asset brokerage for stocks, ETFs, crypto, forex, commodities, futures and options - secure, regulated, and engineered for performance.
             </p>
             <div className="mt-5 flex items-center gap-3">
@@ -66,7 +66,7 @@ export function Footer() {
               </ul>
             </div>))}
         </div>
-        <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row gap-3 items-center justify-between">
           <p className="text-xs text-white/50">© {new Date().getFullYear()} Oakmont Digital Markets Group Ltd. All rights reserved. Registered with applicable regulatory bodies.</p>
           <p className="text-xs text-white/40">Markets are volatile. Trade and invest responsibly.</p>
         </div>

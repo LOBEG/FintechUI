@@ -26,6 +26,7 @@
     color: rgb(var(--fg));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
 
   * {
@@ -39,12 +40,13 @@
 
   body {
     @apply bg-ink-950 text-white dark:bg-ink-950 dark:text-white;
+    line-height: 1.55;
     background-image:
       radial-gradient(1200px 600px at 80% -10%, rgba(16, 185, 129, 0.08), transparent 60%),
       radial-gradient(1000px 500px at -10% 10%, rgba(120, 113, 108, 0.08), transparent 60%),
       radial-gradient(800px 400px at 50% 100%, rgba(63, 63, 70, 0.10), transparent 60%),
       linear-gradient(135deg, #0b0b0c 0%, #141416 45%, #0a0a0b 100%);
-    background-attachment: fixed;
+    background-attachment: scroll;
   }
 
   html:not(.dark) body {
@@ -54,7 +56,14 @@
       radial-gradient(1000px 500px at -10% 10%, rgba(120, 113, 108, 0.10), transparent 60%),
       radial-gradient(800px 400px at 50% 100%, rgba(63, 63, 70, 0.12), transparent 60%),
       linear-gradient(135deg, #111113 0%, #1b1b1f 45%, #0a0a0b 100%);
-    background-attachment: fixed;
+    background-attachment: scroll;
+  }
+
+  @media (min-width: 1024px) {
+    body,
+    html:not(.dark) body {
+      background-attachment: fixed;
+    }
   }
 
   ::selection {
@@ -82,7 +91,7 @@
     background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .btn { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-200 select-none; }
+  .btn { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-[transform,background-color,border-color,box-shadow,color,opacity] duration-300 ease-out select-none will-change-transform; }
   
   /* Primary — institutional slate (landing/auth) */
   .btn-primary {

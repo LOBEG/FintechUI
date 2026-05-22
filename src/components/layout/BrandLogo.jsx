@@ -10,7 +10,7 @@ export function OakmontLogoMark({ className = 'h-11 w-11' }) {
 
 export function BrandWordmark({ className = '' }) {
   return (
-      <span className={`font-display tracking-wide leading-tight whitespace-nowrap min-w-0 ${className}`}>
+      <span className={`font-display tracking-wide leading-none whitespace-nowrap min-w-0 ${className}`}>
       <span className="text-gradient-primary">Oakmont</span>
       <span className="text-white whitespace-nowrap"> DCG</span>
     </span>
