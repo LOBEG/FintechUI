@@ -106,31 +106,47 @@ function FullChart({ candles }) {
 function QuoteRow({ q, onOpen }) {
   const positive = q.pct >= 0;
   return (
-    <button
+    <motion.button
       onClick={() => onOpen(q)}
-      className="w-full text-left glass-light p-3 hover:bg-white/10 transition flex flex-col gap-2"
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2, transition: { duration: 0.15 } }}
+      className="w-full text-left glass-light p-3.5 hover:bg-white/10 transition-all duration-200 flex flex-col gap-2.5 group relative overflow-hidden"
     >
-      <div className="flex items-center gap-3">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="flex items-center gap-3 relative z-10">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">{q.symbol}</p>
-          <p className="text-[11px] text-white/55 truncate">{q.name || q.exchange || ''}</p>
-          <span className={`mt-1 chip border text-[10px] ${signalTone(q.signal)}`}>{q.signal || 'Hold / observe'}</span>
+          <p className="text-sm font-semibold text-white truncate tracking-wide">{q.symbol}</p>
+          <p className="text-[11px] text-white/50 truncate mt-0.5">{q.name || q.exchange || ''}</p>
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className={`mt-1.5 chip border text-[10px] font-medium ${signalTone(q.signal)}`}
+          >
+            {q.signal || 'Hold / observe'}
+          </motion.span>
         </div>
         <div className="hidden sm:block"><MiniSpark candles={q._spark}/></div>
-        <div className="text-right min-w-[6.5rem]">
-          <p className="text-sm font-mono">{fmtPrice(q.price, q.currency)}</p>
-          <p className={`text-[11px] flex items-center gap-1 justify-end ${positive ? 'text-accent-success' : 'text-accent-error'}`}>
+        <div className="text-right min-w-[7rem]">
+          <p className="text-sm font-mono font-semibold tracking-tight">{fmtPrice(q.price, q.currency)}</p>
+          <motion.p 
+            className={`text-[11px] flex items-center gap-1 justify-end font-medium ${positive ? 'text-accent-success' : 'text-accent-error'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.05 }}
+          >
             {positive ? <TrendingUp className="h-3 w-3"/> : <TrendingDown className="h-3 w-3"/>}
             {fmtPct(q.pct)}
-          </p>
+          </motion.p>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-1 text-[10px] text-white/60 font-mono border-t border-white/5 pt-2">
-        <div><span className="text-white/40">High </span><span className="text-accent-success">{fmtPrice(q.dayHigh, q.currency)}</span></div>
-        <div><span className="text-white/40">Low </span><span className="text-accent-error">{fmtPrice(q.dayLow, q.currency)}</span></div>
-        <div className="text-right"><span className="text-white/40">Vol </span>{fmtVol(q.volume)}</div>
+      <div className="grid grid-cols-3 gap-2 text-[10px] text-white/55 font-mono border-t border-white/5 pt-2.5 relative z-10">
+        <div><span className="text-white/35">High </span><span className="text-accent-success font-medium">{fmtPrice(q.dayHigh, q.currency)}</span></div>
+        <div><span className="text-white/35">Low </span><span className="text-accent-error font-medium">{fmtPrice(q.dayLow, q.currency)}</span></div>
+        <div className="text-right"><span className="text-white/35">Vol </span><span className="font-medium">{fmtVol(q.volume)}</span></div>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
@@ -154,55 +170,134 @@ function QuoteDetail({ q, onClose }) {
   }, [q.symbol, range.id, range.interval]);
   const positive = q.pct >= 0;
   return (
-    <div className="fixed inset-0 z-50 bg-ink-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6" onClick={onClose}>
-      <div className="glass-strong w-full max-w-3xl p-5 max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-start gap-3 mb-4">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6" 
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 8 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="glass-strong w-full max-w-4xl p-6 max-h-[92vh] overflow-auto relative" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-teal-500/20 to-blue-500/20" />
+        
+        <div className="flex items-start gap-4 mb-5">
           <div className="flex-1 min-w-0">
-            <h3 className="font-display text-xl">{q.symbol} <span className="text-white/55 text-sm font-normal">· {q.name}</span></h3>
-            <p className="text-[11px] text-white/45">{q.exchangeName || q.exchange || ''} · {q.marketState || 'live'}</p>
+            <h3 className="font-display text-2xl tracking-tight">
+              {q.symbol} 
+              <span className="text-white/50 text-base font-normal ml-2">· {q.name}</span>
+            </h3>
+            <p className="text-xs text-white/40 mt-1 flex items-center gap-2">
+              <span>{q.exchangeName || q.exchange || ''}</span>
+              <span className="inline-block w-1 h-1 rounded-full bg-white/30" />
+              <span className={q.marketState === 'live' ? 'text-accent-success' : ''}>{q.marketState || 'live'}</span>
+            </p>
           </div>
-          <p className="text-right">
-            <span className="text-2xl font-mono">{fmtPrice(q.price, q.currency)}</span>
-            <span className={`block text-sm ${positive ? 'text-accent-success' : 'text-accent-error'}`}>{fmtPct(q.pct)} · {fmtPrice(q.change, q.currency)}</span>
-          </p>
-          <button onClick={onClose} className="h-8 w-8 rounded bg-white/5 hover:bg-white/10 inline-flex items-center justify-center" aria-label="Close"><X className="h-4 w-4"/></button>
+          <motion.p 
+            className="text-right"
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <span className="text-3xl font-mono font-semibold tracking-tight">{fmtPrice(q.price, q.currency)}</span>
+            <span className={`block text-sm font-medium mt-1 ${positive ? 'text-accent-success' : 'text-accent-error'}`}>
+              {fmtPct(q.pct)} · {fmtPrice(q.change, q.currency)}
+            </span>
+          </motion.p>
+          <button 
+            onClick={onClose} 
+            className="h-9 w-9 rounded-lg bg-white/5 hover:bg-white/10 inline-flex items-center justify-center transition-colors duration-200 group" 
+            aria-label="Close"
+          >
+            <X className="h-4 w-4 group-hover:scale-110 transition-transform"/>
+          </button>
         </div>
-        <div className="flex flex-wrap gap-1 mb-3">
-          {RANGE_PRESETS.map((r) => (
-            <button key={r.id} onClick={() => setRangeId(r.id)} className={`px-2 py-1 rounded text-[11px] ${rangeId === r.id ? 'bg-accent-success/15 text-accent-success border border-accent-success/40' : 'bg-white/5 text-white/65 border border-white/10 hover:bg-white/10'}`}>
+        
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {RANGE_PRESETS.map((r, i) => (
+            <motion.button 
+              key={r.id} 
+              onClick={() => setRangeId(r.id)} 
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                rangeId === r.id 
+                  ? 'bg-accent-success/15 text-accent-success border border-accent-success/40 shadow-lg shadow-accent-success/10' 
+                  : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white/80'
+              }`}
+            >
               {r.label}
-            </button>
+            </motion.button>
           ))}
         </div>
-        <FullChart candles={chart?.candles}/>
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-          <div className="glass-light p-2"><p className="text-white/50">Prev close</p><p className="font-mono text-sm">{fmtPrice(q.previousClose, q.currency)}</p></div>
-          <div className="glass-light p-2"><p className="text-white/50">Day high</p><p className="font-mono text-sm text-accent-success">{fmtPrice(q.dayHigh, q.currency)}</p></div>
-          <div className="glass-light p-2"><p className="text-white/50">Day low</p><p className="font-mono text-sm text-accent-error">{fmtPrice(q.dayLow, q.currency)}</p></div>
-          <div className="glass-light p-2"><p className="text-white/50">Volume</p><p className="font-mono text-sm">{fmtVol(q.volume)}</p></div>
-        </div>
-        <p className="mt-4 text-[11px] text-white/45">
-          Live quote sourced from primary exchange feed.
-          {loading
-            ? ' Checking your active session before showing trade actions.'
-            : user
-            ? ' Your Oakmont Digital Markets Group brokerage account is active. Place an order from your trading dashboard.'
-            : ' To place an order, open a verified Oakmont Digital Markets Group brokerage account.'}
-        </p>
-        <div className="mt-3 flex gap-2">
-          {loading ? (
-            <span className="btn-ghost text-xs opacity-70"><Loader2 className="h-3.5 w-3.5 animate-spin"/> Checking session…</span>
-          ) : user ? (
-            <Link href="/dashboard/brokerage" className="btn-primary text-xs">Trade now in Dashboard</Link>
-          ) : (
-            <>
-              <Link href="/signup" className="btn-primary text-xs">Open Brokerage Account</Link>
-              <Link href="/login?next=/dashboard" className="btn-ghost text-xs">Sign in to Trade</Link>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <FullChart candles={chart?.candles}/>
+        </motion.div>
+        
+        <motion.div 
+          className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+        >
+          <div className="glass-light p-3.5 hover:bg-white/5 transition-colors duration-200">
+            <p className="text-white/45 text-[11px] mb-1.5">Prev close</p>
+            <p className="font-mono text-sm font-semibold">{fmtPrice(q.previousClose, q.currency)}</p>
+          </div>
+          <div className="glass-light p-3.5 hover:bg-white/5 transition-colors duration-200">
+            <p className="text-white/45 text-[11px] mb-1.5">Day high</p>
+            <p className="font-mono text-sm font-semibold text-accent-success">{fmtPrice(q.dayHigh, q.currency)}</p>
+          </div>
+          <div className="glass-light p-3.5 hover:bg-white/5 transition-colors duration-200">
+            <p className="text-white/45 text-[11px] mb-1.5">Day low</p>
+            <p className="font-mono text-sm font-semibold text-accent-error">{fmtPrice(q.dayLow, q.currency)}</p>
+          </div>
+          <div className="glass-light p-3.5 hover:bg-white/5 transition-colors duration-200">
+            <p className="text-white/45 text-[11px] mb-1.5">Volume</p>
+            <p className="font-mono text-sm font-semibold">{fmtVol(q.volume)}</p>
+          </div>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <p className="mt-5 text-xs text-white/40 leading-relaxed">
+            Live quote sourced from primary exchange feed.
+            {loading
+              ? ' Checking your active session before showing trade actions.'
+              : user
+              ? ' Your Oakmont Digital Capital Group brokerage account is active. Place an order from your trading dashboard.'
+              : ' To place an order, open a verified Oakmont Digital Capital Group brokerage account.'}
+          </p>
+          <div className="mt-4 flex gap-2.5">
+            {loading ? (
+              <span className="btn-ghost text-xs opacity-70"><Loader2 className="h-3.5 w-3.5 animate-spin"/> Checking session…</span>
+            ) : user ? (
+              <Link href="/dashboard/brokerage" className="btn-primary text-xs">Trade now in Dashboard</Link>
+            ) : (
+              <>
+                <Link href="/signup" className="btn-primary text-xs">Open Brokerage Account</Link>
+                <Link href="/login?next=/dashboard" className="btn-ghost text-xs">Sign in to Trade</Link>
+              </>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -249,25 +344,64 @@ function BrokerageBoard({ assetClass }) {
     return quotes.filter((row) => row.symbol.includes(needle) || (row.name || '').toUpperCase().includes(needle));
   }, [quotes, q]);
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[12rem]">
-          <Search className="h-4 w-4 absolute left-2 top-1/2 -translate-y-1/2 text-white/40"/>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search symbol or name" className="w-full pl-7 pr-3 py-1.5 rounded bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-accent-success/40"/>
+    <div className="space-y-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-wrap items-center gap-3"
+      >
+        <div className="relative flex-1 min-w-[14rem]">
+          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/35"/>
+          <input 
+            value={q} 
+            onChange={(e) => setQ(e.target.value)} 
+            placeholder="Search symbol or name" 
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-accent-success/40 focus:bg-white/[0.07] transition-all duration-200 placeholder:text-white/30"
+          />
         </div>
-        <button onClick={load} disabled={loading} className="text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-50">
-          {loading ? <Loader2 className="h-3 w-3 animate-spin"/> : <RefreshCw className="h-3 w-3"/>} Refresh
+        <button 
+          onClick={load} 
+          disabled={loading} 
+          className="text-xs text-white/50 hover:text-white inline-flex items-center gap-1.5 disabled:opacity-50 px-3 py-2 rounded-lg hover:bg-white/5 transition-all duration-200"
+        >
+          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <RefreshCw className="h-3.5 w-3.5"/>} 
+          <span className="hidden sm:inline">Refresh</span>
         </button>
         {refreshAt > 0 && (
-          <span className="text-[10px] text-white/40">Updated {new Date(refreshAt).toLocaleTimeString()}</span>
+          <motion.span 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[10px] text-white/35 px-2.5 py-1 rounded bg-white/5 font-mono"
+          >
+            {new Date(refreshAt).toLocaleTimeString()}
+          </motion.span>
         )}
-      </div>
+      </motion.div>
       {!quotes.length && loading ? (
-        <div className="glass-light p-6 text-center text-sm text-white/55 inline-flex items-center gap-2 justify-center"><Loader2 className="h-4 w-4 animate-spin"/> Connecting to live market feed…</div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="glass-light p-8 text-center text-sm text-white/50 inline-flex items-center gap-2.5 justify-center w-full"
+        >
+          <Loader2 className="h-5 w-5 animate-spin text-blue-400"/> 
+          <span>Connecting to live market feed…</span>
+        </motion.div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <motion.div 
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.025
+              }
+            }
+          }}
+        >
           {filtered.map((row) => <QuoteRow key={row.symbol} q={row} onOpen={setActive}/>)}
-        </div>
+        </motion.div>
       )}
       {active && <QuoteDetail q={active} onClose={() => setActive(null)}/>}
     </div>
@@ -421,74 +555,193 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
   };
   const active = TABS.find((t) => t.id === tab) || TABS[0];
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14 space-y-6">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <span className="chip bg-white/5 border border-white/10 text-white/80"><Activity className="h-3.5 w-3.5 text-accent-success"/> Multi-asset brokerage · live market data</span>
-        <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-display tracking-tight">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 12 }} 
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <motion.span 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="chip bg-white/5 border border-white/10 text-white/80 inline-flex items-center gap-2"
+        >
+          <Activity className="h-3.5 w-3.5 text-accent-success"/> 
+          Multi-asset brokerage · live market data
+        </motion.span>
+        <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display tracking-tight leading-tight">
           Trade everything from <span className="text-gradient-primary">stocks &amp; ETFs</span> to <span className="text-gradient-primary">crypto, FX &amp; futures</span>.
         </h1>
-        <p className="mt-3 text-white/65 max-w-3xl">
-          Oakmont Digital Markets Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
+        <p className="mt-4 text-white/60 max-w-3xl leading-relaxed">
+          Oakmont Digital Capital Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
         </p>
       </motion.div>
-      <div className="flex flex-wrap gap-1.5">
+      
+      <motion.div 
+        className="flex flex-wrap gap-2"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.04
+            }
+          }
+        }}
+      >
         {TABS.map((t) => (
-          <Link key={t.id} href={`/brokerage/${t.id}`} onClick={(e) => { e.preventDefault(); selectTab(t.id); }} className={`px-3 py-1.5 rounded-full text-xs sm:text-sm transition ${tab === t.id ? 'bg-accent-success/15 text-accent-success border border-accent-success/40' : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'}`}>
-            {t.label}
-          </Link>
+          <motion.div
+            key={t.id}
+            variants={{
+              hidden: { opacity: 0, y: 4 },
+              visible: { opacity: 1, y: 0 }
+            }}
+          >
+            <Link 
+              href={`/brokerage/${t.id}`} 
+              onClick={(e) => { e.preventDefault(); selectTab(t.id); }} 
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 inline-block ${
+                tab === t.id 
+                  ? 'bg-accent-success/15 text-accent-success border border-accent-success/40 shadow-lg shadow-accent-success/10' 
+                  : 'bg-white/5 border border-white/10 text-white/65 hover:bg-white/10 hover:text-white/85'
+              }`}
+            >
+              {t.label}
+            </Link>
+          </motion.div>
         ))}
-      </div>
-      <p className="text-xs text-white/55">{active.blurb}</p>
-      <section className="glass-strong p-4 sm:p-5">
+      </motion.div>
+      
+      <motion.p 
+        key={active.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="text-xs text-white/50 leading-relaxed"
+      >
+        {active.blurb}
+      </motion.p>
+      
+      <motion.section 
+        key={`content-${tab}`}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="glass-strong p-5 sm:p-6"
+      >
         {tab === 'options' ? <OptionsBoard/> : tab === 'crypto' ? <CryptoBoard/> : <BrokerageBoard assetClass={tab}/>}
-      </section>
-      <section className="grid md:grid-cols-3 gap-3">
-        <div className="glass p-4">
-          <BarChart3 className="h-5 w-5 text-blue-400"/>
-          <h3 className="font-display mt-2">Brokerage account</h3>
-          <p className="text-sm text-white/65 mt-1">Single account, every asset class. Stocks, ETFs, options, futures, forex, commodities and crypto in one balance.</p>
-        </div>
-        <div className="glass p-4">
-          <LineChart className="h-5 w-5 text-accent-success"/>
-          <h3 className="font-display mt-2">Live execution</h3>
-          <p className="text-sm text-white/65 mt-1">Smart order routing to NYSE, NASDAQ, CME, CBOT, COMEX, NYMEX, and global FX venues with real-time fills.</p>
-        </div>
-        <div className="glass p-4">
-          <Activity className="h-5 w-5 text-blue-400"/>
-          <h3 className="font-display mt-2">Risk &amp; reporting</h3>
-          <p className="text-sm text-white/65 mt-1">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
-        </div>
-      </section>
-      <section className="glass-strong p-4 sm:p-5">
-        <div className="flex items-center flex-wrap gap-2 mb-3">
+      </motion.section>
+      
+      <motion.section 
+        className="grid md:grid-cols-3 gap-4"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.08
+            }
+          }
+        }}
+      >
+        <motion.div 
+          variants={{
+            hidden: { opacity: 0, y: 8 },
+            visible: { opacity: 1, y: 0 }
+          }}
+          className="glass p-5 hover:bg-white/[0.03] transition-all duration-300 group"
+        >
+          <BarChart3 className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
+          <h3 className="font-display mt-3 text-lg">Brokerage account</h3>
+          <p className="text-sm text-white/60 mt-2 leading-relaxed">Single account, every asset class. Stocks, ETFs, options, futures, forex, commodities and crypto in one balance.</p>
+        </motion.div>
+        <motion.div 
+          variants={{
+            hidden: { opacity: 0, y: 8 },
+            visible: { opacity: 1, y: 0 }
+          }}
+          className="glass p-5 hover:bg-white/[0.03] transition-all duration-300 group"
+        >
+          <LineChart className="h-6 w-6 text-accent-success group-hover:scale-110 transition-transform duration-300"/>
+          <h3 className="font-display mt-3 text-lg">Live execution</h3>
+          <p className="text-sm text-white/60 mt-2 leading-relaxed">Smart order routing to NYSE, NASDAQ, CME, CBOT, COMEX, NYMEX, and global FX venues with real-time fills.</p>
+        </motion.div>
+        <motion.div 
+          variants={{
+            hidden: { opacity: 0, y: 8 },
+            visible: { opacity: 1, y: 0 }
+          }}
+          className="glass p-5 hover:bg-white/[0.03] transition-all duration-300 group"
+        >
+          <Activity className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
+          <h3 className="font-display mt-3 text-lg">Risk &amp; reporting</h3>
+          <p className="text-sm text-white/60 mt-2 leading-relaxed">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
+        </motion.div>
+      </motion.section>
+      
+      <motion.section 
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="glass-strong p-5 sm:p-6"
+      >
+        <div className="flex items-center flex-wrap gap-3 mb-4">
           <h2 className="font-display text-xl">Live asset class status</h2>
-          <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● visible to users</span>
+          <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px] font-medium">● visible to users</span>
         </div>
-        <p className="text-sm text-white/65 max-w-3xl">
-          Oakmont Digital Markets Group displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
+        <p className="text-sm text-white/60 max-w-3xl leading-relaxed">
+          Oakmont Digital Capital Group displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
         </p>
-        <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+        <motion.div 
+          className="mt-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.05
+              }
+            }
+          }}
+        >
           {TABS.map((v) => (
-            <div key={v.id} className="glass-light p-3">
+            <motion.div 
+              key={v.id} 
+              variants={{
+                hidden: { opacity: 0, y: 4 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="glass-light p-4 hover:bg-white/[0.02] transition-colors duration-200"
+            >
               <p className="text-sm font-semibold text-white">{v.label}</p>
-              <p className="text-[11px] text-white/55 mt-0.5">{v.blurb}</p>
-              <p className="text-[10px] text-blue-400/85 mt-1">Live symbols and user-visible signals</p>
-            </div>
+              <p className="text-[11px] text-white/50 mt-1.5 leading-relaxed">{v.blurb}</p>
+              <p className="text-[10px] text-blue-400/80 mt-2">Live symbols and user-visible signals</p>
+            </motion.div>
           ))}
-        </div>
-        <p className="mt-4 text-[11px] text-white/45">
+        </motion.div>
+        <p className="mt-5 text-[11px] text-white/40">
           No placeholder venue list is shown. Live availability is determined by the brokerage and crypto market data feeds.
         </p>
-      </section>
-      <div className="text-center pt-2">
+      </motion.section>
+      
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="text-center pt-4"
+      >
         {loading ? (
-          <span className="btn-ghost opacity-70"><Loader2 className="h-4 w-4 animate-spin"/> Checking session…</span>
+          <span className="btn-ghost opacity-70 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Checking session…</span>
         ) : user ? (
-          <Link href="/dashboard/brokerage" className="btn-primary">Trade now in your Dashboard <ArrowRight className="h-4 w-4"/></Link>
+          <Link href="/dashboard/brokerage" className="btn-primary inline-flex items-center gap-2">Trade now in your Dashboard <ArrowRight className="h-4 w-4"/></Link>
         ) : (
-          <Link href="/signup" className="btn-primary">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
+          <Link href="/signup" className="btn-primary inline-flex items-center gap-2">Open a Brokerage Account <ArrowRight className="h-4 w-4"/></Link>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
