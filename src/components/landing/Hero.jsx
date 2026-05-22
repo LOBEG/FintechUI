@@ -41,7 +41,7 @@ export function Hero() {
             <Link href="/brokerage" className="btn-primary">
               Explore Brokerage <ArrowRight className="h-4 w-4"/>
             </Link>
-            <Link href={!loading && user ? '/dashboard' : '/signup'} className="btn-outline border-blue-500/50 text-blue-400 hover:bg-blue-500/10">
+            <Link href={!loading && user ? '/dashboard' : '/signup'} className="btn-outline">
               {!loading && user ? 'Open Dashboard' : 'Open Account'}
             </Link>
             <Link href={!loading && user ? '/investor' : '/login?next=/investor'} className="btn-ghost">

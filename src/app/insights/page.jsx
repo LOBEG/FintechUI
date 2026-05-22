@@ -7,8 +7,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Sparkline } from '@/components/ui/Charts';
 const insights = [
     { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Markets Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-accent-success' },
-    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-blue-400' },
-    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-blue-400' },
+    { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-teal-400' },
+    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-teal-400' },
     { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Markets Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
 ];
 export default function InsightsPage() {
@@ -53,7 +53,7 @@ export default function InsightsPage() {
         ].map((c) => {
             const Icon = c.icon;
             return (<div key={c.t} className="glass p-5">
-              <Icon className="h-5 w-5 text-blue-400"/>
+              <Icon className="h-5 w-5 text-teal-400"/>
               <p className="mt-3 font-semibold">{c.t}</p>
               <p className="text-sm text-white/65 mt-1">{c.d}</p>
             </div>);

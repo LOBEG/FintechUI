@@ -271,7 +271,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
                 <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
               </div>
-              <Link href={user ? '/dashboard/brokerage' : '/brokerage'} className="btn-primary text-sm self-start lg:self-auto">Open full brokerage</Link>
+              <Link href={user ? '/dashboard/brokerage' : '/brokerage'} className="btn-dashboard text-sm self-start lg:self-auto">Open full brokerage</Link>
             </div>
             <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {DASHBOARD_FEATURES.map((feature) => (
@@ -301,7 +301,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
               <h2 className="mt-1 text-2xl font-display">Sign in to view live {activeFeatureMeta.label.toLowerCase()} content.</h2>
               <p className="mt-2 text-sm text-white/60 max-w-2xl">Each feature now has its own page on desktop and mobile. Secure account data stays hidden until your session is confirmed.</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <a href="/login?next=/dashboard" className="btn-primary text-sm">Sign in</a>
+                <a href="/login?next=/dashboard" className="btn-dashboard text-sm">Sign in</a>
                 <a href="/signup" className="btn-outline text-sm">Create account</a>
               </div>
             </section>
@@ -322,7 +322,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button onClick={() => openInvest(investSymbol)} className="btn-primary text-sm"><Plus className="h-4 w-4"/> {t('invest')}</button>
+                  <button onClick={() => openInvest(investSymbol)} className="btn-dashboard text-sm"><Plus className="h-4 w-4"/> {t('invest')}</button>
                   <button onClick={() => setSellOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('sell')}</button>
                   <button onClick={() => setWithdrawOpen(true)} className="btn-ghost text-sm"><ArrowUpRight className="h-4 w-4"/> {t('withdraw')}</button>
                 </div>
@@ -343,7 +343,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <h2 className="mt-1 text-2xl font-display">Create an account to view cash, balances, positions, history, and execution controls.</h2>
             <p className="mt-2 text-sm text-white/60 max-w-2xl">The live chart and market table remain public for transparency. Funding, investing, selling, withdrawals, and portfolio records are available only after secure sign-in.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <a href="/signup" className="btn-outline text-sm border-blue-500/50 text-blue-400 hover:bg-blue-500/10">Create Account</a>
+              <a href="/signup" className="btn-dashboard text-sm">Create Account</a>
               <a href="/login?next=/dashboard" className="btn-ghost text-sm">Sign in</a>
             </div>
           </section>)}
@@ -762,7 +762,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                         <span className="text-xs text-accent-success">+{(2.4 + i * 1.7).toFixed(1)}%</span>
                       </div>))}
                   </div>
-                  <button className="btn-outline w-full mt-3 text-sm">Configure strategies</button>
+                  <button className="btn-dashboard-outline w-full mt-3 text-sm">Configure strategies</button>
                 </>
               )}
             </div>

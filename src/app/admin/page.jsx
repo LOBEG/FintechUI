@@ -225,7 +225,7 @@ export default function AdminPage() {
         <AdminSidebar />
         <div className="flex-1 min-w-0">
           <TopBar title="Admin Console" />
-          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-blue-400"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-primary text-xs">Sign in</a></div></main>
+          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-indigo-400"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-admin text-xs">Sign in</a></div></main>
         </div>
       </div>
     );
@@ -266,8 +266,8 @@ export default function AdminPage() {
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { k: 'Total users', v: usersTotal.toLocaleString(), sub: `+${usersNew7d} new 7d · ${metrics?.users?.mau || 0} MAU`, icon: Users, color: 'text-accent-success' },
-              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-blue-400' },
-              { k: 'KYC pending', v: kycPending.toLocaleString(), sub: kycPending ? 'Awaiting review' : 'Queue clear', icon: ShieldCheck, color: 'text-blue-400' },
+              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-indigo-400' },
+              { k: 'KYC pending', v: kycPending.toLocaleString(), sub: kycPending ? 'Awaiting review' : 'Queue clear', icon: ShieldCheck, color: 'text-indigo-400' },
               { k: 'Risk alerts (24h)', v: fraudCount24h.toLocaleString(), sub: fraudCount24h ? 'Recent audit events' : 'No active alerts', icon: AlertTriangle, color: 'text-accent-error' },
             ].map((s, i) => {
               const Icon = s.icon;
@@ -287,7 +287,7 @@ export default function AdminPage() {
           <section id="brokerage" className="glass-strong p-4 overflow-hidden">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div>
-                <p className="font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-blue-400"/> Live brokerage signals</p>
+                <p className="font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-indigo-400"/> Live brokerage signals</p>
                 <p className="text-xs text-white/55">
                   {metrics?.brokerage?.liveQuotes || 0} live quotes across {metrics?.brokerage?.symbols || 0} visible symbols
                 </p>
@@ -375,7 +375,7 @@ export default function AdminPage() {
                     </div>
                   ))}
                 </div>
-                <button onClick={initiateRebalance} className="btn-outline w-full mt-4 text-sm">Initiate rebalance</button>
+                <button onClick={initiateRebalance} className="btn-admin-outline w-full mt-4 text-sm">Initiate rebalance</button>
               </div>
             </div>
           </section>
@@ -578,10 +578,10 @@ export default function AdminPage() {
 
           {/* Settings anchor - links from sidebar land here */}
           <section id="settings" className="glass-strong p-5">
-            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-blue-400"/> Console settings</p>
+            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-indigo-400"/> Console settings</p>
             <p className="text-xs text-white/55 mt-1">Operational controls for the Oakmont Digital Markets Group admin console. Adjust polling cadence and reload live data without leaving the page.</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button onClick={refresh} disabled={refreshing} className="btn-outline text-sm inline-flex items-center gap-1 disabled:opacity-60">
+              <button onClick={refresh} disabled={refreshing} className="btn-admin-outline text-sm inline-flex items-center gap-1 disabled:opacity-60">
                 {refreshing ? <Loader2 className="h-4 w-4 animate-spin"/> : <RefreshCw className="h-4 w-4"/>} Refresh all panels
               </button>
               <a href="/api/admin/export?kind=users" className="btn-ghost text-sm">Export users CSV</a>

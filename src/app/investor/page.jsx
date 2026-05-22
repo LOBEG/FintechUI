@@ -64,7 +64,7 @@ export default function InvestorPortalPage() {
       <Navbar />
       <section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">
+          <span className="chip bg-accent-success/15 text-violet-400 border border-accent-success/30">
             <Building2 className="h-3.5 w-3.5"/> Institutional Investor Portal
           </span>
           <h1 className="mt-4 text-3xl sm:text-4xl font-display">
@@ -77,9 +77,9 @@ export default function InvestorPortalPage() {
 
         <div className="mt-8 grid lg:grid-cols-4 gap-4">
           {[
-            { k: 'Total AUM', v: '$848M', icon: Briefcase, accent: 'text-blue-400' },
+            { k: 'Total AUM', v: '$848M', icon: Briefcase, accent: 'text-violet-400' },
             { k: 'YTD Return', v: '+38.4%', icon: TrendingUp, accent: 'text-accent-success' },
-            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-blue-400' },
+            { k: 'Sharpe Ratio', v: '2.31', icon: Gauge, accent: 'text-violet-400' },
             { k: 'Clients', v: '412', icon: Users, accent: 'text-white' },
         ].map((s) => {
             const Icon = s.icon;
@@ -163,12 +163,12 @@ export default function InvestorPortalPage() {
           </p>
           <ul className="mt-3 text-sm text-white/70 space-y-1.5">
             <li>• Regime detection: <span className="text-accent-success">Risk-On</span></li>
-            <li>• Macro signal: <span className="text-blue-400">Constructive</span></li>
+            <li>• Macro signal: <span className="text-violet-400">Constructive</span></li>
             <li>• Liquidity score: <span className="text-white">8.2 / 10</span></li>
           </ul>
         </div>
         <div className="glass-strong p-5">
-          <PieIcon className="h-6 w-6 text-blue-400"/>
+          <PieIcon className="h-6 w-6 text-violet-400"/>
           <p className="font-semibold mt-3">Risk management</p>
           <p className="text-sm text-white/65 mt-1">
             Stress tests, VaR (95%), drawdown analytics, scenario simulation, and concentration limits - reviewed daily by the risk committee.
@@ -180,7 +180,7 @@ export default function InvestorPortalPage() {
           </div>
         </div>
         <div className="glass-strong p-5">
-          <ShieldCheck className="h-6 w-6 text-blue-400"/>
+          <ShieldCheck className="h-6 w-6 text-violet-400"/>
           <p className="font-semibold mt-3">Secure onboarding · KYC/AML</p>
           <p className="text-sm text-white/65 mt-1">
             White-glove onboarding for institutions. Document collection, UBO verification, source-of-funds, and Chainalysis screening - done in 48 hours.
@@ -211,7 +211,7 @@ export default function InvestorPortalPage() {
           </div>
           <div className="mt-5 grid lg:grid-cols-4 gap-3">
             {reports.map((r) => (<div key={r.name} className="glass-light p-3 flex items-center gap-3">
-                <FileText className="h-4 w-4 text-blue-400"/>
+                <FileText className="h-4 w-4 text-violet-400"/>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{r.name}</p>
                   <p className="text-[11px] text-white/55">{r.date} · {r.status}</p>
