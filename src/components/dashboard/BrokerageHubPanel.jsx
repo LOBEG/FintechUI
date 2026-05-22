@@ -103,14 +103,27 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="glass-strong p-5 space-y-4"
+      initial={{ opacity: 0, y: 8 }} 
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="glass-strong p-6 space-y-5 relative overflow-hidden"
     >
-      <div className="flex items-center gap-2">
-        <Briefcase className="h-4 w-4 text-blue-400"/>
-        <h3 className="font-display text-lg">Brokerage hub</h3>
-        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
-        <div className="ml-auto flex items-center gap-2">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-teal-500/20 to-blue-500/20" />
+      
+      <div className="flex items-center flex-wrap gap-3">
+        <div className="flex items-center gap-3 flex-1">
+          <Briefcase className="h-5 w-5 text-blue-400"/>
+          <h3 className="font-display text-xl tracking-tight">Brokerage hub</h3>
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[11px] font-medium"
+          >
+            ● live
+          </motion.span>
+        </div>
+        <div className="flex items-center gap-2">
           <button onClick={() => onInvest && onInvest('AAPL', 'stocks')} className="btn-ghost text-xs">
             <ArrowDownLeft className="h-3.5 w-3.5"/> Invest
           </button>
@@ -121,41 +134,65 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3">
+      <motion.div 
+        className="grid sm:grid-cols-3 gap-4"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.08
+            }
+          }
+        }}
+      >
         {enabledBrokers.map((b) => {
           const Icon = b.icon;
           return (
-            <div key={b.id} className="glass-light p-3 flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <span className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center">
-                   <Icon className="h-4 w-4 text-blue-400"/>
+            <motion.div 
+              key={b.id} 
+              variants={{
+                hidden: { opacity: 0, y: 8 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="glass-light p-4 flex flex-col gap-3 hover:bg-white/[0.02] transition-all duration-300 group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 inline-flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
+                   <Icon className="h-5 w-5 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
                 </span>
                 <span className="font-semibold text-sm flex-1">{b.name}</span>
-                <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● live</span>
+                <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px] font-medium">● live</span>
               </div>
-              <p className="text-[11px] text-white/55">{b.description}</p>
-              <div className="flex flex-wrap gap-1">
+              <p className="text-[11px] text-white/50 leading-relaxed">{b.description}</p>
+              <div className="flex flex-wrap gap-1.5">
                 {b.classes.filter((c) => settings.classes?.[c] !== false).map((c) => (
-                  <span key={c} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">{c} · live</span>
+                  <span key={c} className="chip bg-white/5 border border-white/10 text-white/65 text-[10px] font-medium">{c} · live</span>
                 ))}
               </div>
-              <div className="flex items-center gap-2 text-[10px] text-white/45 mt-auto">
+              <div className="flex items-center gap-2 text-[10px] text-white/40 mt-auto pt-2 border-t border-white/5">
                 <span>{b.source}</span>
-                <span className="ml-auto">updated {updatedLabel}</span>
+                <span className="ml-auto font-mono">{updatedLabel}</span>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
-      <div className="grid lg:grid-cols-2 gap-3">
-        <div className="glass-light p-3">
-          <div className="flex items-center gap-2 mb-2">
+      <motion.div 
+        className="grid lg:grid-cols-2 gap-4"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="glass-light p-4">
+          <div className="flex items-center gap-3 mb-3">
             <Activity className="h-4 w-4 text-blue-400"/>
             <p className="text-sm font-semibold">Live asset-class coverage</p>
-            <span className="ml-auto text-[10px] text-white/45">{quotes.length} live quotes</span>
+            <span className="ml-auto text-[10px] text-white/40 font-mono">{quotes.length} live quotes</span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {enabledClasses.map((cls) => {
               const rows = cls === 'crypto'
                 ? cryptoMarkets.map((row) => ({ symbol: row.symbol, name: row.name, signal: row.signal }))
@@ -168,25 +205,28 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                   ? rows.length
                   : rows.filter((row) => quoteBySymbol.has(row.symbol)).length;
               return (
-                <div key={cls} className="rounded-lg border border-white/10 bg-white/5 p-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold capitalize">{cls}</span>
-                    <span className="text-[10px] text-accent-success">{liveCount} live</span>
-                    <span className="ml-auto text-[10px] text-white/45">{rows.length} symbols</span>
+                <div key={cls} className="rounded-xl border border-white/10 bg-white/[0.03] p-3 hover:bg-white/[0.04] transition-colors duration-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-semibold capitalize tracking-wide">{cls}</span>
+                    <span className="text-[10px] text-accent-success font-medium">{liveCount} live</span>
+                    <span className="ml-auto text-[10px] text-white/40 font-mono">{rows.length} symbols</span>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {rows.map((row) => {
+                  <div className="flex flex-wrap gap-1.5">
+                    {rows.slice(0, 8).map((row) => {
                       const liveQuote = quoteBySymbol.get(row.symbol);
                       const cryptoQuote = cls === 'crypto' ? cryptoMarkets.find((m) => m.symbol === row.symbol) : null;
                       const signal = liveQuote?.signal || cryptoQuote?.signal;
                       return (
-                        <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/70 text-[10px]">
+                        <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/65 text-[10px] font-medium">
                           {row.symbol}{signal ? ` · ${signal}` : ''}
                         </span>
                       );
                     })}
+                    {rows.length > 8 && (
+                      <span className="chip bg-white/5 border border-white/10 text-white/40 text-[10px]">+{rows.length - 8} more</span>
+                    )}
                     {!rows.length && (
-                      <span className="text-[10px] text-white/45">Awaiting live symbols.</span>
+                      <span className="text-[10px] text-white/40">Awaiting live symbols.</span>
                     )}
                   </div>
                 </div>
@@ -194,58 +234,84 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             })}
           </div>
         </div>
-        <div className="glass-light p-3">
-          <div className="flex items-center gap-2 mb-2">
+        
+        <div className="glass-light p-4">
+          <div className="flex items-center gap-3 mb-3">
             <TrendingUp className="h-4 w-4 text-accent-success"/>
             <p className="text-sm font-semibold">Visible live market signals</p>
-            <span className="ml-auto text-[10px] text-white/45">updated {updatedLabel}</span>
+            <span className="ml-auto text-[10px] text-white/40 font-mono">{updatedLabel}</span>
           </div>
-          <div className="divide-y divide-white/5">
-            {signalRows.map((q) => (
-              <div key={q.symbol} className="py-2 flex items-center gap-3 text-xs">
-                <span className="font-semibold w-20">{q.symbol}</span>
-                <span className="text-white/55 flex-1 truncate">{q.name || q.assetClass}</span>
-                <span className={Number(q.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}>{Number(q.pct || 0).toFixed(2)}%</span>
-                <span className={`chip border text-[10px] ${q.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : q.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/70'}`}>{q.signal}</span>
-              </div>
+          <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto -mx-4 px-4">
+            {signalRows.map((q, idx) => (
+              <motion.div 
+                key={q.symbol} 
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.03 }}
+                className="py-2.5 flex items-center gap-3 text-xs hover:bg-white/[0.02] -mx-4 px-4 transition-colors duration-200"
+              >
+                <span className="font-semibold font-mono w-20">{q.symbol}</span>
+                <span className="text-white/50 flex-1 truncate">{q.name || q.assetClass}</span>
+                <span className={`font-mono font-medium ${Number(q.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
+                  {Number(q.pct) >= 0 ? '+' : ''}{Number(q.pct || 0).toFixed(2)}%
+                </span>
+                <span className={`chip border text-[10px] font-medium ${q.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : q.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/65'}`}>
+                  {q.signal}
+                </span>
+              </motion.div>
             ))}
-            {cryptoRows.map((m) => (
-              <div key={m.symbol} className="py-2 flex items-center gap-3 text-xs">
-                <span className="font-semibold w-20">{m.symbol}</span>
-                <span className="text-white/55 flex-1 truncate">{m.name}</span>
-                <span className={Number(m.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}>{Number(m.pct || 0).toFixed(2)}%</span>
-                <span className={`chip border text-[10px] ${m.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : m.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/70'}`}>{m.signal}</span>
-              </div>
+            {cryptoRows.map((m, idx) => (
+              <motion.div 
+                key={m.symbol} 
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (signalRows.length + idx) * 0.03 }}
+                className="py-2.5 flex items-center gap-3 text-xs hover:bg-white/[0.02] -mx-4 px-4 transition-colors duration-200"
+              >
+                <span className="font-semibold font-mono w-20">{m.symbol}</span>
+                <span className="text-white/50 flex-1 truncate">{m.name}</span>
+                <span className={`font-mono font-medium ${Number(m.pct) >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
+                  {Number(m.pct) >= 0 ? '+' : ''}{Number(m.pct || 0).toFixed(2)}%
+                </span>
+                <span className={`chip border text-[10px] font-medium ${m.signal === 'Reduce' ? 'bg-accent-error/15 border-accent-error/30 text-accent-error' : m.signal === 'Accumulate' ? 'bg-accent-success/15 border-accent-success/30 text-accent-success' : 'bg-white/5 border-white/10 text-white/65'}`}>
+                  {m.signal}
+                </span>
+              </motion.div>
             ))}
             {!signalRows.length && !cryptoRows.length && (
-              <p className="py-2 text-xs text-white/45">Connecting to brokerage and crypto market feeds.</p>
+              <p className="py-3 text-xs text-white/40 text-center">Connecting to brokerage and crypto market feeds.</p>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {enabledBrokers.length > 0 && (
-        <div className="glass-light p-3">
-          <p className="text-xs text-white/55 mb-2">Default broker for new orders</p>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="glass-light p-4"
+        >
+          <p className="text-xs text-white/50 mb-3 font-medium">Default broker for new orders</p>
           <div className="flex flex-wrap gap-2">
             {enabledBrokers.map((b) => (
               <button
                 key={b.id}
                 onClick={() => selectBroker(b.id)}
                 disabled={savingBroker}
-                className={`px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 border ${
+                className={`px-4 py-2 rounded-lg text-xs inline-flex items-center gap-2 border transition-all duration-200 font-medium ${
                   preferred === b.id
-                    ? 'bg-accent-success/15 border-accent-success/40 text-accent-success'
-                    : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                    ? 'bg-accent-success/15 border-accent-success/40 text-accent-success shadow-lg shadow-accent-success/10'
+                    : 'bg-white/5 border-white/10 text-white/65 hover:bg-white/10 hover:text-white/85'
                 }`}
               >
                 {preferred === b.id ? <CheckCircle2 className="h-3.5 w-3.5"/> : <span className="h-2 w-2 rounded-full bg-white/30"/>}
                 {b.name}
               </button>
             ))}
-            {savingBroker && <Loader2 className="h-3.5 w-3.5 animate-spin text-white/55"/>}
+            {savingBroker && <Loader2 className="h-4 w-4 animate-spin text-white/50"/>}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {positions.length > 0 && (

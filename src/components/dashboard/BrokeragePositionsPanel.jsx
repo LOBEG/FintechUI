@@ -62,36 +62,55 @@ export default function BrokeragePositionsPanel() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="glass-strong p-5"
+      initial={{ opacity: 0, y: 8 }} 
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="glass-strong p-6 relative overflow-hidden"
     >
-      <div className="flex items-center gap-2 mb-3">
-        <TrendingUp className="h-4 w-4 text-blue-400"/>
-        <h3 className="font-display text-lg">Brokerage positions</h3>
-        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full bg-accent-success400 animate-pulse" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-emerald-500/20" />
+      
+      <div className="flex items-center gap-3 mb-4">
+        <TrendingUp className="h-5 w-5 text-blue-400"/>
+        <h3 className="font-display text-xl tracking-tight">Brokerage positions</h3>
+        <motion.span 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 flex items-center gap-1.5 text-[11px] font-medium"
+        >
+          <span className="inline-block h-2 w-2 rounded-full bg-accent-success animate-pulse" />
           live
-        </span>
+        </motion.span>
       </div>
-      {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2 mb-2">{error}</p>}
-      <div className="overflow-x-auto">
+      
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-xl px-4 py-2.5 mb-4"
+        >
+          {error}
+        </motion.p>
+      )}
+      
+      <div className="overflow-x-auto -mx-6 px-6">
         <table className="min-w-full text-xs">
-          <thead className="text-white/55">
+          <thead className="text-white/50 border-b border-white/10">
             <tr>
-              <th className="text-left py-1 pr-3">Symbol</th>
-              <th className="text-left py-1 pr-3">Class</th>
-              <th className="text-right py-1 pr-3">Qty</th>
-              <th className="text-right py-1 pr-3">Avg Price</th>
-              <th className="text-right py-1 pr-3">Live Price</th>
-              <th className="text-right py-1 pr-3">Market Value</th>
-              <th className="text-right py-1 pr-3">Day %</th>
-              <th className="text-right py-1 pr-3">P&amp;L (USD)</th>
-              <th className="text-right py-1 pr-3">P&amp;L%</th>
-              <th className="text-right py-1">Action</th>
+              <th className="text-left py-3 pr-4 font-medium">Symbol</th>
+              <th className="text-left py-3 pr-4 font-medium">Class</th>
+              <th className="text-right py-3 pr-4 font-medium">Qty</th>
+              <th className="text-right py-3 pr-4 font-medium">Avg Price</th>
+              <th className="text-right py-3 pr-4 font-medium">Live Price</th>
+              <th className="text-right py-3 pr-4 font-medium">Market Value</th>
+              <th className="text-right py-3 pr-4 font-medium">Day %</th>
+              <th className="text-right py-3 pr-4 font-medium">P&amp;L (USD)</th>
+              <th className="text-right py-3 pr-4 font-medium">P&amp;L%</th>
+              <th className="text-right py-3 font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
-            {positions.map((p) => {
+            {positions.map((p, idx) => {
               const q = liveQuotes[p.symbol];
               const dayPct = q?.pct ?? null;
               const isUp = dayPct !== null && dayPct >= 0;
@@ -105,43 +124,55 @@ export default function BrokeragePositionsPanel() {
                 ? (invested > 0 ? ((marketValue - invested) / invested) * 100 : 0)
                 : Number(p.pnlPct) || 0;
               return (
-              <tr key={p.key} className="border-t border-white/5">
-                <td className="py-1.5 pr-3 font-semibold">{p.symbol}</td>
-                <td className="py-1.5 pr-3 text-white/65">{p.assetClass}</td>
-                <td className="py-1.5 pr-3 text-right">{qty.toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
-                <td className="py-1.5 pr-3 text-right">${avgPrice.toFixed(4)}</td>
-                <td className="py-1.5 pr-3 text-right">
+              <motion.tr 
+                key={p.key} 
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="border-t border-white/5 hover:bg-white/[0.02] transition-colors duration-200"
+              >
+                <td className="py-3 pr-4 font-semibold font-mono tracking-wide">{p.symbol}</td>
+                <td className="py-3 pr-4 text-white/60 capitalize">{p.assetClass}</td>
+                <td className="py-3 pr-4 text-right font-mono">{qty.toLocaleString(undefined, { maximumFractionDigits: 6 })}</td>
+                <td className="py-3 pr-4 text-right font-mono text-white/75">${avgPrice.toFixed(4)}</td>
+                <td className="py-3 pr-4 text-right font-mono">
                   {q ? (
-                    <span className="inline-flex items-center gap-1">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-success400 animate-pulse" />
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-success animate-pulse" />
                       ${livePrice.toFixed(4)}
                     </span>
-                  ) : `$${livePrice.toFixed(4)}`}
+                  ) : (
+                    <span className="text-white/60">${livePrice.toFixed(4)}</span>
+                  )}
                 </td>
-                <td className="py-1.5 pr-3 text-right font-mono">${marketValue.toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${dayPct === null ? 'text-white/40' : isUp ? 'text-accent-success400' : 'text-accent-error'}`}>
+                <td className="py-3 pr-4 text-right font-mono font-semibold">${marketValue.toFixed(2)}</td>
+                <td className={`py-3 pr-4 text-right font-mono font-medium ${dayPct === null ? 'text-white/35' : isUp ? 'text-accent-success' : 'text-accent-error'}`}>
                   {dayPct !== null ? (
-                    <span className="inline-flex items-center gap-0.5">
+                    <span className="inline-flex items-center gap-1">
                       {isUp ? '▲' : '▼'}{Math.abs(dayPct).toFixed(2)}%
                     </span>
                   ) : '—'}
                 </td>
-                <td className={`py-1.5 pr-3 text-right ${pnlUsd >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>${pnlUsd.toFixed(2)}</td>
-                <td className={`py-1.5 pr-3 text-right ${pnlPct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{pnlPct.toFixed(2)}%</td>
-                <td className="py-1.5 text-right">
+                <td className={`py-3 pr-4 text-right font-mono font-semibold ${pnlUsd >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
+                  {pnlUsd >= 0 ? '+' : ''}${pnlUsd.toFixed(2)}
+                </td>
+                <td className={`py-3 pr-4 text-right font-mono font-semibold ${pnlPct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
+                  {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%
+                </td>
+                <td className="py-3 text-right">
                   {confirmKey === p.key ? (
-                    <span className="inline-flex items-center gap-1">
+                    <span className="inline-flex items-center gap-1.5">
                       <button
                         onClick={() => liquidate(p)}
                         disabled={busyKey === p.key}
-                        className="px-2 py-1 rounded bg-accent-error text-ink-950 text-[11px] font-semibold disabled:opacity-60"
+                        className="px-3 py-1.5 rounded-lg bg-accent-error hover:bg-accent-error/90 text-white text-[11px] font-semibold disabled:opacity-60 transition-all duration-200 shadow-lg shadow-accent-error/20"
                       >
                         {busyKey === p.key ? <Loader2 className="h-3 w-3 animate-spin inline"/> : 'Confirm'}
                       </button>
                       <button
                         onClick={() => setConfirmKey(null)}
                         disabled={busyKey === p.key}
-                        className="px-2 py-1 rounded bg-white/10 text-[11px]"
+                        className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-[11px] transition-colors duration-200"
                       >
                         Cancel
                       </button>
@@ -149,13 +180,13 @@ export default function BrokeragePositionsPanel() {
                   ) : (
                     <button
                       onClick={() => setConfirmKey(p.key)}
-                      className="px-2 py-1 rounded bg-white/10 hover:bg-white/15 text-[11px]"
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-[11px] font-medium transition-all duration-200 hover:shadow-lg"
                     >
                       Liquidate
                     </button>
                   )}
                 </td>
-              </tr>
+              </motion.tr>
               );
             })}
           </tbody>
