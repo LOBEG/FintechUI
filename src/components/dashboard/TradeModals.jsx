@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, ArrowDownLeft, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Loader2, ArrowDownLeft, ArrowUpRight, CheckCircle2, Info } from 'lucide-react';
 import { api } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 import { useNotifications } from '@/components/Notifications';
@@ -221,7 +221,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
       ) : (
         <form onSubmit={submit} className="space-y-3">
           <div className="flex gap-2 text-xs items-start bg-accent-success/10 border border-accent-success/30 text-blue-400 rounded-lg p-3">
-            <ShieldAlert className="h-4 w-4 mt-0.5 shrink-0"/>
+            <Info className="h-4 w-4 mt-0.5 shrink-0"/>
             <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Markets Group administrator.</p>
           </div>
           <label className="block">

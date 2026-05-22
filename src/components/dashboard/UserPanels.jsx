@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, ShieldCheck, AlertTriangle, Bell, Lock, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
 import { useNotifications } from '@/components/Notifications';
@@ -96,7 +96,7 @@ export function DepositAddressPanel() {
                       {a.memo && <div className="text-[11px] text-blue-400">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
                       {memoRequired && (
                         <div className="flex gap-1.5 items-start text-[11px] text-accent-error bg-accent-error/10 border border-accent-error/30 rounded px-2 py-1.5">
-                          <ShieldAlert className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
+                          <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
                           <span>
                             {a.symbol} requires a destination tag / memo. Sending without it will result in <strong>permanent loss</strong> of funds.
                           </span>
@@ -412,7 +412,7 @@ export function EmailVerifyBanner({ user }) {
   };
   return (
     <section className="glass border border-accent-success/30 bg-accent-success/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-      <ShieldAlert className="h-5 w-5 text-blue-400 shrink-0"/>
+      <Lock className="h-5 w-5 text-blue-400 shrink-0"/>
       <div className="flex-1">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
         <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
@@ -909,7 +909,7 @@ export function KycPanel() {
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500/20 via-violet-500/20 to-indigo-500/20" />
         
         <div className="flex items-center flex-wrap gap-3 mb-4">
-          <ShieldAlert className="h-5 w-5 text-indigo-400"/>
+          <ShieldCheck className="h-5 w-5 text-indigo-400"/>
           <h3 className="font-display text-xl tracking-tight">KYC verification</h3>
           <motion.span 
             initial={{ opacity: 0, scale: 0.9 }}

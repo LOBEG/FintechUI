@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { TrendingUp, Wallet, ListOrdered, History, BarChart3, Bot, Bell, Shield, Settings, Briefcase } from 'lucide-react';
+import { TrendingUp, Wallet, ListOrdered, History, BarChart3, Bot, Bell, ShieldCheck, Settings, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/components/I18nProvider';
 import { useSession } from '@/lib/useSession';
@@ -15,7 +15,7 @@ const items = [
     { href: '/dashboard/analytics', label: 'analytics', icon: BarChart3 },
     { href: '/dashboard/analytics', label: 'aiBot', icon: Bot },
     { href: '/dashboard/security', label: 'alerts', icon: Bell },
-    { href: '/dashboard/security', label: 'security', icon: Shield },
+    { href: '/dashboard/security', label: 'security', icon: ShieldCheck },
     { href: '/dashboard/security', label: 'settings', icon: Settings },
 ];
 

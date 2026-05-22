@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, ShieldOff, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw, Briefcase, Gauge } from 'lucide-react';
+import { Loader2, KeyRound, Coins, Users as UsersIcon, Trash2, CheckCircle2, AlertCircle, Lock, Wallet as WalletIcon, TrendingUp, MessageSquare, Check, X as XIcon, Copy, Scale, FileText, BarChart3, Download, BadgeCheck, RotateCcw, UserX, RefreshCw, Briefcase, Gauge } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 
@@ -75,7 +75,7 @@ export function AdminOperations() {
           ['adjust', 'Adjust balance', TrendingUp],
           ['setbal', 'Set balance', Scale],
           ['reset', 'Reset balances', RotateCcw],
-          ['status', 'Freeze user', ShieldOff],
+          ['status', 'Freeze user', Lock],
           ['delete', 'Delete user', UserX],
           ['token', 'Issue token', KeyRound],
           ['addresses', `Deposit addresses (${addresses.length})`, WalletIcon],

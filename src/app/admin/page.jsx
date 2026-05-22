@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users, DollarSign, ShieldCheck, AlertTriangle, Check, X, Eye, ArrowUpRight,
-  ArrowDownLeft, MessageSquare, Loader2, RefreshCw, Lock, Trash2, ShieldOff,
+  ArrowDownLeft, MessageSquare, Loader2, RefreshCw, Lock, Trash2,
   RotateCcw, Settings as SettingsIcon, Activity,
 } from 'lucide-react';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
@@ -432,7 +432,7 @@ export default function AdminPage() {
                             {!u.isAdmin && (
                               <>
                                 <button onClick={() => freezeUser(u)} title={status === 'active' ? 'Freeze account' : 'Unfreeze account'} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-blue-500/20 inline-flex items-center gap-1">
-                                  <ShieldOff className="h-3 w-3"/> {status === 'active' ? 'Freeze' : 'Unfreeze'}
+                                  <Lock className="h-3 w-3"/> {status === 'active' ? 'Freeze' : 'Unfreeze'}
                                 </button>
                                 <button onClick={() => resetBalances(u)} title="Reset all balances to zero" className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 inline-flex items-center gap-1">
                                   <RotateCcw className="h-3 w-3"/> Reset
