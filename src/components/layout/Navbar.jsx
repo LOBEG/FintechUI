@@ -13,6 +13,8 @@ export function Navbar() {
     const authed = !!user && !loading;
     const publicNav = [
         { href: '/#markets', label: 'Markets' },
+        { href: '/markets/live', label: 'Live Markets' },
+        { href: '/markets/signals', label: 'Signals' },
         { href: '/insights', label: 'Insights' },
         { href: '/about', label: 'About' },
     ];

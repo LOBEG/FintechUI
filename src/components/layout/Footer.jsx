@@ -5,6 +5,8 @@ const groups = [
     {
         title: 'Platform',
         links: [
+            { href: '/markets/live', label: 'Live Markets' },
+            { href: '/markets/signals', label: 'Live Signals' },
             { href: '/brokerage', label: 'Brokerage' },
             { href: '/dashboard', label: 'Trading Dashboard' },
             { href: '/investor', label: 'Investor Portal' },
