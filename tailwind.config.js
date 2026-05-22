@@ -42,8 +42,8 @@ module.exports = {
           100: '#e2e8f0',
         },
         accent: {
-          primary: '#3b82f6',
-          primaryDark: '#2563eb',
+          primary: '#475569',
+          primaryDark: '#334155',
           secondary: '#10b981',
           secondaryDark: '#059669',
           success: '#10b981',
@@ -51,22 +51,33 @@ module.exports = {
           warning: '#f59e0b',
         },
         blue: {
-          muted: '#60a5fa',
-          soft: '#93c5fd',
+          muted: '#64748b',
+          soft: '#94a3b8',
+        },
+        slate: {
+          muted: '#64748b',
+          soft: '#94a3b8',
         },
         cyan: '#06b6d4',
+        fintech: {
+          slate: '#475569',
+          slateDark: '#334155',
+          slateMuted: '#64748b',
+          institutional: '#1e293b',
+          professional: '#3f4652',
+        },
       },
       boxShadow: {
-        glow: '0 0 40px -10px rgba(59, 130, 246, 0.25)',
+        glow: '0 0 40px -10px rgba(71, 85, 105, 0.25)',
         'glow-success': '0 0 40px -10px rgba(16, 185, 129, 0.25)',
         soft: '0 8px 30px rgba(0, 0, 0, 0.35)',
         card: '0 4px 24px rgba(0, 0, 0, 0.25)',
       },
       backgroundImage: {
         'gradient-radial':
-          'radial-gradient(ellipse at top, rgba(59, 130, 246, 0.08), transparent 50%), radial-gradient(ellipse at bottom right, rgba(6, 182, 212, 0.08), transparent 50%)',
+          'radial-gradient(ellipse at top, rgba(71, 85, 105, 0.08), transparent 50%), radial-gradient(ellipse at bottom right, rgba(6, 182, 212, 0.08), transparent 50%)',
         'gradient-primary':
-          'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1e40af 100%)',
+          'linear-gradient(135deg, #475569 0%, #334155 50%, #1e293b 100%)',
         'gradient-success':
           'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
       },
