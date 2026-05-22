@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, Bell, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
@@ -899,28 +900,76 @@ export function KycPanel() {
   const pct = (used, lim) => (lim > 0 ? Math.min(100, (used / lim) * 100) : (used > 0 ? 100 : 0));
   return (
     <>
-      <section className="glass-strong p-5">
-        <div className="flex items-center flex-wrap gap-2 mb-3">
-          <h3 className="font-display text-lg">KYC verification</h3>
-          <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">{summary.label}</span>
+      <motion.section 
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="glass-strong p-6 relative overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500/20 via-violet-500/20 to-indigo-500/20" />
+        
+        <div className="flex items-center flex-wrap gap-3 mb-4">
+          <ShieldAlert className="h-5 w-5 text-indigo-400"/>
+          <h3 className="font-display text-xl tracking-tight">KYC verification</h3>
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="chip bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 font-medium"
+          >
+            {summary.label}
+          </motion.span>
           {pendingSubmission && (
-            <span className="chip bg-white/5 border border-white/10 text-white/65">Tier {pendingSubmission.requestedTier} pending</span>
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="chip bg-amber-500/15 border border-amber-500/30 text-amber-400 font-medium"
+            >
+              Tier {pendingSubmission.requestedTier} pending
+            </motion.span>
           )}
           {nextTier && !pendingSubmission && (
-            <button onClick={() => setOpen(true)} className="ml-auto btn-primary text-xs">Upgrade to Tier {nextTier}</button>
+            <motion.button 
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              onClick={() => setOpen(true)} 
+              className="ml-auto btn-primary text-xs"
+            >
+              Upgrade to Tier {nextTier}
+            </motion.button>
           )}
         </div>
+        
         {summary.tier === 0 ? (
-          <p className="text-sm text-white/65">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="text-sm text-white/60 leading-relaxed bg-white/5 border border-white/10 rounded-xl p-4"
+          >
             Tier 0 accounts cannot withdraw. {emailVerifiedAt ? 'Submit your phone number to reach Tier 1 ($1,000/day).' : 'Verify your email first, then submit your phone number to reach Tier 1.'}
-          </p>
+          </motion.p>
         ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
+          <motion.div 
+            className="grid sm:grid-cols-2 gap-4"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
             <UsageBar title="Daily withdrawals" used={summary.daily.used} limit={summary.daily.limit} pct={pct(summary.daily.used, summary.daily.limit)} />
             <UsageBar title="30-day withdrawals" used={summary.monthly.used} limit={summary.monthly.limit} pct={pct(summary.monthly.used, summary.monthly.limit)} />
-          </div>
+          </motion.div>
         )}
-      </section>
+      </motion.section>
       <KycUpgradeModal open={open} onClose={() => setOpen(false)} requestedTier={nextTier} onSubmitted={() => { setOpen(false); load(); }} />
     </>
   );
@@ -928,18 +977,26 @@ export function KycPanel() {
 
 function UsageBar({ title, used, limit, pct }) {
   return (
-    <div>
-      <div className="flex justify-between text-xs text-white/55 mb-1">
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 4 },
+        visible: { opacity: 1, y: 0 }
+      }}
+      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/[0.07] transition-colors duration-200"
+    >
+      <div className="flex justify-between text-xs text-white/50 mb-2 font-medium">
         <span>{title}</span>
-        <span>${(used || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} / ${Number(limit || 0).toLocaleString()}</span>
+        <span className="font-mono">${(used || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })} / ${Number(limit || 0).toLocaleString()}</span>
       </div>
-      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-        <div
-          className={`h-full ${pct > 90 ? 'bg-accent-error' : pct > 70 ? 'bg-accent-success' : 'bg-accent-success'}`}
-          style={{ width: `${pct}%` }}
+      <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={`h-full ${pct > 90 ? 'bg-gradient-to-r from-red-500 to-accent-error' : pct > 70 ? 'bg-gradient-to-r from-amber-500 to-accent-warning' : 'bg-gradient-to-r from-emerald-500 to-accent-success'}`}
         />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1055,81 +1112,133 @@ export function PortfolioPanel({ refreshKey }) {
   if (!user) return null;
   if (!data) {
     return (
-      <section className="glass-strong p-5">
-        <h3 className="font-display text-lg mb-2">Portfolio P&amp;L</h3>
-        <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading positions…</p>
-      </section>
+      <motion.section 
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-strong p-6"
+      >
+        <h3 className="font-display text-xl mb-3">Portfolio P&amp;L</h3>
+        <p className="text-sm text-white/50 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin text-blue-400"/> Loading positions…</p>
+      </motion.section>
     );
   }
   const { positions, realisedTotal, costBasisTotal, marketValueTotal, unrealisedTotal } = data;
   const nonQuote = positions.filter((p) => !p.isQuote && p.qty > 0);
   const totalPct = costBasisTotal > 0 ? (unrealisedTotal / costBasisTotal) * 100 : 0;
   return (
-    <section className="glass-strong p-5">
-      <div className="flex items-center flex-wrap gap-2 mb-4">
-        <h3 className="font-display text-lg">Portfolio P&amp;L</h3>
-        <span className="chip bg-white/5 border border-white/10 text-white/65">cost-basis weighted</span>
-        {busy && <Loader2 className="h-3.5 w-3.5 animate-spin text-white/40"/>}
-        <button onClick={load} className="ml-auto text-xs text-white/55 hover:text-white">Refresh</button>
+    <motion.section 
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="glass-strong p-6 relative overflow-hidden"
+    >
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500/20 via-emerald-500/20 to-teal-500/20" />
+      
+      <div className="flex items-center flex-wrap gap-3 mb-5">
+        <h3 className="font-display text-xl tracking-tight">Portfolio P&amp;L</h3>
+        <span className="chip bg-white/5 border border-white/10 text-white/60 text-[11px] font-medium">cost-basis weighted</span>
+        {busy && <Loader2 className="h-4 w-4 animate-spin text-white/35"/>}
+        <button onClick={load} className="ml-auto text-xs text-white/50 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-all duration-200 font-medium">Refresh</button>
       </div>
-      <div className="grid sm:grid-cols-4 gap-3 mb-4 text-sm">
+      
+      <motion.div 
+        className="grid sm:grid-cols-4 gap-4 mb-5 text-sm"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: 0.08
+            }
+          }
+        }}
+      >
         <Stat label="Market value" value={`$${fmtMoney(marketValueTotal)}`}/>
         <Stat label="Cost basis" value={`$${fmtMoney(costBasisTotal)}`}/>
         <Stat label="Unrealised" value={fmtSigned(unrealisedTotal)} accent={unrealisedTotal >= 0 ? 'green' : 'red'} sub={costBasisTotal > 0 ? `${totalPct >= 0 ? '+' : ''}${totalPct.toFixed(2)}%` : null}/>
         <Stat label="Realised (lifetime)" value={fmtSigned(realisedTotal)} accent={realisedTotal >= 0 ? 'green' : 'red'}/>
-      </div>
+      </motion.div>
+      
       {nonQuote.length === 0 ? (
-        <p className="text-sm text-white/55">No crypto positions yet. Buy an asset from the markets panel and your cost basis and live P&amp;L will appear here.</p>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-sm text-white/50 bg-white/5 border border-white/10 rounded-xl p-4 leading-relaxed"
+        >
+          No crypto positions yet. Buy an asset from the markets panel and your cost basis and live P&amp;L will appear here.
+        </motion.p>
       ) : (
-        <div className="overflow-x-auto">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="overflow-x-auto -mx-6 px-6"
+        >
           <table className="w-full text-sm">
-            <thead className="text-xs text-white/45 text-left">
+            <thead className="text-xs text-white/45 text-left border-b border-white/10">
               <tr>
-                <th className="py-2">Asset</th>
-                <th>Qty</th>
-                <th>Avg cost</th>
-                <th>Mark</th>
-                <th>Value</th>
-                <th>Unrealised</th>
-                <th>Realised</th>
+                <th className="py-3 font-medium">Asset</th>
+                <th className="font-medium">Qty</th>
+                <th className="font-medium">Avg cost</th>
+                <th className="font-medium">Mark</th>
+                <th className="font-medium">Value</th>
+                <th className="font-medium">Unrealised</th>
+                <th className="font-medium">Realised</th>
               </tr>
             </thead>
             <tbody>
-              {nonQuote.map((p) => {
+              {nonQuote.map((p, idx) => {
                 const up = p.unrealised >= 0;
                 return (
-                  <tr key={p.symbol} className="border-t border-white/5">
-                    <td className="py-2 font-medium">{p.symbol}</td>
-                    <td className="font-mono text-xs">{trimQty(p.qty)}</td>
-                    <td className="font-mono text-xs">${fmtMoney(p.avgCost)}</td>
-                    <td className="font-mono text-xs">${fmtMoney(p.mark)}</td>
-                    <td className="font-mono text-xs">${fmtMoney(p.marketValue)}</td>
-                    <td className={`font-mono text-xs ${up ? 'text-accent-success' : 'text-accent-error'}`}>
+                  <motion.tr 
+                    key={p.symbol} 
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.04 }}
+                    className="border-t border-white/5 hover:bg-white/[0.02] transition-colors duration-200"
+                  >
+                    <td className="py-3 font-semibold font-mono tracking-wide">{p.symbol}</td>
+                    <td className="font-mono text-xs text-white/75">{trimQty(p.qty)}</td>
+                    <td className="font-mono text-xs text-white/75">${fmtMoney(p.avgCost)}</td>
+                    <td className="font-mono text-xs font-medium">${fmtMoney(p.mark)}</td>
+                    <td className="font-mono text-xs font-semibold">${fmtMoney(p.marketValue)}</td>
+                    <td className={`font-mono text-xs font-semibold ${up ? 'text-accent-success' : 'text-accent-error'}`}>
                       {up ? '+' : ''}${fmtMoney(p.unrealised)}
-                      <span className="text-white/45"> ({up ? '+' : ''}{p.unrealisedPct.toFixed(2)}%)</span>
+                      <span className="text-white/40 font-normal"> ({up ? '+' : ''}{p.unrealisedPct.toFixed(2)}%)</span>
                     </td>
-                    <td className={`font-mono text-xs ${p.realised >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
+                    <td className={`font-mono text-xs font-semibold ${p.realised >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>
                       {p.realised >= 0 ? '+' : ''}${fmtMoney(p.realised)}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       )}
-    </section>
+    </motion.section>
   );
 }
 
 function Stat({ label, value, sub, accent }) {
   const colour = accent === 'green' ? 'text-accent-success' : accent === 'red' ? 'text-accent-error' : '';
   return (
-    <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-      <div className="text-[11px] uppercase tracking-wide text-white/45">{label}</div>
-      <div className={`font-display text-lg ${colour}`}>{value}</div>
-      {sub && <div className={`text-xs ${colour}`}>{sub}</div>}
-    </div>
+    <motion.div 
+      variants={{
+        hidden: { opacity: 0, y: 8 },
+        visible: { opacity: 1, y: 0 }
+      }}
+      className="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/[0.07] transition-all duration-200 group relative overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="relative z-10">
+        <div className="text-[11px] uppercase tracking-wider text-white/40 font-semibold mb-2">{label}</div>
+        <div className={`font-display text-xl font-semibold tracking-tight ${colour}`}>{value}</div>
+        {sub && <div className={`text-xs font-medium mt-1.5 ${colour}`}>{sub}</div>}
+      </div>
+    </motion.div>
   );
 }
 
