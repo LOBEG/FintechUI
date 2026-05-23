@@ -103,7 +103,7 @@ export default function AssetDetailClient({ symbol }) {
   );
 
   return (
-    <div className="min-h-screen bg-ink-950 text-white">
+    <div className="min-h-screen bg-graphite-950 text-white">
       <TopBar />
       <div className="flex">
         <Sidebar />

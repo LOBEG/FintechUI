@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function CandleVisualizationPage() {
   return (
-    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-slate-950/70 via-indigo-950/30 to-slate-900/40">
+    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-slate-950/60 via-graphite-900/40 to-charcoal-950/50">
       <Navbar />
       <CandleVisualizationClient />
       <Footer />

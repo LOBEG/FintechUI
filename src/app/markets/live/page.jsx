@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function LiveCoveragePage() {
   return (
-    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-slate-950/70 via-slate-900/40 to-blue-950/40">
+    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-charcoal-950/70 via-graphite-900/50 to-slate-900/50">
       <Navbar />
       <LiveCoverageClient />
       <Footer />

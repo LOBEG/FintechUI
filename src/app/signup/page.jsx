@@ -41,13 +41,13 @@ function SignupForm() {
             setBusy(false);
         }
     };
-    return (<main className="min-h-screen flex relative bg-gradient-to-br from-accent-success950/40 via-stone-950 to-zinc-900">
+    return (<main className="min-h-screen flex relative bg-gradient-to-br from-graphite-950/70 via-charcoal-900 to-slate-950">
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-accent-success500/30 bg-accent-success500/5">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-accent-success/20 bg-accent-success/5">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
           <h1 className="text-2xl font-display">Create your Oakmont Digital Capital Group account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
-          <div className="mt-4 rounded-xl border border-accent-success500/30 bg-accent-success500/10 px-3 py-2 text-sm text-white/80">
+          <div className="mt-4 rounded-xl border border-accent-success/30 bg-accent-success/10 px-3 py-2 text-sm text-white/80">
             <Gift className="inline h-4 w-4 text-accent-success300 mr-1"/> New verified accounts receive an automatic <strong>$100 portfolio cash</strong> credit, ready to invest after sign-up.
           </div>
           <form className="mt-6 space-y-3" onSubmit={onSubmit}>

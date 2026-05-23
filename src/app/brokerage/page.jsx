@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function BrokeragePage() {
   return (
-    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-indigo-950/40 via-slate-950/60 to-blue-950/40">
+    <main className="pb-24 lg:pb-0 relative min-h-screen bg-gradient-to-br from-graphite-950/70 via-charcoal-900/50 to-slate-900/60">
       <Navbar/>
       <BrokerageClient/>
       <Footer/>
