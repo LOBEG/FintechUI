@@ -909,13 +909,13 @@ export function KycPanel() {
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500/20 via-violet-500/20 to-indigo-500/20" />
         
         <div className="flex items-center flex-wrap gap-3 mb-4">
-          <ShieldCheck className="h-5 w-5 text-indigo-400"/>
+          <ShieldCheck className="h-5 w-5 text-cyan-400"/>
           <h3 className="font-display text-xl tracking-tight">KYC verification</h3>
           <motion.span 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="chip bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 font-medium"
+            className="chip bg-indigo-500/15 text-cyan-400 border border-indigo-500/30 font-medium"
           >
             {summary.label}
           </motion.span>

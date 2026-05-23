@@ -82,10 +82,11 @@ module.exports = {
         },
       },
       boxShadow: {
-        glow: '0 0 40px -10px rgba(71, 85, 105, 0.25)',
-        'glow-success': '0 0 40px -10px rgba(16, 185, 129, 0.25)',
-        soft: '0 8px 30px rgba(0, 0, 0, 0.35)',
-        card: '0 4px 24px rgba(0, 0, 0, 0.25)',
+        glow: '0 0 32px -8px rgba(100, 116, 139, 0.20)',
+        'glow-success': '0 0 32px -8px rgba(16, 185, 129, 0.20)',
+        'glow-cyan': '0 0 32px -8px rgba(6, 182, 212, 0.18)',
+        soft: '0 6px 24px rgba(0, 0, 0, 0.40)',
+        card: '0 4px 20px rgba(0, 0, 0, 0.30)',
       },
       backgroundImage: {
         'gradient-radial':
