@@ -22,7 +22,9 @@ export default function Error({ error, reset }) {
           We could not complete that request just now. Live services are still protected and you can safely retry.
         </p>
         <p className="mt-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-xs text-white/55">
-          {error?.message || `${BRAND_NAME} could not render this view.`}
+          {process.env.NODE_ENV === 'production'
+            ? `${BRAND_NAME} could not render this view.`
+            : (error?.message || `${BRAND_NAME} could not render this view.`)}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button type="button" onClick={reset} className="btn-primary text-sm">Try again</button>

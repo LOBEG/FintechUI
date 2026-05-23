@@ -23,5 +23,13 @@ export function middleware(req) {
   headers.set('x-request-id', rid);
   const res = NextResponse.next({ request: { headers } });
   res.headers.set('x-request-id', rid);
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  res.headers.set('Content-Security-Policy', "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'");
+  if (process.env.NODE_ENV === 'production') {
+    res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
   return res;
 }

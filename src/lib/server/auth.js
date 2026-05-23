@@ -16,12 +16,12 @@ const COOKIE_TTL_DAYS = 30;
 
 function secret() {
   const s = process.env.SESSION_SECRET;
-  if (s && s.length >= 16) return s;
+  if (s && s.length >= 32) return s;
   // In production a missing/short secret is a hard error - silently
   // falling back to a known string would let anyone forge cookies.
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
-      'SESSION_SECRET is required in production and must be at least 16 characters.',
+      'SESSION_SECRET is required in production and must be at least 32 characters.',
     );
   }
   return 'oakmontdc-dev-secret-do-not-use-in-prod-oakmontdc-dev-secret';
@@ -105,7 +105,7 @@ export async function setSessionCookie(user, req) {
   jar.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     maxAge: COOKIE_TTL_DAYS * 24 * 60 * 60,
   });
@@ -128,7 +128,12 @@ export async function clearSessionCookie() {
     const payload = verify(existing);
     if (payload?.sid) revokeSession(payload.sid);
   } catch (_) {}
-  jar.set(COOKIE_NAME, '', { path: '/', maxAge: 0 });
+  jar.set(COOKIE_NAME, '', {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 0,
+  });
 }
 
 // Read the current session id (for endpoints that need to know which

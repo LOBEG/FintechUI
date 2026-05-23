@@ -77,7 +77,12 @@ export function useAccessibleDialog({ open, onClose, modal = true }) {
       window.cancelAnimationFrame(frame);
       dialog?.removeEventListener('keydown', handleKeyDown);
       if (modal) document.body.style.overflow = previousOverflow;
-      if (previousFocus && typeof previousFocus.focus === 'function') {
+      if (
+        previousFocus
+        && typeof previousFocus.focus === 'function'
+        && document.contains(previousFocus)
+        && previousFocus.getAttribute?.('aria-hidden') !== 'true'
+      ) {
         window.requestAnimationFrame(() => previousFocus.focus());
       }
     };

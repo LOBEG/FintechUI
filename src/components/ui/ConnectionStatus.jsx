@@ -12,7 +12,11 @@ export function ConnectionBadge({ status, lastUpdated, className = '' }) {
   const [staleSeconds, setStaleSeconds] = useState(0);
 
   useEffect(() => {
-    if (!lastUpdated) return;
+    if (!lastUpdated) {
+      setStaleSeconds(0);
+      return undefined;
+    }
+    setStaleSeconds(Math.floor((Date.now() - lastUpdated) / 1000));
     const id = setInterval(() => {
       setStaleSeconds(Math.floor((Date.now() - lastUpdated) / 1000));
     }, 1000);

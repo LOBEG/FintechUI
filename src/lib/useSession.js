@@ -31,10 +31,10 @@ async function jsonFetchWithMinimumDelay(url, opts = {}, minimumMs = 1200) {
 }
 
 export const api = {
-  get: (u) => jsonFetch(u),
-  post: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'POST', body: JSON.stringify(body || {}) }),
-  patch: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'PATCH', body: JSON.stringify(body || {}) }),
-  del: (u, body) => jsonFetchWithMinimumDelay(u, { method: 'DELETE', body: JSON.stringify(body || {}) }),
+  get: (u, opts = {}) => jsonFetch(u, opts),
+  post: (u, body, opts = {}) => jsonFetchWithMinimumDelay(u, { ...opts, method: 'POST', body: JSON.stringify(body || {}) }),
+  patch: (u, body, opts = {}) => jsonFetchWithMinimumDelay(u, { ...opts, method: 'PATCH', body: JSON.stringify(body || {}) }),
+  del: (u, body, opts = {}) => jsonFetchWithMinimumDelay(u, { ...opts, method: 'DELETE', body: JSON.stringify(body || {}) }),
 };
 
 export function useSession() {

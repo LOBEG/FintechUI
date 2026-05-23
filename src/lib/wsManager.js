@@ -20,7 +20,7 @@ const BINANCE_COMBINED_BASE = 'wss://stream.binance.com:9443/stream?streams=';
 
 const RECONNECT_BASE_MS = 1000;
 const RECONNECT_MAX_MS = 30000;
-const MAX_RECONNECT_ATTEMPTS = 20;
+const MAX_RECONNECT_ATTEMPTS = 8;
 const HEARTBEAT_INTERVAL_MS = 30000;
 const STALE_TIMEOUT_MS = 45000;
 const THROTTLE_MS = 250; // Minimum interval between dispatches to subscribers
@@ -189,10 +189,7 @@ class ManagedStream {
   }
 
   _resetStaleCheck() {
-    if (this.staleTimer) {
-      this._stopStaleCheck();
-      this._startStaleCheck();
-    }
+    this.lastMessageAt = Date.now();
   }
 
   _forceReconnect() {
