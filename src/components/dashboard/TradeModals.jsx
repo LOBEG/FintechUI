@@ -543,6 +543,9 @@ export function BrokerageInvestModal({
       if (!cancelled && r?.universe) setUniverse(r.universe);
     }).catch(() => {});
     return () => { cancelled = true; ctrl.abort(); };
+    // Reset only when the modal is opened or defaults change; live funding
+    // prices should not overwrite a user's in-progress funding selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, defaultClass, defaultSymbol, preferredBroker]);
 
   useEffect(() => {
