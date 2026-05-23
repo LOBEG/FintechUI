@@ -29,21 +29,21 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Globe className="h-8 w-8 text-blue-400 mb-3"/>
+              <Globe className="h-8 w-8 text-slate-400 mb-3"/>
               <h3 className="text-lg font-semibold">Global Presence</h3>
               <p className="mt-2 text-sm text-white/60">
                 Headquartered in London with offices in Singapore and Dubai. Serving clients in 45 countries across Europe, Asia, and the Middle East.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Award className="h-8 w-8 text-blue-400 mb-3"/>
+              <Award className="h-8 w-8 text-slate-400 mb-3"/>
               <h3 className="text-lg font-semibold">Industry Recognition</h3>
               <p className="mt-2 text-sm text-white/60">
                  Recognised for institutional brokerage operations, ISO 27001-aligned controls, and SOC 2 Type II-style operational governance.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Users className="h-8 w-8 text-blue-400 mb-3"/>
+              <Users className="h-8 w-8 text-slate-400 mb-3"/>
               <h3 className="text-lg font-semibold">Experienced Team</h3>
               <p className="mt-2 text-sm text-white/60">
                  Leadership team from capital markets, brokerage, exchange, custody, and fintech operations.

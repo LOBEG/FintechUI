@@ -67,7 +67,7 @@ export function DepositAddressPanel() {
   return (
     <section className="glass-strong p-5 max-w-3xl">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-blue-400"/>
+        <Wallet className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Deposit crypto</h3>
         <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
       </div>
@@ -94,7 +94,7 @@ export function DepositAddressPanel() {
                       ) : (
                         <span className="block h-4 w-full rounded bg-white/5 animate-pulse" aria-hidden="true"/>
                       )}
-                      {a.memo && <div className="text-[11px] text-blue-400">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
+                      {a.memo && <div className="text-[11px] text-slate-300">Memo / tag: <code className="font-mono">{a.memo}</code></div>}
                       {memoRequired && (
                         <div className="flex gap-1.5 items-start text-[11px] text-accent-error bg-accent-error/10 border border-accent-error/30 rounded px-2 py-1.5">
                           <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0"/>
@@ -357,9 +357,9 @@ export function SandboxOnRampPanel({ onClaimed }) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-2">
-        <Wallet className="h-4 w-4 text-blue-400"/>
+        <Wallet className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Sandbox starter funds</h3>
-        <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">test only</span>
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">test only</span>
       </div>
       <p className="text-xs text-white/55 mb-3">
         This deployment has the sandbox on-ramp enabled. Claim {info.amount} USDT of practice funds to try the invest flow.
@@ -400,7 +400,7 @@ export function TestimonialComposer() {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <MessageSquare className="h-4 w-4 text-blue-400"/>
+        <MessageSquare className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Share your Oakmont Digital Capital Group experience</h3>
       </div>
       <p className="text-xs text-white/55 mb-3">Eligible after your first investment or deposit clears. Your testimonial may appear publicly on the Oakmont Digital Capital Group landing page.</p>
@@ -412,7 +412,7 @@ export function TestimonialComposer() {
           <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg px-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button type="button" key={n} onClick={() => setRating(n)} aria-label={`${n} stars`}>
-                <Star className={`h-4 w-4 ${n <= rating ? 'text-blue-400 fill-cyan' : 'text-white/30'}`}/>
+                <Star className={`h-4 w-4 ${n <= rating ? 'text-accent-success fill-accent-success' : 'text-white/30'}`}/>
               </button>
             ))}
           </div>
@@ -456,7 +456,7 @@ export function EmailVerifyBanner({ user }) {
   };
   return (
     <section className="glass border border-accent-success/30 bg-accent-success/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-      <Lock className="h-5 w-5 text-blue-400 shrink-0"/>
+      <Lock className="h-5 w-5 text-slate-400 shrink-0"/>
       <div className="flex-1">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
         <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
@@ -638,7 +638,7 @@ export function OpenOrdersPanel({ refreshKey, onPlaced }) {
                   <tr key={o.id}>
                     <td className="py-2.5 text-white/55 text-xs">{new Date(o.createdAt).toLocaleString()}</td>
                     <td>
-                      <span className={`chip border ${o.side === 'buy' ? 'bg-accent-success/15 text-accent-success border-accent-success/30' : 'bg-blue-500/15 text-blue-400 border-blue-500/30'}`}>{o.side}</span>
+                      <span className={`chip border ${o.side === 'buy' ? 'bg-accent-success/15 text-accent-success border-accent-success/30' : 'bg-accent-error/15 text-accent-error border-accent-error/30'}`}>{o.side}</span>
                     </td>
                     <td className="text-white/80">{o.kind}</td>
                     <td>{o.symbol}</td>
@@ -724,11 +724,11 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
           <div className="grid grid-cols-2 gap-2">
             <div className="flex rounded-lg overflow-hidden border border-white/10">
               <button type="button" onClick={() => setSide('buy')} className={`flex-1 py-2 text-xs ${side === 'buy' ? 'bg-accent-success/20 text-accent-success' : 'bg-white/5 text-white/65'}`}>Buy</button>
-              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-white/65'}`}>Sell</button>
+              <button type="button" onClick={() => setSide('sell')} className={`flex-1 py-2 text-xs ${side === 'sell' ? 'bg-accent-error/15 text-accent-error' : 'bg-white/5 text-white/65'}`}>Sell</button>
             </div>
             <div className="flex rounded-lg overflow-hidden border border-white/10">
-              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-accent-success/15 text-blue-400' : 'bg-white/5 text-white/65'}`}>Limit</button>
-              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-accent-success/15 text-blue-400' : 'bg-white/5 text-white/65'}`}>Stop</button>
+              <button type="button" onClick={() => setKind('limit')} className={`flex-1 py-2 text-xs ${kind === 'limit' ? 'bg-accent-success/15 text-accent-success' : 'bg-white/5 text-white/65'}`}>Limit</button>
+              <button type="button" onClick={() => setKind('stop')} className={`flex-1 py-2 text-xs ${kind === 'stop' ? 'bg-accent-success/15 text-accent-success' : 'bg-white/5 text-white/65'}`}>Stop</button>
             </div>
           </div>
           <label className="block">
@@ -835,7 +835,7 @@ export function BeneficiariesPanel() {
                     </td>
                     <td>
                       {b.status === 'active' && <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">active</span>}
-                      {b.status === 'cooling-down' && <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
+                      {b.status === 'cooling-down' && <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30" title={`Usable from ${new Date(b.usableAt).toLocaleString()}`}>cool-down</span>}
                       {b.status === 'pending-email' && <span className="chip bg-white/5 text-white/65 border border-white/10">awaiting email</span>}
                     </td>
                     <td className="text-right">
@@ -1173,7 +1173,7 @@ export function PortfolioPanel({ refreshKey }) {
         className="glass-strong p-6"
       >
         <h3 className="font-display text-xl mb-3">Portfolio P&amp;L</h3>
-        <p className="text-sm text-white/50 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin text-blue-400"/> Loading positions…</p>
+        <p className="text-sm text-white/50 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin text-slate-400"/> Loading positions…</p>
       </motion.section>
     );
   }
@@ -1477,7 +1477,7 @@ export function ConvertPanel({ onConverted } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <ArrowRightLeft className="h-4 w-4 text-blue-400"/>
+        <ArrowRightLeft className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Convert</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">live mid + spread</span>
       </div>
@@ -1592,9 +1592,9 @@ export function EmptyStateCoach() {
   return (
     <section className="glass-strong p-5 border border-accent-success/20">
       <div className="flex items-center gap-2 mb-3">
-        <Rocket className="h-4 w-4 text-blue-400"/>
+        <Rocket className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Start here</h3>
-        <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">new account</span>
+        <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">new account</span>
         <button
           type="button"
           onClick={() => setDismissed(true)}
@@ -1697,7 +1697,7 @@ export function DcaPanel({ onChanged } = {}) {
   return (
     <section className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Wallet className="h-4 w-4 text-blue-400" aria-hidden/>
+        <Wallet className="h-4 w-4 text-slate-400" aria-hidden/>
         <h3 className="font-display text-lg">Recurring buys (DCA)</h3>
         <span className="chip bg-white/5 text-white/60 border border-white/10 ml-auto">{active.length} active</span>
       </div>
@@ -1901,7 +1901,7 @@ export function ReferralPanel() {
 // Admin replies arrive over the existing notification centre.
 const TICKET_STATUS_COPY = {
   open: { label: 'Open', tone: 'text-accent-success' },
-  awaiting_user: { label: 'Awaiting you', tone: 'text-blue-400' },
+  awaiting_user: { label: 'Awaiting you', tone: 'text-slate-400' },
   answered: { label: 'Answered', tone: 'text-accent-success' },
   closed: { label: 'Closed', tone: 'text-white/45' },
 };
@@ -1985,7 +1985,7 @@ export function SupportPanel() {
   return (
     <section className="glass-strong p-5">
       <header className="flex items-center gap-2">
-        <LifeBuoy className="h-4 w-4 text-blue-400"/>
+        <LifeBuoy className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-base">Support</h3>
         <button
           type="button"
@@ -2067,7 +2067,7 @@ export function SupportPanel() {
                       {(t.messages || []).map((m) => (
                         <li key={m.id} className={`rounded-lg px-3 py-2 text-xs whitespace-pre-wrap break-words ${m.authorRole === 'staff' ? 'bg-accent-success/10 border border-accent-success/20 text-white' : 'bg-white/5 border border-white/10 text-white/85'}`}>
                           <div className="flex items-center justify-between mb-0.5 text-[10px]">
-                            <span className={m.authorRole === 'staff' ? 'text-blue-400' : 'text-white/55'}>
+                            <span className={m.authorRole === 'staff' ? 'text-accent-success' : 'text-white/55'}>
                               {m.authorRole === 'staff' ? 'Oakmont Digital Capital Group support' : 'You'}
                             </span>
                             <span className="text-white/35">{fmtTime(m.createdAt)}</span>
@@ -2134,7 +2134,7 @@ export function SupportContactPanel() {
   return (
     <section id="support-section" className="glass-strong p-5">
       <div className="flex items-center gap-2 mb-3">
-        <LifeBuoy className="h-4 w-4 text-blue-400"/>
+        <LifeBuoy className="h-4 w-4 text-slate-400"/>
         <h3 className="font-display text-lg">Contact Support</h3>
       </div>
       <p className="text-sm text-white/60 mb-4">Need help? Reach out to our support team via your preferred channel.</p>

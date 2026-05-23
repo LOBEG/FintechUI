@@ -110,7 +110,7 @@ export default function BrokeragePositionsPanel() {
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-emerald-500/20" />
       
       <div className="flex items-center gap-3 mb-4">
-        <TrendingUp className="h-5 w-5 text-blue-400"/>
+        <TrendingUp className="h-5 w-5 text-slate-400"/>
         <h3 className="font-display text-xl tracking-tight">Brokerage positions</h3>
         <motion.span 
           initial={{ opacity: 0, scale: 0.9 }}

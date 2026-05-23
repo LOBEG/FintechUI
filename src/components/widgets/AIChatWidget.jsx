@@ -90,7 +90,7 @@ export function AIChatWidget() {
         {open ? <X className="h-6 w-6"/> : <Bot className="h-6 w-6"/>}
       </motion.button>
       <AnimatePresence>
-        {open && (<motion.div drag dragListener={false} dragControls={dragControls} dragMomentum={false} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-4 right-4 lg:left-5 lg:right-auto z-[60] w-[calc(100vw-2rem)] max-w-md lg:w-96 bg-navy-900 border border-blue-500/20 shadow-[0_30px_90px_rgba(0,0,0,0.55)] rounded-2xl overflow-hidden flex flex-col h-[70vh] lg:h-[480px]">
+        {open && (<motion.div drag dragListener={false} dragControls={dragControls} dragMomentum={false} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="fixed bottom-24 left-4 right-4 lg:left-5 lg:right-auto z-[60] w-[calc(100vw-2rem)] max-w-md lg:w-96 bg-navy-900 border border-slate-700/20 shadow-[0_30px_90px_rgba(0,0,0,0.55)] rounded-2xl overflow-hidden flex flex-col h-[70vh] lg:h-[480px]">
             <div onPointerDown={(event) => dragControls.start(event)} className="px-4 py-3 border-b border-white/10 flex items-center gap-2 cursor-move select-none touch-none">
               <span className="h-8 w-8 rounded-lg bg-gradient-primary inline-flex items-center justify-center text-ink-950">
                 <Sparkles className="h-4 w-4"/>
@@ -109,7 +109,7 @@ export function AIChatWidget() {
                 </div>))}
             </div>
             <div className="p-3 border-t border-white/10 flex gap-2">
-              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-blue-500/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
+              <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-slate-700/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-slate-500/50 focus:ring-2 focus:ring-slate-500/10"/>
               <button onClick={send} className="btn-primary btn-sm"><Send className="h-4 w-4"/></button>
             </div>
           </motion.div>)}

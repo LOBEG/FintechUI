@@ -39,7 +39,7 @@ export function PortfolioGrowth() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="lg:col-span-2 glass-strong p-6 flex flex-col items-center">
           <div className="w-full flex items-center justify-between">
             <p className="text-sm text-white/60">Brokerage asset-class coverage</p>
-            <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">
+            <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">
               <TrendingUp className="h-3 w-3"/> Live coverage
             </span>
           </div>

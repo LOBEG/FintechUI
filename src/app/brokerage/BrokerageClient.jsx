@@ -189,7 +189,7 @@ function QuoteDetail({ q, onClose }) {
         {...dialogProps}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-teal-500/20 to-blue-500/20" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-500/15 via-accent-success/10 to-slate-500/15" />
         
         <div className="flex items-start gap-4 mb-5">
           <div className="flex-1 min-w-0">
@@ -391,7 +391,7 @@ function BrokerageBoard({ assetClass }) {
           animate={{ opacity: 1 }}
           className="glass-light p-8 text-center text-sm text-white/50 inline-flex items-center gap-2.5 justify-center w-full"
         >
-          <Loader2 className="h-5 w-5 animate-spin text-blue-400"/> 
+          <Loader2 className="h-5 w-5 animate-spin text-slate-400"/> 
           <span>Connecting to live market feed…</span>
         </motion.div>
       ) : (
@@ -662,7 +662,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           }}
           className="glass p-5 hover:bg-white/[0.03] transition-all duration-300 group"
         >
-          <BarChart3 className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
+          <BarChart3 className="h-6 w-6 text-slate-400 group-hover:scale-110 transition-transform duration-300"/>
           <h3 className="font-display mt-3 text-lg">Brokerage account</h3>
           <p className="text-sm text-white/60 mt-2 leading-relaxed">Single account, every asset class. Stocks, ETFs, options, futures, forex, commodities and crypto in one balance.</p>
         </motion.div>
@@ -684,7 +684,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           }}
           className="glass p-5 hover:bg-white/[0.03] transition-all duration-300 group"
         >
-          <Activity className="h-6 w-6 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
+          <Activity className="h-6 w-6 text-slate-400 group-hover:scale-110 transition-transform duration-300"/>
           <h3 className="font-display mt-3 text-lg">Risk &amp; reporting</h3>
           <p className="text-sm text-white/60 mt-2 leading-relaxed">Real-time PnL, margin, exposure and tax-ready statements. Suitable for retail, professional and institutional clients.</p>
         </motion.div>
@@ -727,7 +727,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
             >
               <p className="text-sm font-semibold text-white">{v.label}</p>
               <p className="text-[11px] text-white/50 mt-1.5 leading-relaxed">{v.blurb}</p>
-              <p className="text-[10px] text-blue-400/80 mt-2">Live symbols and user-visible signals</p>
+              <p className="text-[10px] text-white/45 mt-2">Live symbols and user-visible signals</p>
             </motion.div>
           ))}
         </motion.div>

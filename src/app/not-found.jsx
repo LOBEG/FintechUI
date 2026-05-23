@@ -9,7 +9,7 @@ export default function NotFound() {
         <div className="flex justify-center">
           <BrandLogo className="pointer-events-none" />
         </div>
-        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-blue-400/80">404 · page not found</p>
+        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-white/45">404 · page not found</p>
         <h1 className="mt-3 text-3xl sm:text-4xl font-display">This Oakmont destination is unavailable.</h1>
         <p className="mt-3 text-sm sm:text-base text-white/65">
           The page may have moved, the link may be incomplete, or the route is no longer active on {BRAND_NAME}.

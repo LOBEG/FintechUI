@@ -107,11 +107,11 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       transition={{ duration: 0.4 }}
       className="glass-strong p-6 space-y-5 relative overflow-hidden"
     >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-teal-500/20 to-blue-500/20" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-500/15 via-accent-success/10 to-slate-500/15" />
       
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-1">
-          <Briefcase className="h-5 w-5 text-blue-400"/>
+          <Briefcase className="h-5 w-5 text-slate-400"/>
           <h3 className="font-display text-xl tracking-tight">Brokerage hub</h3>
           <motion.span 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -159,7 +159,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             >
               <div className="flex items-center gap-3">
                 <span className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 inline-flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
-                   <Icon className="h-5 w-5 text-blue-400 group-hover:scale-110 transition-transform duration-300"/>
+                   <Icon className="h-5 w-5 text-slate-400 group-hover:scale-110 transition-transform duration-300"/>
                 </span>
                 <span className="font-semibold text-sm flex-1">{b.name}</span>
                 <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px] font-medium">● live</span>
@@ -187,7 +187,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       >
         <div className="glass-light p-4">
           <div className="flex items-center gap-3 mb-3">
-            <Activity className="h-4 w-4 text-blue-400"/>
+            <Activity className="h-4 w-4 text-slate-400"/>
             <p className="text-sm font-semibold">Live asset-class coverage</p>
             <span className="ml-auto text-[10px] text-white/40 font-mono">{quotes.length} live quotes</span>
           </div>

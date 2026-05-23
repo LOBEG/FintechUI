@@ -52,10 +52,10 @@ export function AdminOperations() {
     return <div className="glass-strong p-6 flex items-center gap-2 text-sm text-white/65"><Loader2 className="h-4 w-4 animate-spin"/> Loading admin operations…</div>;
   }
   if (!user) {
-    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-blue-400"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-admin btn-sm">Sign in</a></div>;
+    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-slate-400"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-admin btn-sm">Sign in</a></div>;
   }
   if (!user.isAdmin) {
-    return <div className="glass-strong p-6 text-sm flex items-center gap-3 text-blue-400"><AlertCircle className="h-5 w-5"/> Your account is not an administrator. Set <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_EMAIL</code> + <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_PASSWORD</code> environment variables and sign in with that account.</div>;
+    return <div className="glass-strong p-6 text-sm flex items-center gap-3 text-slate-400"><AlertCircle className="h-5 w-5"/> Your account is not an administrator. Set <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_EMAIL</code> + <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_PASSWORD</code> environment variables and sign in with that account.</div>;
   }
 
   return (
@@ -260,7 +260,7 @@ function UsersList({ users }) {
             <tr key={u.id}>
               <td className="py-2.5">{u.email}</td>
               <td>{u.name}</td>
-              <td>{u.isAdmin ? <span className="chip bg-accent-success/15 text-blue-400">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}</td>
+              <td>{u.isAdmin ? <span className="chip bg-accent-success/15 text-white/75">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}</td>
               <td>{(u.accountStatus || 'active') === 'active' ? <span className="chip bg-accent-success/15 text-accent-success">active</span> : <span className="chip bg-accent-error/15 text-accent-error">disabled</span>}</td>
               <td className="text-white/55">{new Date(u.createdAt).toLocaleDateString()}</td>
               <td className="text-white/70 text-xs">{Object.entries(u.balances || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}: ${fmt(v)}`).join(' · ') || '-'}</td>
@@ -512,8 +512,8 @@ function TestimonialsPanel({ testimonials, onDone }) {
             <div className="flex items-center gap-2 text-xs">
               <strong className="text-white">{t.name}</strong>
               <span className="text-white/55">{t.role || 'Oakmont Digital Capital Group investor'}</span>
-              <span className={`chip ${t.status === 'approved' ? 'bg-accent-success/15 text-accent-success' : t.status === 'pending' ? 'bg-accent-success/15 text-blue-400' : 'bg-accent-error/15 text-accent-error'}`}>{t.status}</span>
-              <span className="text-blue-400">{'★'.repeat(t.rating || 5)}</span>
+              <span className={`chip ${t.status === 'approved' ? 'bg-accent-success/15 text-accent-success' : t.status === 'pending' ? 'bg-accent-success/15 text-accent-warning' : 'bg-accent-error/15 text-accent-error'}`}>{t.status}</span>
+              <span className="text-accent-success">{'★'.repeat(t.rating || 5)}</span>
             </div>
             <p className="mt-1 text-sm text-white/80">{t.text}</p>
           </div>
@@ -657,7 +657,7 @@ function WithdrawLimitsForm({ users, onDone }) {
         <input list="adm-users-wl" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
         <datalist id="adm-users-wl">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
         {existing && (
-          <p className="mt-1 text-[11px] text-blue-400">Active override: daily {existing.daily ?? '-'} · monthly {existing.monthly ?? '-'} · per-tx {existing.perTx ?? '-'}{existing.setBy ? ` · set by ${existing.setBy}` : ''}</p>
+          <p className="mt-1 text-[11px] text-slate-400">Active override: daily {existing.daily ?? '-'} · monthly {existing.monthly ?? '-'} · per-tx {existing.perTx ?? '-'}{existing.setBy ? ` · set by ${existing.setBy}` : ''}</p>
         )}
       </label>
       <label className="block">
@@ -796,7 +796,7 @@ function ExportsPanel() {
   // the auth cookie is sent automatically.
   const Link = ({ kind, label }) => (
     <a href={`/api/admin/export?kind=${kind}`} className="glass-light p-3 flex items-center gap-3 hover:bg-white/10">
-      <Download className="h-4 w-4 text-blue-400"/>
+      <Download className="h-4 w-4 text-slate-400"/>
       <div className="flex-1">
         <div className="text-sm font-medium">{label}</div>
         <div className="text-[11px] text-white/55">Download as CSV</div>
@@ -838,7 +838,7 @@ function KycQueuePanel() {
         ) : data.pending.map((s) => (
           <div key={s.id} className="glass p-3 mb-2 space-y-2">
             <div className="flex items-center flex-wrap gap-2 text-xs">
-              <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">Tier {s.requestedTier}</span>
+              <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">Tier {s.requestedTier}</span>
               <span className="text-white/85">{s.userEmail}</span>
               <span className="text-white/45 ml-auto">{new Date(s.createdAt).toLocaleString()}</span>
             </div>
@@ -904,7 +904,7 @@ function ResetBalancesForm({ users, onDone }) {
       <p className="sm:col-span-2 text-xs text-white/55">Zero every asset balance for a user. Records a single <code className="px-1 py-0.5 rounded bg-white/10">reset</code> transaction with the prior balances and appends an audit-log entry. Account, history, and metadata are preserved.</p>
       <label className="block sm:col-span-2">
         <span className="text-xs text-white/55">User email</span>
-        <input list="adm-users-rst" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500/40"/>
+        <input list="adm-users-rst" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="alice@example.com" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-slate-500/40"/>
         <datalist id="adm-users-rst">{users.map((u) => <option key={u.id} value={u.email}/>)}</datalist>
         {target && (
           <p className="mt-1 text-[11px] text-white/55">
@@ -1067,13 +1067,13 @@ function BrokerageSettingsPanel() {
         ].map(([label, value]) => (
           <div key={label} className="glass-light p-3">
             <p className="text-[10px] uppercase tracking-wide text-white/45">{label}</p>
-            <p className="mt-1 text-xl font-mono text-blue-400">{value}</p>
+            <p className="mt-1 text-xl font-mono text-white/85">{value}</p>
           </div>
         ))}
       </div>
       <div className="glass-light p-3">
         <div className="flex items-center gap-2 mb-2">
-          <Briefcase className="h-4 w-4 text-blue-400"/>
+          <Briefcase className="h-4 w-4 text-slate-400"/>
           <p className="text-sm font-semibold">Live brokerage visibility</p>
           <span className="ml-auto chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● live feed</span>
         </div>

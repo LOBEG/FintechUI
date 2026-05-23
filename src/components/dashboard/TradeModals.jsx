@@ -149,7 +149,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
           <p className="text-[11px] text-white/55">
             Available {fundingSymbol}: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</strong>
             {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
-            {fundingUsd <= 0 && <span className="text-blue-400"> (insufficient)</span>}
+            {fundingUsd <= 0 && <span className="text-accent-error"> (insufficient)</span>}
           </p>
           <label className="block">
             <span className="text-xs text-white/55">USD amount</span>
@@ -259,7 +259,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
     } finally { setBusy(false); }
   };
   return (
-    <Modal open={open} onClose={onClose} title="Withdraw crypto" icon={<ArrowUpRight className="h-4 w-4 text-blue-400"/>}>
+    <Modal open={open} onClose={onClose} title="Withdraw crypto" icon={<ArrowUpRight className="h-4 w-4 text-slate-400"/>}>
       {success ? (
         <div className="text-center py-6">
           <CheckCircle2 className="h-10 w-10 text-accent-success mx-auto"/>
@@ -270,7 +270,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
-          <div className="flex gap-2 text-xs items-start bg-accent-success/10 border border-accent-success/30 text-blue-400 rounded-lg p-3">
+          <div className="flex gap-2 text-xs items-start bg-accent-success/10 border border-accent-success/30 text-slate-300 rounded-lg p-3">
             <Info className="h-4 w-4 mt-0.5 shrink-0"/>
             <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Capital Group administrator.</p>
           </div>
@@ -316,7 +316,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
                   <option key={n} value={n} className="bg-ink-900">{n}</option>
                 ))}
               </select>
-              <span className="text-[11px] text-blue-400/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
+              <span className="text-[11px] text-accent-error/80 mt-1 block">Sending on the wrong chain will result in permanent loss of funds. Double-check before submitting.</span>
             </label>
           )}
           {!beneficiaryId && memoRequired && (
@@ -595,7 +595,7 @@ export function BrokerageInvestModal({
             <span className="block text-[11px] text-white/55 mt-1">
               Available: <strong>{fundingBal.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)} {fundingSymbol}</strong>
               {' '}≈ <strong>${fundingUsd.toFixed(2)}</strong>
-              {fundingUsd <= 0 && <span className="text-blue-400"> (insufficient)</span>}
+              {fundingUsd <= 0 && <span className="text-accent-error"> (insufficient)</span>}
             </span>
           </label>
           <label className="block">

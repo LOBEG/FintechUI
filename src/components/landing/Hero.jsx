@@ -19,12 +19,12 @@ export function Hero() {
     const chartUpdatedLabel = lastCandle?.updatedAt ? new Date(lastCandle.updatedAt).toLocaleTimeString() : 'connecting';
     return (<section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none"/>
-      <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-blue-500/10 blur-3xl pointer-events-none"/>
+      <div className="absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-slate-500/8 blur-3xl pointer-events-none"/>
       <div className="absolute -bottom-40 left-0 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"/>
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-14 sm:pt-14 sm:pb-16 lg:pt-24 lg:pb-24 grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}>
           <span className="chip bg-white/5 border border-white/10 text-white/80 px-3 py-1.5 text-[11px] sm:text-xs">
-            <Sparkles className="h-3.5 w-3.5 text-blue-400"/>
+            <Sparkles className="h-3.5 w-3.5 text-accent-success"/>
               Live multi-asset brokerage · stocks · crypto · forex · commodities · futures · options
           </span>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-display leading-[0.98] tracking-tight">

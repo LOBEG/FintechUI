@@ -82,13 +82,13 @@ export default function AITradingBotClient() {
   const breadthPct = total ? (up / total) * 100 : 0;
   const bias = breadthPct >= 60 ? { label: 'Risk-On', tone: 'text-accent-success' }
     : breadthPct <= 40 ? { label: 'Risk-Off', tone: 'text-accent-error' }
-    : { label: 'Mixed', tone: 'text-blue-400' };
+    : { label: 'Mixed', tone: 'text-slate-400' };
 
   return (
     <>
       <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="chip bg-white/5 border border-white/10 text-white/80">
-          <Sparkles className="h-3.5 w-3.5 text-blue-400"/> Oakmont Intelligence · Oakmont Digital Capital Group
+          <Sparkles className="h-3.5 w-3.5 text-accent-success"/> Oakmont Intelligence · Oakmont Digital Capital Group
         </span>
         <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display leading-tight">
           <span className="text-gradient-primary">Real-time market signals</span>
@@ -118,7 +118,7 @@ export default function AITradingBotClient() {
           <p className="text-xs text-white/55 mt-1">{up} of {total} tracked pairs are up. Breadth {breadthPct.toFixed(0)}%.</p>
         </div>
         <div className="glass-strong p-4">
-          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingUp className="h-4 w-4 text-blue-400"/> Top mover</div>
+          <div className="flex items-center gap-2 text-white/60 text-xs"><TrendingUp className="h-4 w-4 text-slate-400"/> Top mover</div>
           {(() => {
             const ranked = UNIVERSE.map((s) => ({ s, p: prices[s] })).filter((x) => x.p && isFinite(x.p.pct)).sort((a, b) => b.p.pct - a.p.pct);
             const m = ranked[0];
@@ -187,7 +187,7 @@ export default function AITradingBotClient() {
           const Icon = c.icon;
           return (
             <div key={c.title} className="glass-strong p-5">
-              <Icon className="h-7 w-7 text-blue-400 mb-3"/>
+              <Icon className="h-7 w-7 text-slate-400 mb-3"/>
               <h3 className="font-semibold">{c.title}</h3>
               <p className="text-xs text-white/60 mt-2">{c.desc}</p>
             </div>

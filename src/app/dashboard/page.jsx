@@ -301,7 +301,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           <section className="glass-strong p-4 sm:p-5">
             <div className="flex flex-col lg:flex-row lg:items-end gap-4">
               <div className="flex-1">
-                  <p className="text-xs uppercase tracking-[0.24em] text-blue-400/80">Dedicated workspace</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-white/45">Dedicated workspace</p>
                 <h1 className="mt-1 text-2xl sm:text-3xl font-display">{activeFeatureMeta.label}</h1>
                 <p className="mt-1 text-sm text-white/60 max-w-3xl">{activeFeatureMeta.blurb}</p>
               </div>
@@ -330,7 +330,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             </section>
           )}
           {showAuthGate && (
-            <section className="glass-strong p-5 border-blue-500/25">
+            <section className="glass-strong p-5 border-slate-500/20">
               <p className="text-sm text-white/60">{activeFeatureMeta.label} workspace</p>
               <h2 className="mt-1 text-2xl font-display">Sign in to view live {activeFeatureMeta.label.toLowerCase()} content.</h2>
               <p className="mt-2 text-sm text-white/60 max-w-2xl">Each feature now has its own page on desktop and mobile. Secure account data stays hidden until your session is confirmed.</p>
@@ -369,7 +369,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
             <AvailableCashSelector wallets={wallets} livePrices={livePrices} />
             <div className="glass p-5">
               <p className="text-sm text-white/60">{t('openPnL')}</p>
-              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-blue-400' : 'text-accent-error'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
+              <p className={`text-2xl font-display mt-1 ${openPnl >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{openPnl >= 0 ? '+' : ''}{formatUSD(openPnl)}</p>
               <p className="text-xs text-white/50 mt-1">{positions.length} {t('openPositions')}</p>
             </div>
           </section> : <section className="glass-strong p-5">
@@ -418,7 +418,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     </button>))}
                 </div>
               </div>
-              <div className="mt-3 rounded-xl bg-ink-900/60 border border-blue-500/10 p-2">
+              <div className="mt-3 rounded-xl bg-ink-900/60 border border-slate-700/15 p-2">
                 <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/45">
                   <span className={chartLive ? 'text-accent-success' : 'text-white/45'}>
                     {chartLive ? 'Live Binance candles' : 'Connecting to Binance candles'}
@@ -533,7 +533,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
           {user && activeFeature === 'analytics' && (
             <section className="glass-strong p-5">
               <div className="flex items-center flex-wrap gap-2 mb-3">
-                <Bot className="h-4 w-4 text-blue-400"/>
+                <Bot className="h-4 w-4 text-slate-400"/>
                 <h3 className="font-display text-lg">Live market signals</h3>
                 <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px]">● per-symbol</span>
               </div>
@@ -743,7 +743,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                         <div className="space-y-1.5">
                           {movers.length ? movers.map((m) => (
                             <div key={m.sym} className="glass-light p-2 flex items-center gap-2 text-xs">
-                               <Zap className="h-3.5 w-3.5 text-blue-400"/>
+                               <Zap className="h-3.5 w-3.5 text-slate-400"/>
                               <span className="flex-1 font-semibold">{m.sym}</span>
                               <span className={m.deltaPct >= 0 ? 'text-accent-success' : 'text-accent-error'}>{m.deltaPct >= 0 ? '+' : ''}{m.deltaPct.toFixed(2)}%</span>
                             </div>
@@ -753,7 +753,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                       <div className="glass-light p-3 text-xs space-y-1.5 border border-accent-success/20">
                         <p className="font-semibold text-accent-success">Market insight</p>
                         <p className="text-white/75">{trend}</p>
-                         {concentration && <p className="text-blue-400">{concentration}</p>}
+                         {concentration && <p className="text-white/70">{concentration}</p>}
                       </div>
                     </div>
                   ) : (
@@ -793,7 +793,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 <>
                   <div className="mt-3 space-y-2">
                     {['Grid · SOL/USDT', 'DCA · BTC', 'Arbitrage · ETH'].map((s, i) => (<div key={s} className="glass-light p-3 flex items-center gap-3">
-                        <Zap className="h-4 w-4 text-blue-400"/>
+                        <Zap className="h-4 w-4 text-slate-400"/>
                         <p className="text-sm flex-1">{s}</p>
                         <span className="text-xs text-accent-success">+{(2.4 + i * 1.7).toFixed(1)}%</span>
                       </div>))}
@@ -830,7 +830,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     const isIn = displayType === 'Buy' || displayType === 'Deposit';
                     return (<tr key={i}>
                         <td className="py-2.5">
-                          <span className={`chip ${isIn ? 'bg-accent-success/15 text-accent-success' : 'bg-blue-500/15 text-blue-400'}`}>
+                          <span className={`chip ${isIn ? 'bg-accent-success/15 text-accent-success' : 'bg-accent-error/15 text-accent-error'}`}>
                             {isIn ? <ArrowDownLeft className="h-3 w-3"/> : <ArrowUpRight className="h-3 w-3"/>}
                             {displayType}
                           </span>

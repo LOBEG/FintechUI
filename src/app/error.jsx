@@ -16,7 +16,7 @@ export default function Error({ error, reset }) {
         <div className="flex justify-center">
           <BrandLogo className="pointer-events-none" />
         </div>
-        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-blue-400/80">Platform recovery</p>
+        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-white/45">Platform recovery</p>
         <h1 className="mt-3 text-3xl sm:text-4xl font-display">Oakmont hit a temporary problem.</h1>
         <p className="mt-3 text-sm sm:text-base text-white/65">
           We could not complete that request just now. Live services are still protected and you can safely retry.
