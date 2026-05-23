@@ -30,21 +30,21 @@ export default function SpotTradingPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Zap className="h-8 w-8 text-blue-400 mb-3"/>
+              <Zap className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Low Latency Execution</h3>
               <p className="mt-2 text-sm text-white/60">
                 Sub-10ms order placement. Collocated infrastructure ensures your trades execute at the best available price.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Shield className="h-8 w-8 text-blue-400 mb-3"/>
+              <Shield className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Transparent Fees</h3>
               <p className="mt-2 text-sm text-white/60">
                 Zero maker fees, 0.08% taker fees. Volume-based rebates for accounts over £100k. No hidden charges.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Clock className="h-8 w-8 text-blue-400 mb-3"/>
+              <Clock className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">24/7 Markets</h3>
               <p className="mt-2 text-sm text-white/60">
                 Round-the-clock trading with continuous settlement. Instant GBP, EUR, and USD deposits via bank transfer or card.

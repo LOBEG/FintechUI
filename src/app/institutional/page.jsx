@@ -30,21 +30,21 @@ export default function InstitutionalPage() {
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Shield className="h-8 w-8 text-blue-400 mb-3"/>
+              <Shield className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Qualified Custody</h3>
               <p className="mt-2 text-sm text-white/60">
                 Multi-signature cold storage with geographically distributed keys. Lloyds of London insurance up to £100M. SOC 2 Type II audited.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Network className="h-8 w-8 text-blue-400 mb-3"/>
+              <Network className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">OTC Trading Desk</h3>
               <p className="mt-2 text-sm text-white/60">
                 Block trades with minimal slippage. Settlement via DVP or escrow. Access to institutional counterparty network for large tickets.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
-              <Headphones className="h-8 w-8 text-blue-400 mb-3"/>
+              <Headphones className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Dedicated Support</h3>
               <p className="mt-2 text-sm text-white/60">
                 24/7 institutional support desk. Assigned account manager. Direct API integration assistance and co-location options.

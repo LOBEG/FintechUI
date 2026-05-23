@@ -12,7 +12,7 @@ const items = [
 export function Security() {
     return (<section className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <div className="max-w-2xl">
-        <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">Security & Compliance</span>
+        <span className="chip bg-accent-cyan/10 text-cyan-400 border border-accent-cyan/25">Security & Compliance</span>
         <h2 className="mt-4 text-3xl sm:text-4xl font-display leading-tight">
           Built like an <span className="text-gradient-primary">institutional vault</span>.
         </h2>
@@ -25,7 +25,7 @@ export function Security() {
             const Icon = it.icon;
             return (<motion.div key={it.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} whileHover={{ y: -4 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.45, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }} className="glass p-5 sm:p-6 hover:bg-white/[0.07] transition">
               <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 inline-flex items-center justify-center">
-                <Icon className="h-5 w-5 text-blue-400"/>
+                <Icon className="h-5 w-5 text-cyan-400"/>
               </div>
               <h3 className="mt-4 font-semibold">{it.title}</h3>
               <p className="text-sm text-white/60 mt-1 leading-relaxed">{it.desc}</p>

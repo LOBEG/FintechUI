@@ -225,7 +225,7 @@ export default function AdminPage() {
         <AdminSidebar />
         <div className="flex-1 min-w-0">
           <TopBar title="Admin Console" />
-          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-indigo-400"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-admin text-xs">Sign in</a></div></main>
+          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3"><Lock className="h-5 w-5 text-slate-400"/> Sign in as an administrator. <a href="/login?next=/admin" className="ml-2 btn-admin text-xs">Sign in</a></div></main>
         </div>
       </div>
     );
@@ -236,7 +236,7 @@ export default function AdminPage() {
         <AdminSidebar />
         <div className="flex-1 min-w-0">
           <TopBar title="Admin Console" />
-          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3 text-blue-400"><AlertTriangle className="h-5 w-5"/> Your account is not an administrator.</div></main>
+          <main className="p-6"><div className="glass-strong p-6 text-sm inline-flex items-center gap-3 text-cyan-400"><AlertTriangle className="h-5 w-5"/> Your account is not an administrator.</div></main>
         </div>
       </div>
     );
@@ -266,8 +266,8 @@ export default function AdminPage() {
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { k: 'Total users', v: usersTotal.toLocaleString(), sub: `+${usersNew7d} new 7d · ${metrics?.users?.mau || 0} MAU`, icon: Users, color: 'text-accent-success' },
-              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-indigo-400' },
-              { k: 'KYC pending', v: kycPending.toLocaleString(), sub: kycPending ? 'Awaiting review' : 'Queue clear', icon: ShieldCheck, color: 'text-indigo-400' },
+              { k: 'AUM (live)', v: formatUSD(metrics?.aum || 0, 0), sub: `${(metrics?.transactions?.last24h || 0)} tx in 24h`, icon: DollarSign, color: 'text-slate-400' },
+              { k: 'KYC pending', v: kycPending.toLocaleString(), sub: kycPending ? 'Awaiting review' : 'Queue clear', icon: ShieldCheck, color: 'text-slate-400' },
               { k: 'Risk alerts (24h)', v: fraudCount24h.toLocaleString(), sub: fraudCount24h ? 'Recent audit events' : 'No active alerts', icon: AlertTriangle, color: 'text-accent-error' },
             ].map((s, i) => {
               const Icon = s.icon;
@@ -287,7 +287,7 @@ export default function AdminPage() {
           <section id="brokerage" className="glass-strong p-4 overflow-hidden">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div>
-                <p className="font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-indigo-400"/> Live brokerage signals</p>
+                <p className="font-semibold flex items-center gap-2"><Activity className="h-4 w-4 text-slate-400"/> Live brokerage signals</p>
                 <p className="text-xs text-white/55">
                   {metrics?.brokerage?.liveQuotes || 0} live quotes across {metrics?.brokerage?.symbols || 0} visible symbols
                 </p>
@@ -421,7 +421,7 @@ export default function AdminPage() {
                         <td className="font-medium">{u.name || <span className="text-white/45">-</span>}</td>
                         <td className="text-white/75">{u.email}</td>
                         <td>
-                          {u.isAdmin ? <span className="chip bg-accent-success/15 text-blue-400 border border-accent-success/30">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}
+                          {u.isAdmin ? <span className="chip bg-accent-success/15 text-cyan-400 border border-accent-success/30">admin</span> : <span className="chip bg-white/5 text-white/70 border border-white/10">user</span>}
                         </td>
                         <td>{formatUSD(usdBal(u.balances), 2)}</td>
                         <td>
@@ -431,7 +431,7 @@ export default function AdminPage() {
                           <div className="inline-flex items-center gap-1">
                             {!u.isAdmin && (
                               <>
-                                <button onClick={() => freezeUser(u)} title={status === 'active' ? 'Freeze account' : 'Unfreeze account'} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-blue-500/20 inline-flex items-center gap-1">
+                                <button onClick={() => freezeUser(u)} title={status === 'active' ? 'Freeze account' : 'Unfreeze account'} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-cyan-500/20 inline-flex items-center gap-1">
                                   <Lock className="h-3 w-3"/> {status === 'active' ? 'Freeze' : 'Unfreeze'}
                                 </button>
                                 <button onClick={() => resetBalances(u)} title="Reset all balances to zero" className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 inline-flex items-center gap-1">
@@ -534,7 +534,7 @@ export default function AdminPage() {
                       <tr key={t.id}>
                         <td className="py-2.5 text-white/55 text-xs">{relativeTime(t.createdAt)}</td>
                         <td>
-                          <span className={`chip ${isCredit ? 'bg-accent-success/15 text-accent-success' : 'bg-blue-500/15 text-blue-400'}`}>
+                          <span className={`chip ${isCredit ? 'bg-accent-success/15 text-accent-success' : 'bg-cyan-500/15 text-cyan-400'}`}>
                             {isCredit ? <ArrowDownLeft className="h-3 w-3"/> : <ArrowUpRight className="h-3 w-3"/>} {t.type}
                           </span>
                         </td>
@@ -543,7 +543,7 @@ export default function AdminPage() {
                         <td>{Number(t.amount || 0).toLocaleString('en-US', { maximumFractionDigits: 8 })}</td>
                         <td>{formatUSD(t.usdValue || 0)}</td>
                         <td>
-                          <span className={`chip ${t.status === 'completed' ? 'bg-white/10 text-white' : t.status === 'pending' ? 'bg-blue-500/15 text-blue-400' : 'bg-accent-error/15 text-accent-error'}`}>{t.status || 'completed'}</span>
+                          <span className={`chip ${t.status === 'completed' ? 'bg-white/10 text-white' : t.status === 'pending' ? 'bg-cyan-500/15 text-cyan-400' : 'bg-accent-error/15 text-accent-error'}`}>{t.status || 'completed'}</span>
                         </td>
                       </tr>
                     );
@@ -578,7 +578,7 @@ export default function AdminPage() {
 
           {/* Settings anchor - links from sidebar land here */}
           <section id="settings" className="glass-strong p-5">
-            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-indigo-400"/> Console settings</p>
+            <p className="font-semibold flex items-center gap-2"><SettingsIcon className="h-4 w-4 text-slate-400"/> Console settings</p>
             <p className="text-xs text-white/55 mt-1">Operational controls for the Oakmont Digital Capital Group admin console. Adjust polling cadence and reload live data without leaving the page.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button onClick={refresh} disabled={refreshing} className="btn-admin-outline inline-flex items-center gap-1">

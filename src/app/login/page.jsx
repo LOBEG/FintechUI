@@ -44,8 +44,8 @@ export default function LoginPage() {
           <p className="mt-3 text-white/65">Sign in to manage portfolios, execute trades, and monitor your Oakmont Digital Capital Group investments.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/70">
             <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-accent-success"/> Hardware MFA + passkeys</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-blue-400"/> SOC 2 · ISO 27001 · MiCA</li>
-            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-blue-400"/> 95% cold storage custody</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-slate-400"/> SOC 2 · ISO 27001 · MiCA</li>
+            <li className="flex gap-2"><ShieldCheck className="h-5 w-5 text-slate-400"/> 95% cold storage custody</li>
           </ul>
         </div>
       </section>
