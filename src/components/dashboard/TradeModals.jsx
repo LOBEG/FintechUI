@@ -71,10 +71,12 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
   const fundingBal = walletBalances[fundingSymbol] || 0;
   const fundingUsd = fundingBal * fundingPx;
   const fundingNeeded = fundingPx ? parseFloat(usdAmount || '0') / fundingPx : 0;
+  // Reset all modal state when opening to prevent stale state leakage
   useEffect(() => {
     if (open) {
       setSuccess(null);
       setError(null);
+      setUsdAmount('100');
       setSymbol(defaultSymbol || 'BTC');
       setFundingSymbol(pickDefaultFunding(walletBalances, prices));
     }
@@ -82,14 +84,29 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
   }, [open, defaultSymbol]);
   const submit = async (e) => {
     e.preventDefault();
+    // Client-side validation with toast notifications
+    const amt = parseFloat(usdAmount || '0');
+    if (!amt || amt <= 0) {
+      notify({ level: 'warn', title: 'Invalid amount', message: 'Enter a positive USD amount to invest.' });
+      return;
+    }
+    if (!px) {
+      notify({ level: 'warn', title: 'Price unavailable', message: 'Live price not yet loaded. Please wait a moment.' });
+      return;
+    }
+    if (fundingUsd < amt) {
+      notify({ level: 'error', title: 'Insufficient funds', message: `You need $${amt.toFixed(2)} but only have $${fundingUsd.toFixed(2)} in ${fundingSymbol}.` });
+      return;
+    }
     setBusy(true); setError(null);
     try {
-      const r = await api.post('/api/invest', { symbol, usdAmount: parseFloat(usdAmount), fundingSymbol });
+      const r = await api.post('/api/invest', { symbol, usdAmount: amt, fundingSymbol });
       setSuccess(r.transaction);
       notify({ level: 'success', title: 'Investment confirmed', message: `Acquired ${r.transaction?.amount?.toFixed(6)} ${r.transaction?.symbol} for $${r.transaction?.usdValue?.toFixed(2)}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
+      notify({ level: 'error', title: 'Investment failed', message: err.message });
     } finally { setBusy(false); }
   };
   return (
@@ -178,12 +195,16 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   const [success, setSuccess] = useState(null);
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [beneficiaryId, setBeneficiaryId] = useState('');
+  const [memoTouched, setMemoTouched] = useState(false);
   const { notify } = useNotifications();
   const availableNetworks = NETWORKS[symbol] || [];
   const memoRequired = MEMO_REQUIRED.has(symbol);
+  // Full state reset on open to prevent stale leakage between opens
   useEffect(() => {
     if (open) {
       setSuccess(null); setError(null);
+      setAmount(''); setAddress(''); setMemo(''); setTokenCode('');
+      setBeneficiaryId(''); setMemoTouched(false);
       if (symbols[0] && !balances[symbol]) setSymbol(symbols[0]);
       // Load beneficiaries when the modal opens so the picker is current.
       api.get('/api/beneficiaries').then((r) => setBeneficiaries(r.beneficiaries || [])).catch(() => setBeneficiaries([]));
@@ -191,21 +212,46 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
   // Reset network when the asset changes so we don't submit a stale value.
-  useEffect(() => { setNetwork(availableNetworks[0] || ''); setBeneficiaryId(''); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setNetwork(availableNetworks[0] || ''); setBeneficiaryId(''); setMemo(''); setMemoTouched(false); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
   const eligible = beneficiaries.filter((b) => b.symbol === symbol && b.status === 'active');
   const submit = async (e) => {
     e.preventDefault();
+    // Validation with toast notifications
+    const amt = parseFloat(amount || '0');
+    if (!amt || amt <= 0) {
+      notify({ level: 'warn', title: 'Invalid amount', message: `Enter a valid ${symbol} amount to withdraw.` });
+      return;
+    }
+    if (amt > (balances[symbol] || 0)) {
+      notify({ level: 'error', title: 'Insufficient balance', message: `You have ${(balances[symbol] || 0).toFixed(8)} ${symbol} available.` });
+      return;
+    }
+    if (!tokenCode.trim()) {
+      notify({ level: 'warn', title: 'Token required', message: 'Enter the admin authorisation token to proceed.' });
+      return;
+    }
+    if (!beneficiaryId && !address.trim()) {
+      notify({ level: 'warn', title: 'Address required', message: 'Select a saved beneficiary or enter a destination address.' });
+      return;
+    }
+    // Memo validation for chains that require it
+    if (!beneficiaryId && memoRequired && address.trim() && !memo.trim()) {
+      notify({ level: 'error', title: `Memo required for ${symbol}`, message: `${symbol} transactions require a destination tag/memo. Without it, funds are unrecoverable.` });
+      setMemoTouched(true);
+      return;
+    }
     setBusy(true); setError(null);
     try {
       const payload = beneficiaryId
-        ? { symbol, amount: parseFloat(amount), token: tokenCode.trim(), beneficiaryId }
-        : { symbol, amount: parseFloat(amount), token: tokenCode.trim(), address, memo, network };
+        ? { symbol, amount: amt, token: tokenCode.trim(), beneficiaryId }
+        : { symbol, amount: amt, token: tokenCode.trim(), address, memo, network };
       const r = await api.post('/api/withdraw', payload);
       setSuccess(r.transaction);
       notify({ level: 'success', title: 'Withdrawal processed', message: `Sent ${r.transaction?.amount} ${r.transaction?.symbol}.` });
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
+      notify({ level: 'error', title: 'Withdrawal failed', message: err.message });
     } finally { setBusy(false); }
   };
   return (
@@ -272,8 +318,11 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           {!beneficiaryId && memoRequired && (
             <label className="block">
               <span className="text-xs text-white/55">Destination tag / memo <span className="text-accent-error">(required for {symbol})</span></span>
-              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full field-control font-mono"/>
+              <input value={memo} onChange={(e) => { setMemo(e.target.value); setMemoTouched(true); }} required={!!address} placeholder="e.g. 12345" className={`mt-1 w-full field-control font-mono ${memoTouched && !memo.trim() ? 'border-accent-error ring-1 ring-accent-error/30' : ''}`}/>
               <span className="text-[11px] text-accent-error mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
+              {memoTouched && !memo.trim() && (
+                <span className="text-[11px] text-accent-error mt-0.5 block font-semibold">⚠ You must enter a memo/tag before submitting.</span>
+              )}
             </label>
           )}
           <label className="block">
@@ -330,6 +379,19 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
 
   const submit = async (e) => {
     e.preventDefault();
+    // Client-side validation with toast notifications
+    if (!cryptoAmt || cryptoAmt <= 0) {
+      notify({ level: 'warn', title: 'Invalid amount', message: `Enter a positive ${symbol} amount to sell.` });
+      return;
+    }
+    if (cryptoAmt > held) {
+      notify({ level: 'error', title: 'Insufficient balance', message: `You have ${held.toFixed(8)} ${symbol} available but tried to sell ${cryptoAmt}.` });
+      return;
+    }
+    if (!px) {
+      notify({ level: 'warn', title: 'Price unavailable', message: 'Live price not yet loaded. Please wait a moment.' });
+      return;
+    }
     setBusy(true); setError(null);
     try {
       const r = await api.post('/api/sell', { symbol, amount: cryptoAmt });
@@ -338,6 +400,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
       onSuccess && onSuccess(r);
     } catch (err) {
       setError(err.message);
+      notify({ level: 'error', title: 'Sale failed', message: err.message });
     } finally { setBusy(false); }
   };
 

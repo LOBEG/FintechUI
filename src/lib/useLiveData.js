@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // --- Symbol metadata (display name & brand color) ---
 export const SYMBOL_META = {
@@ -51,32 +51,70 @@ export const DEFAULT_TICKER_SYMBOLS = [
 // at another Binance-compatible base URL by env.
 const PROXY_BASE = '/api/markets';
 const POLL_MS = 5000;
+const KLINE_POLL_MS = 10_000;
+
+// Exponential backoff config for retry on failures
+const BACKOFF_BASE_MS = 2000;
+const BACKOFF_MAX_MS = 30000;
+const MAX_RETRIES = 5;
+
+// Connection status constants
+export const CONNECTION_STATUS = {
+  CONNECTING: 'connecting',
+  LIVE: 'live',
+  DEGRADED: 'degraded',
+  DISCONNECTED: 'disconnected',
+};
+
+// Stale data threshold (30s without successful update = stale)
+const STALE_THRESHOLD_MS = 30_000;
 
 function isBrowser() {
   return typeof window !== 'undefined';
 }
 
+function getBackoffDelay(failures) {
+  const delay = Math.min(BACKOFF_BASE_MS * Math.pow(2, failures), BACKOFF_MAX_MS);
+  // Add jitter ±20%
+  return delay * (0.8 + Math.random() * 0.4);
+}
+
 /**
  * Subscribe to live 24h ticker for one or more symbols.
- * Returns: { [SYMBOL]: { price, pct, open, high, low, vol, live } }
- * Returns an empty object until the live proxy responds.
+ * Returns: { data, status, lastUpdated, isStale }
+ * data: { [SYMBOL]: { price, pct, open, high, low, vol, live } }
  */
 export function useLivePrices(symbols = DEFAULT_TICKER_SYMBOLS) {
   const symbolsKey = symbols.join(',');
   const [data, setData] = useState({});
+  const [status, setStatus] = useState(CONNECTION_STATUS.CONNECTING);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const failuresRef = useRef(0);
+  const timerRef = useRef(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     if (!isBrowser()) return;
-    let cancelled = false;
-    let timer = null;
+    cancelledRef.current = false;
+    failuresRef.current = 0;
+    setStatus(CONNECTION_STATUS.CONNECTING);
+
+    const schedule = (delay) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(tick, delay);
+    };
 
     const tick = async () => {
+      if (cancelledRef.current) return;
       try {
         const qs = encodeURIComponent(JSON.stringify(symbols));
         const res = await fetch(`${PROXY_BASE}/ticker?symbols=${qs}`, { cache: 'no-store' });
         if (!res.ok) throw new Error('ticker proxy fail');
         const arr = await res.json();
-        if (cancelled || !Array.isArray(arr) || !arr.length) return;
+        if (cancelledRef.current || !Array.isArray(arr) || !arr.length) {
+          schedule(POLL_MS);
+          return;
+        }
         setData((prev) => {
           const next = { ...prev };
           for (const t of arr) {
@@ -93,45 +131,164 @@ export function useLivePrices(symbols = DEFAULT_TICKER_SYMBOLS) {
           }
           return next;
         });
+        failuresRef.current = 0;
+        setStatus(CONNECTION_STATUS.LIVE);
+        setLastUpdated(Date.now());
+        schedule(POLL_MS);
       } catch (_) {
-        // keep last known values
+        failuresRef.current += 1;
+        if (failuresRef.current >= MAX_RETRIES) {
+          setStatus(CONNECTION_STATUS.DISCONNECTED);
+        } else {
+          setStatus(CONNECTION_STATUS.DEGRADED);
+        }
+        // Mark existing data as potentially stale but keep it
+        setData((prev) => {
+          const next = { ...prev };
+          for (const key of Object.keys(next)) {
+            next[key] = { ...next[key], live: false };
+          }
+          return next;
+        });
+        const backoff = getBackoffDelay(failuresRef.current);
+        schedule(backoff);
       }
     };
 
     tick();
-    timer = setInterval(tick, POLL_MS);
-
     return () => {
-      cancelled = true;
-      if (timer) clearInterval(timer);
+      cancelledRef.current = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbolsKey]);
+
+  const isStale = lastUpdated ? (Date.now() - lastUpdated) > STALE_THRESHOLD_MS : false;
 
   return data;
 }
 
 /**
+ * Enhanced live prices hook that also exposes connection metadata.
+ * Use this when you need to display connection status or stale indicators.
+ */
+export function useLivePricesWithStatus(symbols = DEFAULT_TICKER_SYMBOLS) {
+  const symbolsKey = symbols.join(',');
+  const [data, setData] = useState({});
+  const [status, setStatus] = useState(CONNECTION_STATUS.CONNECTING);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const failuresRef = useRef(0);
+  const timerRef = useRef(null);
+  const cancelledRef = useRef(false);
+
+  useEffect(() => {
+    if (!isBrowser()) return;
+    cancelledRef.current = false;
+    failuresRef.current = 0;
+    setStatus(CONNECTION_STATUS.CONNECTING);
+
+    const schedule = (delay) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(tick, delay);
+    };
+
+    const tick = async () => {
+      if (cancelledRef.current) return;
+      try {
+        const qs = encodeURIComponent(JSON.stringify(symbols));
+        const res = await fetch(`${PROXY_BASE}/ticker?symbols=${qs}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('ticker proxy fail');
+        const arr = await res.json();
+        if (cancelledRef.current || !Array.isArray(arr) || !arr.length) {
+          schedule(POLL_MS);
+          return;
+        }
+        setData((prev) => {
+          const next = { ...prev };
+          for (const t of arr) {
+            next[t.symbol] = {
+              price: parseFloat(t.lastPrice),
+              pct: parseFloat(t.priceChangePercent),
+              open: parseFloat(t.openPrice),
+              high: parseFloat(t.highPrice),
+              low: parseFloat(t.lowPrice),
+              vol: parseFloat(t.volume),
+              quoteVol: parseFloat(t.quoteVolume),
+              live: true,
+            };
+          }
+          return next;
+        });
+        failuresRef.current = 0;
+        setStatus(CONNECTION_STATUS.LIVE);
+        setLastUpdated(Date.now());
+        schedule(POLL_MS);
+      } catch (_) {
+        failuresRef.current += 1;
+        if (failuresRef.current >= MAX_RETRIES) {
+          setStatus(CONNECTION_STATUS.DISCONNECTED);
+        } else {
+          setStatus(CONNECTION_STATUS.DEGRADED);
+        }
+        setData((prev) => {
+          const next = { ...prev };
+          for (const key of Object.keys(next)) {
+            next[key] = { ...next[key], live: false };
+          }
+          return next;
+        });
+        const backoff = getBackoffDelay(failuresRef.current);
+        schedule(backoff);
+      }
+    };
+
+    tick();
+    return () => {
+      cancelledRef.current = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [symbolsKey]);
+
+  const isStale = lastUpdated ? (Date.now() - lastUpdated) > STALE_THRESHOLD_MS : !lastUpdated;
+
+  return { data, status, lastUpdated, isStale };
+}
+
+/**
  * Real-time candlesticks (klines) for a single symbol via Binance.
+ * Includes retry/backoff logic for resilient polling.
  * @param {string} symbol  e.g. 'BTCUSDT'
  * @param {string} interval e.g. '1m','5m','15m','1h','4h','1d','1w'
  * @param {number} limit candles to fetch from REST
  */
 export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
   const [candles, setCandles] = useState([]);
+  const failuresRef = useRef(0);
+  const timerRef = useRef(null);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     if (!isBrowser()) return;
-    let cancelled = false;
-    let timer = null;
+    cancelledRef.current = false;
+    failuresRef.current = 0;
+
+    const schedule = (delay) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(tick, delay);
+    };
 
     const tick = async () => {
+      if (cancelledRef.current) return;
       try {
         const url = `${PROXY_BASE}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error('klines proxy fail');
         const arr = await res.json();
-        if (cancelled || !Array.isArray(arr) || !arr.length) return;
+        if (cancelledRef.current || !Array.isArray(arr) || !arr.length) {
+          schedule(KLINE_POLL_MS);
+          return;
+        }
         const next = arr.map((k) => ({
           t: k[0],
           o: parseFloat(k[1]),
@@ -143,19 +300,21 @@ export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
           updatedAt: Date.now(),
         }));
         setCandles(next);
+        failuresRef.current = 0;
+        schedule(KLINE_POLL_MS);
       } catch (_) {
-        // keep last set
+        failuresRef.current += 1;
+        // Mark existing candles as stale but keep them
+        setCandles((prev) => prev.length ? prev.map((c) => ({ ...c, live: false })) : prev);
+        const backoff = getBackoffDelay(failuresRef.current);
+        schedule(backoff);
       }
     };
 
     tick();
-    // Refresh every 10s - finer-grained updates aren't useful for the
-    // dashboard candle chart and would add load to the proxy.
-    timer = setInterval(tick, 10_000);
-
     return () => {
-      cancelled = true;
-      if (timer) clearInterval(timer);
+      cancelledRef.current = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [symbol, interval, limit]);
 
@@ -167,4 +326,21 @@ export function useLiveKlines(symbol = 'BTCUSDT', interval = '5m', limit = 60) {
  */
 export function klineCloses(candles) {
   return candles.map((k) => k.c);
+}
+
+/**
+ * Connection status badge component helper.
+ * Returns className + label for UI rendering.
+ */
+export function getConnectionStatusDisplay(status) {
+  switch (status) {
+    case CONNECTION_STATUS.LIVE:
+      return { className: 'text-accent-success', dotClass: 'bg-accent-success', label: 'Live' };
+    case CONNECTION_STATUS.DEGRADED:
+      return { className: 'text-amber-400', dotClass: 'bg-amber-400', label: 'Reconnecting' };
+    case CONNECTION_STATUS.DISCONNECTED:
+      return { className: 'text-red-400', dotClass: 'bg-red-400', label: 'Disconnected' };
+    default:
+      return { className: 'text-white/50', dotClass: 'bg-white/50', label: 'Connecting' };
+  }
 }

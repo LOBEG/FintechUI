@@ -6,7 +6,8 @@ import {
   Activity, Search, RefreshCw, Loader2, TrendingUp, TrendingDown, ArrowRight, X,
 } from 'lucide-react';
 import { CandlestickChart } from '@/components/ui/Charts';
-import { useLiveKlines } from '@/lib/useLiveData';
+import { useLiveKlines, CONNECTION_STATUS } from '@/lib/useLiveData';
+import { ConnectionBadge, ConnectionStatusBar, StaleDataOverlay } from '@/components/ui/ConnectionStatus';
 
 const ASSET_TAB_LABELS = {
   all: 'All',
@@ -235,6 +236,8 @@ export default function LiveCoverageClient() {
   const [search, setSearch] = useState('');
   const [activeSymbol, setActiveSymbol] = useState(null);
   const [refreshAt, setRefreshAt] = useState(0);
+  const [feedStatus, setFeedStatus] = useState(CONNECTION_STATUS.CONNECTING);
+  const [consecutiveFailures, setConsecutiveFailures] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -260,7 +263,19 @@ export default function LiveCoverageClient() {
         }));
         setCryptoQuotes(mapped);
       }
-      setRefreshAt(Date.now());
+      if (bq || cq) {
+        setRefreshAt(Date.now());
+        setFeedStatus(CONNECTION_STATUS.LIVE);
+        setConsecutiveFailures(0);
+      } else {
+        throw new Error('both feeds failed');
+      }
+    } catch (_) {
+      setConsecutiveFailures((prev) => {
+        const next = prev + 1;
+        setFeedStatus(next >= 3 ? CONNECTION_STATUS.DISCONNECTED : CONNECTION_STATUS.DEGRADED);
+        return next;
+      });
     } finally {
       setLoading(false);
     }
@@ -304,10 +319,14 @@ export default function LiveCoverageClient() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14 space-y-6">
+      <ConnectionStatusBar status={feedStatus} lastUpdated={refreshAt || null} />
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <span className="chip bg-white/5 border border-white/10 text-white/80">
-          <Activity className="h-3.5 w-3.5 text-accent-success" /> Live asset-class coverage
-        </span>
+        <div className="flex flex-wrap items-center gap-3 mb-1">
+          <span className="chip bg-white/5 border border-white/10 text-white/80">
+            <Activity className="h-3.5 w-3.5 text-accent-success" /> Live asset-class coverage
+          </span>
+          <ConnectionBadge status={feedStatus} lastUpdated={refreshAt || null} />
+        </div>
         <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-display tracking-tight">
           <span className="text-gradient-primary">{counts.all || '…'} live quotes</span> across every desk.
         </h1>
@@ -360,6 +379,9 @@ export default function LiveCoverageClient() {
         )}
         <Link href="/markets/signals" className="ml-auto text-xs text-accent-success hover:underline inline-flex items-center gap-1">
           Live market signals <ArrowRight className="h-3 w-3" />
+        </Link>
+        <Link href="/markets/candles" className="text-xs text-accent-success hover:underline inline-flex items-center gap-1">
+          Candle visualisation <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
