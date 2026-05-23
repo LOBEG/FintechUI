@@ -457,9 +457,9 @@ export function EmailVerifyBanner({ user }) {
   return (
     <section className="glass border border-accent-success/30 bg-accent-success/5 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
       <Lock className="h-5 w-5 text-slate-400 shrink-0"/>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
-        <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed.</p>
+        <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed. You may also complete this later from your KYC settings.</p>
       </div>
       {!sent ? (
         <button onClick={send} disabled={busy} className="btn-primary text-sm disabled:opacity-60">
@@ -482,6 +482,14 @@ export function EmailVerifyBanner({ user }) {
       {msg && (
         <span className={`text-xs ${msg.kind === 'ok' ? 'text-accent-success' : 'text-accent-error'}`}>{msg.text}</span>
       )}
+      <button
+        onClick={() => setHidden(true)}
+        aria-label="Dismiss — you can verify later from KYC settings"
+        title="Dismiss — verify later from KYC settings"
+        className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10 transition-colors shrink-0 self-start sm:self-auto"
+      >
+        <BellClose className="h-4 w-4 text-white/60"/>
+      </button>
     </section>
   );
 }

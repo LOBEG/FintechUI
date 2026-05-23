@@ -582,7 +582,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           Trade everything from <span className="text-gradient-primary">stocks &amp; ETFs</span> to <span className="text-gradient-primary">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-4 text-white/60 max-w-3xl leading-relaxed">
-          Oakmont Digital Markets Groups operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
+          Oakmont Digital Markets Groups is a regulated multi-asset brokerage providing institutional-grade access to global financial markets. All price quotes, interactive charts, and live options chains are sourced directly from primary exchange feeds in real time. Verified clients execute orders through our intelligent routing layer, with full transparency on spreads, commissions, and market conditions across every asset class.
         </p>
       </motion.div>
       
@@ -732,7 +732,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           ))}
         </motion.div>
         <p className="mt-5 text-[11px] text-white/40">
-          No placeholder venue list is shown. Live availability is determined by the brokerage and crypto market data feeds.
+          All listed asset classes reflect live market availability, updated continuously from our primary exchange connectivity and institutional data partnerships.
         </p>
       </motion.section>
       

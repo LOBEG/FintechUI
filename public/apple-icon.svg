@@ -1,4 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Oakmont Digital Markets Group logo">
-  <rect width="180" height="180" rx="40" fill="#03121f"/>
-  <image href="https://chatgpt.com/backend-api/estuary/content?id=file_00000000077071fd9412b5d29cebc511&amp;ts=494268&amp;p=fs&amp;cid=1&amp;sig=ab42fae21655b04d994f8d1c0c81afbe220cd7277ee4780943d0173a8f96d050&amp;v=0" x="0" y="0" width="180" height="180" preserveAspectRatio="xMidYMid slice"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1f2d"/>
+      <stop offset="100%" stop-color="#03121f"/>
+    </linearGradient>
+    <clipPath id="clip">
+      <rect width="180" height="180" rx="40"/>
+    </clipPath>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#bg)"/>
+  <!-- O circle ring representing Oakmont -->
+  <circle cx="90" cy="90" r="48" fill="none" stroke="#475569" stroke-width="7"/>
+  <!-- Rising trend line (market performance indicator) -->
+  <polyline points="53,115 73,83 90,98 127,58" fill="none" stroke="#10b981" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#clip)"/>
+  <!-- Accent terminal dot -->
+  <circle cx="127" cy="58" r="7" fill="#10b981"/>
 </svg>

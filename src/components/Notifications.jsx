@@ -93,7 +93,7 @@ export function NotificationsProvider({ children }) {
       {children}
       <div
         aria-live="polite"
-        className="fixed top-4 right-4 z-[200] flex flex-col gap-2 pointer-events-none"
+        className="fixed top-[4.5rem] right-4 z-[200] flex flex-col gap-2 pointer-events-none"
       >
         <AnimatePresence mode="sync">
           {toasts.map((t) => (
