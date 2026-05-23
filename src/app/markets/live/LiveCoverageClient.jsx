@@ -238,15 +238,16 @@ export default function LiveCoverageClient() {
   const [refreshAt, setRefreshAt] = useState(0);
   const [feedStatus, setFeedStatus] = useState(CONNECTION_STATUS.CONNECTING);
   const [consecutiveFailures, setConsecutiveFailures] = useState(0);
+  const mountedRef = useRef(true);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal) => {
     setLoading(true);
-    const ctrl = new AbortController();
     try {
       const [bq, cq] = await Promise.all([
-        fetch('/api/brokerage/quotes', { cache: 'no-store', signal: ctrl.signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
-        fetch('/api/markets', { cache: 'no-store', signal: ctrl.signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        fetch('/api/brokerage/quotes', { cache: 'no-store', signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        fetch('/api/markets', { cache: 'no-store', signal }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
       ]);
+      if (!mountedRef.current || signal?.aborted) return;
       if (Array.isArray(bq?.quotes)) setBrokerageQuotes(bq.quotes);
       if (Array.isArray(cq?.markets)) {
         const mapped = cq.markets.map((m) => ({
@@ -271,20 +272,27 @@ export default function LiveCoverageClient() {
         throw new Error('both feeds failed');
       }
     } catch (_) {
+      if (!mountedRef.current || signal?.aborted) return;
       setConsecutiveFailures((prev) => {
         const next = prev + 1;
         setFeedStatus(next >= 3 ? CONNECTION_STATUS.DISCONNECTED : CONNECTION_STATUS.DEGRADED);
         return next;
       });
     } finally {
-      setLoading(false);
+      if (mountedRef.current && !signal?.aborted) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    load();
-    const id = setInterval(load, POLL_QUOTES_MS);
-    return () => clearInterval(id);
+    mountedRef.current = true;
+    const ctrl = new AbortController();
+    load(ctrl.signal);
+    const id = setInterval(() => load(), POLL_QUOTES_MS);
+    return () => {
+      mountedRef.current = false;
+      ctrl.abort();
+      clearInterval(id);
+    };
   }, [load]);
 
   const allQuotes = useMemo(() => {
@@ -371,7 +379,7 @@ export default function LiveCoverageClient() {
           />
         </div>
         <button
-          onClick={load}
+          onClick={() => load()}
           disabled={loading}
           className="text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-50"
         >
@@ -391,6 +399,13 @@ export default function LiveCoverageClient() {
       {loading && !filtered.length ? (
         <div className="glass-light p-6 text-center text-sm text-white/55 inline-flex items-center gap-2 justify-center">
           <Loader2 className="h-4 w-4 animate-spin" /> Connecting to live market feeds…
+        </div>
+      ) : feedStatus === CONNECTION_STATUS.DISCONNECTED && !filtered.length ? (
+        <div className="glass-light p-6 text-center text-sm text-accent-error bg-accent-error/10 border border-accent-error/30 space-y-3">
+          <p>Live market data is temporarily unavailable. Check your connection and retry.</p>
+          <button type="button" onClick={() => load()} className="btn-ghost text-xs mx-auto">
+            <RefreshCw className="h-3 w-3" /> Retry feeds
+          </button>
         </div>
       ) : !filtered.length ? (
         <div className="glass-light p-6 text-center text-sm text-white/55">No live symbols match this filter.</div>

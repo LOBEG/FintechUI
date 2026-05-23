@@ -206,13 +206,20 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
   // Full state reset on open to prevent stale leakage between opens
   useEffect(() => {
     if (open) {
+      const ctrl = new AbortController();
       setSuccess(null); setError(null);
       setAmount(''); setAddress(''); setMemo(''); setTokenCode('');
       setBeneficiaryId(''); setMemoTouched(false);
       if (symbols[0] && !balances[symbol]) setSymbol(symbols[0]);
       // Load beneficiaries when the modal opens so the picker is current.
-      api.get('/api/beneficiaries').then((r) => setBeneficiaries(r.beneficiaries || [])).catch(() => setBeneficiaries([]));
+      api.get('/api/beneficiaries', { signal: ctrl.signal })
+        .then((r) => setBeneficiaries(r.beneficiaries || []))
+        .catch(() => {
+          if (!ctrl.signal.aborted) setBeneficiaries([]);
+        });
+      return () => ctrl.abort();
     }
+    return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
   // Reset network when the asset changes so we don't submit a stale value.
@@ -322,10 +329,18 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           {!beneficiaryId && memoRequired && (
             <label className="block">
               <span className="text-xs text-white/55">Destination tag / memo <span className="text-accent-error">(required for {symbol})</span></span>
-              <input value={memo} onChange={(e) => { setMemo(e.target.value); setMemoTouched(true); }} required={!!address} placeholder="e.g. 12345" className={`mt-1 w-full field-control font-mono ${memoTouched && !memo.trim() ? 'border-accent-error ring-1 ring-accent-error/30' : ''}`}/>
+              <input
+                value={memo}
+                onChange={(e) => { setMemo(e.target.value); setMemoTouched(true); }}
+                required={!!address}
+                placeholder="e.g. 12345"
+                aria-invalid={memoTouched && !memo.trim()}
+                aria-describedby="withdraw-memo-error"
+                className={`mt-1 w-full field-control font-mono ${memoTouched && !memo.trim() ? 'border-accent-error ring-1 ring-accent-error/30' : ''}`}
+              />
               <span className="text-[11px] text-accent-error mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
               {memoTouched && !memo.trim() && (
-                <span className="text-[11px] text-accent-error mt-0.5 block font-semibold">⚠ You must enter a memo/tag before submitting.</span>
+                <span id="withdraw-memo-error" className="text-[11px] text-accent-error mt-0.5 block font-semibold">⚠ You must enter a memo/tag before submitting.</span>
               )}
             </label>
           )}
@@ -361,16 +376,19 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
   const { notify } = useNotifications();
   useEffect(() => {
     if (open) {
+      const ctrl = new AbortController();
       setSuccess(null);
       setError(null);
       setAmount('');
       setSymbol(initial);
       // Pull the live fee schedule so the modal can show "Fee 0.20%".
       // Falls back to the displayed default on error.
-      fetch('/api/sell').then((r) => r.json()).then((j) => {
+      fetch('/api/sell', { signal: ctrl.signal }).then((r) => r.json()).then((j) => {
         if (j?.fees?.takerBps) setFeeBps(j.fees.takerBps);
       }).catch(() => {});
+      return () => ctrl.abort();
     }
+    return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
   const prices = useLivePrices([`${symbol}USDT`]);
@@ -520,23 +538,27 @@ export function BrokerageInvestModal({
     setBroker(preferredBroker || 'prime');
     setFundingSymbol(pickDefaultFunding(walletBalances, fundingPrices));
     let cancelled = false;
-    api.get('/api/brokerage/universe').then((r) => {
+    const ctrl = new AbortController();
+    api.get('/api/brokerage/universe', { signal: ctrl.signal }).then((r) => {
       if (!cancelled && r?.universe) setUniverse(r.universe);
     }).catch(() => {});
-    return () => { cancelled = true; };
+    return () => { cancelled = true; ctrl.abort(); };
   }, [open, defaultClass, defaultSymbol, preferredBroker]);
 
   useEffect(() => {
     if (!open || !symbol) { setQuote(null); return; }
     let cancelled = false;
+    let ctrl = null;
     const fetchQuote = () => {
-      api.get(`/api/brokerage/quotes?symbols=${encodeURIComponent(symbol)}`)
+      ctrl?.abort();
+      ctrl = new AbortController();
+      api.get(`/api/brokerage/quotes?symbols=${encodeURIComponent(symbol)}`, { signal: ctrl.signal })
         .then((r) => { if (!cancelled) setQuote(r?.quotes?.[0] || null); })
         .catch(() => {});
     };
     fetchQuote();
     const id = setInterval(fetchQuote, 10000);
-    return () => { cancelled = true; clearInterval(id); };
+    return () => { cancelled = true; clearInterval(id); ctrl?.abort(); };
   }, [open, symbol]);
 
   useEffect(() => {
@@ -548,6 +570,19 @@ export function BrokerageInvestModal({
 
   const submit = async (e) => {
     e.preventDefault();
+    const amt = parseFloat(usdAmount || '0');
+    if (!amt || amt <= 0) {
+      notify({ level: 'warn', title: 'Invalid amount', message: 'Enter a positive USD amount to invest.' });
+      return;
+    }
+    if (!px) {
+      notify({ level: 'warn', title: 'Quote unavailable', message: 'Live quote not yet loaded. Please wait a moment.' });
+      return;
+    }
+    if (fundingUsd < amt) {
+      notify({ level: 'error', title: 'Insufficient funds', message: `You need $${amt.toFixed(2)} but only have $${fundingUsd.toFixed(2)} in ${fundingSymbol}.` });
+      return;
+    }
     setBusy(true); setError(null);
     try {
       const r = await api.post('/api/brokerage/invest', {
@@ -555,7 +590,7 @@ export function BrokerageInvestModal({
         assetClass,
         broker,
         fundingSymbol,
-        usdAmount: parseFloat(usdAmount),
+        usdAmount: amt,
       });
       setSuccess(r);
       notify({ level: 'success', title: 'Order filled', message: `Invested $${usdAmount} in ${symbol}.` });

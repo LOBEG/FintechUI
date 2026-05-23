@@ -41,21 +41,31 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   const [quotes, setQuotes] = useState([]);
   const [cryptoMarkets, setCryptoMarkets] = useState([]);
   const [savingBroker, setSavingBroker] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
+    let ctrl = null;
     const load = async () => {
+      ctrl?.abort();
+      const requestCtrl = new AbortController();
+      ctrl = requestCtrl;
       try {
         const [s, b, p, u, q, m] = await Promise.all([
-          api.get('/api/brokerage/settings').catch(() => null),
-          api.get('/api/user/preferred-broker').catch(() => null),
-          api.get('/api/brokerage/positions').catch(() => null),
-          fetch('/api/brokerage/universe', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
-          fetch('/api/brokerage/quotes', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
-          fetch('/api/markets', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
+          api.get('/api/brokerage/settings', { signal: requestCtrl.signal }).catch(() => null),
+          api.get('/api/user/preferred-broker', { signal: requestCtrl.signal }).catch(() => null),
+          api.get('/api/brokerage/positions', { signal: requestCtrl.signal }).catch(() => null),
+          fetch('/api/brokerage/universe', { cache: 'no-store', signal: requestCtrl.signal }).then((r) => r.ok ? r.json() : null).catch(() => null),
+          fetch('/api/brokerage/quotes', { cache: 'no-store', signal: requestCtrl.signal }).then((r) => r.ok ? r.json() : null).catch(() => null),
+          fetch('/api/markets', { cache: 'no-store', signal: requestCtrl.signal }).then((r) => r.ok ? r.json() : null).catch(() => null),
         ]);
-        if (cancelled) return;
+        if (cancelled || requestCtrl.signal.aborted) return;
+        if (!s && !b && !p && !u && !q && !m) {
+          setLoadError('Brokerage feeds are temporarily unavailable.');
+          return;
+        }
+        setLoadError(null);
         if (s?.settings) setSettings(s.settings);
         if (b?.preferredBroker) setPreferred(b.preferredBroker);
         if (Array.isArray(p?.positions)) setPositions(p.positions);
@@ -63,11 +73,13 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
         if (Array.isArray(u?.optionsUnderliers)) setOptionsUnderliers(u.optionsUnderliers);
         if (Array.isArray(q?.quotes)) setQuotes(q.quotes);
         if (Array.isArray(m?.markets)) setCryptoMarkets(m.markets);
-      } catch (_) {}
+      } catch (_) {
+        if (!cancelled) setLoadError('Brokerage feeds are temporarily unavailable.');
+      }
     };
     load();
     const id = setInterval(load, 15_000);
-    return () => { cancelled = true; clearInterval(id); };
+    return () => { cancelled = true; ctrl?.abort(); clearInterval(id); };
   }, [user]);
 
   const quoteBySymbol = useMemo(() => new Map(quotes.map((q) => [q.symbol, q])), [quotes]);
@@ -108,6 +120,11 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
       className="glass-strong p-6 space-y-5 relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-500/15 via-accent-success/10 to-slate-500/15" />
+      {loadError && (
+        <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+          {loadError} Showing the last available brokerage state while Oakmont reconnects.
+        </div>
+      )}
       
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center gap-3 flex-1">
