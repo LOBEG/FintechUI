@@ -246,7 +246,7 @@ export default function MarketSignalsClient() {
           <span className="text-gradient-primary">Real-time signals</span>, computed from live candles.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
-          Every Oakmont Digital Capital Group signal is derived in real time from the same candle stream
+          Every Oakmont Digital Markets Groups signal is derived in real time from the same candle stream
           our desks trade. RSI, 12/26 SMA cross and 24h drift are recomputed on every tick - no static
           recommendations, no placeholders. Expand any symbol to see the live candles behind the call.
         </p>

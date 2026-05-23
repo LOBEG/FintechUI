@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Building2, Shield, Network, Headphones } from 'lucide-react';
 
 export const metadata = {
-    title: 'Institutional Services - Oakmont Digital Capital Group',
+    title: 'Institutional Services - Oakmont Digital Markets Groups',
     description: 'Enterprise multi-asset brokerage, custody coordination, reporting and execution services for institutions, family offices, and corporate treasury.',
 };
 

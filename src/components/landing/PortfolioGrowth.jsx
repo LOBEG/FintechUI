@@ -22,7 +22,7 @@ export function PortfolioGrowth() {
             disciplined strategy.
           </motion.h2>
           <p className="mt-3 text-white/65 max-w-xl">
-            Oakmont Digital Capital Group separates public multi-asset market visibility from private account servicing. Visitors see live brokerage coverage across stocks, ETFs, crypto, FX, commodities, futures and options; verified users manage balances and orders; funded clients receive administrator-supervised portfolio updates and reporting.
+            Oakmont Digital Markets Groups separates public multi-asset market visibility from private account servicing. Visitors see live brokerage coverage across stocks, ETFs, crypto, FX, commodities, futures and options; verified users manage balances and orders; funded clients receive administrator-supervised portfolio updates and reporting.
           </p>
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
             {[

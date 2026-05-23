@@ -6,8 +6,8 @@ import BrokerageClient from './BrokerageClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Brokerage - Stocks, ETFs, Crypto, Forex, Commodities, Futures & Options | Oakmont Digital Capital Group',
-  description: 'Multi-asset brokerage from Oakmont Digital Capital Group. Live market data for stocks, ETFs, indices, crypto, forex, commodities, futures and options.',
+  title: 'Brokerage - Stocks, ETFs, Crypto, Forex, Commodities, Futures & Options | Oakmont Digital Markets Groups',
+  description: 'Multi-asset brokerage from Oakmont Digital Markets Groups. Live market data for stocks, ETFs, indices, crypto, forex, commodities, futures and options.',
 };
 
 export default function BrokeragePage() {

@@ -279,7 +279,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
         <form onSubmit={submit} className="space-y-3">
           <div className="flex gap-2 text-xs items-start bg-accent-success/10 border border-accent-success/30 text-slate-300 rounded-lg p-3">
             <Info className="h-4 w-4 mt-0.5 shrink-0"/>
-            <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Capital Group administrator.</p>
+            <p>Withdrawals require a one-time authorisation token issued by an Oakmont Digital Markets Groups administrator.</p>
           </div>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>
@@ -496,7 +496,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];
 const BROKER_OPTIONS = [
   { id: 'prime', label: 'Oakmont Prime' },
-  { id: 'crypto', label: 'Oakmont Digital Capital Group Crypto Desk (Binance)' },
+  { id: 'crypto', label: 'Oakmont Digital Markets Groups Crypto Desk (Binance)' },
   { id: 'multiAsset', label: 'Oakmont Multi-Asset Desk (Yahoo Finance)' },
 ];
 

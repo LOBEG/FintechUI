@@ -68,10 +68,10 @@ export default function InvestorPortalPage() {
             <Building2 className="h-3.5 w-3.5"/> Institutional Investor Portal
           </span>
           <h1 className="mt-4 text-3xl sm:text-4xl font-display">
-            <span className="text-gradient-primary">Oakmont Digital Capital Group</span> Asset Management
+            <span className="text-gradient-primary">Oakmont Digital Markets Groups</span> Asset Management
           </h1>
           <p className="mt-2 text-white/65 max-w-3xl">
-            Oakmont Digital Capital Group Asset Management combines live multi-asset market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent brokerage operating platform rather than a basic trading app.
+            Oakmont Digital Markets Groups Asset Management combines live multi-asset market access, portfolio governance, custody coordination, and risk oversight for investors who need a transparent brokerage operating platform rather than a basic trading app.
           </p>
         </motion.div>
 

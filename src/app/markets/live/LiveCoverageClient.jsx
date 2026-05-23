@@ -339,7 +339,7 @@ export default function LiveCoverageClient() {
           <span className="text-gradient-primary">{counts.all || '…'} live quotes</span> across every desk.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
-          Real-time prices for every Oakmont Digital Capital Group asset class: equities, ETFs, indices,
+          Real-time prices for every Oakmont Digital Markets Groups asset class: equities, ETFs, indices,
           forex, commodities, futures, and crypto. Every row is streamed from the primary exchange feed -
           no mock data, no placeholders. Tap a row to expand a live candle chart.
         </p>

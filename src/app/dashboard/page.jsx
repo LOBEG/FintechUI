@@ -3,7 +3,7 @@ import { memo, useEffect, useMemo, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Wallet, Plus, Bot, Eye, Star, Zap, } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Wallet, Plus, Bot, Eye, Star, Zap, Globe2, BarChart3, } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -391,6 +391,71 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     <span className="mt-4 inline-flex text-[11px] text-accent-success">Open</span>
                 </a>
               ))}
+            </section>
+          )}
+
+          {/* Live asset-class coverage + market quotes — always visible in overview */}
+          {activeFeature === 'overview' && (
+            <section className="space-y-4">
+              {/* Asset-class badges */}
+              <div className="glass-strong p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Globe2 className="h-4 w-4 text-slate-400"/>
+                  <h2 className="text-sm font-semibold text-white/90">Live Asset-Class Coverage</h2>
+                  <span className="chip bg-accent-success/10 text-accent-success border border-accent-success/25 text-[10px] ml-auto">● live</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Crypto', href: '/brokerage?tab=crypto', active: true },
+                    { label: 'Stocks & ETFs', href: '/brokerage?tab=stocks', active: true },
+                    { label: 'Forex', href: '/brokerage?tab=forex', active: true },
+                    { label: 'Commodities', href: '/brokerage?tab=commodities', active: true },
+                    { label: 'Futures', href: '/brokerage?tab=futures', active: true },
+                    { label: 'Options', href: '/brokerage?tab=options', active: true },
+                    { label: 'Fixed Income', href: '/brokerage', active: false },
+                  ].map((cls) => (
+                    <Link
+                      key={cls.label}
+                      href={cls.href}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${cls.active ? 'bg-slate-700/40 border-slate-600/40 text-white/85 hover:bg-slate-600/50 hover:text-white' : 'bg-white/[0.03] border-white/10 text-white/40 cursor-default pointer-events-none'}`}
+                    >
+                      {cls.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Live quote strip */}
+              <div className="glass-strong p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 text-slate-400"/>
+                    <h2 className="text-sm font-semibold text-white/90">Live Market Quotes</h2>
+                  </div>
+                  <Link href="/brokerage" className="text-xs text-white/50 hover:text-white transition">View all markets →</Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2">
+                  {DEFAULT_TICKER_SYMBOLS.slice(0, 8).map((sym) => {
+                    const meta = SYMBOL_META[sym];
+                    const q = livePrices[sym];
+                    if (!meta) return null;
+                    const px = q?.price ?? 0;
+                    const pct = q?.pct ?? 0;
+                    return (
+                      <div key={sym} className="glass-light p-3 flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-5 w-5 rounded-full inline-flex items-center justify-center text-[9px] font-bold text-ink-950 shrink-0 bg-white/5 border border-white/10" style={cryptoLogoStyle(meta.sym) || { background: meta.color }}>
+                            {!cryptoLogoStyle(meta.sym) && <Wallet className="h-3 w-3 text-white/75"/>}
+                          </span>
+                          <span className="text-[11px] font-semibold text-white/90 truncate">{meta.sym}</span>
+                        </div>
+                        <p className="text-sm font-mono font-semibold">{px ? formatUSD(px, px < 1 ? 4 : 2) : '—'}</p>
+                        <p className={`text-[10px] font-mono ${pct >= 0 ? 'text-accent-success' : 'text-accent-error'}`}>{q ? formatPct(pct) : 'connecting'}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </section>
           )}
 

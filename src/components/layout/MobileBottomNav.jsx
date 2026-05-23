@@ -27,17 +27,17 @@ export function MobileBottomNav() {
     
     if (loading || !user) return null;
     
-    return (<nav aria-label="Authenticated mobile navigation" className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t border-white/10 bg-ink-950/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
-      <ul className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory px-1">
+    return (<nav aria-label="Authenticated mobile navigation" className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t border-white/10 bg-ink-950/95 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+      <ul className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory px-2 gap-1 py-1">
         {items.filter((it) => !it.adminOnly || user?.isAdmin).map((it) => {
             const Icon = it.icon;
             const route = it.href.split('#')[0];
             const active = pathname === route || (route !== '/brokerage' && pathname?.startsWith(`${route}/`));
             const label = it.fallback ? (t(it.label) === it.label ? it.fallback : t(it.label)) : t(it.label);
-            return (<li key={`${it.label}-${it.href}`} className="snap-start">
-              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1 py-2 px-3 text-[10px] sm:text-[11px] min-w-[68px] rounded-xl transition-all duration-300 ease-out', active ? 'text-accent-success bg-accent-success/10' : 'text-white/60 hover:text-white hover:bg-white/5')}>
-                <Icon className="h-5 w-5"/>
-                <span>{label}</span>
+            return (<li key={`${it.label}-${it.href}`} className="snap-start shrink-0">
+              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1.5 py-2.5 px-3.5 text-[10px] sm:text-[11px] min-w-[72px] max-w-[88px] rounded-xl transition-all duration-200 ease-out active:scale-95', active ? 'text-accent-success bg-accent-success/10 border border-accent-success/25' : 'text-white/55 hover:text-white/90 hover:bg-white/5 border border-transparent')}>
+                <Icon className="h-[18px] w-[18px] shrink-0"/>
+                <span className="font-medium leading-tight text-center whitespace-nowrap">{label}</span>
               </Link>
             </li>);
         })}

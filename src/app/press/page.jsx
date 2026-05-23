@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Newspaper, Download, Mail } from 'lucide-react';
 
 export const metadata = {
-    title: 'Press - Oakmont Digital Capital Group',
-    description: 'Oakmont Digital Capital Group press releases, media kit, and contact information.',
+    title: 'Press - Oakmont Digital Markets Groups',
+    description: 'Oakmont Digital Markets Groups press releases, media kit, and contact information.',
 };
 
 export default function PressPage() {
@@ -18,7 +18,7 @@ export default function PressPage() {
             <span className="text-gradient-primary">Press</span> & Media
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            Media resources for Oakmont Digital Capital Group, a fintech-grade multi-asset brokerage focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
+            Media resources for Oakmont Digital Markets Groups, a fintech-grade multi-asset brokerage focused on live market data, secure trading workflows, managed account servicing, and transparent reporting.
           </p>
           <div className="mt-10 space-y-6">
             <div className="glass p-6 rounded-xl">
@@ -28,7 +28,7 @@ export default function PressPage() {
                   <h3 className="text-lg font-semibold">Platform overview</h3>
                   <p className="mt-1 text-sm text-white/50">Company profile</p>
                   <p className="mt-3 text-sm text-white/60">
-                    Oakmont Digital Capital Group provides public multi-asset market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for brokerage clients.
+                    Oakmont Digital Markets Groups provides public multi-asset market visibility, verified-user account access, live portfolio records, and admin-controlled investment servicing for brokerage clients.
                   </p>
                 </div>
               </div>
@@ -52,7 +52,7 @@ export default function PressPage() {
                   <h3 className="text-lg font-semibold">Market data and reporting</h3>
                   <p className="mt-1 text-sm text-white/50">Live data infrastructure</p>
                   <p className="mt-3 text-sm text-white/60">
-                    Oakmont Digital Capital Group displays Binance-backed pricing and candle data across public and signed-in experiences, with investor reports derived from live market feeds.
+                    Oakmont Digital Markets Groups displays Binance-backed pricing and candle data across public and signed-in experiences, with investor reports derived from live market feeds.
                   </p>
                 </div>
               </div>

@@ -169,7 +169,7 @@ export default function CandleVisualizationClient() {
           <span className="text-gradient-primary">Live OHLCV candles</span>, streamed in real time.
         </h1>
         <p className="mt-3 text-white/65 max-w-3xl">
-          Full-screen candle visualisation for any Oakmont Digital Capital Group instrument.
+          Full-screen candle visualisation for any Oakmont Digital Markets Groups instrument.
           Charts update automatically from live exchange feeds - Binance for crypto, primary
           exchange for equities, forex, and commodities. No mock data.
         </p>

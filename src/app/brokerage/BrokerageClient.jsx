@@ -285,8 +285,8 @@ function QuoteDetail({ q, onClose }) {
             {loading
               ? ' Checking your active session before showing trade actions.'
               : user
-              ? ' Your Oakmont Digital Capital Group brokerage account is active. Place an order from your trading dashboard.'
-              : ' To place an order, open a verified Oakmont Digital Capital Group brokerage account.'}
+              ? ' Your Oakmont Digital Markets Groups brokerage account is active. Place an order from your trading dashboard.'
+              : ' To place an order, open a verified Oakmont Digital Markets Groups brokerage account.'}
           </p>
           <div className="mt-4 flex gap-2.5">
             {loading ? (
@@ -582,7 +582,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           Trade everything from <span className="text-gradient-primary">stocks &amp; ETFs</span> to <span className="text-gradient-primary">crypto, FX &amp; futures</span>.
         </h1>
         <p className="mt-4 text-white/60 max-w-3xl leading-relaxed">
-          Oakmont Digital Capital Group operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
+          Oakmont Digital Markets Groups operates as a regulated multi-asset brokerage. Every quote, chart and options chain on this page is streamed live from the primary exchange feed - no mock data, no inactive screens. Verified clients route orders through our smart execution layer with transparent spreads and commissions.
         </p>
       </motion.div>
       
@@ -701,7 +701,7 @@ export default function BrokerageClient({ initialTab = 'stocks' }) {
           <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30 text-[10px] font-medium">● visible to users</span>
         </div>
         <p className="text-sm text-white/60 max-w-3xl leading-relaxed">
-          Oakmont Digital Capital Group displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
+          Oakmont Digital Markets Groups displays every supported asset class with live symbols, quotes, charts and market signals. Verified users can open the brokerage workspace from this page and invest through the account-level order ticket.
         </p>
         <motion.div 
           className="mt-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs"

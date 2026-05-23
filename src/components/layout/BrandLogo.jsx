@@ -20,7 +20,7 @@ export function BrandWordmark({ className = '' }) {
   return (
       <span className={`font-display tracking-tight leading-none whitespace-nowrap min-w-0 font-semibold ${className}`}>
       <span className="text-gradient-primary">Oakmont</span>
-      <span className="text-white/95 whitespace-nowrap"> DCG</span>
+      <span className="text-white/95 whitespace-nowrap"> DMG</span>
     </span>
   );
 }

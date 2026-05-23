@@ -4,8 +4,8 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Building, Globe, Award, Users } from 'lucide-react';
 
 export const metadata = {
-    title: 'About Oakmont Digital Capital Group',
-    description: 'Learn about Oakmont Digital Capital Group - institutional-grade multi-asset brokerage and investment platform.',
+    title: 'About Oakmont Digital Markets Groups',
+    description: 'Learn about Oakmont Digital Markets Groups - institutional-grade multi-asset brokerage and investment platform.',
 };
 
 export default function AboutPage() {
@@ -15,10 +15,10 @@ export default function AboutPage() {
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-display">
-            About <span className="text-gradient-primary">Oakmont Digital Capital Group</span>
+            About <span className="text-gradient-primary">Oakmont Digital Markets Groups</span>
           </h1>
           <p className="mt-4 text-lg text-white/70">
-             Oakmont Digital Capital Group is an institutional-grade multi-asset brokerage and investment platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent access to stocks, ETFs, crypto, forex, commodities, futures and options.
+             Oakmont Digital Markets Groups is an institutional-grade multi-asset brokerage and investment platform built around live market data, secure wallet operations, audited transaction records, and administrator-controlled investment servicing. We serve high-net-worth individuals, family offices, and corporate treasury teams that need transparent access to stocks, ETFs, crypto, forex, commodities, futures and options.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             <div className="glass p-6 rounded-xl">

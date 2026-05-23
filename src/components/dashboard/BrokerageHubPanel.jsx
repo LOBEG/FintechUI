@@ -15,7 +15,7 @@ const BROKERS = [
   },
   {
     id: 'crypto',
-    name: 'Oakmont Digital Capital Group Crypto Desk (Binance)',
+    name: 'Oakmont Digital Markets Groups Crypto Desk (Binance)',
     description: 'Spot crypto liquidity routed through Binance.',
     classes: ['crypto'],
     source: 'Binance public API',

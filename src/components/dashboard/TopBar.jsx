@@ -18,14 +18,14 @@ export function TopBar({ title }) {
     const { notify } = useNotifications();
     const memberLabel = user?.isAdmin ? 'Admin' : 'Member';
     
-    return (<header className="border-b border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 z-30">
+    return (<header className="border-b border-white/5 bg-ink-950/75 backdrop-blur-xl sticky top-0 z-30">
       <div className="h-16 px-4 sm:px-6 flex items-center gap-3">
-        <h1 className="text-lg font-display hidden sm:block">{title}</h1>
-        <div className="ml-auto flex-1 max-w-md hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-emerald-400/50 focus-within:ring-2 focus-within:ring-emerald-400/10">
+        <h1 className="text-lg font-display hidden sm:block text-white/90">{title}</h1>
+        <div className="ml-auto flex-1 max-w-md hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-slate-400/40 focus-within:ring-2 focus-within:ring-slate-400/10">
           <Search className="h-4 w-4 text-white/40" aria-hidden="true"/>
           <label htmlFor="dashboard-search" className="sr-only">Search markets, assets, and orders</label>
-          <input id="dashboard-search" placeholder="Search markets, assets, orders…" className="bg-transparent outline-none text-sm flex-1 placeholder:text-white/40"/>
-          <kbd className="text-[10px] text-white/40 border border-white/10 rounded px-1.5 py-0.5">⌘K</kbd>
+          <input id="dashboard-search" placeholder="Search markets, assets, orders…" className="bg-transparent outline-none text-sm flex-1 placeholder:text-white/35"/>
+          <kbd className="text-[10px] text-white/35 border border-white/10 rounded px-1.5 py-0.5">⌘K</kbd>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <button
@@ -41,16 +41,22 @@ export function TopBar({ title }) {
           <ThemeToggle />
           {user && <NotificationBell />}
           {user ? (
-            <div className="flex items-center gap-2 pl-2">
-              <div title={user.email} className="h-9 w-9 rounded-full bg-white/5 border border-slate-600/30 text-slate-400 inline-flex items-center justify-center">
+            <div className="flex items-center gap-2 pl-2 border-l border-white/10">
+              <div title={user.email} className="h-9 w-9 rounded-full bg-slate-700/40 border border-slate-600/40 text-slate-300 inline-flex items-center justify-center shrink-0">
                 <UserCircle className="h-5 w-5"/>
               </div>
-              <div className="text-xs leading-tight hidden md:block">
-                <div className="font-medium">{user.name || user.email.split('@')[0]}</div>
+              <div className="text-xs leading-tight hidden md:block min-w-0">
+                <div className="font-medium text-white/90 truncate max-w-[120px]">{user.name || user.email.split('@')[0]}</div>
                 <div className="text-white/45">{memberLabel}</div>
               </div>
-              <button onClick={async () => { await logout(); notify({ level: 'info', title: 'Signed out', message: 'You have been securely signed out.' }); router.push('/'); }} aria-label={t('logout')} title={t('logout')} className="btn-ghost btn-icon">
-                <LogOut className="h-4 w-4"/>
+              <button
+                onClick={async () => { await logout(); notify({ level: 'info', title: 'Signed out', message: 'You have been securely signed out.' }); router.push('/'); }}
+                aria-label={t('logout')}
+                title={t('logout')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/70 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200"
+              >
+                <LogOut className="h-3.5 w-3.5 shrink-0"/>
+                <span className="hidden sm:inline">Sign out</span>
               </button>
             </div>
           ) : (
@@ -60,10 +66,10 @@ export function TopBar({ title }) {
       </div>
       {mobileSearchOpen && (
         <div className="md:hidden px-4 sm:px-6 pb-3">
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-emerald-400/50 focus-within:ring-2 focus-within:ring-emerald-400/10">
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-slate-400/40 focus-within:ring-2 focus-within:ring-slate-400/10">
             <Search className="h-4 w-4 text-white/40" aria-hidden="true"/>
             <label htmlFor="dashboard-mobile-search" className="sr-only">Search markets, assets, and orders</label>
-            <input id="dashboard-mobile-search" autoFocus placeholder="Search markets, assets, orders…" className="bg-transparent outline-none text-sm flex-1 placeholder:text-white/40"/>
+            <input id="dashboard-mobile-search" autoFocus placeholder="Search markets, assets, orders…" className="bg-transparent outline-none text-sm flex-1 placeholder:text-white/35"/>
           </div>
         </div>
       )}

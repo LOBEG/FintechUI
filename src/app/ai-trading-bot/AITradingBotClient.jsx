@@ -88,7 +88,7 @@ export default function AITradingBotClient() {
     <>
       <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
         <span className="chip bg-white/5 border border-white/10 text-white/80">
-          <Sparkles className="h-3.5 w-3.5 text-accent-success"/> Oakmont Intelligence · Oakmont Digital Capital Group
+          <Sparkles className="h-3.5 w-3.5 text-accent-success"/> Oakmont Intelligence · Oakmont Digital Markets Groups
         </span>
         <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-display leading-tight">
           <span className="text-gradient-primary">Real-time market signals</span>
@@ -173,7 +173,7 @@ export default function AITradingBotClient() {
           </table>
         </div>
         <p className="text-[11px] text-white/45 mt-3">
-          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only. Oakmont Digital Capital Group does not guarantee any returns and all trading carries risk of loss.
+          Signals are computed from public Binance candles (15-minute resolution, 96-bar window). RSI &lt; 30 with rising 12/26 SMAs flags a Strong Buy; RSI &gt; 70 with falling SMAs flags Take Profit. Educational tool only. Oakmont Digital Markets Groups does not guarantee any returns and all trading carries risk of loss.
         </p>
       </section>
 

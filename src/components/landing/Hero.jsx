@@ -35,7 +35,7 @@ export function Hero() {
             <span className="text-gradient-primary">professional alpha</span>.
           </h1>
           <p className="mt-5 text-base sm:text-lg leading-relaxed text-white/70 max-w-xl">
-            Oakmont Digital Capital Group is a regulated multi-asset brokerage. Trade stocks, ETFs, indices, cryptocurrencies, forex, commodities, futures and options from a single live account, with institutional-grade custody, compliant onboarding, and admin-controlled investment servicing.
+            Oakmont Digital Markets Groups is a regulated multi-asset brokerage. Trade stocks, ETFs, indices, cryptocurrencies, forex, commodities, futures and options from a single live account, with institutional-grade custody, compliant onboarding, and admin-controlled investment servicing.
           </p>
           <div className="mt-7 flex flex-col sm:flex-row sm:flex-wrap gap-3">
             <Link href="/brokerage" className="btn-primary w-full sm:w-auto">

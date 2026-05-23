@@ -45,7 +45,7 @@ function SignupForm() {
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-accent-success/20 bg-accent-success/5">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />
-          <h1 className="text-2xl font-display">Create your Oakmont Digital Capital Group account</h1>
+          <h1 className="text-2xl font-display">Create your Oakmont Digital Markets Groups account</h1>
           <p className="text-sm text-white/60 mt-1">Trade and invest across stocks, ETFs, crypto, forex, commodities, futures and options with institutional-grade tools.</p>
           <div className="mt-4 rounded-xl border border-accent-success/30 bg-accent-success/10 px-3 py-2 text-sm text-white/80">
             <Gift className="inline h-4 w-4 text-accent-success300 mr-1"/> New verified accounts receive an automatic <strong>$100 portfolio cash</strong> credit, ready to invest after sign-up.
@@ -88,7 +88,7 @@ function SignupForm() {
             </label>
             <label className="flex items-start gap-2 text-xs text-white/60">
               <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 accent-neon-green"/>
-              I agree to the Oakmont Digital Capital Group Terms of Service, Privacy Policy, and Risk Disclosure.
+              I agree to the Oakmont Digital Markets Groups Terms of Service, Privacy Policy, and Risk Disclosure.
             </label>
             {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
             <button disabled={busy} className="btn-primary w-full disabled:opacity-60">
@@ -106,7 +106,7 @@ function SignupForm() {
         <div className="absolute -bottom-40 -left-20 h-[420px] w-[420px] rounded-full bg-accent-success/10 blur-3xl"/>
         <div className="relative max-w-md">
           <h2 className="text-3xl font-display leading-tight">
-            Join <span className="text-gradient-primary">4.1M+ investors</span><br />on Oakmont Digital Capital Group.
+            Join <span className="text-gradient-primary">4.1M+ investors</span><br />on Oakmont Digital Markets Groups.
           </h2>
           <p className="mt-3 text-white/65">Onboard in minutes. Full KYC verification typically completes in under an hour.</p>
           <ul className="mt-6 space-y-3 text-sm text-white/75">

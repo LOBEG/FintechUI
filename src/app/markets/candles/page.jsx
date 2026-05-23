@@ -6,7 +6,7 @@ import CandleVisualizationClient from './CandleVisualizationClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Live Candle Visualisation | Oakmont Digital Capital Group',
+  title: 'Live Candle Visualisation | Oakmont Digital Markets Groups',
   description:
     'Dedicated live candle chart visualisation page for crypto and multi-asset instruments. Stream real-time OHLCV candles from Binance and primary exchange feeds.',
 };
