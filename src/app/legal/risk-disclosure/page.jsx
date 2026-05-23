@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Risk Disclosure - Oakmont Digital Markets Group',
-    description: 'Important risk disclosure for digital asset trading on Oakmont Digital Markets Group.',
+    title: 'Risk Disclosure - Oakmont Digital Capital Group',
+    description: 'Important risk disclosure for digital asset trading on Oakmont Digital Capital Group.',
 };
 
 export default function RiskDisclosurePage() {
@@ -62,7 +62,7 @@ export default function RiskDisclosurePage() {
             <section>
               <h2 className="text-2xl font-display text-white">7. No Investment Advice</h2>
               <p className="mt-2">
-                Oakmont Digital Markets Group does not provide investment advice. All information on the platform is for informational purposes only. Consult a qualified financial adviser before making investment decisions.
+                Oakmont Digital Capital Group does not provide investment advice. All information on the platform is for informational purposes only. Consult a qualified financial adviser before making investment decisions.
               </p>
             </section>
 
@@ -75,7 +75,7 @@ export default function RiskDisclosurePage() {
 
             <section>
               <p className="mt-4 text-sm text-white/50 italic">
-                By using Oakmont Digital Markets Group, you acknowledge that you have read and understood these risks. You accept full responsibility for your trading decisions and any resulting losses.
+                By using Oakmont Digital Capital Group, you acknowledge that you have read and understood these risks. You accept full responsibility for your trading decisions and any resulting losses.
               </p>
             </section>
           </div>

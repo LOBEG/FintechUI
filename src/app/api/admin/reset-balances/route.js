@@ -60,9 +60,9 @@ export async function POST(req) {
       try {
         await sendEmail({
           to: user.email,
-          subject: 'Your Oakmont Digital Markets Group balances have been reset',
-          text: `All asset balances on your Oakmont Digital Markets Group account have been reset to zero. Reason: ${reason}.`,
-          html: `<p>Hello ${user.name || ''},</p><p>All asset balances on your Oakmont Digital Markets Group account have been reset to <strong>zero</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>If this was unexpected, please contact Oakmont Digital Markets Group support immediately.</p>`,
+          subject: 'Your Oakmont Digital Capital Group balances have been reset',
+          text: `All asset balances on your Oakmont Digital Capital Group account have been reset to zero. Reason: ${reason}.`,
+          html: `<p>Hello ${user.name || ''},</p><p>All asset balances on your Oakmont Digital Capital Group account have been reset to <strong>zero</strong>.</p><p><strong>Reason:</strong> ${reason}</p><p>If this was unexpected, please contact Oakmont Digital Capital Group support immediately.</p>`,
         });
       } catch (_) {}
     }

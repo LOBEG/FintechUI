@@ -3,8 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 export const metadata = {
-    title: 'Privacy Policy - Oakmont Digital Markets Group',
-    description: 'Oakmont Digital Markets Group Privacy Policy and data protection practices.',
+    title: 'Privacy Policy - Oakmont Digital Capital Group',
+    description: 'Oakmont Digital Capital Group Privacy Policy and data protection practices.',
 };
 
 export default function PrivacyPage() {

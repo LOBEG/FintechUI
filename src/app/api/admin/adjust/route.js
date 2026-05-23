@@ -67,15 +67,15 @@ export async function POST(req) {
     });
 
     const direction = amount > 0 ? 'increased' : 'decreased';
-    const subject = `Your Oakmont Digital Markets Group ${symbol} position was ${direction}`;
+    const subject = `Your Oakmont Digital Capital Group ${symbol} position was ${direction}`;
     const body_html = `
       <p>Hello ${user.name || ''},</p>
       <p>An adjustment of <strong>${amount > 0 ? '+' : ''}${amount} ${symbol}</strong>
       (≈ $${(Math.abs(amount) * price).toLocaleString(undefined, { maximumFractionDigits: 2 })})
-      has just been applied to your Oakmont Digital Markets Group account.</p>
+      has just been applied to your Oakmont Digital Capital Group account.</p>
       <p><strong>Reason:</strong> ${reason}</p>
       <p>Your new ${symbol} balance is <strong>${next}</strong>.</p>
-      <p>- The Oakmont Digital Markets Group team</p>
+      <p>- The Oakmont Digital Capital Group team</p>
     `;
     try {
       await sendEmail({

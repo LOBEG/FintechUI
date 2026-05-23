@@ -511,7 +511,7 @@ function TestimonialsPanel({ testimonials, onDone }) {
           <div className="flex-1 min-w-[200px]">
             <div className="flex items-center gap-2 text-xs">
               <strong className="text-white">{t.name}</strong>
-              <span className="text-white/55">{t.role || 'Oakmont Digital Markets Group investor'}</span>
+              <span className="text-white/55">{t.role || 'Oakmont Digital Capital Group investor'}</span>
               <span className={`chip ${t.status === 'approved' ? 'bg-accent-success/15 text-accent-success' : t.status === 'pending' ? 'bg-accent-success/15 text-blue-400' : 'bg-accent-error/15 text-accent-error'}`}>{t.status}</span>
               <span className="text-blue-400">{'★'.repeat(t.rating || 5)}</span>
             </div>
@@ -984,7 +984,7 @@ function DeleteUserForm({ users, onDone }) {
 
 const BROKERAGE_INTEGRATIONS = [
   ['prime', 'Oakmont Prime'],
-  ['crypto', 'Oakmont Digital Markets Group Crypto Desk (Binance)'],
+  ['crypto', 'Oakmont Digital Capital Group Crypto Desk (Binance)'],
   ['multiAsset', 'Oakmont Multi-Asset Desk (Yahoo Finance)'],
 ];
 const BROKERAGE_CLASSES = ['stocks', 'etfs', 'indices', 'forex', 'commodities', 'futures'];

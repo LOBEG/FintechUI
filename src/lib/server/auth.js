@@ -206,7 +206,7 @@ export function bootstrapAdmin() {
   const user = {
     id: newId('user'),
     email,
-    name: 'Oakmont Digital Markets Group Admin',
+    name: 'Oakmont Digital Capital Group Admin',
     passwordHash: hash,
     passwordSalt: salt,
     isAdmin: true,

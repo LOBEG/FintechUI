@@ -6,10 +6,10 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { Sparkline } from '@/components/ui/Charts';
 const insights = [
-    { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Markets Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-accent-success' },
+    { tag: 'Macro', title: 'Rate cuts ahead: re-rating risk assets', author: 'Oakmont Digital Capital Group Research', time: '2h ago', desc: 'Dovish FOMC commentary suggests a constructive setup for BTC and tech-heavy crypto majors into Q4.', color: 'text-accent-success' },
     { tag: 'On-chain', title: 'Bitcoin: dormant supply hits 14-yr high', author: 'Oakmont Intelligence', time: '5h ago', desc: 'Long-term holder cohort behavior signals accumulation; exchange balances at multi-year lows.', color: 'text-teal-400' },
-    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Markets Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-teal-400' },
-    { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Markets Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
+    { tag: 'Equities', title: 'Tech capex cycle vs. crypto correlation', author: 'Oakmont Digital Capital Group Research', time: '1d ago', desc: 'We dissect the rolling 30-day correlation between NDX and BTC, and what it implies for portfolio construction.', color: 'text-teal-400' },
+    { tag: 'DeFi', title: 'RWA tokenization: a $30T opportunity', author: 'Oakmont Digital Capital Group Research', time: '2d ago', desc: 'Tokenized treasuries, private credit, and real estate are catalyzing institutional flows into on-chain markets.', color: 'text-white' },
 ];
 export default function InsightsPage() {
     return (<main className="pb-20 lg:pb-0 relative min-h-screen bg-gradient-to-br from-stone-950/60 via-neutral-900/40 to-zinc-950/60">
@@ -23,7 +23,7 @@ export default function InsightsPage() {
             Institutional <span className="text-gradient-primary">research & intelligence</span>.
           </h1>
           <p className="mt-2 text-white/65 max-w-2xl">
-            Daily macro briefings, on-chain analytics, and curated market intelligence from the Oakmont Digital Markets Group research desk and Oakmont Intelligence.
+            Daily macro briefings, on-chain analytics, and curated market intelligence from the Oakmont Digital Capital Group research desk and Oakmont Intelligence.
           </p>
         </motion.div>
       </section>

@@ -14,8 +14,8 @@ export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const tab = BROKERAGE_TABS.find((item) => item.id === resolvedParams?.assetClass);
   return {
-    title: `${tab?.label || 'Brokerage'} | Oakmont Digital Markets Group`,
-    description: tab?.blurb || 'Live multi-asset brokerage workspace from Oakmont Digital Markets Group.',
+    title: `${tab?.label || 'Brokerage'} | Oakmont Digital Capital Group`,
+    description: tab?.blurb || 'Live multi-asset brokerage workspace from Oakmont Digital Capital Group.',
   };
 }
 
