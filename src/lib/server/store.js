@@ -1,4 +1,4 @@
-// File-based JSON persistence layer for Oakmont Digital Capital Group.
+// File-based JSON persistence layer for Oakmont Digital Markets Groups.
 // Designed to run on Railway with an attached volume mounted at /data
 // (configurable via DATA_DIR env). Falls back to <repo>/data in dev.
 //

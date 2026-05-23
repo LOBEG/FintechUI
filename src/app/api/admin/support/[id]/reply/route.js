@@ -67,7 +67,7 @@ export async function POST(req, { params }) {
         const safeBody = escapeHtml(text).replace(/\n/g, '<br/>');
         await sendEmail({
           to: u.email,
-          subject: `Oakmont Digital Capital Group support reply - ${ticket.subject}`,
+          subject: `Oakmont Digital Markets Groups support reply - ${ticket.subject}`,
           html: `<p>Hi ${escapeHtml(u.name || u.email)},</p>
 <p>Our support team has replied to your ticket <strong>${safeSubject}</strong>:</p>
 <blockquote style="border-left:3px solid #ccc;padding:0 12px;color:#444">${safeBody}</blockquote>

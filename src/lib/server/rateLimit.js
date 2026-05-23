@@ -3,7 +3,7 @@
 // Buckets are keyed by `${routeKey}:${clientIp}` and store a sliding window
 // of request timestamps. Because Next.js route handlers run inside a single
 // Node process per replica, this is effective for single-replica deployments
-// (which Oakmont Digital Capital Group uses). For multi-replica scale-out, replace this with a
+// (which Oakmont Digital Markets Groups uses). For multi-replica scale-out, replace this with a
 // Redis-backed limiter without touching callers.
 
 const buckets = new Map();

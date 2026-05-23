@@ -1,6 +1,6 @@
 // RFC 6238 TOTP - Time-based One-Time Password.
 //
-// Implemented from first principles on top of node:crypto so Oakmont Digital Capital Group
+// Implemented from first principles on top of node:crypto so Oakmont Digital Markets Groups
 // doesn't have to take a new dependency. Compatible with Google
 // Authenticator, Authy, 1Password and every other authenticator that
 // supports otpauth://totp/ URIs.

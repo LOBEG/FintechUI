@@ -41,7 +41,7 @@ function SignupForm() {
             setBusy(false);
         }
     };
-    return (<main className="min-h-screen flex relative bg-gradient-to-br from-graphite-950/70 via-charcoal-900 to-slate-950">
+    return (<main className="min-h-screen flex relative">
       <section className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong w-full max-w-md p-7 border-accent-success/20 bg-accent-success/5">
           <BrandLogo compact className="lg:hidden mb-4" textClassName="text-xl" />

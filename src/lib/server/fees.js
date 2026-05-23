@@ -1,6 +1,6 @@
 // Maker/taker fee model.
 //
-// Brokers charge a small percentage on every fill. Oakmont Digital Capital Group bills every
+// Brokers charge a small percentage on every fill. Oakmont Digital Markets Groups bills every
 // invest (buy) and sell as a "taker" fill at the market price - we never
 // actually rest an order on Binance, so we always pay the taker rate.
 //
