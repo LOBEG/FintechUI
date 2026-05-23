@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, ShieldCheck, AlertTriangle, Bell, Lock, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
@@ -130,10 +130,10 @@ export function MarketsPanel({ onInvest }) {
   // column resets to desc (the more useful direction for price/volume).
   const [sortBy, setSortBy] = useState(null); // 'price' | 'pct' | 'volume' | null
   const [sortDir, setSortDir] = useState('desc');
-  const requestSort = (col) => {
+  const requestSort = useCallback((col) => {
     if (sortBy === col) setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'));
     else { setSortBy(col); setSortDir('desc'); }
-  };
+  }, [sortBy]);
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -179,7 +179,7 @@ export function MarketsPanel({ onInvest }) {
     })();
     return () => { cancelled = true; };
   }, [user]);
-  const toggleFavourite = async (symbol) => {
+  const toggleFavourite = useCallback(async (symbol) => {
     if (!user) return;
     const had = watchlist.includes(symbol);
     // Optimistic update.
@@ -191,23 +191,24 @@ export function MarketsPanel({ onInvest }) {
       // Revert on failure.
       setWatchlist((prev) => had ? [...prev, symbol] : prev.filter((s) => s !== symbol));
     }
-  };
-  const authHref = (symbol) => `/login?next=/dashboard&asset=${encodeURIComponent(symbol)}`;
-  const handleInvest = (symbol) => {
+  }, [user, watchlist]);
+  const watchlistSet = useMemo(() => new Set(watchlist), [watchlist]);
+  const authHref = useCallback((symbol) => `/login?next=/dashboard&asset=${encodeURIComponent(symbol)}`, []);
+  const handleInvest = useCallback((symbol) => {
     if (!user) {
       window.location.href = authHref(symbol);
       return;
     }
     onInvest && onInvest(symbol);
-  };
-  const filtered = rows.filter((r) => {
+  }, [authHref, onInvest, user]);
+  const filtered = useMemo(() => rows.filter((r) => {
     if (!q) return true;
     const s = q.toLowerCase();
     return r.symbol.toLowerCase().includes(s) || r.name.toLowerCase().includes(s);
-  });
+  }), [q, rows]);
   // Apply column sort if one is active. Missing values sort to the end so
   // a freshly-rendered table with one slow row doesn't claim first place.
-  const sorted = sortBy
+  const sorted = useMemo(() => (sortBy
     ? filtered.slice().sort((a, b) => {
       const av = a[sortBy]; const bv = b[sortBy];
       const aMissing = av == null || !isFinite(av);
@@ -217,7 +218,7 @@ export function MarketsPanel({ onInvest }) {
       if (bMissing) return -1;
       return sortDir === 'asc' ? av - bv : bv - av;
     })
-    : filtered;
+    : filtered), [filtered, sortBy, sortDir]);
   const sortIndicator = (col) => {
     if (sortBy !== col) return null;
     return <span aria-hidden className="ml-1 text-white/60">{sortDir === 'asc' ? '▲' : '▼'}</span>;
@@ -281,7 +282,7 @@ export function MarketsPanel({ onInvest }) {
               </tr>
             )}
             {sorted.map((r) => {
-              const fav = watchlist.includes(r.symbol);
+              const fav = watchlistSet.has(r.symbol);
               return (
               <tr key={r.symbol}>
                 {user && (

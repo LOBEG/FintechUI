@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Loader2 } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
@@ -48,6 +48,22 @@ export default function BrokeragePositionsPanel() {
     const id = setInterval(() => fetchLive(positions), 12000);
     return () => clearInterval(id);
   }, [positions, fetchLive]);
+
+  const displayRows = useMemo(() => positions.map((p) => {
+    const q = liveQuotes[p.symbol];
+    const dayPct = q?.pct ?? null;
+    const isUp = dayPct !== null && dayPct >= 0;
+    const qty = Number(p.qty) || 0;
+    const avgPrice = Number(p.avgPrice) || 0;
+    const livePrice = Number(q?.price ?? p.livePrice ?? 0);
+    const invested = Number(p.usdInvested) || (qty * avgPrice) || 0;
+    const marketValue = qty * livePrice;
+    const pnlUsd = q ? (marketValue - invested) : Number(p.pnlUsd) || 0;
+    const pnlPct = q
+      ? (invested > 0 ? ((marketValue - invested) / invested) * 100 : 0)
+      : Number(p.pnlPct) || 0;
+    return { p, q, dayPct, isUp, qty, avgPrice, livePrice, marketValue, pnlUsd, pnlPct };
+  }), [liveQuotes, positions]);
 
   if (!user) return null;
   if (!loaded) {
@@ -134,19 +150,7 @@ export default function BrokeragePositionsPanel() {
             </tr>
           </thead>
           <tbody>
-            {positions.map((p, idx) => {
-              const q = liveQuotes[p.symbol];
-              const dayPct = q?.pct ?? null;
-              const isUp = dayPct !== null && dayPct >= 0;
-              const qty = Number(p.qty) || 0;
-              const avgPrice = Number(p.avgPrice) || 0;
-              const livePrice = Number(q?.price ?? p.livePrice ?? 0);
-              const invested = Number(p.usdInvested) || (qty * avgPrice) || 0;
-              const marketValue = qty * livePrice;
-              const pnlUsd = q ? (marketValue - invested) : Number(p.pnlUsd) || 0;
-              const pnlPct = q
-                ? (invested > 0 ? ((marketValue - invested) / invested) * 100 : 0)
-                : Number(p.pnlPct) || 0;
+            {displayRows.map(({ p, q, dayPct, isUp, qty, avgPrice, livePrice, marketValue, pnlUsd, pnlPct }, idx) => {
               return (
               <motion.tr 
                 key={p.key} 

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
 function rand(seed) {
     let s = seed;
@@ -24,7 +24,7 @@ function generateCandles(count, seed = 42, base = 70000) {
     return out;
 }
 
-export function CandlestickChart({ width = 720, height = 320, count = 60, seed = 7, base = 70000, animate = true, showAxes = true, data = null, responsive = true }) {
+export const CandlestickChart = memo(function CandlestickChart({ width = 720, height = 320, count = 60, seed = 7, base = 70000, animate = true, showAxes = true, data = null, responsive = true }) {
     const [internal, setInternal] = useState(() => generateCandles(count, seed, base));
     const containerRef = useRef(null);
     const [containerWidth, setContainerWidth] = useState(width);
@@ -198,8 +198,8 @@ export function CandlestickChart({ width = 720, height = 320, count = 60, seed =
         </svg>
       </div>
     );
-}
-export function Sparkline({ width = 120, height = 40, seed = 1, positive = true, data = null, }) {
+});
+export const Sparkline = memo(function Sparkline({ width = 120, height = 40, seed = 1, positive = true, data = null, }) {
     const points = useMemo(() => {
         if (Array.isArray(data) && data.length) {
             return data.map((v) => Number(v)).filter((v) => Number.isFinite(v));
@@ -227,8 +227,8 @@ export function Sparkline({ width = 120, height = 40, seed = 1, positive = true,
     return (<svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} style={{ contain: 'layout style paint' }}>
       <path d={path} fill="none" stroke={color} strokeWidth={1.5}/>
     </svg>);
-}
-export function DonutChart({ size = 180, data, }) {
+});
+export const DonutChart = memo(function DonutChart({ size = 180, data, }) {
     const total = data.reduce((a, b) => a + b.value, 0) || 1;
     const r = size / 2 - 14;
     const c = 2 * Math.PI * r;
@@ -249,8 +249,8 @@ export function DonutChart({ size = 180, data, }) {
         <span className="text-lg font-semibold">{total.toLocaleString()}</span>
       </div>
     </div>);
-}
-export function BarChart({ data, width = 320, height = 140, color = '#3b82f6', }) {
+});
+export const BarChart = memo(function BarChart({ data, width = 320, height = 140, color = '#3b82f6', }) {
     const max = Math.max(...data, 1);
     const bw = width / data.length;
     return (<svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height} style={{ contain: 'layout style paint' }}>
@@ -259,4 +259,4 @@ export function BarChart({ data, width = 320, height = 140, color = '#3b82f6', }
             return (<rect key={i} x={i * bw + 3} y={height - h} width={bw - 6} height={h} rx={3} fill={color} opacity={0.85}/>);
         })}
     </svg>);
-}
+});

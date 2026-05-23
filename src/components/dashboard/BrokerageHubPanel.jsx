@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, Network, Building2, Globe, Loader2, CheckCircle2, ArrowDownLeft, ArrowUpRight, Activity, TrendingUp } from 'lucide-react';
 import { api, useSession } from '@/lib/useSession';
@@ -71,35 +71,34 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
   }, [user]);
 
   const quoteBySymbol = useMemo(() => new Map(quotes.map((q) => [q.symbol, q])), [quotes]);
-
-  if (!user) return null;
-  if (!settings) return null;
-  const integrations = settings.integrations || {};
-  const anyEnabled = !!(integrations.prime || integrations.crypto || integrations.multiAsset);
-  if (!anyEnabled) return null;
-
-  const updatedLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  const selectBroker = async (id) => {
+  const cryptoMarketBySymbol = useMemo(() => new Map(cryptoMarkets.map((m) => [m.symbol, m])), [cryptoMarkets]);
+  const integrations = useMemo(() => settings?.integrations || {}, [settings]);
+  const enabledBrokers = useMemo(() => BROKERS.filter((b) => integrations[b.id]), [integrations]);
+  const enabledClasses = useMemo(() => [
+    ...Object.keys(universe).filter((c) => settings?.classes?.[c] !== false),
+    ...(integrations.crypto ? ['crypto'] : []),
+    ...(settings?.classes?.options !== false && optionsUnderliers.length ? ['options'] : []),
+  ], [integrations.crypto, optionsUnderliers.length, settings?.classes, universe]);
+  const signalRows = useMemo(() => quotes
+    .filter((q) => q.signal && q.price)
+    .map((q) => ({ ...q, kind: q.assetClass || 'brokerage' })), [quotes]);
+  const cryptoRows = useMemo(() => cryptoMarkets
+    .filter((m) => Number(m.price) > 0)
+    .map((m) => ({ ...m, kind: 'crypto', signal: m.signal || (Number(m.pct) >= 1 ? 'Accumulate' : Number(m.pct) <= -1 ? 'Reduce' : 'Hold / observe') })), [cryptoMarkets]);
+  const selectBroker = useCallback(async (id) => {
     setSavingBroker(true);
     try {
       const r = await api.patch('/api/user/preferred-broker', { broker: id });
       if (r?.preferredBroker) setPreferred(r.preferredBroker);
     } catch (_) {} finally { setSavingBroker(false); }
-  };
+  }, []);
 
-  const enabledBrokers = BROKERS.filter((b) => integrations[b.id]);
-  const enabledClasses = [
-    ...Object.keys(universe).filter((c) => settings.classes?.[c] !== false),
-    ...(integrations.crypto ? ['crypto'] : []),
-    ...(settings.classes?.options !== false && optionsUnderliers.length ? ['options'] : []),
-  ];
-  const signalRows = quotes
-    .filter((q) => q.signal && q.price)
-    .map((q) => ({ ...q, kind: q.assetClass || 'brokerage' }));
-  const cryptoRows = cryptoMarkets
-    .filter((m) => Number(m.price) > 0)
-    .map((m) => ({ ...m, kind: 'crypto', signal: m.signal || (Number(m.pct) >= 1 ? 'Accumulate' : Number(m.pct) <= -1 ? 'Reduce' : 'Hold / observe') }));
+  if (!user) return null;
+  if (!settings) return null;
+  const anyEnabled = !!(integrations.prime || integrations.crypto || integrations.multiAsset);
+  if (!anyEnabled) return null;
+
+  const updatedLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
     <motion.section
@@ -214,7 +213,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
                   <div className="flex flex-wrap gap-1.5">
                     {rows.slice(0, 8).map((row) => {
                       const liveQuote = quoteBySymbol.get(row.symbol);
-                      const cryptoQuote = cls === 'crypto' ? cryptoMarkets.find((m) => m.symbol === row.symbol) : null;
+                      const cryptoQuote = cls === 'crypto' ? cryptoMarketBySymbol.get(row.symbol) : null;
                       const signal = liveQuote?.signal || cryptoQuote?.signal;
                       return (
                         <span key={row.symbol} className="chip bg-white/5 border border-white/10 text-white/65 text-[10px] font-medium">
@@ -331,7 +330,7 @@ export default function BrokerageHubPanel({ onInvest, onWithdraw }) {
             <tbody>
               {positions.map((p) => {
                 const live = quoteBySymbol.get(p.symbol);
-                const cryptoLive = cryptoMarkets.find((m) => m.symbol === p.symbol);
+                const cryptoLive = cryptoMarketBySymbol.get(p.symbol);
                 const qty = Number(p.qty) || 0;
                 const avgPrice = Number(p.avgPrice) || 0;
                 const livePrice = Number(live?.price ?? cryptoLive?.price ?? p.livePrice ?? 0);
