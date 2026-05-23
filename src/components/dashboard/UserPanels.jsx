@@ -1,11 +1,12 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Wallet, Check, Search, MessageSquare, Star, Loader2, ShieldAlert, ShieldCheck, AlertTriangle, Bell, Lock, X as BellClose, ArrowRightLeft, Rocket, LifeBuoy, Send, ChevronDown, ChevronUp } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api, useSession } from '@/lib/useSession';
 import { useNotifications } from '@/components/Notifications';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
+import { useAccessibleDialog } from '@/lib/useAccessibleDialog';
 
 // Memo / destination-tag bearing chains. Funds sent without the memo are
 // generally not recoverable on a shared exchange wallet, so we warn the
@@ -121,6 +122,10 @@ export function MarketsPanel({ onInvest }) {
   const [rows, setRows] = useState([]);
   const [q, setQ] = useState('');
   const [watchlist, setWatchlist] = useState([]); // base symbols
+  const [loading, setLoading] = useState(true);
+  const [marketError, setMarketError] = useState(null);
+  const [watchlistError, setWatchlistError] = useState(null);
+  const hasRowsRef = useRef(false);
   // Column sort. Click a header to toggle asc/desc; clicking a different
   // column resets to desc (the more useful direction for price/volume).
   const [sortBy, setSortBy] = useState(null); // 'price' | 'pct' | 'volume' | null
@@ -137,8 +142,22 @@ export function MarketsPanel({ onInvest }) {
         // Avoid clobbering a populated table with an empty response -
         // Binance occasionally returns [] under rate-limit and we don't
         // want the UI to flash empty.
-        if (mounted && Array.isArray(r.markets) && r.markets.length) setRows(r.markets);
-      } catch (_) {}
+        if (!mounted) return;
+        if (Array.isArray(r.markets) && r.markets.length) {
+          setRows(r.markets);
+          hasRowsRef.current = true;
+          setMarketError(null);
+        } else if (!hasRowsRef.current) {
+          setRows([]);
+          setMarketError('Live market prices are temporarily unavailable.');
+        } else {
+          setMarketError('Showing the last Oakmont market snapshot while the feed reconnects.');
+        }
+      } catch (_) {
+        if (mounted) setMarketError(hasRowsRef.current ? 'Showing the last Oakmont market snapshot while the feed reconnects.' : 'Live market prices are temporarily unavailable.');
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
     load();
     const id = setInterval(load, 15000);
@@ -150,8 +169,13 @@ export function MarketsPanel({ onInvest }) {
     (async () => {
       try {
         const r = await api.get('/api/watchlist');
-        if (!cancelled) setWatchlist(Array.isArray(r.symbols) ? r.symbols : []);
-      } catch (_) { /* tolerate */ }
+        if (!cancelled) {
+          setWatchlist(Array.isArray(r.symbols) ? r.symbols : []);
+          setWatchlistError(null);
+        }
+      } catch (_) {
+        if (!cancelled) setWatchlistError('Saved watchlist is temporarily unavailable.');
+      }
     })();
     return () => { cancelled = true; };
   }, [user]);
@@ -198,6 +222,7 @@ export function MarketsPanel({ onInvest }) {
     if (sortBy !== col) return null;
     return <span aria-hidden className="ml-1 text-white/60">{sortDir === 'asc' ? '▲' : '▼'}</span>;
   };
+  const colSpan = user ? 8 : 7;
   const sortableHeader = (col, label, extraClass = '') => (
     <th
       className={`py-2 font-medium ${extraClass}`}
@@ -219,9 +244,16 @@ export function MarketsPanel({ onInvest }) {
         <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● live</span>
         <div className="ml-auto flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5">
           <Search className="h-3.5 w-3.5 text-white/50"/>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search asset…" className="bg-transparent outline-none text-sm w-32"/>
+          <label htmlFor="markets-search" className="sr-only">Search crypto markets</label>
+          <input id="markets-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search asset…" className="bg-transparent outline-none text-sm w-32"/>
         </div>
       </div>
+      {(marketError || watchlistError) && (
+        <div className="mb-3 space-y-2" aria-live="polite">
+          {marketError && <p className="rounded-lg border border-accent-warning/30 bg-accent-warning/10 px-3 py-2 text-xs text-accent-warning">{marketError}</p>}
+          {watchlistError && user && <p className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/65">{watchlistError}</p>}
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="text-xs text-white/50 text-left">
@@ -237,6 +269,17 @@ export function MarketsPanel({ onInvest }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
+            {!sorted.length && (
+              <tr>
+                <td colSpan={colSpan} className="py-6 text-center text-white/45">
+                  {q
+                    ? 'No markets match this search.'
+                    : loading
+                      ? 'Loading live market prices…'
+                      : marketError || 'No live market rows are available yet.'}
+                </td>
+              </tr>
+            )}
             {sorted.map((r) => {
               const fav = watchlist.includes(r.symbol);
               return (
@@ -450,12 +493,17 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [unread, setUnread] = useState(0);
+  const [loadError, setLoadError] = useState(null);
+  const { dialogRef, closeButtonRef, titleId, dialogProps } = useAccessibleDialog({ open, onClose: () => setOpen(false), modal: false });
   const reload = async () => {
     try {
       const r = await api.get('/api/notifications');
       setItems(r.items || []);
       setUnread(r.unread || 0);
-    } catch (_) {}
+      setLoadError(null);
+    } catch (_) {
+      setLoadError('Notifications are temporarily unavailable.');
+    }
   };
   useEffect(() => {
     reload();
@@ -475,6 +523,7 @@ export function NotificationBell() {
         className="relative h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10"
         aria-label={`Notifications${unread ? ` - ${unread} unread` : ''}`}
         aria-expanded={open}
+        aria-controls="notifications-panel"
       >
         <Bell className="h-4 w-4"/>
         {unread > 0 && (
@@ -484,19 +533,21 @@ export function NotificationBell() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto glass-strong border border-white/10 rounded-xl shadow-glass z-40" role="dialog" aria-label="Notifications">
+        <div id="notifications-panel" ref={dialogRef} {...dialogProps} className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto glass-strong border border-white/10 rounded-xl shadow-glass z-40">
           <div className="flex items-center justify-between p-3 border-b border-white/10">
-            <span className="text-sm font-display">Notifications</span>
+            <span id={titleId} className="text-sm font-display">Notifications</span>
             <div className="flex items-center gap-1">
               {unread > 0 && (
                 <button onClick={markAll} className="text-[11px] text-white/65 hover:text-white px-2 py-1 rounded hover:bg-white/5">Mark all read</button>
               )}
-              <button onClick={() => setOpen(false)} aria-label="Close" className="h-7 w-7 rounded-md hover:bg-white/10 inline-flex items-center justify-center">
+              <button ref={closeButtonRef} onClick={() => setOpen(false)} aria-label="Close notifications panel" className="h-7 w-7 rounded-md hover:bg-white/10 inline-flex items-center justify-center">
                 <BellClose className="h-3.5 w-3.5"/>
               </button>
             </div>
           </div>
-          {items.length === 0 ? (
+          {loadError ? (
+            <p className="text-xs text-white/55 p-4">{loadError}</p>
+          ) : items.length === 0 ? (
             <p className="text-xs text-white/55 p-4">You&apos;re all caught up.</p>
           ) : (
             <ul className="divide-y divide-white/5">
@@ -639,6 +690,7 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
   const [qty, setQty] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const { dialogRef, closeButtonRef, titleId, dialogProps } = useAccessibleDialog({ open, onClose });
   useEffect(() => { if (open) { setError(null); } }, [open]);
   if (!open) return null;
   const submit = async (e) => {
@@ -662,10 +714,10 @@ function PlaceOrderModal({ open, onClose, onPlaced }) {
   })();
   return (
     <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
+      <div ref={dialogRef} {...dialogProps} onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-display flex-1">Place limit / stop order</h3>
-          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+          <h3 id={titleId} className="text-lg font-display flex-1">Place limit / stop order</h3>
+          <button ref={closeButtonRef} onClick={onClose} aria-label="Close order dialog" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
         </div>
         <form onSubmit={submit} className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
@@ -813,6 +865,7 @@ function AddBeneficiaryModal({ open, onClose, onAdded }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [done, setDone] = useState(false);
+  const { dialogRef, closeButtonRef, titleId, dialogProps } = useAccessibleDialog({ open, onClose });
   useEffect(() => { if (open) { setError(null); setDone(false); setLabel(''); setAddress(''); setMemo(''); setNetwork(''); } }, [open]);
   if (!open) return null;
   const submit = async (e) => {
@@ -826,10 +879,10 @@ function AddBeneficiaryModal({ open, onClose, onAdded }) {
   };
   return (
     <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
+      <div ref={dialogRef} {...dialogProps} onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6 relative">
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-display flex-1">Add beneficiary</h3>
-          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+          <h3 id={titleId} className="text-lg font-display flex-1">Add beneficiary</h3>
+          <button ref={closeButtonRef} onClick={onClose} aria-label="Close add beneficiary dialog" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
         </div>
         {done ? (
           <div className="text-sm space-y-3">
@@ -1005,6 +1058,7 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const { notify } = useNotifications();
+  const { dialogRef, closeButtonRef, titleId, dialogProps } = useAccessibleDialog({ open, onClose });
   useEffect(() => { if (open) { setForm({}); setError(null); } }, [open]);
   if (!open || !requestedTier) return null;
   const submit = async (e) => {
@@ -1022,10 +1076,10 @@ function KycUpgradeModal({ open, onClose, requestedTier, onSubmitted }) {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   return (
     <div onClick={onClose} className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6">
+      <div ref={dialogRef} {...dialogProps} onClick={(e) => e.stopPropagation()} className="glass-strong w-full max-w-md p-6">
         <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-display flex-1">Upgrade to Tier {requestedTier}</h3>
-          <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
+          <h3 id={titleId} className="text-lg font-display flex-1">Upgrade to Tier {requestedTier}</h3>
+          <button ref={closeButtonRef} onClick={onClose} aria-label="Close KYC upgrade dialog" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><BellClose className="h-4 w-4"/></button>
         </div>
         <form onSubmit={submit} className="space-y-3 text-sm">
           {requestedTier === 1 && (

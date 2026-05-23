@@ -22,10 +22,10 @@ export function MarketTicker() {
               const logo = getCryptoLogo(a.sym);
               return (<div key={`${a.key}-${i}`} className="flex items-center gap-3 px-6 whitespace-nowrap border-r border-white/5">
                 {logo ? (
-                  <img src={logo} alt={a.sym} width={24} height={24} loading="lazy" className="h-6 w-6 rounded-full bg-white/5"
-                    onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling.style.display = 'inline-flex'; }} />
+                  <img src={logo} alt={`${a.name || a.sym} logo`} width={24} height={24} loading="lazy" className="h-6 w-6 rounded-full bg-white/5"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
                 ) : null}
-                <span className={`h-7 w-7 rounded-full ${logo ? 'hidden' : 'inline-flex'} items-center justify-center text-[11px] font-bold text-ink-950`} style={{ background: a.color }}>
+                <span className={`h-7 w-7 rounded-full ${logo ? 'hidden' : 'inline-flex'} items-center justify-center text-[11px] font-bold text-ink-950`} style={{ background: a.color }} role="img" aria-label={`${a.name || a.sym} fallback mark`}>
                   {a.sym.slice(0, 1)}
                 </span>
                 <span className="text-sm font-semibold text-white">{a.sym}</span>

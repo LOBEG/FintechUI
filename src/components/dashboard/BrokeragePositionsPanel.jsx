@@ -11,13 +11,17 @@ export default function BrokeragePositionsPanel() {
   const [confirmKey, setConfirmKey] = useState(null);
   const [busyKey, setBusyKey] = useState(null);
   const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
   const [liveQuotes, setLiveQuotes] = useState({});
 
   const load = useCallback(async () => {
     try {
       const r = await api.get('/api/brokerage/positions');
       setPositions(Array.isArray(r?.positions) ? r.positions : []);
-    } catch (_) {} finally { setLoaded(true); }
+      setLoadError(null);
+    } catch (_) {
+      setLoadError('Brokerage positions are temporarily unavailable.');
+    } finally { setLoaded(true); }
   }, []);
 
   const fetchLive = useCallback(async (pos) => {
@@ -46,8 +50,28 @@ export default function BrokeragePositionsPanel() {
   }, [positions, fetchLive]);
 
   if (!user) return null;
-  if (!loaded) return null;
-  if (positions.length === 0) return null;
+  if (!loaded) {
+    return (
+      <section className="glass-strong p-6">
+        <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading brokerage positions…</p>
+      </section>
+    );
+  }
+  if (loadError && positions.length === 0) {
+    return (
+      <section className="glass-strong p-6">
+        <p className="text-sm text-white/55">{loadError}</p>
+      </section>
+    );
+  }
+  if (positions.length === 0) {
+    return (
+      <section className="glass-strong p-6">
+        <h3 className="font-display text-xl tracking-tight">Brokerage positions</h3>
+        <p className="mt-2 text-sm text-white/55">No live brokerage positions yet. Invest from the Oakmont brokerage hub to populate this panel.</p>
+      </section>
+    );
+  }
 
   const liquidate = async (p) => {
     setBusyKey(p.key); setError(null);
@@ -83,13 +107,13 @@ export default function BrokeragePositionsPanel() {
         </motion.span>
       </div>
       
-      {error && (
+      {(error || loadError) && (
         <motion.p 
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
           className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-xl px-4 py-2.5 mb-4"
         >
-          {error}
+          {error || loadError}
         </motion.p>
       )}
       

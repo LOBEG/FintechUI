@@ -118,6 +118,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
     const [watchlistExpanded, setWatchlistExpanded] = useState(false);
     const [historyExpanded, setHistoryExpanded] = useState(false);
     const [liveWallet, setLiveWallet] = useState(null);
+    const [watchlistError, setWatchlistError] = useState(null);
     const refreshWallet = useCallback(async () => {
         if (!user) { setLiveWallet(null); return; }
         try { const w = await api.get('/api/wallet'); setLiveWallet(w); } catch (_) {}
@@ -132,8 +133,16 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
         (async () => {
             try {
                 const r = await api.get('/api/watchlist');
-                if (!cancelled) setWatchlistBases(Array.isArray(r.symbols) ? r.symbols : []);
-            } catch (_) { if (!cancelled) setWatchlistBases([]); }
+                if (!cancelled) {
+                    setWatchlistBases(Array.isArray(r.symbols) ? r.symbols : []);
+                    setWatchlistError(null);
+                }
+            } catch (_) {
+                if (!cancelled) {
+                    setWatchlistBases(null);
+                    setWatchlistError('Saved watchlist is temporarily unavailable. Showing the Oakmont live shortlist instead.');
+                }
+            }
         })();
         return () => { cancelled = true; };
     }, [user]);
@@ -549,6 +558,8 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                 </button>
               </div>
               <div className="mt-3 divide-y divide-white/5">
+                {watchlistError && <p className="mb-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/65">{watchlistError}</p>}
+                {watchlistBases === null && !watchlistError && <p className="mb-3 text-xs text-white/50">Loading your saved watchlist…</p>}
                 {visibleWatchlistSymbols.map((s, i) => {
                   const meta = SYMBOL_META[s];
                   const d = livePrices[s];

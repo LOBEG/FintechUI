@@ -5,10 +5,12 @@ import { X, Loader2, ArrowDownLeft, ArrowUpRight, CheckCircle2, Info } from 'luc
 import { api } from '@/lib/useSession';
 import { useLivePrices } from '@/lib/useLiveData';
 import { useNotifications } from '@/components/Notifications';
+import { useAccessibleDialog } from '@/lib/useAccessibleDialog';
 
 const SUPPORTED = ['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'DOGE', 'AVAX', 'LINK', 'LTC', 'TRX', 'DOT', 'MATIC', 'TON', 'ATOM', 'NEAR', 'APT', 'ARB', 'OP', 'SUI', 'FIL', 'INJ', 'SHIB', 'PEPE', 'BCH', 'ETC', 'XLM', 'ALGO', 'HBAR'];
 
 function Modal({ open, onClose, title, icon, children }) {
+  const { dialogRef, closeButtonRef, titleId, dialogProps } = useAccessibleDialog({ open, onClose });
   return (
     <AnimatePresence>
       {open && (
@@ -20,12 +22,14 @@ function Modal({ open, onClose, title, icon, children }) {
           <motion.div
             initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }}
             className="glass-strong w-full max-w-md card-pad-lg relative"
+            ref={dialogRef}
+            {...dialogProps}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2 mb-4">
               <span className="h-9 w-9 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center">{icon}</span>
-              <h3 className="text-lg font-display flex-1">{title}</h3>
-              <button onClick={onClose} aria-label="Close" className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><X className="h-4 w-4"/></button>
+              <h3 id={titleId} className="text-lg font-display flex-1">{title}</h3>
+              <button ref={closeButtonRef} onClick={onClose} aria-label={`Close ${title}`} className="h-8 w-8 rounded-lg hover:bg-white/10 inline-flex items-center justify-center"><X className="h-4 w-4"/></button>
             </div>
             {children}
           </motion.div>

@@ -360,7 +360,10 @@ export default function LiveCoverageClient() {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[12rem]">
           <Search className="h-4 w-4 absolute left-2 top-1/2 -translate-y-1/2 text-white/40" />
+          <label htmlFor="live-coverage-search" className="sr-only">Search live market coverage</label>
           <input
+            id="live-coverage-search"
+            type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search symbol or name"
