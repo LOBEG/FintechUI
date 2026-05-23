@@ -12,6 +12,7 @@ export const translations = {
     alerts: 'Alerts',
     security: 'Security',
     settings: 'Settings',
+    admin: 'Admin',
     support: 'Support',
     logout: 'Logout',
     
@@ -51,6 +52,7 @@ export const translations = {
     alerts: 'Alertas',
     security: 'Seguridad',
     settings: 'Configuración',
+    admin: 'Administración',
     support: 'Soporte',
     logout: 'Cerrar sesión',
     
@@ -90,6 +92,7 @@ export const translations = {
     alerts: 'Alertes',
     security: 'Sécurité',
     settings: 'Paramètres',
+    admin: 'Admin',
     support: 'Soutien',
     logout: 'Déconnexion',
     
@@ -129,6 +132,7 @@ export const translations = {
     alerts: 'Alarme',
     security: 'Sicherheit',
     settings: 'Einstellungen',
+    admin: 'Admin',
     support: 'Unterstützung',
     logout: 'Abmelden',
     
@@ -168,6 +172,7 @@ export const translations = {
     alerts: 'Alertas',
     security: 'Segurança',
     settings: 'Configurações',
+    admin: 'Admin',
     support: 'Suporte',
     logout: 'Sair',
     
@@ -207,6 +212,7 @@ export const translations = {
     alerts: '警报',
     security: '安全',
     settings: '设置',
+    admin: '管理员',
     support: '支持',
     logout: '登出',
     

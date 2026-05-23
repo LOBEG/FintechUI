@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
@@ -9,8 +10,10 @@ import { BrandLogo } from '@/components/layout/BrandLogo';
 import { useSession } from '@/lib/useSession';
 export function Navbar() {
     const [open, setOpen] = useState(false);
+    const pathname = usePathname();
     const { user, loading } = useSession();
     const authed = !!user && !loading;
+    const showAccountNav = authed && pathname !== '/';
     const publicNav = [
         { href: '/#markets', label: 'Markets' },
         { href: '/markets/live', label: 'Live Markets' },
@@ -18,7 +21,7 @@ export function Navbar() {
         { href: '/insights', label: 'Insights' },
         { href: '/about', label: 'About' },
     ];
-    const authedNav = authed
+    const authedNav = showAccountNav
         ? [
             { href: '/brokerage', label: 'Brokerage' },
             { href: '/dashboard/trade', label: 'Trade' },
@@ -31,7 +34,7 @@ export function Navbar() {
             ...(user?.isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
         ]
         : [];
-    const nav = [...publicNav, ...authedNav];
+    const nav = pathname === '/' ? publicNav : [...publicNav, ...authedNav];
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         <BrandLogo compact textClassName="text-[clamp(1.05rem,2.6vw,1.45rem)]" markClassName="h-10 w-10 sm:h-11 sm:w-11" />
@@ -69,7 +72,7 @@ export function Navbar() {
               {authedNav.length > 0 && (
                 <div className="border-t border-white/5 pt-3">
                   <p className="px-3 pb-2 text-[11px] uppercase tracking-[0.2em] text-white/35">Account</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
                     {authedNav.map((n) => (<Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-white/80 hover:bg-white/5 transition-all duration-300 ease-out hover:-translate-y-0.5">
                         {n.label}
                       </Link>))}

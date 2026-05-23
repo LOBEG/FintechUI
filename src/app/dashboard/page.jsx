@@ -454,7 +454,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                     if (!requireAuth()) return;
                     if (side === 'buy') openInvest(investSymbol);
                     else setSellOpen(true);
-                }} className={`btn w-full justify-center text-sm font-semibold ${side === 'buy' ? 'bg-accent-success text-ink-950 hover:shadow-glow' : 'bg-accent-error text-white'}`}>
+                }} className={`${side === 'buy' ? 'btn-dashboard' : 'btn-error'} w-full justify-center`}>
                   {user ? (side === 'buy' ? `${t('buy')} ${investSymbol}` : `${t('sell')} ${investSymbol}`) : t('trade')}
                 </button>
               </div>
@@ -626,7 +626,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
                           <td className={pos ? 'text-accent-success' : 'text-accent-error'}>{pos ? '+' : ''}{formatUSD(p.pnl)}</td>
                           <td className={pos ? 'text-accent-success' : 'text-accent-error'}>{pos ? '+' : ''}{p.roe.toFixed(2)}%</td>
                           <td className="text-right">
-                            <button className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Close</button>
+                            <button className="btn-ghost btn-sm">Close</button>
                           </td>
                         </tr>);
                       })}
@@ -836,7 +836,7 @@ export default function DashboardPage({ initialFeature = 'overview' }) {
 function Field({ label, value, onChange, disabled, }) {
     return (<label className="block">
       <span className="text-xs text-white/55">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/50 disabled:opacity-50"/>
+      <input value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="mt-1 field-control disabled:opacity-50"/>
     </label>);
 }
 function Row({ k, v }) {

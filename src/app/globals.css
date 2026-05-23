@@ -81,6 +81,9 @@
   .glass-strong { @apply bg-ink-900/85 backdrop-blur-2xl border border-slate-600/20 rounded-2xl shadow-[0_24px_70px_rgba(0,0,0,0.36)]; }
   .glass-light { @apply bg-white/[0.045] backdrop-blur-md border border-slate-700/20 rounded-xl; }
   .glass-card { @apply bg-ink-900/90 text-white backdrop-blur-xl border border-slate-600/20 rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]; }
+  .card-pad { @apply p-4 sm:p-5; }
+  .card-pad-lg { @apply p-5 sm:p-6; }
+  .card-pad-sm { @apply p-3 sm:p-4; }
   .terminal-panel { @apply bg-navy-950 text-white rounded-3xl border border-slate-700/20 shadow-[0_30px_80px_rgba(0,0,0,0.45)]; }
   .browser-frame { @apply rounded-3xl overflow-hidden shadow-2xl border border-white/10; }
   .text-gradient-primary {
@@ -91,7 +94,9 @@
     background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .btn { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-[transform,background-color,border-color,box-shadow,color,opacity] duration-300 ease-out select-none will-change-transform; }
+  .btn { @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold leading-none transition-[transform,background-color,border-color,box-shadow,color,opacity] duration-300 ease-out select-none will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0; }
+  .btn-sm { @apply px-3 py-2 text-xs rounded-lg; }
+  .btn-icon { @apply h-9 w-9 p-0 rounded-lg; }
   
   /* Primary — institutional slate (landing/auth) */
   .btn-primary {
@@ -99,8 +104,7 @@
     background-image: linear-gradient(135deg, #475569 0%, #334155 55%, #1e293b 100%);
     box-shadow: 0 0 22px rgba(71,85,105,0.24);
   }
-  .btn-primary:focus-visible { @apply outline-2 outline-offset-2 outline-slate-400; }
-  .btn-primary:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-primary:focus-visible { @apply outline-slate-400; }
   
   /* Secondary — professional slate variant (general purpose) */
   .btn-secondary {
@@ -108,8 +112,7 @@
     background-image: linear-gradient(135deg, #64748b 0%, #475569 55%, #334155 100%);
     box-shadow: 0 0 22px rgba(100,116,139,0.24);
   }
-  .btn-secondary:focus-visible { @apply outline-2 outline-offset-2 outline-slate-300; }
-  .btn-secondary:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-secondary:focus-visible { @apply outline-slate-300; }
   
   /* Success — green (confirmations, positive actions) */
   .btn-success {
@@ -117,16 +120,13 @@
     background-image: linear-gradient(135deg, #10b981 0%, #059669 55%, #047857 100%);
     box-shadow: 0 0 22px rgba(16,185,129,0.28);
   }
-  .btn-success:focus-visible { @apply outline-2 outline-offset-2 outline-green-400; }
-  .btn-success:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-success:focus-visible { @apply outline-green-400; }
   
   /* Ghost — minimal style (secondary actions) */
-  .btn-ghost { @apply btn bg-white/5 border border-white/10 text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300; }
-  .btn-ghost:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-ghost { @apply btn bg-white/5 border border-white/10 text-white hover:bg-white/10 focus-visible:outline-slate-300; }
   
   /* Outline — slate outline variant */
-  .btn-outline { @apply btn border border-slate-500/60 text-slate-300 hover:bg-slate-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400; }
-  .btn-outline:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-outline { @apply btn border border-slate-500/60 text-slate-300 hover:bg-slate-500/10 focus-visible:outline-slate-400; }
   
   /* Dashboard — green/teal accent for portfolio operations */
   .btn-dashboard {
@@ -134,11 +134,9 @@
     background-image: linear-gradient(135deg, #10b981 0%, #059669 55%, #047857 100%);
     box-shadow: 0 0 22px rgba(16,185,129,0.28);
   }
-  .btn-dashboard:focus-visible { @apply outline-2 outline-offset-2 outline-emerald-400; }
-  .btn-dashboard:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-dashboard:focus-visible { @apply outline-emerald-400; }
   
-  .btn-dashboard-outline { @apply btn border border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400; }
-  .btn-dashboard-outline:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-dashboard-outline { @apply btn border border-emerald-500/60 text-emerald-400 hover:bg-emerald-500/10 focus-visible:outline-emerald-400; }
   
   /* Admin — indigo/violet for administrative controls */
   .btn-admin {
@@ -146,11 +144,9 @@
     background-image: linear-gradient(135deg, #6366f1 0%, #4f46e5 55%, #3730a3 100%);
     box-shadow: 0 0 22px rgba(99,102,241,0.28);
   }
-  .btn-admin:focus-visible { @apply outline-2 outline-offset-2 outline-indigo-400; }
-  .btn-admin:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-admin:focus-visible { @apply outline-indigo-400; }
   
-  .btn-admin-outline { @apply btn border border-indigo-500/60 text-indigo-400 hover:bg-indigo-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400; }
-  .btn-admin-outline:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-admin-outline { @apply btn border border-indigo-500/60 text-indigo-400 hover:bg-indigo-500/10 focus-visible:outline-indigo-400; }
   
   /* Brokerage — teal/sky for multi-asset trading */
   .btn-teal {
@@ -158,11 +154,9 @@
     background-image: linear-gradient(135deg, #14b8a6 0%, #0d9488 55%, #0f766e 100%);
     box-shadow: 0 0 22px rgba(20,184,166,0.28);
   }
-  .btn-teal:focus-visible { @apply outline-2 outline-offset-2 outline-teal-400; }
-  .btn-teal:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-teal:focus-visible { @apply outline-teal-400; }
   
-  .btn-teal-outline { @apply btn border border-teal-500/60 text-teal-400 hover:bg-teal-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-400; }
-  .btn-teal-outline:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-teal-outline { @apply btn border border-teal-500/60 text-teal-400 hover:bg-teal-500/10 focus-visible:outline-teal-400; }
   
   /* Investor — violet/indigo for portfolio management */
   .btn-investor {
@@ -170,11 +164,17 @@
     background-image: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 55%, #5b21b6 100%);
     box-shadow: 0 0 22px rgba(139,92,246,0.28);
   }
-  .btn-investor:focus-visible { @apply outline-2 outline-offset-2 outline-violet-400; }
-  .btn-investor:disabled { @apply opacity-50 cursor-not-allowed hover:translate-y-0; }
+  .btn-investor:focus-visible { @apply outline-violet-400; }
   
-  .btn-investor-outline { @apply btn border border-violet-500/60 text-violet-400 hover:bg-violet-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400; }
-  .btn-investor-outline:disabled { @apply opacity-50 cursor-not-allowed; }
+  .btn-investor-outline { @apply btn border border-violet-500/60 text-violet-400 hover:bg-violet-500/10 focus-visible:outline-violet-400; }
+  
+  .btn-error {
+    @apply btn text-white hover:-translate-y-0.5 focus-visible:outline-red-400;
+    background-image: linear-gradient(135deg, #ef4444 0%, #dc2626 55%, #991b1b 100%);
+    box-shadow: 0 0 22px rgba(239,68,68,0.24);
+  }
+  
+  .field-control { @apply w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-400/50 focus:ring-2 focus:ring-emerald-400/10; }
   
   .chip { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full; }
 }

@@ -110,7 +110,7 @@ export function AIChatWidget() {
             </div>
             <div className="p-3 border-t border-white/10 flex gap-2">
               <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} placeholder="Ask Oakmont…" className="flex-1 bg-ink-950/70 border border-blue-500/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"/>
-              <button onClick={send} className="btn-primary !px-3 !py-2"><Send className="h-4 w-4"/></button>
+              <button onClick={send} className="btn-primary btn-sm"><Send className="h-4 w-4"/></button>
             </div>
           </motion.div>)}
       </AnimatePresence>

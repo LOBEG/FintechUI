@@ -1799,7 +1799,7 @@ export function ReferralPanel() {
           <button
             type="button"
             onClick={() => onCopy(data.code)}
-            className="btn-ghost text-[11px] px-2 py-1 inline-flex items-center gap-1"
+            className="btn-ghost btn-sm inline-flex items-center gap-1"
             aria-label="Copy referral code"
           >
             {copied ? <Check className="h-3.5 w-3.5 text-accent-success"/> : <Copy className="h-3.5 w-3.5"/>}
@@ -1814,7 +1814,7 @@ export function ReferralPanel() {
           <button
             type="button"
             onClick={() => onCopy(data.shareUrl)}
-            className="btn-ghost text-[11px] px-2 py-1 inline-flex items-center gap-1"
+            className="btn-ghost btn-sm inline-flex items-center gap-1"
             aria-label="Copy referral share URL"
           >
             <Copy className="h-3.5 w-3.5"/>
@@ -1935,7 +1935,7 @@ export function SupportPanel() {
         <button
           type="button"
           onClick={() => { setShowForm((s) => !s); setMsg(null); }}
-          className="btn-ghost text-xs px-2 py-1 ml-auto"
+          className="btn-ghost btn-sm ml-auto"
           aria-expanded={showForm}
           aria-controls="support-new-form"
         >
@@ -2034,7 +2034,7 @@ export function SupportPanel() {
                           type="button"
                           onClick={() => onReply(t.id)}
                           disabled={busy || !reply.trim()}
-                          className="btn-ghost text-xs px-2 py-1 disabled:opacity-50"
+                          className="btn-ghost btn-sm"
                           aria-label="Send reply"
                         >
                           <Send className="h-3.5 w-3.5"/>

@@ -19,7 +19,7 @@ function Modal({ open, onClose, title, icon, children }) {
         >
           <motion.div
             initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }}
-            className="glass-strong w-full max-w-md p-6 relative"
+            className="glass-strong w-full max-w-md card-pad-lg relative"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2 mb-4">
@@ -102,7 +102,7 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
             Acquired <strong>{success.amount.toFixed(8)} {success.symbol}</strong> for ${success.usdValue.toFixed(2)} at ${success.price.toFixed(2)}.
           </p>
           <p className="text-xs text-white/45 mt-2">A confirmation email has been sent.</p>
-          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+          <button onClick={onClose} className="btn-dashboard mt-5 w-full justify-center">Done</button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
@@ -112,13 +112,13 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
           <div className="grid grid-cols-2 gap-2">
             <label className="block">
               <span className="text-xs text-white/55">Buy (target)</span>
-              <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full field-control">
                 {SUPPORTED.filter((s) => s !== fundingSymbol).map((s) => <option key={s} value={s} className="bg-ink-900">{s}</option>)}
               </select>
             </label>
             <label className="block">
               <span className="text-xs text-white/55">Spend (funding)</span>
-              <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full field-control">
                 {FUNDING_OPTIONS.filter((s) => s !== symbol).map((s) => (
                   <option key={s} value={s} className="bg-ink-900">{s} ({(walletBalances[s] || 0).toFixed(s === 'USDT' || s === 'USDC' ? 2 : 6)})</option>
                 ))}
@@ -132,15 +132,15 @@ export function InvestModal({ open, onClose, onSuccess, defaultSymbol = 'BTC', w
           </p>
           <label className="block">
             <span className="text-xs text-white/55">USD amount</span>
-            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
+            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full field-control"/>
           </label>
-          <div className="glass-light p-3 text-xs space-y-1">
+          <div className="glass-light card-pad-sm text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `${px.toLocaleString(undefined, { maximumFractionDigits: 6 })} USDT` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated {symbol}</span><span>{estCrypto.toFixed(8)}</span></div>
             <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
           {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60" title={fundingUsd < parseFloat(usdAmount || '0') ? `Insufficient ${fundingSymbol}` : ''}>
+          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-dashboard w-full justify-center" title={fundingUsd < parseFloat(usdAmount || '0') ? `Insufficient ${fundingSymbol}` : ''}>
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>
         </form>
@@ -216,7 +216,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           <p className="mt-3 font-semibold">Withdrawal processed</p>
           <p className="text-sm text-white/65 mt-1">Sent <strong>{success.amount} {success.symbol}</strong>{success.address ? ` to ${success.address}` : ''}.</p>
           <p className="text-xs text-white/45 mt-2">A confirmation email has been sent.</p>
-          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+          <button onClick={onClose} className="btn-dashboard mt-5 w-full justify-center">Done</button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
@@ -226,7 +226,7 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           </div>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>
-            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full field-control">
               {(symbols.length ? symbols : SUPPORTED).map((s) => (
                 <option key={s} value={s} className="bg-ink-900">{s} - {(balances[s] || 0).toFixed(8)}</option>
               ))}
@@ -234,14 +234,14 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Amount ({symbol})</span>
-            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500/40"/>
+            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full field-control"/>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Saved beneficiary</span>
             <select
               value={beneficiaryId}
               onChange={(e) => setBeneficiaryId(e.target.value)}
-              className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"
+              className="mt-1 w-full field-control"
             >
               <option value="" className="bg-ink-900">- Enter address manually -</option>
               {eligible.map((b) => (
@@ -255,13 +255,13 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           {!beneficiaryId && (
             <label className="block">
               <span className="text-xs text-white/55">Destination address (optional)</span>
-              <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500/40"/>
+              <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x… / bc1…" className="mt-1 w-full field-control"/>
             </label>
           )}
           {!beneficiaryId && availableNetworks.length > 1 && (
             <label className="block">
               <span className="text-xs text-white/55">Network</span>
-              <select value={network} onChange={(e) => setNetwork(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+              <select value={network} onChange={(e) => setNetwork(e.target.value)} className="mt-1 w-full field-control">
                 {availableNetworks.map((n) => (
                   <option key={n} value={n} className="bg-ink-900">{n}</option>
                 ))}
@@ -272,16 +272,16 @@ export function WithdrawModal({ open, onClose, onSuccess, balances = {} }) {
           {!beneficiaryId && memoRequired && (
             <label className="block">
               <span className="text-xs text-white/55">Destination tag / memo <span className="text-accent-error">(required for {symbol})</span></span>
-              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-blue-500/40"/>
+              <input value={memo} onChange={(e) => setMemo(e.target.value)} required={!!address} placeholder="e.g. 12345" className="mt-1 w-full field-control font-mono"/>
               <span className="text-[11px] text-accent-error mt-1 block">Without a memo, {symbol} sent to an exchange is unrecoverable.</span>
             </label>
           )}
           <label className="block">
             <span className="text-xs text-white/55">Admin authorisation token</span>
-            <input value={tokenCode} onChange={(e) => setTokenCode(e.target.value.toUpperCase())} required placeholder="e.g. K3WJ9PXTV2NQ7M5BNCRA" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono outline-none focus:border-blue-500/40 tracking-wider"/>
+            <input value={tokenCode} onChange={(e) => setTokenCode(e.target.value.toUpperCase())} required placeholder="e.g. K3WJ9PXTV2NQ7M5BNCRA" className="mt-1 w-full field-control font-mono tracking-wider"/>
           </label>
           {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy} className="btn w-full justify-center bg-cyan text-ink-950 hover:shadow-glow disabled:opacity-60">
+          <button disabled={busy} className="btn-dashboard w-full justify-center">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Processing…</> : `Withdraw ${amount || ''} ${symbol}`}
           </button>
         </form>
@@ -352,7 +352,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
             <strong>{Number(success.proceeds).toFixed(2)} USDT</strong>{' '}
             (fee {Number(success.fee).toFixed(2)} USDT).
           </p>
-          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+          <button onClick={onClose} className="btn-dashboard mt-5 w-full justify-center">Done</button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
@@ -361,7 +361,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
           </p>
           <label className="block">
             <span className="text-xs text-white/55">Asset</span>
-            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full field-control">
               {(heldSymbols.length ? heldSymbols : SUPPORTED).map((s) => (
                 <option key={s} value={s} className="bg-ink-900">{s} - {(balances[s] || 0).toFixed(8)}</option>
               ))}
@@ -375,7 +375,7 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
                 onChange={(e) => setAmount(e.target.value)}
                 inputMode="decimal"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-16 py-2 text-sm outline-none focus:border-accent-success/40"
+                className="field-control pr-16"
               />
               <button
                 type="button"
@@ -387,14 +387,14 @@ export function SellModal({ open, onClose, onSuccess, balances = {}, defaultSymb
             </div>
             <span className="text-[11px] text-white/45 mt-1 block">Available: {held.toFixed(8)} {symbol}</span>
           </label>
-          <div className="glass-light p-3 text-xs space-y-1">
+          <div className="glass-light card-pad-sm text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>${px ? px.toLocaleString(undefined, { maximumFractionDigits: 4 }) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Gross</span><span>${grossUsd.toFixed(2)}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Fee ({(feeBps / 100).toFixed(2)}%)</span><span>−${feeUsd.toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold pt-1 border-t border-white/10"><span>You receive</span><span>${netUsd.toFixed(2)} USDT</span></div>
           </div>
           {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy || !px || cryptoAmt <= 0 || cryptoAmt > held} className="btn-primary w-full justify-center disabled:opacity-60">
+          <button disabled={busy || !px || cryptoAmt <= 0 || cryptoAmt > held} className="btn-dashboard w-full justify-center">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Selling…</> : `Sell ${cryptoAmt || ''} ${symbol}`}
           </button>
         </form>
@@ -511,7 +511,7 @@ export function BrokerageInvestModal({
             for ${Number(success.transaction.usdValue).toFixed(2)} at ${Number(success.transaction.price).toFixed(4)}.
           </p>
           <p className="text-xs text-white/45 mt-2">Fee {Number(success.fee).toFixed(2)} USDT.</p>
-          <button onClick={onClose} className="btn-primary mt-5 w-full justify-center">Done</button>
+          <button onClick={onClose} className="btn-dashboard mt-5 w-full justify-center">Done</button>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-3">
@@ -520,7 +520,7 @@ export function BrokerageInvestModal({
           </p>
           <label className="block">
             <span className="text-xs text-white/55">Spend (funding)</span>
-            <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={fundingSymbol} onChange={(e) => setFundingSymbol(e.target.value)} className="mt-1 w-full field-control">
               {FUNDING_OPTIONS.map((s) => (
                 <option key={s} value={s} className="bg-ink-900">{s} ({(walletBalances[s] || 0).toFixed(s === 'USDT' || s === 'USDC' ? 2 : 6)})</option>
               ))}
@@ -533,33 +533,33 @@ export function BrokerageInvestModal({
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Broker</span>
-            <select value={broker} onChange={(e) => setBroker(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={broker} onChange={(e) => setBroker(e.target.value)} className="mt-1 w-full field-control">
               {BROKER_OPTIONS.map((o) => <option key={o.id} value={o.id} className="bg-ink-900">{o.label}</option>)}
             </select>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Asset class</span>
-            <select value={assetClass} onChange={(e) => setAssetClass(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={assetClass} onChange={(e) => setAssetClass(e.target.value)} className="mt-1 w-full field-control">
               {BROKERAGE_CLASSES.map((c) => <option key={c} value={c} className="bg-ink-900">{c}</option>)}
             </select>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">Symbol</span>
-            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none">
+            <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="mt-1 w-full field-control">
               {rows.map((r) => <option key={r.symbol} value={r.symbol} className="bg-ink-900">{r.symbol} - {r.name}</option>)}
             </select>
           </label>
           <label className="block">
             <span className="text-xs text-white/55">USD amount</span>
-            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-accent-success/40"/>
+            <input value={usdAmount} onChange={(e) => setUsdAmount(e.target.value)} inputMode="decimal" required className="mt-1 w-full field-control"/>
           </label>
-          <div className="glass-light p-3 text-xs space-y-1">
+          <div className="glass-light card-pad-sm text-xs space-y-1">
             <div className="flex justify-between"><span className="text-white/60">Live price</span><span>{px ? `$${px.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">Estimated qty</span><span>{estQty ? estQty.toFixed(6) : '-'}</span></div>
             <div className="flex justify-between"><span className="text-white/60">{fundingSymbol} debited</span><span>{fundingNeeded.toFixed(fundingSymbol === 'USDT' || fundingSymbol === 'USDC' ? 2 : 8)}</span></div>
           </div>
           {error && <p className="text-xs text-accent-error bg-accent-error/10 border border-accent-error/30 rounded-lg px-3 py-2">{error}</p>}
-          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-primary w-full justify-center disabled:opacity-60">
+          <button disabled={busy || !px || fundingUsd < parseFloat(usdAmount || '0')} className="btn-dashboard w-full justify-center">
             {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Investing…</> : `Invest $${usdAmount} via ${fundingSymbol} → ${symbol}`}
           </button>
         </form>

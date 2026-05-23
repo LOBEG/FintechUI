@@ -52,7 +52,7 @@ export function AdminOperations() {
     return <div className="glass-strong p-6 flex items-center gap-2 text-sm text-white/65"><Loader2 className="h-4 w-4 animate-spin"/> Loading admin operations…</div>;
   }
   if (!user) {
-    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-blue-400"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-primary text-xs">Sign in</a></div>;
+    return <div className="glass-strong p-6 text-sm flex items-center gap-3"><Lock className="h-5 w-5 text-blue-400"/>Sign in as an administrator to access live admin operations. <a href="/login" className="ml-auto btn-admin btn-sm">Sign in</a></div>;
   }
   if (!user.isAdmin) {
     return <div className="glass-strong p-6 text-sm flex items-center gap-3 text-blue-400"><AlertCircle className="h-5 w-5"/> Your account is not an administrator. Set <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_EMAIL</code> + <code className="px-1 py-0.5 rounded bg-white/10">ADMIN_PASSWORD</code> environment variables and sign in with that account.</div>;
@@ -65,7 +65,7 @@ export function AdminOperations() {
       <div className="flex items-center gap-2">
         <h2 className="font-display text-lg">Live admin operations</h2>
         <span className="chip bg-accent-success/15 text-accent-success border border-accent-success/30">● real-time</span>
-        <button onClick={refresh} disabled={refreshBusy} className="ml-auto text-xs text-white/55 hover:text-white inline-flex items-center gap-1 disabled:opacity-60">
+        <button onClick={refresh} disabled={refreshBusy} className="ml-auto btn-ghost btn-sm inline-flex items-center gap-1">
           {refreshBusy ? <Loader2 className="h-3 w-3 animate-spin"/> : <RefreshCw className="h-3 w-3"/>} Refresh
         </button>
       </div>
@@ -189,7 +189,7 @@ function CreditForm({ users, onDone }) {
         <input value={note} onChange={(e) => setNote(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Crediting…</> : 'Credit user & send email'}
       </button>
     </form>
@@ -240,7 +240,7 @@ function TokenForm({ users, onDone }) {
         <input value={expiresInHours} onChange={(e) => setExpiresInHours(e.target.value)} inputMode="decimal" placeholder="24" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border font-mono break-all ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Issuing…</> : 'Issue withdrawal token'}
       </button>
     </form>
@@ -296,7 +296,7 @@ function TokensList({ tokens, users, onDone }) {
               <td className="text-white/55 text-xs">{new Date(t.createdAt).toLocaleString()}</td>
               <td className="text-right">
                 {t.status === 'active' && (
-                  <button onClick={() => revoke(t.id)} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10 inline-flex items-center gap-1"><Trash2 className="h-3 w-3"/> Revoke</button>
+                  <button onClick={() => revoke(t.id)} className="btn-ghost btn-sm inline-flex items-center gap-1"><Trash2 className="h-3 w-3"/> Revoke</button>
                 )}
               </td>
             </tr>
@@ -354,7 +354,7 @@ function TxList({ transactions, users, onDone }) {
                     <button
                       onClick={() => reverse(t.id)}
                       disabled={busyId === t.id}
-                      className="px-2 py-1 rounded bg-accent-error/15 text-accent-error hover:bg-accent-error/25 text-xs disabled:opacity-60"
+                      className="btn-error btn-sm"
                       title="Reverse within 30 min of creation"
                     >
                       {busyId === t.id ? '…' : 'Reverse'}
@@ -414,7 +414,7 @@ function AdjustForm({ users, onDone }) {
         <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Adjusting…</> : 'Apply adjustment & email user'}
       </button>
     </form>
@@ -469,7 +469,7 @@ function AddressesPanel({ addresses, onDone }) {
           <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Cold storage A" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
         </label>
         {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-        <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+        <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
           {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Publish deposit address'}
         </button>
       </form>
@@ -518,9 +518,9 @@ function TestimonialsPanel({ testimonials, onDone }) {
             <p className="mt-1 text-sm text-white/80">{t.text}</p>
           </div>
           <div className="flex gap-1">
-            {t.status !== 'approved' && <button onClick={() => setStatus(t.id, 'approved')} className="px-2 py-1 rounded bg-accent-success/15 text-accent-success text-xs inline-flex items-center gap-1"><Check className="h-3 w-3"/>Approve</button>}
-            {t.status !== 'rejected' && <button onClick={() => setStatus(t.id, 'rejected')} className="px-2 py-1 rounded bg-accent-error/15 text-accent-error text-xs inline-flex items-center gap-1"><XIcon className="h-3 w-3"/>Reject</button>}
-            <button onClick={() => del(t.id)} className="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-xs inline-flex items-center gap-1"><Trash2 className="h-3 w-3"/>Delete</button>
+            {t.status !== 'approved' && <button onClick={() => setStatus(t.id, 'approved')} className="btn-admin btn-sm inline-flex items-center gap-1"><Check className="h-3 w-3"/>Approve</button>}
+            {t.status !== 'rejected' && <button onClick={() => setStatus(t.id, 'rejected')} className="btn-error btn-sm inline-flex items-center gap-1"><XIcon className="h-3 w-3"/>Reject</button>}
+            <button onClick={() => del(t.id)} className="btn-ghost btn-sm inline-flex items-center gap-1"><Trash2 className="h-3 w-3"/>Delete</button>
           </div>
         </li>
       ))}
@@ -575,7 +575,7 @@ function SetBalanceForm({ users, onDone }) {
         <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-neon-green"/> Email the user a notification
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Setting…</> : 'Set balance'}
       </button>
     </form>
@@ -619,7 +619,7 @@ function StatusForm({ users, onDone }) {
         <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. AML review" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Updating…</> : status === 'disabled' ? 'Freeze account' : 'Unfreeze account'}
       </button>
     </form>
@@ -677,7 +677,7 @@ function WithdrawLimitsForm({ users, onDone }) {
         <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. enhanced due diligence" className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save limits'}
       </button>
       <button type="button" disabled={busy || !existing} onClick={() => apply(true)} className="btn-outline justify-center disabled:opacity-40">
@@ -702,7 +702,7 @@ function AuditLogPanel() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <p className="text-xs text-white/55">Append-only, hash-chained record of every administrative action. Each entry includes the SHA-256 of the prior entry so any post-hoc tampering is detectable.</p>
-        <button onClick={load} className="ml-auto text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Refresh</button>
+        <button onClick={load} className="ml-auto btn-ghost btn-sm">Refresh</button>
       </div>
       {busy && !entries.length ? (
         <p className="text-sm text-white/55 inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin"/> Loading…</p>
@@ -776,7 +776,7 @@ function MetricsPanel() {
           </table>
         </div>
       </div>
-      <button onClick={load} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:bg-white/10">Refresh</button>
+      <button onClick={load} className="btn-ghost btn-sm">Refresh</button>
     </div>
   );
 }
@@ -850,10 +850,10 @@ function KycQueuePanel() {
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs outline-none"
             />
             <div className="flex gap-2">
-              <button disabled={busyId === s.id} onClick={() => act(s.id, 'approve')} className="btn-primary text-xs disabled:opacity-60">
+              <button disabled={busyId === s.id} onClick={() => act(s.id, 'approve')} className="btn-admin btn-sm">
                 {busyId === s.id ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Check className="h-3.5 w-3.5"/>} Approve
               </button>
-              <button disabled={busyId === s.id} onClick={() => act(s.id, 'reject')} className="btn-secondary text-xs disabled:opacity-60">
+              <button disabled={busyId === s.id} onClick={() => act(s.id, 'reject')} className="btn-error btn-sm">
                 <XIcon className="h-3.5 w-3.5"/> Reject
               </button>
             </div>
@@ -922,7 +922,7 @@ function ResetBalancesForm({ users, onDone }) {
         <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-cyan"/> Email the user a notification
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} className="sm:col-span-2 btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} className="sm:col-span-2 btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Resetting…</> : 'Reset all balances to zero'}
       </button>
     </form>
@@ -975,7 +975,7 @@ function DeleteUserForm({ users, onDone }) {
         <input value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none"/>
       </label>
       {msg && <p className={`sm:col-span-2 text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy || !canSubmit} className="sm:col-span-2 btn justify-center bg-accent-error text-ink-950 hover:shadow-glow disabled:opacity-50">
+      <button disabled={busy || !canSubmit} className="sm:col-span-2 btn-error justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Deleting…</> : 'Delete user permanently'}
       </button>
     </form>
@@ -1144,7 +1144,7 @@ function BrokerageSettingsPanel() {
                   type="number"
                   value={settings.limits?.[c]?.min ?? ''}
                   onChange={(e) => setLimit(c, 'min', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-xs"
+                  className="field-control text-xs"
                 />
               </label>
               <label className="flex-1">
@@ -1153,7 +1153,7 @@ function BrokerageSettingsPanel() {
                   type="number"
                   value={settings.limits?.[c]?.max ?? ''}
                   onChange={(e) => setLimit(c, 'max', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded px-2 py-1 text-xs"
+                  className="field-control text-xs"
                 />
               </label>
             </div>
@@ -1161,7 +1161,7 @@ function BrokerageSettingsPanel() {
         </div>
       </div>
       {msg && <p className={`text-xs px-3 py-2 rounded-lg border ${msg.kind === 'ok' ? 'bg-accent-success/10 border-accent-success/30 text-accent-success' : 'bg-accent-error/10 border-accent-error/30 text-accent-error'}`}>{msg.text}</p>}
-      <button disabled={busy} onClick={save} className="btn-primary justify-center disabled:opacity-60">
+      <button disabled={busy} onClick={save} className="btn-admin justify-center">
         {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Saving…</> : 'Save brokerage settings'}
       </button>
     </div>
