@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Users, ShieldCheck, ArrowLeftRight, Headphones, PieChart, DollarSign, Wallet, AlertTriangle, Settings, } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BrandWordmark, OakmontLogoMark } from '@/components/layout/BrandLogo';
+import { BrandWordmark } from '@/components/layout/BrandLogo';
 const items = [
     { href: '/admin', label: 'Overview', icon: PieChart },
     { href: '/admin#users', label: 'Users', icon: Users },
@@ -18,8 +18,7 @@ const items = [
 export function AdminSidebar() {
     const pathname = usePathname();
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
-      <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-white/5">
-        <OakmontLogoMark className="h-10 w-10"/>
+      <Link href="/" className="flex items-center gap-3 px-5 h-16 border-b border-white/5">
         <BrandWordmark compact className="text-[0.82rem] leading-tight"/>
         <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Admin</span>
       </Link>

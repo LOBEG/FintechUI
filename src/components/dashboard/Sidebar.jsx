@@ -29,7 +29,7 @@ export function Sidebar() {
     const visibleItems = items.filter((it) => !it.adminOnly || user?.isAdmin);
     
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
-      <BrandLogo compact className="px-4 h-16 border-b border-white/5" markClassName="h-10 w-10" textClassName="text-lg" />
+      <BrandLogo compact showMark={false} className="px-5 h-16 border-b border-white/5" textClassName="text-lg" />
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {visibleItems.map((it) => {
             const route = it.href.split('#')[0];

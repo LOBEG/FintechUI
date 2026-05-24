@@ -37,7 +37,7 @@ export function Navbar() {
     const nav = pathname === '/' ? publicNav : [...publicNav, ...authedNav];
     return (<header className="sticky top-0 z-40 backdrop-blur-xl bg-ink-950/60 border-b border-white/5">
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 min-h-16 py-2 flex items-center justify-between gap-2 sm:gap-3">
-        <BrandLogo compact textClassName="text-[clamp(0.68rem,3.1vw,1.2rem)] sm:text-[clamp(0.9rem,2.2vw,1.35rem)] max-w-[11.5rem] min-[380px]:max-w-[14rem] sm:max-w-none" markClassName="h-9 w-9 sm:h-11 sm:w-11 shrink-0" className="shrink min-w-0" />
+        <BrandLogo compact showMark={false} textClassName="text-[clamp(0.82rem,3.4vw,1.2rem)] sm:text-[clamp(1rem,2.2vw,1.35rem)] max-w-[13rem] min-[380px]:max-w-[15rem] sm:max-w-none" className="shrink min-w-0" />
         <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center min-w-0">
           {nav.map((n) => (<Link key={n.href} href={n.href} className="px-3 py-2 text-sm text-white/70 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-300 ease-out hover:-translate-y-0.5">
               {n.label}

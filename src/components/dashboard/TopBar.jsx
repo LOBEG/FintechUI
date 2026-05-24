@@ -21,7 +21,7 @@ export function TopBar({ title }) {
     
     return (<header className="border-b border-white/5 bg-ink-950/75 backdrop-blur-xl sticky top-0 z-30">
       <div className="min-h-16 px-3 sm:px-6 py-2 flex items-center gap-2 sm:gap-3">
-        <BrandLogo compact className="lg:hidden flex-1 shrink min-w-0 max-w-[7.25rem] min-[380px]:max-w-[9.5rem] sm:max-w-[16rem]" markClassName="h-8 w-8 min-[380px]:h-9 min-[380px]:w-9 shrink-0" textClassName="text-[0.58rem] min-[380px]:text-[0.68rem] sm:text-sm leading-[0.95]" />
+        <BrandLogo compact showMark={false} className="lg:hidden flex-1 shrink min-w-0 max-w-[8.5rem] min-[380px]:max-w-[10.75rem] sm:max-w-[16rem]" textClassName="text-[0.68rem] min-[380px]:text-[0.78rem] sm:text-sm leading-[0.95]" />
         <h1 className="text-lg font-display hidden sm:block text-white/90">{title}</h1>
         <div className="ml-auto flex-1 max-w-md hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-slate-400/40 focus-within:ring-2 focus-within:ring-slate-400/10">
           <Search className="h-4 w-4 text-white/40" aria-hidden="true"/>

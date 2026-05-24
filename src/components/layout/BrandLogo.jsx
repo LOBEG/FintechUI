@@ -25,10 +25,10 @@ export function BrandWordmark({ className = '' }) {
   );
 }
 
-export function BrandLogo({ href = '/', compact = false, className = '', markClassName = 'h-11 w-11', textClassName = 'text-2xl' }) {
+export function BrandLogo({ href = '/', compact = false, className = '', markClassName = 'h-11 w-11', textClassName = 'text-2xl', showMark = true }) {
   return (
     <Link href={href} className={`flex items-center gap-2 sm:gap-3 group min-w-0 transition-opacity hover:opacity-90 ${className}`}>
-      <OakmontLogoMark className={markClassName}/>
+      {showMark && <OakmontLogoMark className={markClassName}/>}
       <BrandWordmark compact={compact} className={textClassName}/>
     </Link>
   );
