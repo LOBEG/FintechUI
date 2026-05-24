@@ -17,9 +17,9 @@ const items = [
 ];
 export function AdminSidebar() {
     const pathname = usePathname();
-    return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
+    return (<aside className="hidden lg:flex w-72 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
       <div className="px-4 py-3 border-b border-white/5">
-        <BrandLogo markClassName="h-8 w-8 shrink-0" textClassName="text-[0.67rem] leading-tight" className="min-w-0" />
+        <BrandLogo markClassName="h-8 w-8 shrink-0" textClassName="text-[0.8rem] leading-tight" className="min-w-0" />
         <span className="mt-2 inline-flex text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Admin Console</span>
       </div>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">

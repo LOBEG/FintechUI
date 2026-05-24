@@ -18,16 +18,18 @@ export function OakmontLogoMark({ className = 'h-11 w-11' }) {
 
 export function BrandWordmark({ className = '' }) {
   return (
-    <span className={`font-display tracking-tight leading-[0.95] min-w-0 font-semibold whitespace-nowrap ${className}`} aria-label={BRAND_NAME}>
+    <span className={`inline-flex max-w-full flex-wrap items-baseline gap-x-1 font-display tracking-tight leading-[1.05] font-semibold overflow-visible ${className}`} aria-label={BRAND_NAME}>
       <span className="text-gradient-primary">Oakmont</span>
-      <span className="text-white/95"> Digital Markets Groups</span>
+      <span className="text-white/95">Digital</span>
+      <span className="text-white/95">Markets</span>
+      <span className="text-white/95">Groups</span>
     </span>
   );
 }
 
 export function BrandLogo({ href = '/', compact = false, className = '', markClassName = 'h-11 w-11', textClassName = 'text-2xl', showMark = true }) {
   return (
-    <Link href={href} className={`flex items-center gap-2 sm:gap-3 group min-w-0 transition-opacity hover:opacity-90 ${className}`}>
+    <Link href={href} className={`flex items-center gap-2 sm:gap-3 group min-w-0 overflow-visible transition-opacity hover:opacity-90 ${className}`}>
       {showMark && <OakmontLogoMark className={markClassName}/>}
       <BrandWordmark compact={compact} className={textClassName}/>
     </Link>
