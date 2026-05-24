@@ -7,6 +7,14 @@ import { Mail, Lock, User, ShieldCheck, Check, Loader2, Gift } from 'lucide-reac
 import { useSession } from '@/lib/useSession';
 import { useNotifications } from '@/components/Notifications';
 import { BrandLogo } from '@/components/layout/BrandLogo';
+function queueEmailVerifyPrompt(user) {
+    if (typeof window === 'undefined' || !user || user.emailVerifiedAt) return;
+    try {
+        const key = `oakmont_email_verify_prompt:${user.id || user.email}`;
+        sessionStorage.setItem(key, '1');
+        sessionStorage.removeItem(`${key}:shown`);
+    } catch (_) {}
+}
 function SignupForm() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -31,7 +39,8 @@ function SignupForm() {
         if (!agree) { setError('Please accept the terms to continue.'); return; }
         setBusy(true);
         try {
-            await signup(email, password, name, referralCode.trim() || undefined);
+            const u = await signup(email, password, name, referralCode.trim() || undefined);
+            queueEmailVerifyPrompt(u);
             notify({ level: 'success', title: 'Account created', message: 'Your $100 welcome portfolio cash credit is ready to invest.' });
             router.push('/dashboard');
         } catch (err) {

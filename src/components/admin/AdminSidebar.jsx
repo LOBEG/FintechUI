@@ -20,7 +20,7 @@ export function AdminSidebar() {
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
       <Link href="/" className="flex items-center gap-2.5 px-5 h-16 border-b border-white/5">
         <OakmontLogoMark className="h-10 w-10"/>
-        <BrandWordmark compact className="text-xl truncate"/>
+        <BrandWordmark compact className="text-[0.82rem] leading-tight"/>
         <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Admin</span>
       </Link>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">

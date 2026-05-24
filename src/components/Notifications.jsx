@@ -9,25 +9,25 @@ const LEVEL_STYLES = {
   success: {
     icon: CheckCircle2,
     bar: 'bg-accent-success500',
-    bg: 'bg-accent-success950/90 border-accent-success600/40',
+    bg: 'bg-accent-success950/95 border-accent-success600/50',
     text: 'text-accent-success300',
   },
   info: {
     icon: Info,
     bar: 'bg-sky-500',
-    bg: 'bg-sky-950/90 border-sky-600/40',
+    bg: 'bg-sky-950/95 border-sky-500/50',
     text: 'text-sky-300',
   },
   warn: {
     icon: AlertTriangle,
     bar: 'bg-amber-500',
-    bg: 'bg-amber-950/90 border-amber-600/40',
+    bg: 'bg-amber-950/95 border-amber-500/50',
     text: 'text-amber-300',
   },
   error: {
     icon: XCircle,
     bar: 'bg-red-500',
-    bg: 'bg-red-950/90 border-red-600/40',
+    bg: 'bg-red-950/95 border-red-500/50',
     text: 'text-red-300',
   },
 };
@@ -51,17 +51,17 @@ function Toast({ toast, onDismiss }) {
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 80, scale: 0.94 }}
       transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-      className={`relative w-80 rounded-xl border backdrop-blur-xl shadow-xl overflow-hidden ${style.bg}`}
+      className={`relative w-full sm:w-80 max-w-sm rounded-xl border backdrop-blur-xl shadow-2xl shadow-black/45 overflow-hidden ring-1 ring-white/10 ${style.bg}`}
     >
       <div className={`absolute top-0 left-0 h-0.5 w-full ${style.bar}`} />
-      <div className="flex items-start gap-3 px-4 py-3">
-        <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${style.text}`} />
+      <div className="flex items-start gap-3 px-4 py-3.5">
+        <Icon className={`h-4 w-4 mt-0.5 shrink-0 drop-shadow ${style.text}`} />
         <div className="flex-1 min-w-0">
           {toast.title && (
-            <p className={`text-sm font-semibold leading-tight ${style.text}`}>{toast.title}</p>
+            <p className={`text-sm font-semibold leading-tight tracking-tight ${style.text}`}>{toast.title}</p>
           )}
           {toast.message && (
-            <p className="text-xs text-white/70 mt-0.5 leading-snug">{toast.message}</p>
+            <p className="text-xs text-white/85 mt-1 leading-snug">{toast.message}</p>
           )}
         </div>
         <button
@@ -93,7 +93,7 @@ export function NotificationsProvider({ children }) {
       {children}
       <div
         aria-live="polite"
-        className="fixed top-[4.5rem] right-4 z-[200] flex flex-col gap-2 pointer-events-none"
+        className="fixed top-[4.5rem] inset-x-3 sm:inset-x-auto sm:right-4 z-[200] flex flex-col items-stretch sm:items-end gap-2 pointer-events-none"
       >
         <AnimatePresence mode="sync">
           {toasts.map((t) => (

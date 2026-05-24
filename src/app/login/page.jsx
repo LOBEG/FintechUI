@@ -7,6 +7,14 @@ import { Mail, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
 import { useNotifications } from '@/components/Notifications';
 import { BrandLogo } from '@/components/layout/BrandLogo';
+function queueEmailVerifyPrompt(user) {
+    if (typeof window === 'undefined' || !user || user.emailVerifiedAt) return;
+    try {
+        const key = `oakmont_email_verify_prompt:${user.id || user.email}`;
+        sessionStorage.setItem(key, '1');
+        sessionStorage.removeItem(`${key}:shown`);
+    } catch (_) {}
+}
 export default function LoginPage() {
     const [show, setShow] = useState(false);
     const [email, setEmail] = useState('');
@@ -22,6 +30,7 @@ export default function LoginPage() {
         setBusy(true);
         try {
             const u = await login(email, password);
+            queueEmailVerifyPrompt(u);
             notify({ level: 'success', title: 'Signed in', message: `Welcome back, ${u.name || u.email}.` });
             router.push(u.isAdmin ? '/admin' : '/dashboard');
         } catch (err) {

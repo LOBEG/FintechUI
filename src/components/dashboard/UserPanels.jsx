@@ -429,19 +429,44 @@ export function TestimonialComposer() {
 // ---- EmailVerifyBanner -------------------------------------------------
 // Surfaced at the top of the dashboard for any signed-in user whose
 // emailVerifiedAt is unset. Sends/confirms the six-digit OTP code.
-export function EmailVerifyBanner({ user }) {
+export function EmailVerifyBanner({ user, manual = false }) {
   const [sent, setSent] = useState(false);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
-  const [hidden, setHidden] = useState(false);
-  if (!user || user.emailVerifiedAt || hidden) return null;
-  const send = async () => {
+  const [hidden, setHidden] = useState(!manual);
+  const promptKey = user ? `oakmont_email_verify_prompt:${user.id || user.email}` : null;
+  const send = useCallback(async ({ quiet = false } = {}) => {
     setBusy(true); setMsg(null);
-    try { await api.post('/api/auth/send-verification', {}); setSent(true); setMsg({ kind: 'ok', text: 'Code sent - check your inbox.' }); }
+    try {
+      await api.post('/api/auth/send-verification', {});
+      setSent(true);
+      setMsg(quiet ? null : { kind: 'ok', text: 'Code sent - check your inbox.' });
+    }
     catch (e) { setMsg({ kind: 'err', text: e.message }); }
     finally { setBusy(false); }
-  };
+  }, []);
+  useEffect(() => {
+    if (!user || user.emailVerifiedAt) return;
+    if (manual) {
+      setHidden(false);
+      return;
+    }
+    try {
+      const shouldShow = promptKey && sessionStorage.getItem(promptKey) === '1' && sessionStorage.getItem(`${promptKey}:shown`) !== '1';
+      if (!shouldShow) {
+        setHidden(true);
+        return;
+      }
+      sessionStorage.setItem(`${promptKey}:shown`, '1');
+      sessionStorage.removeItem(promptKey);
+      setHidden(false);
+      send({ quiet: true });
+    } catch (_) {
+      setHidden(true);
+    }
+  }, [manual, promptKey, send, user]);
+  if (!user || user.emailVerifiedAt || hidden) return null;
   const confirm = async (e) => {
     e.preventDefault();
     setBusy(true); setMsg(null);
@@ -459,10 +484,10 @@ export function EmailVerifyBanner({ user }) {
       <Lock className="h-5 w-5 text-slate-400 shrink-0"/>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">Verify your email to unlock withdrawals.</p>
-        <p className="text-xs text-white/60">We sent the code to {user.email}. Withdrawals are limited until your inbox is confirmed. You may also complete this later from your KYC settings.</p>
+        <p className="text-xs text-white/60">{sent ? 'We sent' : 'Send'} the code to {user.email}. Withdrawals are limited until your email is confirmed. You may also complete this later from your KYC settings.</p>
       </div>
       {!sent ? (
-        <button onClick={send} disabled={busy} className="btn-primary text-sm disabled:opacity-60">
+        <button onClick={() => send()} disabled={busy} className="btn-primary text-sm disabled:opacity-60">
           {busy ? <><Loader2 className="h-4 w-4 animate-spin"/> Sending…</> : 'Send verification code'}
         </button>
       ) : (
@@ -482,14 +507,16 @@ export function EmailVerifyBanner({ user }) {
       {msg && (
         <span className={`text-xs ${msg.kind === 'ok' ? 'text-accent-success' : 'text-accent-error'}`}>{msg.text}</span>
       )}
-      <button
-        onClick={() => setHidden(true)}
-        aria-label="Dismiss — you can verify later from KYC settings"
-        title="Dismiss — verify later from KYC settings"
-        className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10 transition-colors shrink-0 self-start sm:self-auto"
-      >
-        <BellClose className="h-4 w-4 text-white/60"/>
-      </button>
+      {!manual && (
+        <button
+          onClick={() => setHidden(true)}
+          aria-label="Dismiss — you can verify later from KYC settings"
+          title="Dismiss — verify later from KYC settings"
+          className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 inline-flex items-center justify-center hover:bg-white/10 transition-colors shrink-0 self-start sm:self-auto"
+        >
+          <BellClose className="h-4 w-4 text-white/60"/>
+        </button>
+      )}
     </section>
   );
 }
@@ -1030,6 +1057,11 @@ export function KycPanel() {
             <UsageBar title="Daily withdrawals" used={summary.daily.used} limit={summary.daily.limit} pct={pct(summary.daily.used, summary.daily.limit)} />
             <UsageBar title="30-day withdrawals" used={summary.monthly.used} limit={summary.monthly.limit} pct={pct(summary.monthly.used, summary.monthly.limit)} />
           </motion.div>
+        )}
+        {!emailVerifiedAt && (
+          <div className="mt-4">
+            <EmailVerifyBanner user={user} manual />
+          </div>
         )}
       </motion.section>
       <KycUpgradeModal open={open} onClose={() => setOpen(false)} requestedTier={nextTier} onSubmitted={() => { setOpen(false); load(); }} />

@@ -9,6 +9,7 @@ import { useSession } from '@/lib/useSession';
 import { NotificationBell } from '@/components/dashboard/UserPanels';
 import { useNotifications } from '@/components/Notifications';
 import { useI18n } from '@/components/I18nProvider';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 
 export function TopBar({ title }) {
     const { user, logout } = useSession();
@@ -19,7 +20,8 @@ export function TopBar({ title }) {
     const memberLabel = user?.isAdmin ? 'Admin' : 'Member';
     
     return (<header className="border-b border-white/5 bg-ink-950/75 backdrop-blur-xl sticky top-0 z-30">
-      <div className="h-16 px-4 sm:px-6 flex items-center gap-3">
+      <div className="min-h-16 px-3 sm:px-6 py-2 flex items-center gap-2 sm:gap-3">
+        <BrandLogo compact className="lg:hidden flex-1 shrink min-w-0 max-w-[7.25rem] min-[380px]:max-w-[9.5rem] sm:max-w-[16rem]" markClassName="h-8 w-8 min-[380px]:h-9 min-[380px]:w-9 shrink-0" textClassName="text-[0.58rem] min-[380px]:text-[0.68rem] sm:text-sm leading-[0.95]" />
         <h1 className="text-lg font-display hidden sm:block text-white/90">{title}</h1>
         <div className="ml-auto flex-1 max-w-md hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 focus-within:border-slate-400/40 focus-within:ring-2 focus-within:ring-slate-400/10">
           <Search className="h-4 w-4 text-white/40" aria-hidden="true"/>
@@ -27,7 +29,7 @@ export function TopBar({ title }) {
           <input id="dashboard-search" placeholder="Search markets, assets, orders…" className="bg-transparent outline-none text-sm flex-1 placeholder:text-white/35"/>
           <kbd className="text-[10px] text-white/35 border border-white/10 rounded px-1.5 py-0.5">⌘K</kbd>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setMobileSearchOpen((open) => !open)}
