@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, LogOut, LogIn, UserCircle, X } from 'lucide-react';
+import { Search, LogOut, LogIn, X } from 'lucide-react';
 import { LanguageSelector } from '@/components/widgets/LanguageSelector';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 import { useSession } from '@/lib/useSession';
@@ -44,15 +44,6 @@ export function TopBar({ title }) {
           {user && <NotificationBell />}
           {user ? (
             <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-              <div title={user.email} className="h-9 w-9 rounded-full bg-slate-700/60 border border-slate-500/50 text-slate-100 font-semibold text-xs inline-flex items-center justify-center shrink-0 select-none uppercase tracking-wide">
-                {(() => {
-                  const src = (user.name || user.email || '').trim();
-                  const parts = src.split(/\s+/).filter(Boolean);
-                  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`;
-                  if (parts.length === 1) return parts[0].slice(0, 2);
-                  return <UserCircle className="h-5 w-5"/>;
-                })()}
-              </div>
               <div className="text-xs leading-tight hidden md:block min-w-0">
                 <div className="font-medium text-white/90 truncate max-w-[120px]">{user.name || user.email.split('@')[0]}</div>
                 <div className="text-white/45">{memberLabel}</div>
