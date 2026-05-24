@@ -18,7 +18,7 @@ export function OakmontLogoMark({ className = 'h-11 w-11' }) {
 
 export function BrandWordmark({ className = '' }) {
   return (
-    <span className={`inline-flex max-w-full flex-wrap items-baseline gap-x-1 font-display tracking-tight leading-[1.05] font-semibold overflow-visible ${className}`} aria-label={BRAND_NAME}>
+    <span className={`inline-flex max-w-full flex-nowrap items-baseline gap-x-1 font-display tracking-tight leading-[1.05] font-semibold overflow-visible whitespace-nowrap ${className}`} aria-label={BRAND_NAME}>
       <span className="text-gradient-primary">Oakmont</span>
       <span className="text-white/95">Digital</span>
       <span className="text-white/95">Markets</span>

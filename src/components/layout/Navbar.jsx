@@ -70,7 +70,7 @@ export function Navbar() {
                             aria-label="Open navigation menu"
                             aria-expanded={open}
                             aria-controls="nav-drawer"
-                            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white shadow-lg shadow-black/20 transition-all duration-200 hover:bg-white/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300 active:scale-95"
+                            className="relative z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white shadow-lg shadow-black/20 transition-all duration-200 hover:bg-white/20 hover:text-white hover:border-white/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300 active:scale-95"
                         >
                             <Menu className="h-5 w-5" />
                         </button>

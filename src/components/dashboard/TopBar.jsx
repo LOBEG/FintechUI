@@ -100,14 +100,14 @@ export function TopBar({ title }) {
         router.push(href);
     };
     
-    return (<header className="border-b border-white/5 bg-ink-950/75 backdrop-blur-xl sticky top-0 z-30">
+    return (<header className="border-b border-white/5 bg-ink-950/75 backdrop-blur-xl sticky top-0 z-40 overflow-visible">
       <div className="min-h-16 px-3 sm:px-6 py-2 flex items-center gap-2 sm:gap-3">
         <BrandLogo
-          className="flex-1 min-w-0 sm:flex-none"
+          className="shrink-0 min-w-0"
           markClassName="h-8 w-8 min-[380px]:h-9 min-[380px]:w-9 sm:h-10 sm:w-10 shrink-0"
           textClassName="text-[0.68rem] min-[380px]:text-xs sm:text-sm xl:text-base leading-tight"
         />
-        <h1 className="text-lg font-display hidden xl:block text-white/90">{title}</h1>
+        <h1 className="text-lg font-display hidden xl:block text-white/90 shrink-0">{title}</h1>
         <div className="ml-auto hidden w-full max-w-md flex-1 lg:block">
           <HeaderSearch id="dashboard-search" value={search} onChange={setSearch} onSelect={selectSearchResult} />
         </div>
@@ -119,7 +119,7 @@ export function TopBar({ title }) {
               aria-label="Open header menu"
               aria-expanded={actionsOpen}
               aria-controls="header-actions-menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white shadow-lg shadow-black/20 transition-all duration-200 hover:bg-white/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300 active:scale-95"
+              className="relative z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white shadow-lg shadow-black/20 transition-all duration-200 hover:bg-white/20 hover:text-white hover:border-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300 active:scale-95"
             >
               <Menu className="h-5 w-5"/>
             </button>
@@ -171,7 +171,7 @@ export function TopBar({ title }) {
           )}
         </div>
       </div>
-      <div className="px-3 sm:px-6 pb-3 lg:hidden">
+      <div className="relative px-3 sm:px-6 pb-3 lg:hidden">
         <HeaderSearch id="dashboard-mobile-search" value={search} onChange={setSearch} onSelect={selectSearchResult} compact />
       </div>
     </header>);
