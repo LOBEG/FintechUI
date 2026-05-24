@@ -18,8 +18,8 @@ export function OakmontLogoMark({ className = 'h-11 w-11' }) {
 
 export function BrandWordmark({ className = '' }) {
   return (
-    <span className={`font-display tracking-tight leading-[0.95] min-w-0 font-semibold ${className}`} aria-label={BRAND_NAME}>
-      <span className="text-gradient-primary whitespace-nowrap">Oakmont</span>
+    <span className={`font-display tracking-tight leading-[0.95] min-w-0 font-semibold whitespace-nowrap ${className}`} aria-label={BRAND_NAME}>
+      <span className="text-gradient-primary">Oakmont</span>
       <span className="text-white/95"> Digital Markets Groups</span>
     </span>
   );

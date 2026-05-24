@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Users, ShieldCheck, ArrowLeftRight, Headphones, PieChart, DollarSign, Wallet, AlertTriangle, Settings, } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BrandWordmark } from '@/components/layout/BrandLogo';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 const items = [
     { href: '/admin', label: 'Overview', icon: PieChart },
     { href: '/admin#users', label: 'Users', icon: Users },
@@ -18,10 +18,10 @@ const items = [
 export function AdminSidebar() {
     const pathname = usePathname();
     return (<aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-white/5 bg-ink-950/60 backdrop-blur-xl sticky top-0 h-screen">
-      <Link href="/" className="flex items-center gap-3 px-5 h-16 border-b border-white/5 min-w-0">
-        <BrandWordmark className="text-sm leading-tight min-w-0"/>
-        <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-400 font-semibold shrink-0">Admin</span>
-      </Link>
+      <div className="px-4 py-3 border-b border-white/5">
+        <BrandLogo markClassName="h-8 w-8 shrink-0" textClassName="text-[0.67rem] leading-tight" className="min-w-0" />
+        <span className="mt-2 inline-flex text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Admin Console</span>
+      </div>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {items.map((it) => {
             const Icon = it.icon;

@@ -13,6 +13,7 @@ const items = [
     { href: '/dashboard/positions', label: 'positions', icon: ListOrdered },
     { href: '/dashboard/history', label: 'history', icon: History },
     { href: '/dashboard/analytics', label: 'analytics', icon: BarChart3 },
+    { href: '/markets/signals', label: 'marketsIntelligence', icon: BarChart3, fallback: 'Markets Intelligence' },
     { href: '/dashboard/analytics#bot-section', label: 'aiBot', icon: Bot },
     { href: '/dashboard/security#alerts-section', label: 'alerts', icon: Bell },
     { href: '/dashboard/security', label: 'security', icon: ShieldCheck },
@@ -35,9 +36,9 @@ export function MobileBottomNav() {
             const active = pathname === route || (route !== '/brokerage' && pathname?.startsWith(`${route}/`));
             const label = it.fallback ? (t(it.label) === it.label ? it.fallback : t(it.label)) : t(it.label);
             return (<li key={`${it.label}-${it.href}`} className="snap-start shrink-0">
-              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1.5 py-2.5 px-3.5 text-[10px] sm:text-[11px] min-w-[72px] max-w-[88px] rounded-xl transition-all duration-200 ease-out active:scale-95', active ? 'text-accent-success bg-accent-success/10 border border-accent-success/25' : 'text-white/55 hover:text-white/90 hover:bg-white/5 border border-transparent')}>
+              <Link href={it.href} className={cn('flex flex-col items-center justify-center gap-1.5 py-2.5 px-3 text-[10px] sm:text-[11px] min-w-[92px] rounded-xl transition-all duration-200 ease-out active:scale-95', active ? 'text-accent-success bg-accent-success/10 border border-accent-success/25' : 'text-white/55 hover:text-white/90 hover:bg-white/5 border border-transparent')}>
                 <Icon className="h-[18px] w-[18px] shrink-0"/>
-                <span className="font-medium leading-tight text-center whitespace-nowrap">{label}</span>
+                <span className="font-medium leading-tight text-center whitespace-normal">{label}</span>
               </Link>
             </li>);
         })}
