@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 5 7 13;
+    --fg: 240 246 255;
+  }
+
+  html {
+    /* Slightly larger root font so all rem-based text reads comfortably on
+       mobile and desktop without forcing the user to zoom. */
+    font-size: 17px;
+    letter-spacing: -0.011em;
+  }
+
+  @media (min-width: 1024px) {
+    html { font-size: 17.5px; }
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    background: rgb(var(--bg));
+    color: rgb(var(--fg));
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  * {
+    min-width: 0;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  body {
+    @apply bg-graphite-950 text-white dark:bg-graphite-950 dark:text-white;
+    line-height: 1.65;
+    font-weight: 400;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(6, 182, 212, 0.04), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(71, 85, 105, 0.06), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(45, 50, 62, 0.08), transparent 60%),
+      linear-gradient(135deg, #0d0f12 0%, #12151a 50%, #0a0c0f 100%);
+    background-attachment: scroll;
+  }
+
+  html:not(.dark) body {
+    @apply bg-charcoal-950 text-white;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(6, 182, 212, 0.05), transparent 60%),
+      radial-gradient(1000px 500px at -10% 10%, rgba(71, 85, 105, 0.07), transparent 60%),
+      radial-gradient(800px 400px at 50% 100%, rgba(45, 50, 62, 0.09), transparent 60%),
+      linear-gradient(135deg, #0e1115 0%, #13161b 50%, #0a0c0f 100%);
+    background-attachment: scroll;
+  }
+
+  @media (min-width: 1024px) {
+    body,
+    html:not(.dark) body {
+      background-attachment: fixed;
+    }
+  }
+
+  ::selection {
+    background: rgba(100, 116, 139, 0.25);
+    color: white;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+}
+
+@layer components {
+  .glass { @apply bg-graphite-900/75 backdrop-blur-xl border border-slate-700/25 rounded-2xl shadow-[0_18px_50px_rgba(0,0,0,0.35)]; }
+  .glass-strong { @apply bg-graphite-900/90 backdrop-blur-2xl border border-slate-600/15 rounded-2xl shadow-[0_24px_70px_rgba(0,0,0,0.42)]; }
+  .glass-light { @apply bg-white/[0.035] backdrop-blur-md border border-slate-700/15 rounded-xl; }
+  .glass-card { @apply bg-graphite-900/95 text-white backdrop-blur-xl border border-slate-600/15 rounded-2xl shadow-[0_18px_60px_rgba(0,0,0,0.40)]; }
+  .card-pad { @apply p-4 sm:p-5; }
+  .card-pad-lg { @apply p-5 sm:p-6; }
+  .card-pad-sm { @apply p-3 sm:p-4; }
+  .terminal-panel { @apply bg-charcoal-950 text-white rounded-3xl border border-slate-700/15 shadow-[0_30px_80px_rgba(0,0,0,0.50)]; }
+  .browser-frame { @apply rounded-3xl overflow-hidden shadow-2xl border border-white/[0.08]; }
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .text-gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .btn { @apply inline-flex min-h-10 max-w-full items-center justify-center gap-2 whitespace-normal break-words px-5 py-2.5 text-center rounded-xl text-sm font-semibold leading-snug transition-[transform,background-color,border-color,box-shadow,color,opacity] duration-300 ease-out select-none will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 active:scale-[0.98]; }
+  .btn-sm { @apply px-3 py-2 text-xs rounded-lg; }
+  .btn-icon { @apply h-10 w-10 shrink-0 p-0 rounded-lg whitespace-nowrap; }
+  
+  /* Primary — institutional slate (landing/auth) */
+  .btn-primary {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #64748b 0%, #475569 55%, #334155 100%);
+    box-shadow: 0 0 20px rgba(100,116,139,0.20);
+  }
+  .btn-primary:focus-visible { @apply outline-slate-400; }
+  
+  /* Secondary — professional slate variant (general purpose) */
+  .btn-secondary {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #64748b 0%, #475569 55%, #334155 100%);
+    box-shadow: 0 0 18px rgba(100,116,139,0.18);
+  }
+  .btn-secondary:focus-visible { @apply outline-slate-300; }
+  
+  /* Success — green (confirmations, positive actions) */
+  .btn-success {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #10b981 0%, #059669 55%, #047857 100%);
+    box-shadow: 0 0 20px rgba(16,185,129,0.22);
+  }
+  .btn-success:focus-visible { @apply outline-green-400; }
+  
+  /* Ghost — minimal style (secondary actions) */
+  .btn-ghost { @apply btn bg-white/[0.04] border border-white/[0.08] text-white hover:bg-white/[0.08] focus-visible:outline-slate-300; }
+  
+  /* Outline — slate outline variant */
+  .btn-outline { @apply btn border border-slate-500/50 text-slate-300 hover:bg-slate-500/[0.08] focus-visible:outline-slate-400; }
+  
+  /* Dashboard — green/teal accent for portfolio operations */
+  .btn-dashboard {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #10b981 0%, #059669 55%, #047857 100%);
+    box-shadow: 0 0 20px rgba(16,185,129,0.22);
+  }
+  .btn-dashboard:focus-visible { @apply outline-emerald-400; }
+  
+  .btn-dashboard-outline { @apply btn border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/[0.08] focus-visible:outline-emerald-400; }
+  
+  /* Admin — steel/slate for administrative controls */
+  .btn-admin {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #64748b 0%, #475569 55%, #334155 100%);
+    box-shadow: 0 0 20px rgba(100,116,139,0.22);
+  }
+  .btn-admin:focus-visible { @apply outline-slate-400; }
+  
+  .btn-admin-outline { @apply btn border border-slate-500/50 text-slate-400 hover:bg-slate-500/[0.08] focus-visible:outline-slate-400; }
+  
+  /* Brokerage — cyan for multi-asset trading */
+  .btn-teal {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #06b6d4 0%, #0891b2 55%, #0e7490 100%);
+    box-shadow: 0 0 20px rgba(6,182,212,0.22);
+  }
+  .btn-teal:focus-visible { @apply outline-cyan-400; }
+  
+  .btn-teal-outline { @apply btn border border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/[0.08] focus-visible:outline-cyan-400; }
+  
+  /* Investor — steel/slate for portfolio management */
+  .btn-investor {
+    @apply btn text-white hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, #64748b 0%, #475569 55%, #334155 100%);
+    box-shadow: 0 0 20px rgba(100,116,139,0.22);
+  }
+  .btn-investor:focus-visible { @apply outline-slate-400; }
+  
+  .btn-investor-outline { @apply btn border border-slate-500/50 text-slate-400 hover:bg-slate-500/[0.08] focus-visible:outline-slate-400; }
+  
+  .btn-error {
+    @apply btn text-white hover:-translate-y-0.5 focus-visible:outline-red-400;
+    background-image: linear-gradient(135deg, #ef4444 0%, #dc2626 55%, #991b1b 100%);
+    box-shadow: 0 0 20px rgba(239,68,68,0.20);
+  }
+  
+  .field-control { @apply w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm outline-none focus:border-cyan-400/40 focus:ring-2 focus:ring-cyan-400/[0.08]; }
+  
+  .chip { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+.marquee-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Prevent iOS Safari from zooming when focusing form fields. The 16px
+   threshold is the documented break-even on mobile WebKit. */
+input, select, textarea { font-size: 16px; }
+
+/* Reserve space for the iPhone home-indicator under the fixed bottom
+   navigation. The MobileBottomNav already extends behind the safe area
+   thanks to its translucent background. */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
