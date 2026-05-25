@@ -26,7 +26,7 @@ export default function CareersPage() {
                 <div>
                   <h3 className="text-lg font-semibold">Senior Backend Engineer</h3>
                   <div className="mt-2 flex flex-wrap gap-3 text-sm text-white/60">
-                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> London</span>
+                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> Remote</span>
                     <span className="flex items-center gap-1"><Clock className="h-4 w-4"/> Full-time</span>
                     <span className="flex items-center gap-1"><Briefcase className="h-4 w-4"/> Engineering</span>
                   </div>
@@ -41,12 +41,12 @@ export default function CareersPage() {
                 <div>
                   <h3 className="text-lg font-semibold">Compliance Manager</h3>
                   <div className="mt-2 flex flex-wrap gap-3 text-sm text-white/60">
-                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> London / Remote</span>
+                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> Remote</span>
                     <span className="flex items-center gap-1"><Clock className="h-4 w-4"/> Full-time</span>
                     <span className="flex items-center gap-1"><Briefcase className="h-4 w-4"/> Legal & Compliance</span>
                   </div>
                   <p className="mt-3 text-sm text-white/60">
-                    Lead AML, KYC, and regulatory reporting. FCA/MiCA experience preferred. CAMS or equivalent certification desired.
+                    Lead AML, KYC, and regulatory reporting. Financial-services compliance experience preferred. CAMS or equivalent certification desired.
                   </p>
                 </div>
               </div>
@@ -56,7 +56,7 @@ export default function CareersPage() {
                 <div>
                   <h3 className="text-lg font-semibold">Quantitative Trader</h3>
                   <div className="mt-2 flex flex-wrap gap-3 text-sm text-white/60">
-                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> Singapore</span>
+                    <span className="flex items-center gap-1"><MapPin className="h-4 w-4"/> Remote</span>
                     <span className="flex items-center gap-1"><Clock className="h-4 w-4"/> Full-time</span>
                     <span className="flex items-center gap-1"><Briefcase className="h-4 w-4"/> Trading</span>
                   </div>

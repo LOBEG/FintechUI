@@ -32,7 +32,7 @@ export default function AboutPage() {
               <Globe className="h-8 w-8 text-slate-400 mb-3"/>
               <h3 className="text-lg font-semibold">Global Presence</h3>
               <p className="mt-2 text-sm text-white/60">
-                Headquartered in London with offices in Singapore and Dubai. Serving clients in 45 countries across Europe, Asia, and the Middle East.
+                U.S.-headquartered brokerage operations with a digitally native servicing model for sophisticated clients, institutional desks, and corporate treasury teams requiring secure multi-asset market access.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">

@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default function TermsPage() {
-    const currentDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     return (<>
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
@@ -69,7 +69,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-display text-white">8. Governing Law</h2>
               <p className="mt-2">
-                These Terms are governed by the laws of England and Wales. Disputes shall be resolved through arbitration in London under LCIA rules.
+                These Terms are governed by the applicable platform user agreement and dispute-resolution framework presented to clients during onboarding. Disputes shall be handled through confidential arbitration unless otherwise required by applicable law.
               </p>
             </section>
 

@@ -40,14 +40,14 @@ export default function SpotTradingPage() {
               <Shield className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Transparent Fees</h3>
               <p className="mt-2 text-sm text-white/60">
-                Zero maker fees, 0.08% taker fees. Volume-based rebates for accounts over £100k. No hidden charges.
+                Zero maker fees, 0.08% taker fees. Volume-based rebates for qualified high-volume accounts. No hidden charges.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">
               <Clock className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">24/7 Markets</h3>
               <p className="mt-2 text-sm text-white/60">
-                Round-the-clock trading with continuous settlement. Instant GBP, EUR, and USD deposits via bank transfer or card.
+                Round-the-clock trading with continuous settlement. Major fiat deposits are supported via bank transfer or card.
               </p>
             </div>
           </div>

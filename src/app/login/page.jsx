@@ -31,7 +31,6 @@ export default function LoginPage() {
         try {
             const u = await login(email, password);
             queueEmailVerifyPrompt(u);
-            notify({ level: 'success', title: 'Signed in', message: `Welcome back, ${u.name || u.email}.` });
             router.push(u.isAdmin ? '/admin' : '/dashboard');
         } catch (err) {
             setError(err.message || 'Login failed');

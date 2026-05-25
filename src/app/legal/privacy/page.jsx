@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default function PrivacyPage() {
-    const currentDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     return (<>
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">

@@ -5,7 +5,7 @@ const items = [
     { icon: ShieldCheck, title: 'SOC 2 Type II & ISO 27001', desc: 'Independently audited security controls and operational resilience.' },
     { icon: Lock, title: '95% Cold Storage', desc: 'Multi-sig custody with Fireblocks & qualified custodians.' },
     { icon: FileBadge, title: 'KYC / AML Compliant', desc: 'Onfido + Chainalysis screening; FATF Travel Rule support.' },
-    { icon: Building2, title: 'Regulated Entities', desc: 'Licensed across EU (MiCA), UK (FCA), US (MSB), and DIFC.' },
+    { icon: Building2, title: 'Regulated Entities', desc: 'Brokerage compliance workflows aligned with financial-services oversight, AML controls, and institutional operating standards.' },
     { icon: Eye, title: 'Real-time Monitoring', desc: '24/7 SOC, anomaly detection and behavioral analytics.' },
     { icon: KeyRound, title: 'Hardware MFA & Passkeys', desc: 'FIDO2, YubiKey & WebAuthn. Withdrawal allowlists.' },
 ];

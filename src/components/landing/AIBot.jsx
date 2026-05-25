@@ -1,14 +1,14 @@
 'use client';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Bot, Zap, Brain, LineChart, Cpu, ShieldCheck } from 'lucide-react';
+import { Bot, Zap, Brain, LineChart, Cpu, Gauge } from 'lucide-react';
 import { Sparkline } from '@/components/ui/Charts';
 import { cryptoLogoStyle } from '@/lib/cryptoLogos';
 import { useSession } from '@/lib/useSession';
 const strategies = [
     { name: 'Crypto DCA planner · BTC/USDT', ret: 'Live', win: 'Risk rules active', seed: 3, symbol: 'BTC' },
     { name: 'Equity momentum watch · AAPL', ret: 'Live', win: 'Brokerage feed active', seed: 7, icon: LineChart },
-    { name: 'Cross-asset portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: ShieldCheck },
+    { name: 'Cross-asset portfolio guardrails', ret: 'Live', win: 'Controls enabled', seed: 4, icon: Gauge },
 ];
 export function AIBot() {
     const { user, loading } = useSession();

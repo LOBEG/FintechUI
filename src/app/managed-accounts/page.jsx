@@ -33,7 +33,7 @@ export default function ManagedAccountsPage() {
               <Shield className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Segregated Custody</h3>
               <p className="mt-2 text-sm text-white/60">
-                Your assets held in isolated wallets. Qualified custodian with insurance cover up to £10M. Full transparency via real-time dashboard.
+                Your assets held in isolated wallets. Qualified custodian coordination with institutional insurance coverage. Full transparency via real-time dashboard.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">

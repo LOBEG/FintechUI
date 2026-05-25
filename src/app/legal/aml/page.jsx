@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default function AMLPage() {
-    const currentDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     return (<>
       <Navbar />
       <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8">
@@ -20,14 +20,14 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">1. Commitment to AML Compliance</h2>
               <p className="mt-2">
-                Oakmont Digital Markets Groups is committed to preventing money laundering and terrorist financing. We comply with the UK Money Laundering Regulations 2017, 5th Anti-Money Laundering Directive, and FCA guidance.
+                Oakmont Digital Markets Groups is committed to preventing money laundering and terrorist financing. We maintain AML/CFT controls, sanctions screening, transaction monitoring, and documented escalation procedures aligned with applicable financial-services obligations.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-display text-white">2. Know Your Customer (KYC)</h2>
               <p className="mt-2">
-                All users must complete identity verification before trading. We require: government-issued ID, proof of address (utility bill or bank statement dated within 3 months), and source of funds declaration for deposits over £10,000.
+                All users must complete identity verification before trading. We require: government-issued ID, proof of address, and source-of-funds declarations for activity that meets enhanced-review thresholds.
               </p>
             </section>
 
@@ -48,7 +48,7 @@ export default function AMLPage() {
             <section>
               <h2 className="text-2xl font-display text-white">5. Reporting</h2>
               <p className="mt-2">
-                Suspicious Activity Reports (SARs) are filed with the National Crime Agency as required. We cooperate fully with law enforcement and regulatory investigations.
+                Suspicious Activity Reports (SARs) are escalated to the appropriate compliance channels as required. We cooperate fully with law enforcement and regulatory investigations.
               </p>
             </section>
 

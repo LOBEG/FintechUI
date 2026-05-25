@@ -33,7 +33,7 @@ export default function InstitutionalPage() {
               <Shield className="h-8 w-8 text-cyan-400 mb-3"/>
               <h3 className="text-lg font-semibold">Qualified Custody</h3>
               <p className="mt-2 text-sm text-white/60">
-                Multi-signature cold storage with geographically distributed keys. Lloyds of London insurance up to £100M. SOC 2 Type II audited.
+                Multi-signature cold storage with distributed key controls, custody-policy oversight, institutional insurance coordination, and SOC 2 Type II-style operational governance.
               </p>
             </div>
             <div className="glass p-6 rounded-xl">

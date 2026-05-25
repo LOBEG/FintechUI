@@ -1,11 +1,11 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-import { Newspaper, Download, Mail } from 'lucide-react';
+import { Newspaper } from 'lucide-react';
 
 export const metadata = {
     title: 'Press - Oakmont Digital Markets Groups',
-    description: 'Oakmont Digital Markets Groups press releases, media kit, and contact information.',
+    description: 'Oakmont Digital Markets Groups press releases and company information.',
 };
 
 export default function PressPage() {
@@ -56,28 +56,6 @@ export default function PressPage() {
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="mt-10 grid sm:grid-cols-2 gap-6">
-            <div className="glass p-6 rounded-xl">
-              <Download className="h-8 w-8 text-accent-success mb-3"/>
-              <h3 className="text-lg font-semibold">Media Kit</h3>
-              <p className="mt-2 text-sm text-white/60">
-                Logos, brand guidelines, and company fact sheet.
-              </p>
-              <a href="#" className="mt-4 inline-flex items-center text-sm text-accent-success hover:underline">
-                Download Kit →
-              </a>
-            </div>
-            <div className="glass p-6 rounded-xl">
-              <Mail className="h-8 w-8 text-slate-400 mb-3"/>
-              <h3 className="text-lg font-semibold">Media Enquiries</h3>
-              <p className="mt-2 text-sm text-white/60">
-                For press enquiries, contact our communications team.
-              </p>
-              <a href="mailto:press@oakmontdigitalmarkets.com" className="mt-4 inline-flex items-center text-sm text-accent-success hover:underline">
-                press@oakmontdigitalmarkets.com →
-              </a>
             </div>
           </div>
         </div>
